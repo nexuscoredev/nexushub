@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PageHeader } from '../components/PageHeader';
+import { SystemCard } from '../components/SystemCard';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase, supabaseErrorMessage } from '../lib/supabase';
 import type { HubSystem } from '../types/database';
@@ -75,19 +76,7 @@ export function DashboardPage() {
       <h2 className="section-heading">Produtos NEXUS</h2>
       <div className="product-grid">
         {systems.map((sys) => (
-          <a
-            key={sys.id}
-            href={sys.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="card"
-            style={{ display: 'block' }}
-          >
-            <strong>{sys.nome}</strong>
-            <p style={{ color: 'var(--muted)', fontSize: '0.85rem', marginTop: '0.35rem' }}>
-              {sys.descricao}
-            </p>
-          </a>
+          <SystemCard key={sys.id} system={sys} variant="link" />
         ))}
       </div>
     </div>

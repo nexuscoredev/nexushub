@@ -1,0 +1,54 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.logoWrap {
+  width: 56px;
+  height: 56px;
+  margin-bottom: 1rem;
+  padding: 0.35rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: 0 0 24px rgba(255, 255, 255, 0.04);
+}
+
+.logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.35rem;
+}
+
+.desc {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+  flex: 1;
+}
+
+.action {
+  align-self: flex-start;
+  font-size: 0.85rem;
+}
+
+.linkCard {
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.25s ease, transform 0.2s ease;
+}
+
+.linkCard:hover {
+  transform: translateY(-2px);
+}

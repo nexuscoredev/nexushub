@@ -1,5 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getTodoistToken, todoistFetch } from '../../_lib/todoist.js';
+import {
+  getTodoistToken,
+  mapTodoistTask,
+  todoistFetch,
+  type TodoistTaskV1,
+} from '../../_lib/todoist.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const taskId = req.query.taskId as string | undefined;
@@ -20,12 +25,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const body = req.body as { is_completed?: boolean };
     if (typeof body.is_completed === 'boolean') {
       if (body.is_completed) {
-        await todoistFetch(`/tasks/${taskId}/close`, { method: 'POST' });
+        await todoistFetch<null>(`/tasks/${taskId}/close`, { method: 'POST' });
       } else {
-        await todoistFetch(`/tasks/${taskId}/reopen`, { method: 'POST' });
+        await todoistFetch<null>(`/tasks/${taskId}/reopen`, { method: 'POST' });
       }
     }
-    const task = await todoistFetch(`/tasks/${taskId}`);
+
+    let task = null;
+    try {
+      const raw = await todoistFetch<TodoistTaskV1>(`/tasks/${taskId}`);
+      task = mapTodoistTask(raw);
+    } catch {
+      task = {
+        id: taskId,
+        is_completed: Boolean(body.is_completed),
+      };
+    }
+
     return res.status(200).json({ task });
   } catch (e) {
     return res.status(500).json({

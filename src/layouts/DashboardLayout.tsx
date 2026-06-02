@@ -26,81 +26,83 @@ export function DashboardLayout() {
     { to: '/dashboard', label: 'Painel', icon: '◈', show: true },
     { to: '/agenda', label: 'Agenda', icon: '◷', show: podeFinanceiroAgenda },
     { to: '/financeiro', label: 'Financeiro', icon: '◎', show: podeFinanceiroAgenda },
-    { to: '/fila', label: 'Fila operacional', icon: '≡', show: true },
+    { to: '/fila', label: 'Fila', icon: '≡', show: true },
     { to: '/sistemas', label: 'Sistemas', icon: '⬡', show: true },
     { to: '/usuarios', label: 'Usuários', icon: '◉', show: podeGestao },
-    { to: '/configuracoes', label: 'Configurações', icon: '⚙', show: true },
+    { to: '/configuracoes', label: 'Config', icon: '⚙', show: true },
   ];
+
+  const visibleNav = navItems.filter((item) => item.show);
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/login');
   };
 
-  const sidebar = (
-    <>
-      <div className={styles.brand}>
-        <HubLogo size="md" />
-      </div>
-      <nav className={styles.nav}>
-        {navItems
-          .filter((item) => item.show)
-          .map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
-              }
-              onClick={() => setMenuOpen(false)}
-            >
-              <span className={styles.navIcon} aria-hidden>
-                {item.icon}
-              </span>
-              {item.label}
-            </NavLink>
-          ))}
-      </nav>
-      <div className={styles.userBlock}>
-        <div className={styles.userRow}>
-          <div className={styles.avatar}>
-            {userInitial(profile?.nome, user?.email)}
-          </div>
-          <div>
-            <div className={styles.userName}>{profile?.nome ?? user?.email}</div>
-            <div className={styles.userMeta}>{profile?.cargo ?? '—'}</div>
-          </div>
-          <span className={styles.statusDot} title="Online" />
-        </div>
-        <button type="button" className={`btn-ghost ${styles.signOut}`} onClick={handleSignOut}>
-          Sair
-        </button>
-      </div>
-    </>
-  );
-
   return (
     <TechShell>
       <div className={styles.shell}>
-        <div
-          className={menuOpen ? styles.overlayVisible : styles.overlay}
-          onClick={() => setMenuOpen(false)}
-          aria-hidden
-        />
-        <aside className={`${styles.sidebar} ${menuOpen ? styles.sidebarOpen : ''}`}>
-          {sidebar}
-        </aside>
-        <div className={styles.mainWrap}>
-          <div className={styles.mobileBar}>
-            <HubLogo size="sm" />
-            <button type="button" className="btn-ghost" onClick={() => setMenuOpen(true)}>
-              Menu
+        <header className={styles.commandBar}>
+          <div className={styles.commandGlow} aria-hidden />
+
+          <div className={styles.commandTop}>
+            <button
+              type="button"
+              className={`btn-ghost ${styles.menuToggle}`}
+              onClick={() => setMenuOpen((o) => !o)}
+              aria-expanded={menuOpen}
+              aria-label="Menu de navegação"
+            >
+              {menuOpen ? '✕' : '☰'}
             </button>
+
+            <div className={styles.brandCenter}>
+              <HubLogo size="sm" showSubtitle={false} />
+            </div>
+
+            <div className={styles.userCompact}>
+              <div className={styles.avatar} title={profile?.nome ?? user?.email}>
+                {userInitial(profile?.nome, user?.email)}
+              </div>
+              <button type="button" className={`btn-ghost ${styles.signOutBtn}`} onClick={handleSignOut}>
+                Sair
+              </button>
+            </div>
           </div>
-          <main className={styles.main}>
-            <Outlet />
-          </main>
-        </div>
+
+          <nav
+            className={`${styles.commandDock} ${menuOpen ? styles.commandDockOpen : ''}`}
+            aria-label="Navegação principal"
+          >
+            <div className={styles.dockTrack}>
+              {visibleNav.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={({ isActive }) =>
+                    `${styles.dockLink} ${isActive ? styles.dockLinkActive : ''}`
+                  }
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <span className={styles.dockIcon} aria-hidden>
+                    {item.icon}
+                  </span>
+                  <span className={styles.dockLabel}>{item.label}</span>
+                </NavLink>
+              ))}
+            </div>
+          </nav>
+
+          <div className={styles.commandMeta}>
+            <span className={styles.metaUser}>{profile?.nome ?? user?.email}</span>
+            <span className={styles.metaDot} aria-hidden />
+            <span className={styles.metaRole}>{profile?.cargo ?? '—'}</span>
+          </div>
+        </header>
+
+        <main className={styles.main}>
+          <Outlet />
+        </main>
       </div>
     </TechShell>
   );

@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getTodoistToken, todoistFetch, type TodoistProject } from '../_lib/todoist.js';
+import { getTodoistToken, todoistFetchProjects } from '../_lib/todoist.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET') {
@@ -12,7 +12,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const projects = await todoistFetch<TodoistProject[]>('/projects');
+    const projects = await todoistFetchProjects();
     return res.status(200).json({ configured: true, projects });
   } catch (e) {
     return res.status(500).json({

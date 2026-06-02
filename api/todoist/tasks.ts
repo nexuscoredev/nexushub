@@ -1,9 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import {
   getTodoistToken,
-  todoistFetch,
-  type TodoistProject,
-  type TodoistTaskRaw,
+  todoistFetchProjects,
+  todoistFetchTasks,
 } from '../_lib/todoist.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -21,25 +20,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     let projectName: string | null = null;
     let filterProjectId = projectId;
 
+    const projects = await todoistFetchProjects();
+
     if (!filterProjectId) {
-      const projects = await todoistFetch<TodoistProject[]>('/projects');
       const first = projects[0];
       filterProjectId = first?.id;
       projectName = first?.name ?? null;
     } else {
-      const projects = await todoistFetch<TodoistProject[]>('/projects');
       projectName = projects.find((p) => p.id === filterProjectId)?.name ?? null;
     }
 
-    const tasks = await todoistFetch<TodoistTaskRaw[]>('/tasks');
-    const filtered = filterProjectId
-      ? tasks.filter((t) => t.project_id === filterProjectId)
-      : tasks;
+    const tasks = await todoistFetchTasks(filterProjectId ?? undefined);
 
     return res.status(200).json({
       configured: true,
       projectName,
-      tasks: filtered.map((t) => ({
+      tasks: tasks.map((t) => ({
         id: t.id,
         content: t.content,
         description: t.description,
