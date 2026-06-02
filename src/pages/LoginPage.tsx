@@ -11,7 +11,7 @@ export function LoginPage() {
   const location = useLocation();
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname ?? '/dashboard';
 
-  const [email, setEmail] = useState('');
+  const [usuario, setUsuario] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -25,7 +25,7 @@ export function LoginPage() {
     setError(null);
     setLoading(true);
     try {
-      await signIn(email.trim(), password);
+      await signIn(usuario.trim(), password);
       navigate(from, { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Falha na autenticação');
@@ -60,16 +60,17 @@ export function LoginPage() {
 
           <form className={styles.form} onSubmit={handleSubmit}>
             <div>
-              <label className="label" htmlFor="email">
-                E-mail
+              <label className="label" htmlFor="usuario">
+                Usuário
               </label>
               <input
-                id="email"
-                type="email"
+                id="usuario"
+                type="text"
                 className="input"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="username"
+                placeholder="Vinicius, Rafael ou Felipe"
+                value={usuario}
+                onChange={(e) => setUsuario(e.target.value)}
                 required
               />
             </div>

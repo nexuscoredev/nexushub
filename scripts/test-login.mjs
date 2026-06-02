@@ -18,23 +18,28 @@ for (const line of readFileSync(envPath, 'utf8').split('\n')) {
 }
 
 const sb = createClient(env.VITE_SUPABASE_URL, env.VITE_SUPABASE_ANON_KEY);
-const users = [
-  'vinicius@nexustech.com',
-  'rafael@nexustech.com',
-  'felipe@nexustech.com',
-];
+const users = ['vinicius', 'rafael', 'felipe'];
 
 let failed = false;
-for (const email of users) {
-  const { data, error } = await sb.auth.signInWithPassword({
+for (const usuario of users) {
+  const { data: email, error: lookupError } = await sb.rpc('hub_email_for_usuario', {
+    p_usuario: usuario,
+  });
+  if (lookupError || !email) {
+    console.log(`${usuario}: FAIL — usuário não encontrado (${lookupError?.message ?? 'RPC'})`);
+    failed = true;
+    continue;
+  }
+
+  const { error } = await sb.auth.signInWithPassword({
     email,
     password: '123456',
   });
   if (error) {
-    console.log(`${email}: FAIL — ${error.message}`);
+    console.log(`${usuario}: FAIL — ${error.message}`);
     failed = true;
   } else {
-    console.log(`${email}: OK`);
+    console.log(`${usuario}: OK`);
   }
   await sb.auth.signOut();
 }

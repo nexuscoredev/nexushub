@@ -17,7 +17,7 @@ export function HubLogo({
   return (
     <div className={`${styles.logo} ${sizeClass} ${styles.mark}`}>
       <img
-        src="/img/nexus-mark.png"
+        src="/img/favicon.png"
         alt=""
         className={styles.markImg}
         aria-hidden

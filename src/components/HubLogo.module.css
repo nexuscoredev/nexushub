@@ -12,6 +12,7 @@
   flex-shrink: 0;
   display: block;
   object-fit: contain;
+  border-radius: 50%;
 }
 
 .text {

@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
+import { normalizeUsuario } from '../lib/usuarios';
 import { podeGerenciar } from '../lib/cargos';
 import { podeAcessarFinanceiroAgenda, normalizeEmail } from '../lib/acesso';
 import { supabase, supabaseConfigured, supabaseErrorMessage } from '../lib/supabase';
@@ -21,7 +22,7 @@ interface AuthState {
   configured: boolean;
   podeFinanceiroAgenda: boolean;
   podeGestao: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
+  signIn: (usuario: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -88,8 +89,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     void refreshProfile();
   }, [user?.id, refreshProfile]);
 
-  const signIn = useCallback(async (email: string, password: string) => {
+  const signIn = useCallback(async (usuario: string, password: string) => {
     if (!supabase) throw new Error('Supabase não configurado. Defina VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.');
+    const login = normalizeUsuario(usuario);
+    if (!login) throw new Error('Usuário ou senha inválidos.');
+
+    const { data: email, error: lookupError } = await supabase.rpc('hub_email_for_usuario', {
+      p_usuario: login,
+    });
+
+    if (lookupError || !email) {
+      throw new Error('Usuário ou senha inválidos.');
+    }
+
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw new Error(supabaseErrorMessage(error));
   }, []);

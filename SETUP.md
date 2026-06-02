@@ -24,7 +24,7 @@ URL: `https://ndcenckgtezerlmggola.supabase.co`
 
 ## 2. Vercel
 
-Projeto: **nexushub** — https://nexushub-coral.vercel.app
+Projeto: **nexushub** (time NEXUS) — https://nexuscorehub.vercel.app
 
 Variáveis **já configuradas pelo agente** (se existirem no dashboard):
 

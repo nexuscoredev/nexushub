@@ -34,6 +34,7 @@ export function UsersPage() {
         <table className="data-table">
           <thead>
             <tr>
+              <th>Usuário</th>
               <th>Nome</th>
               <th>E-mail</th>
               <th>Cargo</th>
@@ -43,6 +44,7 @@ export function UsersPage() {
           <tbody>
             {users.map((u) => (
               <tr key={u.id}>
+                <td>{u.usuario}</td>
                 <td>{u.nome}</td>
                 <td>{u.email}</td>
                 <td>{u.cargo}</td>

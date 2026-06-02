@@ -18,8 +18,8 @@ export function SettingsPage() {
           <h2 className={styles.cardTitle}>Sessão</h2>
           <dl className={styles.dl}>
             <div>
-              <dt>E-mail</dt>
-              <dd>{user?.email ?? '—'}</dd>
+              <dt>Usuário</dt>
+              <dd>{profile?.usuario ?? '—'}</dd>
             </div>
             <div>
               <dt>Nome</dt>

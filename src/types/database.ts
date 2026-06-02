@@ -9,6 +9,7 @@ export type HubCargo =
 export interface HubProfile {
   id: string;
   email: string;
+  usuario: string;
   nome: string;
   cargo: HubCargo;
   ativo: boolean;

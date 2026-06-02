@@ -3,15 +3,33 @@
  * Requer SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY (nunca VITE_).
  *
  * Uso: npm run seed:users
- * Senha padrão documentada: 123456 (alterar após primeiro login em produção).
+ * Login: usuário (vinicius, rafael, felipe) + senha 123456
  */
 
 import { createClient } from '@supabase/supabase-js';
 
 const USERS = [
-  { email: 'vinicius@nexustech.com', nome: 'Vinícius', cargo: 'CTO', password: '123456' },
-  { email: 'rafael@nexustech.com', nome: 'Rafael', cargo: 'CEO', password: '123456' },
-  { email: 'felipe@nexustech.com', nome: 'Felipe', cargo: 'Desenvolvedor', password: '123456' },
+  {
+    usuario: 'vinicius',
+    email: 'vinicius@nexustech.com',
+    nome: 'Vinícius',
+    cargo: 'CTO',
+    password: '123456',
+  },
+  {
+    usuario: 'rafael',
+    email: 'rafael@nexustech.com',
+    nome: 'Rafael',
+    cargo: 'CEO',
+    password: '123456',
+  },
+  {
+    usuario: 'felipe',
+    email: 'felipe@nexustech.com',
+    nome: 'Felipe',
+    cargo: 'Desenvolvedor',
+    password: '123456',
+  },
 ];
 
 const url = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
@@ -33,8 +51,10 @@ for (const user of USERS) {
     email: user.email,
     password: user.password,
     email_confirm: true,
-    user_metadata: { nome: user.nome, cargo: user.cargo },
+    user_metadata: { nome: user.nome, cargo: user.cargo, usuario: user.usuario },
   });
+
+  let userId = data.user?.id;
 
   if (error) {
     const { data: list } = await admin.auth.admin.listUsers({ perPage: 200 });
@@ -42,17 +62,29 @@ for (const user of USERS) {
       (u) => u.email?.toLowerCase() === user.email.toLowerCase(),
     );
     if (found) {
+      userId = found.id;
       await admin.auth.admin.updateUserById(found.id, {
         password: user.password,
-        user_metadata: { nome: user.nome, cargo: user.cargo },
+        user_metadata: { nome: user.nome, cargo: user.cargo, usuario: user.usuario },
       });
-      console.log(`Atualizado: ${user.email}`);
+      console.log(`Atualizado: ${user.usuario} (${user.email})`);
     } else {
-      console.error(`Erro em ${user.email}:`, error.message);
+      console.error(`Erro em ${user.usuario}:`, error.message);
+      continue;
     }
   } else {
-    console.log(`Criado: ${user.email} (${data.user?.id})`);
+    console.log(`Criado: ${user.usuario} (${data.user?.id})`);
+  }
+
+  if (userId) {
+    const { error: profileError } = await admin
+      .from('hub_profiles')
+      .update({ usuario: user.usuario, nome: user.nome, cargo: user.cargo })
+      .eq('id', userId);
+    if (profileError) {
+      console.warn(`Perfil ${user.usuario}:`, profileError.message);
+    }
   }
 }
 
-console.log('Seed concluído. Senha padrão: 123456 — troque em produção.');
+console.log('Seed concluído. Login: vinicius / rafael / felipe — senha 123456');
