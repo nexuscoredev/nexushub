@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "seed:users": "node scripts/seed-users.mjs",
     "check:setup": "node scripts/check-setup.mjs",
+    "test:login": "node scripts/test-login.mjs",
     "lint": "tsc --noEmit"
   },
   "dependencies": {

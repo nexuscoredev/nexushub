@@ -3,7 +3,6 @@ import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { HubLogo } from '../components/HubLogo';
 import { useAuth } from '../contexts/AuthContext';
 import { CARGOS } from '../lib/cargos';
-import { TEAM_HINT_EMAILS } from '../lib/acesso';
 import type { HubCargo } from '../types/database';
 import styles from './LoginPage.module.css';
 
@@ -153,11 +152,13 @@ export function LoginPage() {
         </p>
 
         <p className={styles.hint}>
-          Equipe:{' '}
-          {TEAM_HINT_EMAILS.map((e) => (
-            <code key={e}>{e} </code>
-          ))}
-          — senha padrão documentada no README (seed).
+          Equipe (e-mail + senha <code>123456</code>):
+          <br />
+          Vinicius → <code>vinicius@nexustech.com</code>
+          <br />
+          Rafael → <code>rafael@nexustech.com</code>
+          <br />
+          Felipe → <code>felipe@nexustech.com</code>
         </p>
 
         <p style={{ marginTop: '1rem', textAlign: 'center' }}>
