@@ -94,7 +94,7 @@ async function todoistFetchAll<T>(
 }
 
 export function mapTodoistTask(task: TodoistTaskV1, isCompleted?: boolean): TodoistTaskRaw {
-  const completed = isCompleted ?? Boolean(task.checked) || Boolean(task.completed_at);
+  const completed = isCompleted ?? (Boolean(task.checked) || Boolean(task.completed_at));
   return {
     id: task.id,
     content: task.content,
