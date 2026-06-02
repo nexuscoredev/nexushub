@@ -1,0 +1,56 @@
+.projectBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  max-width: 420px;
+}
+
+.projectSelect {
+  flex: 1;
+  min-width: 200px;
+  cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.sectionTitle {
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+}
+
+.taskList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.taskItem {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.taskDone {
+  opacity: 0.75;
+}
+
+.taskDoneText {
+  text-decoration: line-through;
+}
+
+.taskDue {
+  color: var(--muted);
+}
+
+.empty {
+  color: var(--muted);
+}

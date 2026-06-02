@@ -16,7 +16,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const projectId = process.env.TODOIST_PROJECT_ID;
+    const queryProjectId =
+      typeof req.query.projectId === 'string' && req.query.projectId.trim()
+        ? req.query.projectId.trim()
+        : undefined;
+    const projectId = queryProjectId ?? process.env.TODOIST_PROJECT_ID;
     let projectName: string | null = null;
     let filterProjectId = projectId;
 
@@ -34,7 +38,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     return res.status(200).json({
       configured: true,
+      projectId: filterProjectId ?? null,
       projectName,
+      projects,
       tasks: tasks.map((t) => ({
         id: t.id,
         content: t.content,
