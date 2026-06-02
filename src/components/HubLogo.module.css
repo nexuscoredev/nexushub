@@ -1,0 +1,35 @@
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.1;
+}
+
+.wordmark {
+  font-family: Georgia, 'Times New Roman', serif;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: var(--text);
+}
+
+.subtitle {
+  font-size: 0.7em;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 0.15rem;
+  padding-left: 0.15em;
+}
+
+.sm .wordmark {
+  font-size: 1rem;
+}
+
+.md .wordmark {
+  font-size: 1.35rem;
+}
+
+.lg .wordmark {
+  font-size: 2rem;
+}
