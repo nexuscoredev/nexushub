@@ -19,6 +19,7 @@
   align-items: center;
   padding-top: 0.25rem;
 }
+
 .accent {
   position: absolute;
   left: 0;
@@ -26,22 +27,22 @@
   bottom: 0.15rem;
   width: 3px;
   border-radius: 4px;
-  background: linear-gradient(180deg, var(--accent-cyan), var(--accent-violet));
-  box-shadow: 0 0 20px var(--accent-glow);
+  background: var(--liquid-silver);
+  box-shadow: 0 0 16px var(--accent-glow);
 }
 
 .badge {
   display: inline-block;
-  font-family: var(--font-mono);
   font-size: 0.65rem;
+  font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--accent-cyan);
+  color: var(--polished-silver);
   margin-bottom: 0.5rem;
-  padding: 0.2rem 0.5rem;
-  border: 1px solid rgba(0, 212, 255, 0.25);
-  border-radius: 4px;
-  background: rgba(0, 212, 255, 0.06);
+  padding: 0.25rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .title {
@@ -50,7 +51,7 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  background: linear-gradient(120deg, #fff 0%, #b8b8b8 50%, #6a6a6a 100%);
+  background: var(--liquid-silver);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

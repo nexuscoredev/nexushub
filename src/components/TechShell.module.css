@@ -10,20 +10,20 @@
   inset: 0;
   z-index: 0;
   background:
-    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(0, 212, 255, 0.14), transparent 55%),
-    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(140, 120, 255, 0.1), transparent 50%),
-    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(255, 255, 255, 0.04), transparent 45%),
-    #050508;
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(255, 255, 255, 0.06), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(255, 255, 255, 0.04), transparent 50%),
+    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(255, 255, 255, 0.03), transparent 45%),
+    #0a0a0a;
 }
 
 .grid {
   position: fixed;
   inset: 0;
   z-index: 0;
-  opacity: 0.35;
+  opacity: 0.25;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
   background-size: 48px 48px;
   mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 75%);
 }
@@ -42,7 +42,7 @@
   height: 420px;
   top: -120px;
   left: -80px;
-  background: rgba(0, 212, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .orbB {
@@ -50,7 +50,7 @@
   height: 360px;
   bottom: -100px;
   right: -60px;
-  background: rgba(167, 139, 250, 0.1);
+  background: rgba(200, 200, 200, 0.04);
   animation-delay: -6s;
 }
 
@@ -59,13 +59,13 @@
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  opacity: 0.04;
+  opacity: 0.03;
   background: repeating-linear-gradient(
     0deg,
     transparent,
     transparent 2px,
-    rgba(255, 255, 255, 0.15) 2px,
-    rgba(255, 255, 255, 0.15) 3px
+    rgba(255, 255, 255, 0.12) 2px,
+    rgba(255, 255, 255, 0.12) 3px
   );
 }
 

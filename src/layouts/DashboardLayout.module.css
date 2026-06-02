@@ -12,7 +12,7 @@
   position: sticky;
   top: 0;
   height: 100vh;
-  background: rgba(8, 10, 16, 0.75);
+  background: rgba(10, 10, 10, 0.92);
   backdrop-filter: blur(24px) saturate(1.2);
   border-right: 1px solid var(--border);
   box-shadow: 4px 0 48px rgba(0, 0, 0, 0.4);
@@ -28,11 +28,11 @@
   background: linear-gradient(
     180deg,
     transparent,
-    var(--accent-cyan),
-    var(--accent-violet),
+    rgba(255, 255, 255, 0.25),
+    rgba(255, 255, 255, 0.08),
     transparent
   );
-  opacity: 0.35;
+  opacity: 0.5;
   pointer-events: none;
 }
 
@@ -63,12 +63,11 @@
 }
 
 .navIcon {
-  font-family: var(--font-mono);
   font-size: 0.75rem;
   width: 1.5rem;
   text-align: center;
-  color: var(--accent-cyan);
-  opacity: 0.7;
+  color: var(--polished-silver);
+  opacity: 0.65;
   transition: opacity 0.2s;
 }
 
@@ -84,14 +83,14 @@
 
 .navLinkActive {
   color: #fff;
-  background: linear-gradient(90deg, rgba(0, 212, 255, 0.12), rgba(167, 139, 250, 0.06));
-  border-color: rgba(0, 212, 255, 0.25);
-  box-shadow: 0 0 24px rgba(0, 212, 255, 0.08);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.04);
 }
 
 .navLinkActive .navIcon {
   opacity: 1;
-  text-shadow: 0 0 12px var(--accent-glow);
+  color: var(--primary);
 }
 
 .navLinkActive::before {
@@ -103,7 +102,7 @@
   width: 3px;
   height: 60%;
   border-radius: 0 4px 4px 0;
-  background: var(--accent-cyan);
+  background: var(--primary);
   box-shadow: 0 0 12px var(--accent-glow);
 }
 
@@ -121,7 +120,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.06), transparent 60%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), transparent 60%);
   pointer-events: none;
 }
 
@@ -136,16 +135,15 @@
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #1a2030, #0a0c12);
-  border: 1px solid var(--border-glow);
+  background: linear-gradient(135deg, #222222, #0a0a0a);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1rem;
-  color: var(--accent-cyan);
-  box-shadow: 0 0 20px rgba(0, 212, 255, 0.15);
+  color: var(--primary);
 }
 
 .userName {
@@ -154,11 +152,11 @@
 }
 
 .userMeta {
-  font-family: var(--font-mono);
   font-size: 0.68rem;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent-cyan);
+  color: var(--polished-silver);
   margin-top: 0.15rem;
 }
 
@@ -167,7 +165,7 @@
   height: 6px;
   border-radius: 50%;
   background: var(--success);
-  box-shadow: 0 0 8px var(--success);
+  box-shadow: 0 0 8px rgba(198, 232, 208, 0.4);
   margin-left: auto;
   flex-shrink: 0;
   animation: pulse 2s ease infinite;
@@ -218,7 +216,7 @@
     justify-content: space-between;
     padding: 0.85rem 1rem;
     border-bottom: 1px solid var(--border);
-    background: rgba(8, 10, 16, 0.9);
+    background: rgba(10, 10, 10, 0.95);
     backdrop-filter: blur(16px);
     position: sticky;
     top: 0;

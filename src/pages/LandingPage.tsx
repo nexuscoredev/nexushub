@@ -10,7 +10,7 @@ export function LandingPage() {
         <div className={styles.heroGlow} aria-hidden />
         <div className={styles.content}>
           <span className={styles.eyebrow}>NEXUS Technology Systems</span>
-          <HubLogo size="lg" variant="full" showSubtitle={false} />
+          <HubLogo size="lg" showSubtitle={false} />
           <p className={styles.tagline}>
             Command center para sistemas, fila operacional, finanças e agenda — tudo
             sincronizado em tempo real.

@@ -14,7 +14,7 @@
   transform: translate(-50%, -50%);
   width: min(600px, 90vw);
   height: min(400px, 60vh);
-  background: radial-gradient(ellipse, rgba(0, 212, 255, 0.15), transparent 65%);
+  background: radial-gradient(ellipse, rgba(255, 255, 255, 0.08), transparent 65%);
   pointer-events: none;
 }
 
@@ -30,15 +30,15 @@
 }
 
 .eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.25em;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--accent-cyan);
-  padding: 0.35rem 0.75rem;
-  border: 1px solid rgba(0, 212, 255, 0.2);
+  color: var(--polished-silver);
+  padding: 0.35rem 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 999px;
-  background: rgba(0, 212, 255, 0.05);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .tagline {
@@ -57,8 +57,8 @@
 }
 
 .hint {
-  font-family: var(--font-mono);
   font-size: 0.68rem;
+  font-weight: 600;
   letter-spacing: 0.1em;
   color: var(--muted);
   text-transform: uppercase;
@@ -91,8 +91,8 @@
 }
 
 .statLabel {
-  font-family: var(--font-mono);
   font-size: 0.65rem;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);

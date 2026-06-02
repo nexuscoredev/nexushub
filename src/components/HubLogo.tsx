@@ -3,7 +3,7 @@ import styles from './HubLogo.module.css';
 interface HubLogoProps {
   size?: 'sm' | 'md' | 'lg';
   showSubtitle?: boolean;
-  /** full = imagem horizontal; mark = ícone + texto */
+  /** mark = ícone + wordmark; full = ícone maior + wordmark (landing) */
   variant?: 'full' | 'mark';
 }
 
@@ -12,24 +12,12 @@ export function HubLogo({
   showSubtitle = true,
   variant = 'mark',
 }: HubLogoProps) {
-  if (variant === 'full') {
-    return (
-      <div className={`${styles.logo} ${styles[size]} ${styles.full}`}>
-        <img
-          src="/logo-nexus.svg"
-          alt="NEXUS Hub"
-          className={styles.fullImg}
-          width={240}
-          height={64}
-        />
-      </div>
-    );
-  }
+  const sizeClass = variant === 'full' ? styles.lg : styles[size];
 
   return (
-    <div className={`${styles.logo} ${styles[size]} ${styles.mark}`}>
+    <div className={`${styles.logo} ${sizeClass} ${styles.mark}`}>
       <img
-        src="/logo-nexus-mark.svg"
+        src="/img/nexus-mark.png"
         alt=""
         className={styles.markImg}
         aria-hidden
