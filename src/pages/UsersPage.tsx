@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { PageHeader } from '../components/PageHeader';
 import { supabase, supabaseErrorMessage } from '../lib/supabase';
 import type { HubProfile } from '../types/database';
 
@@ -22,8 +23,11 @@ export function UsersPage() {
 
   return (
     <div>
-      <h1 className="page-title">Usuários</h1>
-      <p className="page-subtitle">Perfis do hub (gestão).</p>
+      <PageHeader
+        badge="Admin"
+        title="Usuários"
+        subtitle="Perfis do hub (gestão)."
+      />
       {error && <div className="error-banner">{error}</div>}
       {loading && <p style={{ color: 'var(--muted)' }}>Carregando…</p>}
       <div className="table-wrap card" style={{ padding: 0 }}>

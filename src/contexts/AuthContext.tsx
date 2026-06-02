@@ -11,7 +11,7 @@ import type { Session, User } from '@supabase/supabase-js';
 import { podeGerenciar } from '../lib/cargos';
 import { podeAcessarFinanceiroAgenda, normalizeEmail } from '../lib/acesso';
 import { supabase, supabaseConfigured, supabaseErrorMessage } from '../lib/supabase';
-import type { HubCargo, HubProfile } from '../types/database';
+import type { HubProfile } from '../types/database';
 
 interface AuthState {
   session: Session | null;
@@ -22,11 +22,6 @@ interface AuthState {
   podeFinanceiroAgenda: boolean;
   podeGestao: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (
-    email: string,
-    password: string,
-    meta: { nome: string; cargo: HubCargo },
-  ) => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -99,25 +94,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw new Error(supabaseErrorMessage(error));
   }, []);
 
-  const signUp = useCallback(
-    async (
-      email: string,
-      password: string,
-      meta: { nome: string; cargo: HubCargo },
-    ) => {
-      if (!supabase) throw new Error('Supabase não configurado.');
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { nome: meta.nome, cargo: meta.cargo },
-        },
-      });
-      if (error) throw new Error(supabaseErrorMessage(error));
-    },
-    [],
-  );
-
   const signOut = useCallback(async () => {
     if (!supabase) return;
     await supabase.auth.signOut();
@@ -138,7 +114,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       podeFinanceiroAgenda,
       podeGestao,
       signIn,
-      signUp,
       signOut,
       refreshProfile,
     }),
@@ -150,7 +125,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       podeFinanceiroAgenda,
       podeGestao,
       signIn,
-      signUp,
       signOut,
       refreshProfile,
     ],

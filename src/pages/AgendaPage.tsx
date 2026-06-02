@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { PageHeader } from '../components/PageHeader';
 import { formatDateTime } from '../lib/format';
 import type { CalendarEvent } from '../types/database';
 
@@ -56,8 +57,11 @@ export function AgendaPage() {
 
   return (
     <div>
-      <h1 className="page-title">Agenda</h1>
-      <p className="page-subtitle">Rafael e Vinícius — visão mútua das agendas.</p>
+      <PageHeader
+        badge="Calendar"
+        title="Agenda"
+        subtitle="Rafael e Vinícius — visão mútua das agendas."
+      />
 
       <div className="tabs">
         {(

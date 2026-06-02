@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { PageHeader } from '../components/PageHeader';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase, supabaseErrorMessage } from '../lib/supabase';
 import type { HubSystem } from '../types/database';
@@ -35,10 +36,11 @@ export function DashboardPage() {
 
   return (
     <div>
-      <h1 className="page-title">Painel</h1>
-      <p className="page-subtitle">
-        Olá, {profile?.nome ?? 'usuário'}. Visão geral do NEXUS Hub.
-      </p>
+      <PageHeader
+        badge="Overview"
+        title="Painel"
+        subtitle={`Olá, ${profile?.nome ?? 'usuário'}. Visão geral do NEXUS Hub.`}
+      />
 
       {error && <div className="error-banner">{error}</div>}
 
@@ -61,10 +63,8 @@ export function DashboardPage() {
         </div>
       </div>
 
-      <h2 style={{ fontSize: '0.95rem', marginBottom: '0.75rem', color: 'var(--muted)' }}>
-        Atalhos
-      </h2>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '2rem' }}>
+      <h2 className="section-heading">Atalhos</h2>
+      <div className="link-grid">
         {shortcuts.map((s) => (
           <Link key={s.to} to={s.to} className="btn-ghost">
             {s.label}
@@ -72,16 +72,8 @@ export function DashboardPage() {
         ))}
       </div>
 
-      <h2 style={{ fontSize: '0.95rem', marginBottom: '0.75rem', color: 'var(--muted)' }}>
-        Produtos NEXUS
-      </h2>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-          gap: '1rem',
-        }}
-      >
+      <h2 className="section-heading">Produtos NEXUS</h2>
+      <div className="product-grid">
         {systems.map((sys) => (
           <a
             key={sys.id}

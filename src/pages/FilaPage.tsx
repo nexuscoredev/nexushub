@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { PageHeader } from '../components/PageHeader';
 import type { TodoistTask } from '../types/database';
 
 export function FilaPage() {
@@ -62,25 +63,26 @@ export function FilaPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center', marginBottom: '0.5rem' }}>
-        <h1 className="page-title" style={{ marginBottom: 0, flex: 1 }}>
-          Fila operacional
-        </h1>
-        <button type="button" className="btn-ghost" onClick={() => void load()}>
-          Atualizar
-        </button>
-        <a
-          href="https://todoist.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-ghost"
-        >
-          Abrir Todoist
-        </a>
-      </div>
-      <p className="page-subtitle">
-        {projectName ? `Projeto: ${projectName}` : 'Tarefas da equipe via Todoist'}
-      </p>
+      <PageHeader
+        badge="Ops"
+        title="Fila operacional"
+        subtitle={projectName ? `Projeto: ${projectName}` : 'Tarefas da equipe via Todoist'}
+        actions={
+          <>
+            <button type="button" className="btn-ghost" onClick={() => void load()}>
+              Atualizar
+            </button>
+            <a
+              href="https://todoist.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-ghost"
+            >
+              Abrir Todoist
+            </a>
+          </>
+        }
+      />
 
       {error && <div className="error-banner" style={{ marginBottom: '1rem' }}>{error}</div>}
       {loading && <p style={{ color: 'var(--muted)' }}>Carregando tarefas…</p>}

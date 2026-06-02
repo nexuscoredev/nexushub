@@ -1,8 +1,33 @@
 .logo {
+  line-height: 1.1;
+}
+
+.mark {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.full {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.markImg {
+  flex-shrink: 0;
+  display: block;
+}
+
+.fullImg {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+.text {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  line-height: 1.1;
 }
 
 .wordmark {
@@ -11,6 +36,10 @@
   text-transform: uppercase;
   font-weight: 400;
   color: var(--text);
+  background: linear-gradient(135deg, #ffffff 0%, #c8c8c8 45%, #6a6a6a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .subtitle {
@@ -22,14 +51,41 @@
   padding-left: 0.15em;
 }
 
+.sm .markImg {
+  width: 28px;
+  height: 28px;
+}
+
 .sm .wordmark {
   font-size: 1rem;
+}
+
+.sm .fullImg {
+  width: 160px;
+}
+
+.md .markImg {
+  width: 36px;
+  height: 36px;
 }
 
 .md .wordmark {
   font-size: 1.35rem;
 }
 
+.md .fullImg {
+  width: 200px;
+}
+
+.lg .markImg {
+  width: 56px;
+  height: 56px;
+}
+
 .lg .wordmark {
   font-size: 2rem;
+}
+
+.lg .fullImg {
+  width: min(280px, 85vw);
 }

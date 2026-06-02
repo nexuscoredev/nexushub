@@ -1,19 +1,26 @@
 :root {
-  --bg: #0a0a0a;
-  --surface: #0e0e0e;
-  --surface-elevated: #141414;
-  --text: #f5f5f5;
-  --muted: #888888;
+  --bg: #050508;
+  --surface: rgba(12, 14, 20, 0.72);
+  --surface-solid: #0c0e14;
+  --surface-elevated: rgba(18, 22, 32, 0.9);
+  --glass: rgba(255, 255, 255, 0.04);
+  --text: #f0f2f5;
+  --muted: #7a8499;
   --border: rgba(255, 255, 255, 0.08);
-  --silver-gradient: linear-gradient(135deg, #ffffff 0%, #a8a8a8 50%, #444444 100%);
-  --danger: #f87171;
-  --success: #4ade80;
-  --radius: 12px;
-  --sidebar-width: 260px;
-  font-family: Inter, system-ui, sans-serif;
-  color: var(--text);
-  background: var(--bg);
-  line-height: 1.5;
+  --border-glow: rgba(0, 212, 255, 0.35);
+  --accent-cyan: #00d4ff;
+  --accent-violet: #a78bfa;
+  --accent-glow: rgba(0, 212, 255, 0.45);
+  --silver-gradient: linear-gradient(135deg, #ffffff 0%, #c0c8d4 40%, #5a6270 100%);
+  --danger: #ff6b7a;
+  --success: #3ee8a5;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --sidebar-width: 272px;
+  --font-display: 'Syne', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --shadow-glow: 0 0 40px rgba(0, 212, 255, 0.08);
 }
 
 *,
@@ -24,9 +31,21 @@
   padding: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   min-height: 100vh;
+  font-family: var(--font-body);
+  color: var(--text);
   background: var(--bg);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
 }
 
 a {
@@ -41,28 +60,39 @@ textarea {
   font: inherit;
 }
 
+::selection {
+  background: rgba(0, 212, 255, 0.25);
+  color: #fff;
+}
+
 .btn-primary {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.65rem 1.25rem;
+  padding: 0.7rem 1.5rem;
   border: none;
   border-radius: 999px;
   background: var(--silver-gradient);
-  color: #0a0a0a;
+  color: #050508;
   font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 24px rgba(255, 255, 255, 0.12);
 }
 
 .btn-primary:hover {
-  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2);
 }
 
 .btn-primary:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
+  transform: none;
 }
 
 .btn-ghost {
@@ -72,99 +102,134 @@ textarea {
   padding: 0.55rem 1rem;
   border-radius: 999px;
   border: 1px solid var(--border);
-  background: transparent;
+  background: var(--glass);
+  backdrop-filter: blur(8px);
   color: var(--text);
   cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
 }
 
 .btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--border-glow);
+  background: rgba(0, 212, 255, 0.06);
+  color: #fff;
 }
 
 .card {
   background: var(--surface);
+  backdrop-filter: blur(20px);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.25rem;
+  padding: 1.35rem;
+  box-shadow: var(--shadow-glow);
+  transition: border-color 0.25s ease;
+}
+
+.card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .card-glass {
-  background: rgba(14, 14, 14, 0.85);
-  backdrop-filter: blur(12px);
+  background: var(--surface);
+  backdrop-filter: blur(20px);
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
 
 .input {
   width: 100%;
-  padding: 0.65rem 0.85rem;
-  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
-  background: var(--surface-elevated);
+  background: rgba(0, 0, 0, 0.35);
   color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .input:focus {
-  outline: 2px solid rgba(255, 255, 255, 0.15);
-  outline-offset: 0;
+  outline: none;
+  border-color: var(--border-glow);
+  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.12);
 }
 
 .label {
   display: block;
-  font-size: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--muted);
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.4rem;
 }
 
 .error-banner {
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  background: rgba(248, 113, 113, 0.12);
-  border: 1px solid rgba(248, 113, 113, 0.35);
-  color: #fecaca;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 107, 122, 0.1);
+  border: 1px solid rgba(255, 107, 122, 0.35);
+  color: #ffc9cf;
   font-size: 0.9rem;
 }
 
 .info-banner {
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border);
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 212, 255, 0.05);
+  border: 1px solid rgba(0, 212, 255, 0.15);
   color: var(--muted);
   font-size: 0.9rem;
 }
 
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
 }
 
 .kpi {
-  padding: 1rem 1.15rem;
+  position: relative;
+  padding: 1.15rem 1.25rem;
   border-radius: var(--radius);
   border: 1px solid var(--border);
   background: var(--surface);
+  backdrop-filter: blur(16px);
+  overflow: hidden;
+}
+
+.kpi::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-cyan), transparent);
+  opacity: 0.7;
 }
 
 .kpi-label {
-  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--muted);
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.4rem;
 }
 
 .kpi-value {
-  font-size: 1.35rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
   font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .page-title {
-  font-family: Georgia, 'Times New Roman', serif;
-  letter-spacing: 0.2em;
+  font-family: var(--font-display);
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  font-size: 1.1rem;
-  margin-bottom: 0.25rem;
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .page-subtitle {
@@ -172,30 +237,66 @@ textarea {
   margin-bottom: 1.5rem;
 }
 
+.section-heading {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+
+.link-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
 .tabs {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
+  padding: 0.35rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.25);
+  width: fit-content;
+  max-width: 100%;
 }
 
 .tab {
-  padding: 0.45rem 0.9rem;
+  padding: 0.5rem 1rem;
   border-radius: 999px;
-  border: 1px solid var(--border);
+  border: none;
   background: transparent;
   color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 500;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab:hover {
+  color: var(--text);
 }
 
 .tab.active {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(167, 139, 250, 0.15));
+  color: #fff;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.15);
 }
 
 .table-wrap {
   overflow-x: auto;
+  border-radius: var(--radius-sm);
 }
 
 table.data-table {
@@ -206,12 +307,21 @@ table.data-table {
 
 table.data-table th,
 table.data-table td {
-  padding: 0.65rem 0.75rem;
+  padding: 0.75rem 1rem;
   text-align: left;
   border-bottom: 1px solid var(--border);
 }
 
 table.data-table th {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--muted);
   font-weight: 500;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+table.data-table tbody tr:hover td {
+  background: rgba(0, 212, 255, 0.03);
 }

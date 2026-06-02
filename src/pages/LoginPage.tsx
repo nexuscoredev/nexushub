@@ -1,22 +1,18 @@
 import { FormEvent, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { HubLogo } from '../components/HubLogo';
+import { TechShell } from '../components/TechShell';
 import { useAuth } from '../contexts/AuthContext';
-import { CARGOS } from '../lib/cargos';
-import type { HubCargo } from '../types/database';
 import styles from './LoginPage.module.css';
 
 export function LoginPage() {
-  const { session, signIn, signUp, configured } = useAuth();
+  const { session, signIn, configured } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname ?? '/dashboard';
 
-  const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [nome, setNome] = useState('');
-  const [cargo, setCargo] = useState<HubCargo>('Desenvolvedor');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -29,11 +25,7 @@ export function LoginPage() {
     setError(null);
     setLoading(true);
     try {
-      if (mode === 'login') {
-        await signIn(email.trim(), password);
-      } else {
-        await signUp(email.trim(), password, { nome: nome.trim(), cargo });
-      }
+      await signIn(email.trim(), password);
       navigate(from, { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Falha na autenticação');
@@ -43,130 +35,69 @@ export function LoginPage() {
   };
 
   return (
-    <div className={styles.page}>
-      <div className={`card ${styles.card}`}>
-        <HubLogo />
-        <h1 className="page-title" style={{ marginTop: '1.5rem' }}>
-          {mode === 'login' ? 'Entrar' : 'Criar conta'}
-        </h1>
-        <p className="page-subtitle" style={{ marginBottom: 0 }}>
-          Acesso ao NEXUS Hub
-        </p>
-
-        {!configured && (
-          <div className="error-banner" style={{ marginTop: '1rem' }}>
-            Supabase não configurado. Copie .env.example para .env.local.
+    <TechShell>
+      <div className={styles.page}>
+        <div className={`card ${styles.card}`}>
+          <div className={styles.cardGlow} aria-hidden />
+          <HubLogo size="md" variant="full" showSubtitle={false} />
+          <div className={styles.header}>
+            <span className={styles.badge}>Secure access</span>
+            <h1 className={styles.title}>Entrar</h1>
+            <p className={styles.subtitle}>Acesso restrito à equipe NEXUS</p>
           </div>
-        )}
 
-        {error && (
-          <div className="error-banner" style={{ marginTop: '1rem' }}>
-            {error}
-          </div>
-        )}
-
-        <form className={styles.form} onSubmit={handleSubmit}>
-          {mode === 'signup' && (
-            <>
-              <div>
-                <label className="label" htmlFor="nome">
-                  Nome
-                </label>
-                <input
-                  id="nome"
-                  className="input"
-                  value={nome}
-                  onChange={(e) => setNome(e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <label className="label" htmlFor="cargo">
-                  Cargo
-                </label>
-                <select
-                  id="cargo"
-                  className="input"
-                  value={cargo}
-                  onChange={(e) => setCargo(e.target.value as HubCargo)}
-                >
-                  {CARGOS.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </>
+          {!configured && (
+            <div className="error-banner" style={{ marginTop: '1rem' }}>
+              Supabase não configurado. Copie .env.example para .env.local.
+            </div>
           )}
-          <div>
-            <label className="label" htmlFor="email">
-              E-mail
-            </label>
-            <input
-              id="email"
-              type="email"
-              className="input"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label className="label" htmlFor="password">
-              Senha
-            </label>
-            <input
-              id="password"
-              type="password"
-              className="input"
-              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-            />
-          </div>
-          <button type="submit" className="btn-primary" disabled={loading || !configured}>
-            {loading ? 'Aguarde…' : mode === 'login' ? 'Entrar' : 'Criar conta'}
-          </button>
-        </form>
 
-        <p className={styles.toggle}>
-          {mode === 'login' ? (
-            <>
-              Primeiro acesso?{' '}
-              <button type="button" onClick={() => setMode('signup')}>
-                Criar conta
-              </button>
-            </>
-          ) : (
-            <>
-              Já tem conta?{' '}
-              <button type="button" onClick={() => setMode('login')}>
-                Entrar
-              </button>
-            </>
+          {error && (
+            <div className="error-banner" style={{ marginTop: '1rem' }}>
+              {error}
+            </div>
           )}
-        </p>
 
-        <p className={styles.hint}>
-          Equipe (e-mail + senha <code>123456</code>):
-          <br />
-          Vinicius → <code>vinicius@nexustech.com</code>
-          <br />
-          Rafael → <code>rafael@nexustech.com</code>
-          <br />
-          Felipe → <code>felipe@nexustech.com</code>
-        </p>
+          <form className={styles.form} onSubmit={handleSubmit}>
+            <div>
+              <label className="label" htmlFor="email">
+                E-mail
+              </label>
+              <input
+                id="email"
+                type="email"
+                className="input"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label className="label" htmlFor="password">
+                Senha
+              </label>
+              <input
+                id="password"
+                type="password"
+                className="input"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+              />
+            </div>
+            <button type="submit" className="btn-primary" disabled={loading || !configured}>
+              {loading ? 'Autenticando…' : 'Entrar no Hub'}
+            </button>
+          </form>
 
-        <p style={{ marginTop: '1rem', textAlign: 'center' }}>
-          <Link to="/" style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>
-            ← Voltar
-          </Link>
-        </p>
+          <p className={styles.back}>
+            <Link to="/">← Voltar ao início</Link>
+          </p>
+        </div>
       </div>
-    </div>
+    </TechShell>
   );
 }

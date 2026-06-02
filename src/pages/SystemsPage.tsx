@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { PageHeader } from '../components/PageHeader';
 import { supabase, supabaseErrorMessage } from '../lib/supabase';
 import type { HubSystem } from '../types/database';
 
@@ -26,8 +27,11 @@ export function SystemsPage() {
 
   return (
     <div>
-      <h1 className="page-title">Sistemas</h1>
-      <p className="page-subtitle">Produtos NEXUS — abrem em nova aba.</p>
+      <PageHeader
+        badge="Integrations"
+        title="Sistemas"
+        subtitle="Produtos NEXUS — abrem em nova aba."
+      />
       {error && <div className="error-banner">{error}</div>}
       {loading && <p style={{ color: 'var(--muted)' }}>Carregando…</p>}
       <div

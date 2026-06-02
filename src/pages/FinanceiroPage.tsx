@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { deleteFinanceRow, FinanceCrudBar } from '../components/FinanceCrudBar';
+import { PageHeader } from '../components/PageHeader';
 import {
   totalMensalAssinaturas,
   totalRecebido,
@@ -53,8 +54,11 @@ export function FinanceiroPage() {
 
   return (
     <div>
-      <h1 className="page-title">Financeiro</h1>
-      <p className="page-subtitle">Gestão financeira NEXUS — acesso restrito aos sócios.</p>
+      <PageHeader
+        badge="Finance"
+        title="Financeiro"
+        subtitle="Gestão financeira NEXUS — acesso restrito aos sócios."
+      />
 
       {error && <div className="error-banner" style={{ marginBottom: '1rem' }}>{error}</div>}
 
