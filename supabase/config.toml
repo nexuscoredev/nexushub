@@ -1,0 +1,10 @@
+# Supabase local CLI (opcional) — link: supabase link --project-ref ndcenckgtezerlmggola
+project_id = "ndcenckgtezerlmggola"
+
+[api]
+enabled = true
+port = 54321
+
+[db]
+port = 54322
+major_version = 15

@@ -1,5 +1,6 @@
 {
   "name": "nexushub",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -7,6 +8,7 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "seed:users": "node scripts/seed-users.mjs",
+    "check:setup": "node scripts/check-setup.mjs",
     "lint": "tsc --noEmit"
   },
   "dependencies": {

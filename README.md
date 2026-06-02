@@ -16,6 +16,8 @@ Painel administrativo central da **NEXUS Technology Systems** — sistemas integ
 | Auth / DB | Supabase Auth + Postgres + RLS |
 | APIs secretas | Vercel Serverless em `/api/*` |
 
+**Checklist completo (o que falta de secrets):** veja [SETUP.md](./SETUP.md).
+
 ## Setup local
 
 1. Clone em disco local (não use Google Drive / OneDrive como fonte de trabalho):

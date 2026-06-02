@@ -1,0 +1,37 @@
+---
+description: Fluxo Git NEXUS Hub — clone local, sync GitHub, sem Drive
+alwaysApply: true
+---
+
+# Fluxo Git — NEXUS Hub
+
+## Fonte de verdade
+
+- **GitHub:** https://github.com/nexuscoredev/nexushub
+- **Clone local:** `C:\dev\NEXUS\nexushub`
+- **Deploy:** Vercel (projeto `nexushub`)
+- **Nunca** usar OneDrive ou Google Drive para versionar ou sincronizar código
+- **Nunca** commitar `.env`, `.env.local`, service role ou tokens
+
+## Antes de codar
+
+```powershell
+cd "C:\dev\NEXUS\nexushub"
+git checkout main
+git fetch origin
+git pull origin main
+npm install
+```
+
+## Publicar (quando o utilizador pedir deploy/commit)
+
+```powershell
+git pull --rebase origin main
+npm run build
+git add .
+git commit -m "mensagem"
+git push origin main
+npx vercel --prod --yes
+```
+
+Em conflitos ou working tree suja: parar e perguntar.
