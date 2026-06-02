@@ -40,24 +40,24 @@ export interface HubFinanceSubscription {
 
 export interface HubFinanceInvestment {
   id: string;
-  descricao: string;
+  titulo: string;
   valor: number;
-  moeda: string;
   tipo: 'investimento' | 'Saída';
   responsavel: 'Rafael' | 'Vinícius';
   status: string;
-  data_referencia: string | null;
+  data_investimento: string | null;
   notas: string | null;
+  created_at?: string;
 }
 
 export interface HubFinanceReceivable {
   id: string;
   cliente_descricao: string;
   valor: number;
-  moeda: string;
   data_prevista: string;
   status: 'pendente' | 'recebido' | 'atrasado';
   notas: string | null;
+  created_at?: string;
 }
 
 export interface TodoistTask {

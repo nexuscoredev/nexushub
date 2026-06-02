@@ -32,7 +32,7 @@ export function FinanceiroPage() {
     const [r, s, i] = await Promise.all([
       supabase.from('hub_finance_receivables').select('*').order('data_prevista', { ascending: false }),
       supabase.from('hub_finance_subscriptions').select('*').order('nome'),
-      supabase.from('hub_finance_investments').select('*').order('data_referencia', { ascending: false }),
+      supabase.from('hub_finance_investments').select('*').order('data_investimento', { ascending: false }),
     ]);
     if (r.error || s.error || i.error) {
       setError(supabaseErrorMessage(r.error ?? s.error ?? i.error));
@@ -130,7 +130,7 @@ export function FinanceiroPage() {
               title="Investimentos"
               table="hub_finance_investments"
               rows={investOnly}
-              columns={['descricao', 'valor', 'responsavel', 'status', 'data_referencia']}
+              columns={['titulo', 'valor', 'responsavel', 'status', 'data_investimento']}
               onRefresh={load}
             />
           )}
@@ -139,7 +139,7 @@ export function FinanceiroPage() {
               title="Saídas"
               table="hub_finance_investments"
               rows={saidas}
-              columns={['descricao', 'valor', 'responsavel', 'status', 'data_referencia']}
+              columns={['titulo', 'valor', 'responsavel', 'status', 'data_investimento']}
               onRefresh={load}
             />
           )}

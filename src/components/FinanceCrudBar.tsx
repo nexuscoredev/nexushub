@@ -53,8 +53,9 @@ export function FinanceCrudBar({ table, onSaved }: FinanceCrudBarProps) {
             { name: 'categoria', label: 'Categoria', type: 'text' },
           ]
         : [
-            { name: 'descricao', label: 'Descrição', type: 'text' },
+            { name: 'titulo', label: 'Descrição', type: 'text' },
             { name: 'valor', label: 'Valor', type: 'number' },
+            { name: 'data_investimento', label: 'Data', type: 'date' },
             { name: 'tipo', label: 'Tipo', type: 'text', defaultValue: 'Saída' },
             { name: 'responsavel', label: 'Responsável', type: 'text', defaultValue: 'Rafael' },
             { name: 'status', label: 'Status', type: 'text', defaultValue: 'pago' },
