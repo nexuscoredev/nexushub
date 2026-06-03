@@ -352,3 +352,28 @@ a:hover .brand-logo {
   filter: grayscale(100%) brightness(1.42) contrast(0.92);
   opacity: 1;
 }
+
+@media (max-width: 768px) {
+  .error-banner,
+  .info-banner {
+    font-size: 0.85rem;
+    padding: 0.75rem 0.9rem;
+  }
+}
+
+@media (max-width: 768px) and (hover: none) {
+  .btn-primary:hover {
+    transform: none;
+    filter: none;
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--border);
+    background: var(--glass);
+    color: var(--text);
+  }
+
+  .card:hover {
+    border-color: var(--border);
+  }
+}

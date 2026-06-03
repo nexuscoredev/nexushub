@@ -84,3 +84,43 @@
     transform: translate(24px, 16px) scale(1.05);
   }
 }
+
+@media (max-width: 768px) {
+  .root {
+    min-height: 100dvh;
+  }
+
+  .content {
+    min-height: 100dvh;
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  .orbA {
+    width: 260px;
+    height: 260px;
+    filter: blur(64px);
+  }
+
+  .orbB {
+    width: 220px;
+    height: 220px;
+    filter: blur(64px);
+  }
+
+  .grid {
+    opacity: 0.18;
+    background-size: 40px 40px;
+  }
+
+  .scanline {
+    opacity: 0.02;
+  }
+}
+
+@media (max-width: 480px) {
+  .orbA,
+  .orbB {
+    animation: none;
+  }
+}
