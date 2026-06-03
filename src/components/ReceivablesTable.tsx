@@ -102,6 +102,7 @@ export function ReceivablesTable({
     'table-wrap',
     embedded ? styles.embeddedTable : '',
     styles.tableReceivables,
+    styles.financeMobileCards,
   ]
     .filter(Boolean)
     .join(' ');
@@ -123,7 +124,7 @@ export function ReceivablesTable({
         <p className={styles.recebimentosLabel}>{title}</p>
       )}
 
-      <div style={{ marginBottom: embedded ? '0.5rem' : '1rem' }}>
+      <div className={styles.addRowBar}>
         <button type="button" className="btn-primary" onClick={() => setOpenAdd(!openAdd)}>
           {openAdd ? 'Cancelar' : addOnly ? 'Adicionar registro' : 'Adicionar registro'}
         </button>
@@ -179,13 +180,15 @@ export function ReceivablesTable({
 
             return (
               <tr key={row.id}>
-                <td className={styles.cellCliente}>
+                <td className={styles.cellCliente} data-label="Cliente">
                   <ClienteComLogo descricao={row.cliente_descricao} />
                 </td>
-                <td>{formatBRL(Number(row.valor))}</td>
-                <td className={pagoClass}>{formatBRL(pago)}</td>
-                <td>{formatBRL(falta)}</td>
-                <td className={styles.cellPagamento}>
+                <td data-label="Valor total">{formatBRL(Number(row.valor))}</td>
+                <td className={pagoClass} data-label="Pago">
+                  {formatBRL(pago)}
+                </td>
+                <td data-label="Falta">{formatBRL(falta)}</td>
+                <td className={styles.cellPagamento} data-label="Pagamento">
                   {p.parcelado ? (
                     <div className={styles.parcelasRow}>
                       {compactParcelas && (
@@ -228,9 +231,9 @@ export function ReceivablesTable({
                     </div>
                   )}
                 </td>
-                <td>{formatDate(row.data_prevista)}</td>
-                <td>{stripUserNotas(row.notas) || '—'}</td>
-                <td style={{ whiteSpace: 'nowrap' }}>
+                <td data-label="Data">{formatDate(row.data_prevista)}</td>
+                <td data-label="Notas">{stripUserNotas(row.notas) || '—'}</td>
+                <td className={styles.cellActions} data-label="Ações">
                   <button type="button" className="btn-ghost" onClick={() => setEditing(row)}>
                     Editar
                   </button>

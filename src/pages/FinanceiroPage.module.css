@@ -4,6 +4,18 @@
   gap: 1.5rem;
 }
 
+.addRowBar {
+  margin-bottom: 1rem;
+}
+
+.embeddedTable .addRowBar {
+  margin-bottom: 0.5rem;
+}
+
+.cellActions {
+  white-space: nowrap;
+}
+
 .section {
   position: relative;
   border: 1px solid var(--border);
@@ -213,12 +225,41 @@
 }
 
 @media (max-width: 768px) {
+  .financePage .tabs {
+    margin-bottom: 1rem;
+  }
+
+  .sections {
+    gap: 1rem;
+  }
+
+  .section {
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
   .sectionBody {
     padding: 0.85rem 0.75rem;
   }
 
   .sectionHeader {
     padding: 0.75rem 0.85rem;
+    gap: 0.65rem;
+  }
+
+  .sectionTitle {
+    font-size: 0.9rem;
+  }
+
+  .sectionSubtitle {
+    font-size: 0.72rem;
+  }
+
+  .sectionMeta {
+    font-size: 0.72rem;
+    line-height: 1.45;
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
 
   .dropBar {
@@ -228,9 +269,190 @@
     font-size: 0.75rem;
   }
 
+  .mensalidadesStack {
+    gap: 0.65rem;
+  }
+
+  .clientBlock {
+    padding: 0.65rem 0.5rem 0.85rem;
+    border-radius: var(--radius-sm);
+    background: rgba(0, 0, 0, 0.15);
+  }
+
+  .clientContractRow {
+    gap: 0.4rem;
+    padding: 0.5rem 0.35rem 0.65rem;
+  }
+
+  .clientContractRow span {
+    font-size: 0.82rem;
+  }
+
+  .recebimentosLabel {
+    margin-left: 0;
+    font-size: 0.72rem;
+  }
+
+  .embeddedTable {
+    margin-left: -0.25rem;
+    margin-right: -0.25rem;
+  }
+
+  .addRowBar {
+    margin-bottom: 0.75rem;
+  }
+
+  .addRowBar :global(.btn-primary) {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  .financePage :global(.card) {
+    padding: 0.85rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .financePage :global(.input),
+  .financePage :global(select.input) {
+    width: 100%;
+    max-width: 100%;
+    font-size: 16px;
+    min-height: 44px;
+  }
+
+  .financePage :global(.label) {
+    font-size: 0.72rem;
+  }
+
+  .parcelasRow {
+    gap: 0.45rem;
+  }
+
+  .parcelaChip {
+    min-height: 40px;
+    padding: 0.35rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
   .tableReceivables .cellPagamento {
     min-width: 0;
     max-width: none;
+  }
+
+  .financeMobileCards.table-wrap {
+    overflow: visible;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .financeMobileCards :global(table.data-table) {
+    min-width: 0 !important;
+    border-collapse: separate;
+    border-spacing: 0 0.65rem;
+  }
+
+  .financeMobileCards :global(table.data-table thead) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .financeMobileCards :global(table.data-table tbody tr) {
+    display: block;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.65rem 0.75rem;
+    background: rgba(0, 0, 0, 0.28);
+  }
+
+  .financeMobileCards :global(table.data-table tbody td) {
+    display: grid;
+    grid-template-columns: minmax(5.25rem, 36%) 1fr;
+    align-items: start;
+    gap: 0.35rem 0.65rem;
+    padding: 0.4rem 0;
+    border-bottom: none;
+    font-size: 0.875rem;
+  }
+
+  .financeMobileCards :global(table.data-table tbody td)::before {
+    content: attr(data-label);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.35;
+    padding-top: 0.1rem;
+  }
+
+  .financeMobileCards :global(table.data-table tbody) td.cellCliente,
+  .financeMobileCards :global(table.data-table tbody) td.cellPagamento {
+    grid-template-columns: 1fr;
+  }
+
+  .financeMobileCards :global(table.data-table tbody) td.cellCliente::before,
+  .financeMobileCards :global(table.data-table tbody) td.cellPagamento::before {
+    margin-bottom: 0.15rem;
+  }
+
+  .financeMobileCards :global(table.data-table tbody td.cellPagamento) .parcelasRow {
+    width: 100%;
+  }
+
+  .financeMobileCards :global(table.data-table tbody) td.cellActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    grid-template-columns: unset;
+    padding-top: 0.55rem !important;
+    margin-top: 0.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    white-space: normal;
+  }
+
+  .financeMobileCards :global(table.data-table tbody) td.cellActions::before {
+    width: 100%;
+    flex: 0 0 100%;
+    margin-bottom: 0.1rem;
+  }
+
+  .financeMobileCards :global(table.data-table tbody) td.cellActions :global(.btn-ghost) {
+    min-height: 44px;
+    padding: 0.5rem 0.85rem;
+    flex: 1 1 calc(50% - 0.25rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .sectionMeta {
+    font-size: 0.68rem;
+  }
+
+  .parcelasRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .parcelaChip {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .financeMobileCards :global(table.data-table tbody) td.cellActions :global(.btn-ghost) {
+    flex: 1 1 100%;
+    width: 100%;
+    justify-content: center;
   }
 }
 

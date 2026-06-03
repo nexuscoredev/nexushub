@@ -108,7 +108,7 @@ export function FinanceiroPage() {
   const kpiSaidas = totalSaidas(investments);
 
   return (
-    <div>
+    <div className={styles.financePage}>
       <PageHeader
         badge="Finance"
         title="Financeiro"
@@ -288,7 +288,7 @@ function FinanceTable<T extends { id: string }>({
 
   return (
     <div
-      className="table-wrap"
+      className={`table-wrap ${styles.financeMobileCards}`}
       style={{
         marginBottom: compact ? '1rem' : 0,
         padding: compact ? '0' : undefined,
@@ -340,9 +340,14 @@ function FinanceTable<T extends { id: string }>({
                 else if (col === 'notas') display = String(val ?? '—');
                 else if (typeof val === 'boolean') display = val ? 'Sim' : 'Não';
                 else display = String(val ?? '—');
-                return <td key={col}>{display}</td>;
+                const label = col.replace(/_/g, ' ');
+                return (
+                  <td key={col} data-label={label}>
+                    {display}
+                  </td>
+                );
               })}
-              <td style={{ whiteSpace: 'nowrap' }}>
+              <td className={styles.cellActions} data-label="Ações">
                 <button type="button" className="btn-ghost" onClick={() => setEditing(row)}>
                   Editar
                 </button>
