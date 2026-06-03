@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { HubLogo } from '../HubLogo';
 import {
   hubChatCarregarConversas,
   hubChatCarregarMensagens,
@@ -242,23 +241,27 @@ export function HubChatWidget({
   return (
     <div className={styles.shell} role="dialog" aria-label="Chat interno NEXUS">
       <header className={styles.header}>
-        <HubLogo size="sm" showSubtitle={false} />
-        <div className={styles.headerTitle}>
-          <strong>Chat interno</strong>
-          <span>{profile.nome}</span>
+        <div className={styles.headerMain}>
+          <img src="/img/favicon.png" alt="" className={styles.headerMark} width={32} height={32} />
+          <div className={styles.headerTitle}>
+            <strong>Chat interno</strong>
+            <span>{profile.nome}</span>
+          </div>
         </div>
-        <button
-          type="button"
-          className={styles.iconBtn}
-          onClick={() => void atualizarLista()}
-          aria-label="Atualizar"
-          title="Atualizar"
-        >
-          ↻
-        </button>
-        <button type="button" className={styles.iconBtn} onClick={onFechar} aria-label="Fechar">
-          ✕
-        </button>
+        <div className={styles.headerActions}>
+          <button
+            type="button"
+            className={styles.iconBtn}
+            onClick={() => void atualizarLista()}
+            aria-label="Atualizar"
+            title="Atualizar"
+          >
+            ↻
+          </button>
+          <button type="button" className={styles.iconBtn} onClick={onFechar} aria-label="Fechar">
+            ✕
+          </button>
+        </div>
       </header>
 
       {erro ? <div className={styles.erro}>{erro}</div> : null}
