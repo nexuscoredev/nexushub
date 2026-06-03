@@ -13,7 +13,8 @@ export type NavIconName =
   | 'close'
   | 'refresh'
   | 'external'
-  | 'chevronDown';
+  | 'chevronDown'
+  | 'sparkles';
 
 interface NavIconProps {
   name: NavIconName;
@@ -93,6 +94,12 @@ const paths: Record<NavIconName, ReactNode> = {
   chevronDown: (
     <>
       <path d="m6 9 6 6 6-6" />
+    </>
+  ),
+  sparkles: (
+    <>
+      <path d="M9.5 2 10 7.5 4 9.5 7.5 10 2 9.5 7.5 4 9.5 10 7.5 9.5 2Z" />
+      <path d="M18 14.5 18.3 17 16 17.3 16.5 19.5 14 18 14.5 17 16 16.5 19.5 14 17.3 14.5 18Z" />
     </>
   ),
 };

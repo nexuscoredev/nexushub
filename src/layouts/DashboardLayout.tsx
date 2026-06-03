@@ -5,6 +5,8 @@ import { NavIcon, type NavIconName } from '../components/NavIcon';
 import { UserAvatar } from '../components/UserAvatar';
 import { TechShell } from '../components/TechShell';
 import { HubChatLauncher } from '../components/chat/HubChatLauncher';
+import { HubNovidadesModal } from '../components/HubNovidadesModal';
+import { hasUnseenNovidades } from '../data/hubNovidades';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './DashboardLayout.module.css';
 
@@ -20,6 +22,8 @@ export function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [novidadesOpen, setNovidadesOpen] = useState(false);
+  const [novidadesBadge, setNovidadesBadge] = useState(hasUnseenNovidades);
 
   const navItems: NavItem[] = [
     { to: '/dashboard', label: 'Painel', icon: 'dashboard', show: true },
@@ -60,6 +64,11 @@ export function DashboardLayout() {
 
   const closeMenu = () => setMenuOpen(false);
   const toggleMenu = () => setMenuOpen((open) => !open);
+
+  const openNovidades = () => {
+    setNovidadesOpen(true);
+    setNovidadesBadge(false);
+  };
 
   return (
     <TechShell>
@@ -105,6 +114,17 @@ export function DashboardLayout() {
             </nav>
 
             <div className={styles.userCompact}>
+              <button
+                type="button"
+                className={`btn-ghost ${styles.novidadesBtn}`}
+                onClick={openNovidades}
+                aria-label="Ver novidades do Hub"
+                title="Novidades"
+              >
+                <NavIcon name="sparkles" className={styles.novidadesIcon} />
+                <span className={styles.novidadesLabel}>Novidades</span>
+                {novidadesBadge && <span className={styles.novidadesBadge} aria-hidden />}
+              </button>
               <NavLink
                 to="/perfil"
                 className={styles.avatarLink}
@@ -172,6 +192,18 @@ export function DashboardLayout() {
               </ul>
 
               <div className={styles.mobileDrawerFoot}>
+                <button
+                  type="button"
+                  className={styles.mobileFootLink}
+                  onClick={() => {
+                    closeMenu();
+                    openNovidades();
+                  }}
+                >
+                  <NavIcon name="sparkles" className={styles.mobileNavIcon} />
+                  <span>Novidades</span>
+                  {novidadesBadge && <span className={styles.mobileNovidadesDot} aria-hidden />}
+                </button>
                 <NavLink
                   to="/perfil"
                   className={styles.mobileFootLink}
@@ -206,6 +238,7 @@ export function DashboardLayout() {
           <Outlet />
         </main>
         {profile ? <HubChatLauncher profile={profile} /> : null}
+        <HubNovidadesModal open={novidadesOpen} onClose={() => setNovidadesOpen(false)} />
       </div>
     </TechShell>
   );

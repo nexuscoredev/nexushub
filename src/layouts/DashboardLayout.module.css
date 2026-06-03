@@ -78,6 +78,55 @@
   letter-spacing: 0.06em;
 }
 
+.novidadesBtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.novidadesBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.novidadesIcon {
+  width: 16px;
+  height: 16px;
+  color: var(--polished-silver);
+}
+
+.novidadesLabel {
+  color: var(--polished-silver);
+}
+
+.novidadesBadge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 8px rgba(143, 217, 154, 0.65);
+}
+
+.mobileNovidadesDot {
+  width: 8px;
+  height: 8px;
+  margin-left: auto;
+  border-radius: 50%;
+  background: var(--success);
+  flex-shrink: 0;
+}
+
 /* Mobile hamburger (hidden on desktop) */
 .menuBtn {
   display: none;
@@ -418,6 +467,19 @@
 
   .signOutBtn {
     display: none;
+  }
+
+  .novidadesLabel {
+    display: none;
+  }
+
+  .novidadesBtn {
+    order: 2;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    justify-content: center;
+    margin-left: auto;
   }
 
   .commandDock {
