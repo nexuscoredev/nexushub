@@ -1,3 +1,4 @@
+import type { AssigneeOption } from '../lib/todoistAssignees';
 import type {
   CreateTaskInput,
   TodoistComment,
@@ -42,6 +43,7 @@ export async function fetchTasks(opts?: {
   projects: TodoistProject[];
   projectId: string | null;
   projectName: string | null;
+  assigneeOptions: AssigneeOption[];
 }> {
   const res = await fetch(
     `/api/todoist/tasks${qs({
@@ -56,8 +58,9 @@ export async function fetchTasks(opts?: {
     projects: TodoistProject[];
     projectId: string | null;
     projectName: string | null;
+    assigneeOptions?: AssigneeOption[];
   }>(res);
-  return body;
+  return { ...body, assigneeOptions: body.assigneeOptions ?? [] };
 }
 
 export async function fetchTask(taskId: string): Promise<TodoistTask> {

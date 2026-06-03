@@ -1,3 +1,18 @@
+.chip:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.assigneeChip {
+  font-size: 0.72rem;
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: var(--primary);
+  font-weight: 500;
+}
+
 .chip {
   display: inline-flex;
   align-items: center;

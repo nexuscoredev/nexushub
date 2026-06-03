@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { PageHeader } from '../components/PageHeader';
 import * as todoistApi from '../lib/todoistApi';
+import type { AssigneeHub, AssigneeOption } from '../lib/todoistAssignees';
+import { TEAM_ASSIGNEES } from '../lib/todoistAssignees';
 import type {
   TodoistComment,
   TodoistLabel,
@@ -68,18 +70,20 @@ function filterQueryFor(id: QuickFilter): string | undefined {
 
 interface ChipProps {
   active?: boolean;
+  disabled?: boolean;
   onClick: () => void;
   children: ReactNode;
   title?: string;
 }
 
-function Chip({ active, onClick, children, title }: ChipProps) {
+function Chip({ active, disabled, onClick, children, title }: ChipProps) {
   return (
     <button
       type="button"
       className={`${styles.chip} ${active ? styles.chipActive : ''}`}
       onClick={onClick}
       title={title}
+      disabled={disabled}
     >
       {children}
     </button>
@@ -130,6 +134,9 @@ function TaskRow({ task, sectionName, selected, onSelect, onToggle }: TaskRowPro
           )}
         </div>
         <div className={styles.taskMeta}>
+          {task.assignee_name && (
+            <span className={styles.assigneeChip}>{task.assignee_name}</span>
+          )}
           {due && <small className={styles.taskDue}>{due}</small>}
           {sectionName && <span className={styles.sectionChip}>{sectionName}</span>}
           {(task.labels ?? []).map((l) => (
@@ -166,6 +173,10 @@ export function FilaPage() {
   const [newPriority, setNewPriority] = useState(4);
   const [newSectionId, setNewSectionId] = useState('');
   const [newLabels, setNewLabels] = useState<string[]>([]);
+  const [newAssigneeHub, setNewAssigneeHub] = useState<AssigneeHub | ''>('');
+  const [assigneeOptions, setAssigneeOptions] = useState<AssigneeOption[]>(
+    TEAM_ASSIGNEES.map((t) => ({ ...t, assignee_id: null, uid: null })),
+  );
 
   const sectionMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -191,6 +202,11 @@ export function FilaPage() {
         filterQuery: opts?.filterQuery,
       });
       setTasks(data.tasks);
+      setAssigneeOptions(
+        data.assigneeOptions.length
+          ? data.assigneeOptions
+          : TEAM_ASSIGNEES.map((t) => ({ ...t, assignee_id: null, uid: null })),
+      );
       setProjectName(data.projectName);
       const resolvedId = data.projectId ?? projectId;
       if (resolvedId) {
@@ -282,10 +298,14 @@ export function FilaPage() {
     setNewPriority(4);
     setNewSectionId('');
     setNewLabels([]);
+    setNewAssigneeHub('');
   };
 
   const handleAddTask = async () => {
     if (!newTaskTitle.trim()) return;
+    const assignee = newAssigneeHub
+      ? assigneeOptions.find((o) => o.hub === newAssigneeHub)
+      : undefined;
     try {
       setError(null);
       await todoistApi.createTask({
@@ -295,6 +315,7 @@ export function FilaPage() {
         labels: newLabels.length ? newLabels : undefined,
         priority: newPriority,
         due_string: newDue === 'today' ? 'today' : newDue === 'tomorrow' ? 'tomorrow' : undefined,
+        assignee_id: assignee?.assignee_id ?? undefined,
       });
       resetNewTask();
       await refresh(selectedProjectId);
@@ -489,6 +510,23 @@ export function FilaPage() {
                   title={p.title}
                 >
                   {p.label}
+                </Chip>
+              ))}
+            </div>
+            <div className={styles.chipRow}>
+              <span className={styles.chipGroupLabel}>Responsável</span>
+              <Chip active={!newAssigneeHub} onClick={() => setNewAssigneeHub('')}>
+                Ninguém
+              </Chip>
+              {assigneeOptions.map((o) => (
+                <Chip
+                  key={o.hub}
+                  active={newAssigneeHub === o.hub}
+                  onClick={() => setNewAssigneeHub(o.hub)}
+                  title={`Todoist: ${o.todoistName}`}
+                  disabled={!o.assignee_id}
+                >
+                  {o.label}
                 </Chip>
               ))}
             </div>
@@ -704,6 +742,29 @@ export function FilaPage() {
                         }
                       >
                         {d.label}
+                      </Chip>
+                    ))}
+                  </div>
+                </div>
+
+                <div className={styles.actionGroup}>
+                  <span className={styles.chipGroupLabel}>Responsável</span>
+                  <div className={styles.chipRow}>
+                    <Chip
+                      active={!selectedTask.assignee_hub}
+                      onClick={() => void patchSelected({ assignee_id: null })}
+                    >
+                      Ninguém
+                    </Chip>
+                    {assigneeOptions.map((o) => (
+                      <Chip
+                        key={o.hub}
+                        active={selectedTask.assignee_hub === o.hub}
+                        onClick={() => void patchSelected({ assignee_id: o.assignee_id })}
+                        title={`Todoist: ${o.todoistName}`}
+                        disabled={!o.assignee_id}
+                      >
+                        {o.label}
                       </Chip>
                     ))}
                   </div>

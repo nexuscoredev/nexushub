@@ -51,6 +51,9 @@ export interface TodoistTask {
   section_id?: string | null;
   labels?: string[];
   note_count?: number;
+  responsible_uid?: string | null;
+  assignee_name?: string | null;
+  assignee_hub?: string | null;
 }
 
 export interface CreateTaskInput {
@@ -62,6 +65,7 @@ export interface CreateTaskInput {
   priority?: number;
   due_string?: string;
   due_date?: string;
+  assignee_id?: number | null;
 }
 
 export interface UpdateTaskInput {
@@ -73,6 +77,7 @@ export interface UpdateTaskInput {
   due_date?: string;
   section_id?: string;
   is_completed?: boolean;
+  assignee_id?: number | null;
   move?: {
     project_id?: string;
     section_id?: string;

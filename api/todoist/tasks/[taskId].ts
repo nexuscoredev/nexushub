@@ -58,7 +58,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         body.priority !== undefined ||
         body.due_string !== undefined ||
         body.due_date !== undefined ||
-        body.section_id !== undefined;
+        body.section_id !== undefined ||
+        body.assignee_id !== undefined;
 
       let task;
       if (hasUpdateFields) {
@@ -70,6 +71,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           due_string: body.due_string,
           due_date: body.due_date,
           section_id: body.section_id,
+          assignee_id: body.assignee_id,
         });
       } else {
         try {

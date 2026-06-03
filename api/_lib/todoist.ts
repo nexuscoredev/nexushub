@@ -63,6 +63,7 @@ export interface TodoistTaskV1 {
   labels?: string[];
   note_count?: number;
   completed_at?: string | null;
+  responsible_uid?: string | null;
 }
 
 export interface TodoistTaskRaw {
@@ -77,6 +78,9 @@ export interface TodoistTaskRaw {
   section_id?: string | null;
   labels?: string[];
   note_count?: number;
+  responsible_uid?: string | null;
+  assignee_name?: string | null;
+  assignee_hub?: string | null;
 }
 
 export interface CreateTaskInput {
@@ -88,6 +92,7 @@ export interface CreateTaskInput {
   priority?: number;
   due_string?: string;
   due_date?: string;
+  assignee_id?: number | null;
 }
 
 export interface UpdateTaskInput {
@@ -98,6 +103,7 @@ export interface UpdateTaskInput {
   due_string?: string;
   due_date?: string;
   section_id?: string;
+  assignee_id?: number | null;
 }
 
 export interface MoveTaskInput {
@@ -105,6 +111,14 @@ export interface MoveTaskInput {
   section_id?: string;
   parent_id?: string;
 }
+
+import {
+  buildAssigneeOptions,
+  type TodoistCollaborator,
+} from './todoistAssignees.js';
+
+export type { TodoistCollaborator, AssigneeOption } from './todoistAssignees.js';
+export { TEAM_ASSIGNEES, buildAssigneeOptions } from './todoistAssignees.js';
 
 function buildQuery(params: Record<string, string | number | undefined>): string {
   const q = new URLSearchParams();
@@ -162,8 +176,18 @@ export async function todoistFetchAll<T>(
   return items;
 }
 
-export function mapTodoistTask(task: TodoistTaskV1, isCompleted?: boolean): TodoistTaskRaw {
+export function mapTodoistTask(
+  task: TodoistTaskV1,
+  isCompleted?: boolean,
+  collaborators: TodoistCollaborator[] = [],
+): TodoistTaskRaw {
   const completed = isCompleted ?? (Boolean(task.checked) || Boolean(task.completed_at));
+  const options = buildAssigneeOptions(collaborators);
+  const matched = options.find((o) => o.uid && o.uid === task.responsible_uid);
+  const collab = task.responsible_uid
+    ? collaborators.find((c) => c.id === task.responsible_uid)
+    : undefined;
+
   return {
     id: task.id,
     content: task.content,
@@ -176,7 +200,18 @@ export function mapTodoistTask(task: TodoistTaskV1, isCompleted?: boolean): Todo
     section_id: task.section_id ?? null,
     labels: task.labels ?? [],
     note_count: task.note_count ?? 0,
+    responsible_uid: task.responsible_uid ?? null,
+    assignee_name: matched?.label ?? collab?.full_name ?? null,
+    assignee_hub: matched?.hub ?? null,
   };
+}
+
+export async function todoistFetchCollaborators(
+  projectId: string,
+): Promise<TodoistCollaborator[]> {
+  return todoistFetchAll<TodoistCollaborator>(`/projects/${projectId}/collaborators`, {
+    limit: 200,
+  });
 }
 
 /** Requisição simples (ex.: close/reopen/get by id). */
@@ -334,7 +369,15 @@ export async function todoistDeleteComment(commentId: string): Promise<null> {
 
 export async function todoistGetTask(taskId: string): Promise<TodoistTaskRaw> {
   const raw = await todoistFetch<TodoistTaskV1>(`/tasks/${taskId}`);
-  return mapTodoistTask(raw);
+  let collaborators: TodoistCollaborator[] = [];
+  if (raw.project_id) {
+    try {
+      collaborators = await todoistFetchCollaborators(raw.project_id);
+    } catch {
+      collaborators = [];
+    }
+  }
+  return mapTodoistTask(raw, undefined, collaborators);
 }
 
 export async function todoistCreateTask(data: CreateTaskInput): Promise<TodoistTaskRaw> {
@@ -342,7 +385,15 @@ export async function todoistCreateTask(data: CreateTaskInput): Promise<TodoistT
     method: 'POST',
     body: JSON.stringify(data),
   });
-  return mapTodoistTask(raw);
+  let collaborators: TodoistCollaborator[] = [];
+  if (raw.project_id) {
+    try {
+      collaborators = await todoistFetchCollaborators(raw.project_id);
+    } catch {
+      collaborators = [];
+    }
+  }
+  return mapTodoistTask(raw, false, collaborators);
 }
 
 export async function todoistUpdateTask(
@@ -395,23 +446,27 @@ export async function todoistQuickAddTask(
 export async function todoistFilterTasks(
   query: string,
   lang?: string,
+  collaborators: TodoistCollaborator[] = [],
 ): Promise<TodoistTaskRaw[]> {
   const items = await todoistFetchAll<TodoistTaskV1>('/tasks/filter', {
     query,
     ...(lang ? { lang } : {}),
     limit: 200,
   });
-  return items.map((t) => mapTodoistTask(t, false));
+  return items.map((t) => mapTodoistTask(t, false, collaborators));
 }
 
-export async function todoistFetchTasks(opts?: {
-  projectId?: string;
-  sectionId?: string;
-  label?: string;
-  filterQuery?: string;
-}): Promise<TodoistTaskRaw[]> {
+export async function todoistFetchTasks(
+  opts?: {
+    projectId?: string;
+    sectionId?: string;
+    label?: string;
+    filterQuery?: string;
+  },
+  collaborators: TodoistCollaborator[] = [],
+): Promise<TodoistTaskRaw[]> {
   if (opts?.filterQuery) {
-    return todoistFilterTasks(opts.filterQuery);
+    return todoistFilterTasks(opts.filterQuery, undefined, collaborators);
   }
 
   const query: Record<string, string | number | undefined> = { limit: 200 };
@@ -420,7 +475,7 @@ export async function todoistFetchTasks(opts?: {
   if (opts?.label) query.label = opts.label;
 
   const active = await todoistFetchAll<TodoistTaskV1>('/tasks', query);
-  const activeMapped = active.map((t) => mapTodoistTask(t, false));
+  const activeMapped = active.map((t) => mapTodoistTask(t, false, collaborators));
 
   const until = new Date();
   until.setUTCDate(until.getUTCDate() + 1);
@@ -439,7 +494,7 @@ export async function todoistFetchTasks(opts?: {
     '/tasks/completed/by_completion_date',
     completedQuery,
   );
-  const completedMapped = completed.map((t) => mapTodoistTask(t, true));
+  const completedMapped = completed.map((t) => mapTodoistTask(t, true, collaborators));
 
   const byId = new Map<string, TodoistTaskRaw>();
   for (const t of [...activeMapped, ...completedMapped]) {

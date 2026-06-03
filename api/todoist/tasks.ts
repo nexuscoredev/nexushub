@@ -1,6 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import {
+  buildAssigneeOptions,
   getTodoistToken,
+  type TodoistCollaborator,
+  todoistFetchCollaborators,
   todoistCreateTask,
   todoistFetchProjects,
   todoistFetchTasks,
@@ -41,12 +44,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         projectName = projects.find((p) => p.id === filterProjectId)?.name ?? null;
       }
 
-      const tasks = await todoistFetchTasks({
-        projectId: filterQuery ? undefined : filterProjectId ?? undefined,
-        sectionId,
-        label,
-        filterQuery,
-      });
+      let collaborators: TodoistCollaborator[] = [];
+      if (filterProjectId) {
+        try {
+          collaborators = await todoistFetchCollaborators(filterProjectId);
+        } catch {
+          collaborators = [];
+        }
+      }
+
+      const tasks = await todoistFetchTasks(
+        {
+          projectId: filterQuery ? undefined : filterProjectId ?? undefined,
+          sectionId,
+          label,
+          filterQuery,
+        },
+        collaborators,
+      );
 
       return res.status(200).json({
         configured: true,
@@ -54,6 +69,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         projectName,
         projects,
         tasks,
+        assigneeOptions: buildAssigneeOptions(collaborators),
       });
     }
 
