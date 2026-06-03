@@ -1,7 +1,5 @@
 /** Monta linha no formato Quick Add do Todoist (mesmo motor do app). */
 
-import { isoDateToTodoistDuePt } from './todoistDuePt';
-
 export function escapeQuickAddToken(name: string): string {
   return name.replace(/\\/g, '\\\\').replace(/ /g, '\\ ');
 }
@@ -17,8 +15,6 @@ export interface QuickAddExtras {
   /** Prioridade Hub P1=1 … P4=4 (vira p1…p4 no texto). */
   priorityHub?: number;
   duePreset?: '' | 'today' | 'tomorrow';
-  /** YYYY-MM-DD — prazo específico (Quick Add em português). */
-  dueDateIso?: string;
   assigneeTodoistName?: string;
 }
 
@@ -59,17 +55,6 @@ export function buildQuickAddText(title: string, extras: QuickAddExtras = {}): s
   }
   if (extras.duePreset === 'tomorrow' && !/\b(amanhã|amanha|tomorrow)\b/i.test(t)) {
     parts.push('amanhã');
-  }
-
-  if (extras.dueDateIso && !extras.duePreset) {
-    const dueText = isoDateToTodoistDuePt(extras.dueDateIso);
-    const duePattern = new RegExp(
-      dueText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
-      'i',
-    );
-    if (!duePattern.test(t) && !/\bdia \d+/i.test(t)) {
-      parts.push(dueText);
-    }
   }
 
   if (extras.assigneeTodoistName && !/\+/.test(t)) {

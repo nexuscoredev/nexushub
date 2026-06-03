@@ -195,19 +195,21 @@ export function CreateTaskModal({
       sectionName: section?.name,
       labels: selectedLabels,
       priorityHub: priority,
-      duePreset: due || undefined,
-      dueDateIso: !due && customDueDate ? customDueDate : undefined,
+      duePreset: customDueDate ? undefined : due || undefined,
       assigneeTodoistName: assignee?.todoistName,
     });
 
     setSubmitting(true);
     setError(null);
     try {
-      const created = await todoistApi.quickAddTask({
+      let created = await todoistApi.quickAddTask({
         text: quickText,
         project_id: projectId,
         section_id: sectionId || undefined,
       });
+      if (customDueDate) {
+        created = await todoistApi.updateTask(created.id, { due_date: customDueDate });
+      }
       onCreated(created.project_id || projectId);
       onClose();
     } catch (err) {
