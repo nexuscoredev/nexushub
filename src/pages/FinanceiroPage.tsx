@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { ReceivablesTable } from '../components/ReceivablesTable';
 import {
   deleteFinanceRow,
   FinanceCrudBar,
@@ -11,7 +12,6 @@ import {
   SAIDA_SECOES,
   secaoEntradaReceivable,
   secaoSaidaInvestment,
-  stripFluxoTag,
   type EntradaSecao,
   type FinanceFluxo,
   type FinanceFluxoSecao,
@@ -24,6 +24,7 @@ import {
   totalSaidasPorResponsavel,
 } from '../lib/financeiro';
 import { formatBRL, formatDate } from '../lib/format';
+import { valorPagoReceivable } from '../lib/receivableParcelas';
 import { supabase, supabaseErrorMessage } from '../lib/supabase';
 import type {
   HubFinanceInvestment,
@@ -155,14 +156,10 @@ export function FinanceiroPage() {
             <FinanceQueueSection
               key={secao.id}
               title={secao.label}
-              totalLabel={
-                secao.id === 'mensalidades'
-                  ? formatBRL(
-                      totalMensalidadesRecorrentes +
-                        sumReceivables(receivablesBySecao.mensalidades),
-                    )
-                  : formatBRL(sumReceivables(receivablesBySecao.implantacoes))
-              }
+              totalLabel={formatReceivableSectionMeta(
+                receivablesBySecao[secao.id],
+                secao.id === 'mensalidades' ? totalMensalidadesRecorrentes : 0,
+              )}
             >
               {secao.id === 'mensalidades' && (
                 <FinanceTable
@@ -174,11 +171,9 @@ export function FinanceiroPage() {
                   compact
                 />
               )}
-              <FinanceTable
+              <ReceivablesTable
                 title={secao.id === 'mensalidades' ? 'Recebimentos' : undefined}
-                table="hub_finance_receivables"
                 rows={receivablesBySecao[secao.id]}
-                columns={['cliente_descricao', 'valor', 'data_prevista', 'status', 'notas']}
                 fluxoSecao={{ fluxo: 'entrada', secao: secao.id }}
                 onRefresh={load}
                 compact={secao.id === 'mensalidades'}
@@ -213,6 +208,24 @@ export function FinanceiroPage() {
 
 function sumReceivables(items: HubFinanceReceivable[]): number {
   return items.reduce((s, r) => s + Number(r.valor), 0);
+}
+
+function sumReceivablesPago(items: HubFinanceReceivable[]): number {
+  return items.reduce((s, r) => s + valorPagoReceivable(r), 0);
+}
+
+function formatReceivableSectionMeta(
+  items: HubFinanceReceivable[],
+  contratosMensais = 0,
+): string {
+  const total = sumReceivables(items);
+  const pago = sumReceivablesPago(items);
+  const falta = Math.max(0, total - pago);
+  let line = `${formatBRL(total)} total · ${formatBRL(pago)} pago · ${formatBRL(falta)} falta`;
+  if (contratosMensais > 0) {
+    line += ` · ${formatBRL(contratosMensais)}/mês contratos`;
+  }
+  return line;
 }
 
 function sumInvestments(items: HubFinanceInvestment[]): number {
@@ -320,7 +333,7 @@ function FinanceTable<T extends { id: string }>({
                 if (col === 'valor' || col === 'valor_mensal') display = formatBRL(Number(val));
                 else if (col.includes('data')) display = formatDate(String(val ?? ''));
                 else if (col === 'categoria') display = CATEGORIA_LABELS[String(val)] ?? String(val ?? '—');
-                else if (col === 'notas') display = stripFluxoTag(String(val ?? '')) || '—';
+                else if (col === 'notas') display = String(val ?? '—');
                 else if (typeof val === 'boolean') display = val ? 'Sim' : 'Não';
                 else display = String(val ?? '—');
                 return <td key={col}>{display}</td>;

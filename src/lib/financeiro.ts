@@ -1,3 +1,4 @@
+import { valorPagoReceivable } from './receivableParcelas';
 import type {
   HubFinanceInvestment,
   HubFinanceReceivable,
@@ -13,9 +14,7 @@ export function totalMensalAssinaturas(
 }
 
 export function totalRecebido(items: HubFinanceReceivable[]): number {
-  return items
-    .filter((r) => r.status === 'recebido')
-    .reduce((sum, r) => sum + Number(r.valor), 0);
+  return items.reduce((sum, r) => sum + valorPagoReceivable(r), 0);
 }
 
 export function totalSaidas(items: HubFinanceInvestment[]): number {

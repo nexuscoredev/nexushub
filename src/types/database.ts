@@ -55,10 +55,13 @@ export interface HubFinanceReceivable {
   id: string;
   cliente_descricao: string;
   valor: number;
-  categoria: string | null;
+  categoria?: string | null;
   data_prevista: string;
   status: 'pendente' | 'recebido' | 'atrasado';
   notas: string | null;
+  parcelado?: boolean;
+  qtd_parcelas?: number | null;
+  parcelas_pagas?: number[];
   created_at?: string;
 }
 
