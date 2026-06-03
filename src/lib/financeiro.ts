@@ -1,3 +1,4 @@
+import { secaoEntradaReceivable } from './financeCategories';
 import { valorPagoReceivable, valorRestanteReceivable } from './receivableParcelas';
 import type {
   HubFinanceInvestment,
@@ -9,8 +10,21 @@ export function totalMensalAssinaturas(
   items: HubFinanceSubscription[],
 ): number {
   return items
-    .filter((s) => s.ativo)
+    .filter((s) => s.ativo !== false)
     .reduce((sum, s) => sum + Number(s.valor_mensal), 0);
+}
+
+/** Contratos /mês; se não houver contratos, soma os recebíveis na fila Mensalidades. */
+export function totalMensalidade(
+  subscriptions: HubFinanceSubscription[],
+  receivables: HubFinanceReceivable[],
+): number {
+  const contratos = totalMensalAssinaturas(subscriptions);
+  if (contratos > 0) return contratos;
+
+  return receivables
+    .filter((r) => secaoEntradaReceivable(r) === 'mensalidades')
+    .reduce((sum, r) => sum + Number(r.valor), 0);
 }
 
 /** Soma do valor total de todas as entradas (recebíveis). */

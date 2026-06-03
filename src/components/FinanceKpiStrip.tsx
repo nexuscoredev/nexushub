@@ -17,7 +17,7 @@ const KPI_ITEMS: {
   { key: 'aReceber', label: 'Total a receber', icon: '/img/finance/pendente.svg' },
   { key: 'geralEntradas', label: 'Total geral', icon: '/img/finance/entradas.svg' },
   { key: 'recebido', label: 'Total recebido', icon: '/img/finance/recebido.svg' },
-  { key: 'mensalidade', label: 'Total mensalidade', icon: '/img/finance/mensalidade.svg' },
+  { key: 'mensalidade', label: 'Total mensalidade / mês', icon: '/img/finance/mensalidade.svg' },
   { key: 'saidas', label: 'Total saídas', icon: '/img/finance/saidas.svg' },
 ];
 

@@ -23,6 +23,7 @@ import {
   totalAReceber,
   totalGeralEntradas,
   totalMensalAssinaturas,
+  totalMensalidade,
   totalRecebido,
   totalSaidas,
 } from '../lib/financeiro';
@@ -103,6 +104,7 @@ export function FinanceiroPage() {
   }, [investments]);
 
   const totalMensalidadesRecorrentes = totalMensalAssinaturas(subscriptions);
+  const kpiMensalidade = totalMensalidade(subscriptions, receivables);
   const kpiAReceber = totalAReceber(receivables);
   const kpiGeralEntradas = totalGeralEntradas(receivables);
   const kpiRecebido = totalRecebido(receivables);
@@ -127,7 +129,7 @@ export function FinanceiroPage() {
           aReceber: kpiAReceber,
           geralEntradas: kpiGeralEntradas,
           recebido: kpiRecebido,
-          mensalidade: totalMensalidadesRecorrentes,
+          mensalidade: kpiMensalidade,
           saidas: kpiSaidas,
         }}
       />
