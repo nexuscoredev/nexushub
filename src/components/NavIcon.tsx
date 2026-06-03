@@ -14,7 +14,8 @@ export type NavIconName =
   | 'refresh'
   | 'external'
   | 'chevronDown'
-  | 'sparkles';
+  | 'sparkles'
+  | 'pencil';
 
 interface NavIconProps {
   name: NavIconName;
@@ -108,6 +109,12 @@ const paths: Record<NavIconName, ReactNode> = {
         stroke="none"
         d="M18 14 L18.65 16.35 L21 17 L18.65 17.65 L18 20 L17.35 17.65 L15 17 L17.35 16.35 Z"
       />
+    </>
+  ),
+  pencil: (
+    <>
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5" />
     </>
   ),
 };

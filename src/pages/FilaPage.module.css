@@ -362,7 +362,14 @@
   min-width: 0;
 }
 
-.detailClose {
+.detailHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.detailHeaderBtn {
   flex-shrink: 0;
   width: 36px;
   height: 36px;
@@ -374,15 +381,17 @@
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.06);
   color: var(--polished-silver);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
-.detailClose:hover {
+.detailHeaderBtn:hover {
   color: #fff;
   border-color: rgba(255, 255, 255, 0.28);
   background: rgba(255, 255, 255, 0.1);
 }
 
-.detailCloseIcon {
+.detailHeaderIcon {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
@@ -789,13 +798,8 @@
 .detailTitle {
   font-size: 1.05rem;
   line-height: 1.35;
-  margin: 0 0 0.35rem;
+  margin: 0;
   word-break: break-word;
-}
-
-.detailRename {
-  font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
 }
 
 .detailActions {

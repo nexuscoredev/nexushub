@@ -959,28 +959,33 @@ export function FilaPage() {
                         </button>
                       </div>
                     ) : (
-                      <>
-                        <h2 id="task-detail-title" className={styles.detailTitle}>
-                          <TodoistTaskContent content={selectedTask.content} />
-                        </h2>
-                        <button
-                          type="button"
-                          className={`btn-ghost ${styles.detailRename}`}
-                          onClick={() => setRenamingTitle(true)}
-                        >
-                          Renomear
-                        </button>
-                      </>
+                      <h2 id="task-detail-title" className={styles.detailTitle}>
+                        <TodoistTaskContent content={selectedTask.content} />
+                      </h2>
                     )}
                   </div>
-                  <button
-                    type="button"
-                    className={styles.detailClose}
-                    onClick={closeDetail}
-                    aria-label="Fechar detalhes"
-                  >
-                    <NavIcon name="close" className={styles.detailCloseIcon} />
-                  </button>
+                  <div className={styles.detailHeaderActions}>
+                    {!renamingTitle && (
+                      <button
+                        type="button"
+                        className={styles.detailHeaderBtn}
+                        onClick={() => setRenamingTitle(true)}
+                        aria-label="Renomear tarefa"
+                        title="Renomear"
+                      >
+                        <NavIcon name="pencil" className={styles.detailHeaderIcon} />
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      className={styles.detailHeaderBtn}
+                      onClick={closeDetail}
+                      aria-label="Fechar detalhes"
+                      title="Fechar"
+                    >
+                      <NavIcon name="close" className={styles.detailHeaderIcon} />
+                    </button>
+                  </div>
                 </div>
 
                 <div className={styles.detailFields}>
