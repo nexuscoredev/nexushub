@@ -44,9 +44,11 @@ export function getFinanceFields(table: FinanceTable): FinanceField[] {
   ];
 }
 
-function buildPayload(fd: FormData): Record<string, unknown> {
+function buildPayload(fd: FormData, table: FinanceTable): Record<string, unknown> {
+  const allowed = new Set(getFinanceFields(table).map((f) => f.name));
   const payload: Record<string, unknown> = {};
   fd.forEach((v, k) => {
+    if (!allowed.has(k)) return;
     if (k === 'valor' || k === 'valor_mensal' || k === 'dia_vencimento') {
       payload[k] = Number(v);
     } else if (k === 'ativo') {
@@ -58,7 +60,9 @@ function buildPayload(fd: FormData): Record<string, unknown> {
       payload[k] = v;
     }
   });
-  if (!fd.has('ativo')) payload.ativo = false;
+  if (table === 'hub_finance_subscriptions' && !fd.has('ativo')) {
+    payload.ativo = false;
+  }
   return payload;
 }
 
@@ -96,7 +100,7 @@ export function FinanceRecordForm({
     e.preventDefault();
     if (!supabase) return;
     setError(null);
-    const payload = buildPayload(new FormData(e.currentTarget));
+    const payload = buildPayload(new FormData(e.currentTarget), table);
 
     const { error: err } = isEdit
       ? await supabase.from(table).update(payload).eq('id', recordId!)
