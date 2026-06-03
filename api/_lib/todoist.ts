@@ -97,7 +97,7 @@ export interface CreateTaskInput {
   priority?: number;
   due_string?: string;
   due_date?: string;
-  assignee_id?: number | null;
+  assignee_id?: number | string | null;
 }
 
 export interface UpdateTaskInput {
@@ -108,7 +108,7 @@ export interface UpdateTaskInput {
   due_string?: string;
   due_date?: string;
   section_id?: string;
-  assignee_id?: number | null;
+  assignee_id?: number | string | null;
 }
 
 export interface MoveTaskInput {
@@ -118,13 +118,28 @@ export interface MoveTaskInput {
 }
 
 import {
+  assigneeFieldsForTodoistApi,
   buildAssigneeOptions,
   collaboratorDisplayName,
   type TodoistCollaborator,
 } from './todoistAssignees.js';
+import { hubPriorityToTodoistApi, todoistApiPriorityToHub } from './todoistPriority.js';
 
 export type { TodoistCollaborator, AssigneeOption } from './todoistAssignees.js';
 export { TEAM_ASSIGNEES, buildAssigneeOptions } from './todoistAssignees.js';
+
+function buildTaskWriteBody(
+  data: CreateTaskInput | UpdateTaskInput,
+): Record<string, unknown> {
+  const { assignee_id, priority, section_id: _section, ...rest } = data as CreateTaskInput &
+    UpdateTaskInput & { section_id?: string };
+  const out: Record<string, unknown> = { ...rest };
+  if (priority !== undefined) {
+    out.priority = hubPriorityToTodoistApi(priority);
+  }
+  Object.assign(out, assigneeFieldsForTodoistApi(assignee_id));
+  return out;
+}
 
 function buildQuery(params: Record<string, string | number | undefined>): string {
   const q = new URLSearchParams();
@@ -200,7 +215,7 @@ export function mapTodoistTask(
     description: task.description ?? '',
     is_completed: completed,
     due: task.due,
-    priority: task.priority,
+    priority: todoistApiPriorityToHub(task.priority),
     url: `https://todoist.com/showTask?id=${task.id}`,
     project_id: task.project_id,
     section_id: task.section_id ?? null,
@@ -391,7 +406,7 @@ export async function todoistGetTask(taskId: string): Promise<TodoistTaskRaw> {
 export async function todoistCreateTask(data: CreateTaskInput): Promise<TodoistTaskRaw> {
   const raw = await todoistFetch<TodoistTaskV1>('/tasks', {
     method: 'POST',
-    body: JSON.stringify(data),
+    body: JSON.stringify(buildTaskWriteBody(data)),
   });
   let collaborators: TodoistCollaborator[] = [];
   if (raw.project_id) {
@@ -409,10 +424,11 @@ export async function todoistUpdateTask(
   data: UpdateTaskInput,
 ): Promise<TodoistTaskRaw> {
   const { section_id, ...updateFields } = data;
-  if (Object.keys(updateFields).length > 0) {
+  const writeBody = buildTaskWriteBody(updateFields);
+  if (Object.keys(writeBody).length > 0) {
     await todoistFetch<TodoistTaskV1>(`/tasks/${taskId}`, {
       method: 'POST',
-      body: JSON.stringify(updateFields),
+      body: JSON.stringify(writeBody),
     });
   }
   if (section_id !== undefined) {

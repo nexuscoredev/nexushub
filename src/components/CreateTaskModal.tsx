@@ -177,7 +177,7 @@ export function CreateTaskModal({
       return;
     }
     const assignee = assigneeHub ? assigneeOptions.find((o) => o.hub === assigneeHub) : undefined;
-    if (assigneeHub && !assignee?.assignee_id) {
+    if (assigneeHub && !assignee?.uid && assignee?.assignee_id == null) {
       setError(
         `${assignee?.label ?? 'Responsável'} não está no projeto Todoist. Compartilhe o projeto com a equipe ou escolha outro responsável.`,
       );
@@ -193,7 +193,7 @@ export function CreateTaskModal({
         labels: selectedLabels.length ? selectedLabels : undefined,
         priority,
         due_string: due === 'today' ? 'today' : due === 'tomorrow' ? 'tomorrow' : undefined,
-        assignee_id: assignee?.assignee_id ?? undefined,
+        assignee_id: assignee?.uid ?? assignee?.assignee_id ?? undefined,
       });
       onCreated(projectId);
       onClose();
@@ -295,10 +295,10 @@ export function CreateTaskModal({
                 <ModalChip
                   key={o.hub}
                   active={assigneeHub === o.hub}
-                  unavailable={!o.assignee_id}
+                  unavailable={!o.uid && o.assignee_id == null}
                   onClick={() => setAssigneeHub(o.hub)}
                   title={
-                    o.assignee_id
+                    o.uid || o.assignee_id != null
                       ? `Todoist: ${o.todoistName}`
                       : `${o.label} — não encontrado neste projeto`
                   }
@@ -307,7 +307,7 @@ export function CreateTaskModal({
                 </ModalChip>
               ))}
             </div>
-            {assigneeHub && !selectedAssignee?.assignee_id && (
+            {assigneeHub && !selectedAssignee?.uid && selectedAssignee?.assignee_id == null && (
               <p className={`${styles.hint} ${styles.hintWarn}`}>
                 Compartilhe este projeto no Todoist com {selectedAssignee?.label} para poder atribuir.
               </p>

@@ -860,9 +860,11 @@ export function FilaPage() {
                         <Chip
                           key={o.hub}
                           active={selectedTask.assignee_hub === o.hub}
-                          onClick={() => void patchSelected({ assignee_id: o.assignee_id })}
+                          onClick={() =>
+                            void patchSelected({ assignee_id: o.uid ?? o.assignee_id })
+                          }
                           title={
-                            o.assignee_id
+                            o.uid || o.assignee_id != null
                               ? `Todoist: ${o.todoistName}`
                               : `${o.label} — não encontrado neste projeto`
                           }

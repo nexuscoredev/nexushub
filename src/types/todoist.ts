@@ -68,7 +68,7 @@ export interface CreateTaskInput {
   due_string?: string;
   due_date?: string;
   parent_id?: string | null;
-  assignee_id?: number | null;
+  assignee_id?: number | string | null;
 }
 
 export interface UpdateTaskInput {
@@ -80,7 +80,7 @@ export interface UpdateTaskInput {
   due_date?: string;
   section_id?: string;
   is_completed?: boolean;
-  assignee_id?: number | null;
+  assignee_id?: number | string | null;
   move?: {
     project_id?: string;
     section_id?: string;
