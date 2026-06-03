@@ -42,8 +42,13 @@ Variáveis **já configuradas pelo agente** (se existirem no dashboard):
 | `TODOIST_API_TOKEN` | Todoist → Integrations |
 | `TODOIST_PROJECT_ID` | (opcional) ID do projeto da equipe |
 | `GOOGLE_SERVICE_ACCOUNT_JSON` | Google Cloud (ou embeds abaixo) |
-| `GOOGLE_CALENDAR_EMBED_RAFAEL` | (opcional MVP) URL iframe Calendar |
-| `GOOGLE_CALENDAR_EMBED_VINICIUS` | (opcional MVP) URL iframe Calendar |
+| `GOOGLE_CALENDAR_ID_VINICIUS` | `viniciussantosdemorais2002@gmail.com` |
+| `GOOGLE_CALENDAR_EMBED_VINICIUS` | URL iframe (MVP — já pode ir na Vercel) |
+| `GOOGLE_CALENDAR_EMBED_RAFAEL` | (opcional) URL iframe Calendar |
+
+**Agenda Vinícius (MVP embed):** basta `GOOGLE_CALENDAR_EMBED_VINICIUS` — a aba Agenda mostra o iframe do Google Calendar.
+
+**Lista de eventos (API):** exige `GOOGLE_SERVICE_ACCOUNT_JSON` + compartilhar o calendário com o e-mail da service account (acesso leitor).
 
 Depois de adicionar a anon key: **Redeploy** em Vercel (Deployments → Redeploy).
 

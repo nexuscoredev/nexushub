@@ -64,7 +64,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const embedRafael = process.env.GOOGLE_CALENDAR_EMBED_RAFAEL ?? '';
   const embedVinicius = process.env.GOOGLE_CALENDAR_EMBED_VINICIUS ?? '';
   const idRafael = process.env.GOOGLE_CALENDAR_ID_RAFAEL ?? 'rafael@nexustech.com';
-  const idVinicius = process.env.GOOGLE_CALENDAR_ID_VINICIUS ?? 'vinicius@nexustech.com';
+  const idVinicius =
+    process.env.GOOGLE_CALENDAR_ID_VINICIUS ?? 'viniciussantosdemorais2002@gmail.com';
   const view = (req.query.view as string) ?? 'combinado';
 
   const hasServiceAccount = Boolean(parseServiceAccount());
