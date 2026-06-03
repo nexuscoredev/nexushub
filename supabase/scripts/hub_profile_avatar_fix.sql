@@ -1,4 +1,7 @@
--- Foto de perfil (storage público) + URL no hub_profiles
+-- =============================================================================
+-- NEXUS Hub — Foto de perfil: rode no SQL Editor se "Erro ao enviar foto"
+-- (bucket hub-avatars, coluna avatar_url, policies de storage)
+-- =============================================================================
 
 alter table public.hub_profiles
   add column if not exists avatar_url text;
@@ -16,7 +19,6 @@ on conflict (id) do update set
   file_size_limit = excluded.file_size_limit,
   allowed_mime_types = excluded.allowed_mime_types;
 
--- Impede que usuário comum altere cargo, e-mail, etc. (só nome e avatar)
 create or replace function public.hub_profiles_guard_self_update()
 returns trigger
 language plpgsql
@@ -50,7 +52,6 @@ create trigger hub_profiles_guard_self_update
   for each row
   execute function public.hub_profiles_guard_self_update();
 
--- Storage: avatares em pasta {user_id}/
 drop policy if exists hub_avatars_select on storage.objects;
 create policy hub_avatars_select on storage.objects
   for select
@@ -86,3 +87,12 @@ create policy hub_avatars_delete on storage.objects
     bucket_id = 'hub-avatars'
     and split_part(name, '/', 1) = auth.uid()::text
   );
+
+select 'hub_profiles.avatar_url' as check_item, exists (
+  select 1 from information_schema.columns
+  where table_schema = 'public' and table_name = 'hub_profiles' and column_name = 'avatar_url'
+) as ok
+union all
+select 'bucket hub-avatars', exists (
+  select 1 from storage.buckets where id = 'hub-avatars'
+);

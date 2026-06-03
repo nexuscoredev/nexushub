@@ -19,6 +19,15 @@ select 'hub_chat_conversas', exists (
 union all
 select 'hub-chat-anexos bucket', exists (
   select 1 from storage.buckets where id = 'hub-chat-anexos'
+)
+union all
+select 'hub_profiles.avatar_url', exists (
+  select 1 from information_schema.columns
+  where table_schema = 'public' and table_name = 'hub_profiles' and column_name = 'avatar_url'
+)
+union all
+select 'hub-avatars bucket', exists (
+  select 1 from storage.buckets where id = 'hub-avatars'
 );
 
 -- ---------- 2) Funções RLS do hub (se faltarem) ----------
@@ -121,3 +130,6 @@ create trigger on_auth_user_created_hub
 -- ---------- 4) Chat — só se tabelas ainda não existirem: rode o arquivo completo
 --     supabase/migrations/20260612120000_hub_chat_interno.sql
 --     OU supabase/scripts/hub_chat_fix_prereqs_and_storage.sql (se chat já existe, só storage)
+
+-- ---------- 5) Foto de perfil — se hub-avatars = false acima:
+--     supabase/scripts/hub_profile_avatar_fix.sql

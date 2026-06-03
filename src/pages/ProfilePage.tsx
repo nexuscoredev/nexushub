@@ -66,7 +66,7 @@ export function ProfilePage() {
       await refreshProfile();
       setSuccess('Foto atualizada.');
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Erro ao enviar foto.');
+      setError(supabaseErrorMessage(e));
     } finally {
       setUploadingPhoto(false);
       if (fileRef.current) fileRef.current.value = '';
@@ -87,7 +87,7 @@ export function ProfilePage() {
       await refreshProfile();
       setSuccess('Foto removida.');
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Erro ao remover foto.');
+      setError(supabaseErrorMessage(e));
     } finally {
       setUploadingPhoto(false);
     }
