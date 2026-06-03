@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { CreateTaskModal } from '../components/CreateTaskModal';
+import { PromptNameModal } from '../components/PromptNameModal';
 import { NavIcon } from '../components/NavIcon';
 import { PageHeader } from '../components/PageHeader';
 import { ProjectSelector } from '../components/ProjectSelector';
@@ -54,6 +55,29 @@ const PRIORITIES = [
 ] as const;
 
 const COMMENT_PRESETS = ['Ok', 'Em andamento', 'Bloqueado', 'Precisa revisão'];
+
+type CreatePromptKind = 'project' | 'section' | 'label';
+
+const CREATE_PROMPT: Record<
+  CreatePromptKind,
+  { title: string; fieldLabel: string; placeholder: string }
+> = {
+  project: {
+    title: 'Novo projeto',
+    fieldLabel: 'Nome do projeto',
+    placeholder: 'Ex.: Cliente — Sistema',
+  },
+  section: {
+    title: 'Nova seção',
+    fieldLabel: 'Nome da seção',
+    placeholder: 'Ex.: Backlog',
+  },
+  label: {
+    title: 'Nova etiqueta',
+    fieldLabel: 'Nome da etiqueta',
+    placeholder: 'Ex.: urgente',
+  },
+};
 
 function pickProjectId(list: TodoistProject[], preferred?: string): string {
   if (preferred && list.some((p) => p.id === preferred)) return preferred;
@@ -236,6 +260,7 @@ export function FilaPage() {
   const [completedOpen, setCompletedOpen] = useState(false);
   const [advancedFiltersOpen, setAdvancedFiltersOpen] = useState(false);
   const [collapsedTasks, setCollapsedTasks] = useState<Set<string>>(() => new Set());
+  const [createPromptKind, setCreatePromptKind] = useState<CreatePromptKind | null>(null);
 
   const sectionMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -431,29 +456,21 @@ export function FilaPage() {
     }
   };
 
-  const promptCreate = async (kind: 'project' | 'section' | 'label') => {
-    const labels: Record<typeof kind, string> = {
-      project: 'Nome do novo projeto',
-      section: 'Nome da nova seção',
-      label: 'Nome da nova etiqueta',
-    };
-    const name = window.prompt(labels[kind]);
-    if (!name?.trim()) return;
-    try {
-      setError(null);
-      if (kind === 'project') {
-        await todoistApi.createProject(name.trim());
-        setProjects(await todoistApi.fetchProjects());
-      } else if (kind === 'section') {
-        if (!selectedProjectId) return;
-        await todoistApi.createSection(name.trim(), selectedProjectId);
-        await loadMeta(selectedProjectId);
-      } else {
-        await todoistApi.createLabel(name.trim());
-        setLabels(await todoistApi.fetchLabels());
+  const handleCreateConfirm = async (name: string) => {
+    if (!createPromptKind) return;
+    setError(null);
+    if (createPromptKind === 'project') {
+      await todoistApi.createProject(name);
+      setProjects(await todoistApi.fetchProjects());
+    } else if (createPromptKind === 'section') {
+      if (!selectedProjectId) {
+        throw new Error('Selecione um projeto na aba Tarefas antes de criar uma seção.');
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao criar');
+      await todoistApi.createSection(name, selectedProjectId);
+      await loadMeta(selectedProjectId);
+    } else {
+      await todoistApi.createLabel(name);
+      setLabels(await todoistApi.fetchLabels());
     }
   };
 
@@ -505,7 +522,7 @@ export function FilaPage() {
             >
               <NavIcon
                 name="refresh"
-                className={`${styles.headerIcon} ${loading ? styles.spin : ''}`}
+                className={`${styles.refreshIcon} ${loading ? styles.spin : ''}`}
               />
             </button>
             <a
@@ -928,18 +945,18 @@ export function FilaPage() {
       {viewTab === 'manage' && (
         <div className="card" style={{ padding: '1.25rem' }}>
           <div className={styles.manageActions}>
-            <button type="button" className="btn-primary" onClick={() => void promptCreate('project')}>
+            <button type="button" className="btn-primary" onClick={() => setCreatePromptKind('project')}>
               + Novo projeto
             </button>
             <button
               type="button"
               className="btn-primary"
               disabled={!selectedProjectId}
-              onClick={() => void promptCreate('section')}
+              onClick={() => setCreatePromptKind('section')}
             >
               + Nova seção
             </button>
-            <button type="button" className="btn-primary" onClick={() => void promptCreate('label')}>
+            <button type="button" className="btn-primary" onClick={() => setCreatePromptKind('label')}>
               + Nova etiqueta
             </button>
           </div>
@@ -1015,6 +1032,17 @@ export function FilaPage() {
             </ul>
           </div>
         </div>
+      )}
+
+      {createPromptKind && (
+        <PromptNameModal
+          open
+          title={CREATE_PROMPT[createPromptKind].title}
+          fieldLabel={CREATE_PROMPT[createPromptKind].fieldLabel}
+          placeholder={CREATE_PROMPT[createPromptKind].placeholder}
+          onClose={() => setCreatePromptKind(null)}
+          onConfirm={handleCreateConfirm}
+        />
       )}
     </div>
   );

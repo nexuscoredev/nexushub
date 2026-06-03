@@ -44,10 +44,27 @@ export function DashboardLayout() {
         <header className={styles.commandBar}>
           <div className={styles.commandGlow} aria-hidden />
 
-          <div className={styles.commandTop}>
-            <div className={styles.brandCenter}>
+          <div className={styles.commandMain}>
+            <div className={styles.brandDock}>
               <HubLogo size="sm" showSubtitle={false} />
             </div>
+
+            <nav className={styles.commandDock} aria-label="Navegação principal">
+              <div className={styles.dockTrack}>
+                {visibleNav.map((item) => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    className={({ isActive }) =>
+                      `${styles.dockLink} ${isActive ? styles.dockLinkActive : ''}`
+                    }
+                  >
+                    <NavIcon name={item.icon} className={styles.dockIcon} />
+                    <span className={styles.dockLabel}>{item.label}</span>
+                  </NavLink>
+                ))}
+              </div>
+            </nav>
 
             <div className={styles.userCompact}>
               <div className={styles.avatar} title={profile?.nome ?? user?.email}>
@@ -58,23 +75,6 @@ export function DashboardLayout() {
               </button>
             </div>
           </div>
-
-          <nav className={styles.commandDock} aria-label="Navegação principal">
-            <div className={styles.dockTrack}>
-              {visibleNav.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={({ isActive }) =>
-                    `${styles.dockLink} ${isActive ? styles.dockLinkActive : ''}`
-                  }
-                >
-                  <NavIcon name={item.icon} className={styles.dockIcon} />
-                  <span className={styles.dockLabel}>{item.label}</span>
-                </NavLink>
-              ))}
-            </div>
-          </nav>
 
           <div className={styles.commandMeta}>
             <span className={styles.metaUser}>{profile?.nome ?? user?.email}</span>
