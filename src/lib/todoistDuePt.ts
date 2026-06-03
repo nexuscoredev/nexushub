@@ -188,6 +188,30 @@ function normalizeDueString(s: string | undefined): string {
   return (s ?? '').trim().toLowerCase();
 }
 
+export type FilaQuickFilter = '' | 'today' | 'tomorrow' | 'overdue' | 'p1';
+
+function taskIsOverdue(task: { due?: TodoistDue | null }): boolean {
+  const due = task.due;
+  if (!due) return false;
+  const dateIso = extractDueDateIso(due);
+  if (dateIso) return dateIso < localTodayIso();
+  const s = normalizeDueString(due.string);
+  return s === 'overdue' || s === 'atrasado' || s === 'atrasada';
+}
+
+/** Filtro rápido da Fila (Hoje, Amanhã, Atrasadas, Urgentes). */
+export function taskMatchesFilaQuickFilter(
+  task: { due?: TodoistDue | null; priority: number },
+  filter: FilaQuickFilter,
+): boolean {
+  if (!filter) return true;
+  if (filter === 'p1') return task.priority === 1;
+  if (filter === 'overdue') return taskIsOverdue(task);
+  if (filter === 'today') return taskMatchesDuePreset(task, 'today');
+  if (filter === 'tomorrow') return taskMatchesDuePreset(task, 'tomorrow');
+  return true;
+}
+
 /** Tarefa corresponde ao preset de prazo do Hub (Hoje / Amanhã / Sem prazo). */
 export function taskMatchesDuePreset(task: { due?: TodoistDue | null }, preset: TodoistDuePreset): boolean {
   const due = task.due;

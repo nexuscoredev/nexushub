@@ -40,6 +40,7 @@ import {
 import {
   formatTodoistDueDisplay,
   taskMatchesDuePreset,
+  taskMatchesFilaQuickFilter,
   todoistDuePresetToApi,
   type TodoistDuePreset,
 } from '../lib/todoistDuePt';
@@ -389,12 +390,16 @@ export function FilaPage() {
   );
 
   const fetchActiveTasks = useCallback(
-    async (projectId: string, opts?: { sectionId?: string; label?: string; filterQuery?: string }) => {
+    async (
+      projectId: string,
+      opts?: { sectionId?: string; label?: string; filterQuery?: string; clientQuickFilter?: boolean },
+    ) => {
+      const useApiQuickFilter = Boolean(opts?.filterQuery) && !opts?.clientQuickFilter;
       const data = await todoistApi.fetchTasks({
-        projectId: opts?.filterQuery ? undefined : projectId,
+        projectId: useApiQuickFilter ? undefined : projectId,
         sectionId: opts?.sectionId,
         label: opts?.label,
-        filterQuery: opts?.filterQuery,
+        filterQuery: useApiQuickFilter ? opts?.filterQuery : undefined,
         skipProjects: true,
         includeCompleted: false,
       });
@@ -438,6 +443,7 @@ export function FilaPage() {
     async (opts?: { silent?: boolean }) => {
       const id = selectedProjectId;
       const filterQ = filterQueryFor(quickFilter);
+      const clientQuickFilter = Boolean(onlyMyTasks && filterQ);
       if (!id && !filterQ) return;
       if (!opts?.silent) setLoading(true);
       setError(null);
@@ -446,8 +452,9 @@ export function FilaPage() {
           sectionId: sectionFilter || undefined,
           label: labelFilter || undefined,
           filterQuery: filterQ,
+          clientQuickFilter,
         });
-        if (completedLoaded && id && !filterQ) {
+        if (completedLoaded && id && (!filterQ || clientQuickFilter)) {
           await loadCompletedTasks(id);
         }
       } catch (e) {
@@ -460,6 +467,7 @@ export function FilaPage() {
       completedLoaded,
       fetchActiveTasks,
       loadCompletedTasks,
+      onlyMyTasks,
       quickFilter,
       sectionFilter,
       labelFilter,
@@ -481,6 +489,7 @@ export function FilaPage() {
 
         const id = pickProjectId(list, projectId ?? selectedProjectId);
         const filterQ = filterQueryFor(quickFilter);
+        const clientQuickFilter = Boolean(onlyMyTasks && filterQ);
 
         if (!id && !filterQ) {
           setTasks([]);
@@ -492,6 +501,7 @@ export function FilaPage() {
           sectionId: sectionFilter || undefined,
           label: labelFilter || undefined,
           filterQuery: filterQ,
+          clientQuickFilter,
         });
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Erro ao carregar fila');
@@ -500,7 +510,7 @@ export function FilaPage() {
         setLoading(false);
       }
     },
-    [fetchActiveTasks, loadMeta, quickFilter, sectionFilter, labelFilter, selectedProjectId],
+    [fetchActiveTasks, loadMeta, onlyMyTasks, quickFilter, sectionFilter, labelFilter, selectedProjectId],
   );
 
   const skipFilterRefresh = useRef(true);
@@ -520,7 +530,7 @@ export function FilaPage() {
       void refreshTasksOnly();
     }, 280);
     return () => window.clearTimeout(timer);
-  }, [sectionFilter, labelFilter, quickFilter, projects.length, refreshTasksOnly]);
+  }, [sectionFilter, labelFilter, quickFilter, onlyMyTasks, projects.length, refreshTasksOnly]);
 
   useEffect(() => {
     if (!completedOpen || !selectedProjectId || completedLoaded) return;
@@ -677,13 +687,21 @@ export function FilaPage() {
     [onlyMyTasks, myHub, assigneeOptions],
   );
 
+  const filterByQuick = useCallback(
+    (list: TodoistTask[]) => {
+      if (!quickFilter || !onlyMyTasks) return list;
+      return list.filter((t) => taskMatchesFilaQuickFilter(t, quickFilter));
+    },
+    [quickFilter, onlyMyTasks],
+  );
+
   const pending = useMemo(
-    () => filterByAssignee(tasks.filter((t) => !t.is_completed)),
-    [tasks, filterByAssignee],
+    () => filterByQuick(filterByAssignee(tasks.filter((t) => !t.is_completed))),
+    [tasks, filterByAssignee, filterByQuick],
   );
   const done = useMemo(
-    () => filterByAssignee(tasks.filter((t) => t.is_completed)),
-    [tasks, filterByAssignee],
+    () => filterByQuick(filterByAssignee(tasks.filter((t) => t.is_completed))),
+    [tasks, filterByAssignee, filterByQuick],
   );
 
   useEffect(() => {
