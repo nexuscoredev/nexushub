@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { HubLogo } from '../components/HubLogo';
 import { NavIcon, type NavIconName } from '../components/NavIcon';
@@ -21,7 +20,6 @@ function userInitial(name: string | undefined, email: string | undefined): strin
 export function DashboardLayout() {
   const { profile, user, podeFinanceiroAgenda, podeGestao, signOut } = useAuth();
   const navigate = useNavigate();
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const navItems: NavItem[] = [
     { to: '/dashboard', label: 'Painel', icon: 'dashboard', show: true },
@@ -47,16 +45,6 @@ export function DashboardLayout() {
           <div className={styles.commandGlow} aria-hidden />
 
           <div className={styles.commandTop}>
-            <button
-              type="button"
-              className={`btn-ghost ${styles.menuToggle}`}
-              onClick={() => setMenuOpen((o) => !o)}
-              aria-expanded={menuOpen}
-              aria-label="Menu de navegação"
-            >
-              {menuOpen ? <NavIcon name="close" className={styles.menuIcon} /> : <NavIcon name="menu" className={styles.menuIcon} />}
-            </button>
-
             <div className={styles.brandCenter}>
               <HubLogo size="sm" showSubtitle={false} />
             </div>
@@ -71,10 +59,7 @@ export function DashboardLayout() {
             </div>
           </div>
 
-          <nav
-            className={`${styles.commandDock} ${menuOpen ? styles.commandDockOpen : ''}`}
-            aria-label="Navegação principal"
-          >
+          <nav className={styles.commandDock} aria-label="Navegação principal">
             <div className={styles.dockTrack}>
               {visibleNav.map((item) => (
                 <NavLink
@@ -83,7 +68,6 @@ export function DashboardLayout() {
                   className={({ isActive }) =>
                     `${styles.dockLink} ${isActive ? styles.dockLinkActive : ''}`
                   }
-                  onClick={() => setMenuOpen(false)}
                 >
                   <NavIcon name={item.icon} className={styles.dockIcon} />
                   <span className={styles.dockLabel}>{item.label}</span>

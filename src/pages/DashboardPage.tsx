@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { PageHeader } from '../components/PageHeader';
 import { SystemCard } from '../components/SystemCard';
 import { useAuth } from '../contexts/AuthContext';
@@ -23,17 +22,6 @@ export function DashboardPage() {
         else setSystems((data ?? []) as HubSystem[]);
       });
   }, []);
-
-  const shortcuts = [
-    { to: '/sistemas', label: 'Sistemas integrados' },
-    { to: '/fila', label: 'Fila operacional' },
-    ...(podeFinanceiroAgenda
-      ? [
-          { to: '/financeiro', label: 'Financeiro' },
-          { to: '/agenda', label: 'Agenda' },
-        ]
-      : []),
-  ];
 
   return (
     <div>
@@ -62,15 +50,6 @@ export function DashboardPage() {
             {podeFinanceiroAgenda ? 'Sim' : 'Não'}
           </div>
         </div>
-      </div>
-
-      <h2 className="section-heading">Atalhos</h2>
-      <div className="link-grid">
-        {shortcuts.map((s) => (
-          <Link key={s.to} to={s.to} className="btn-ghost">
-            {s.label}
-          </Link>
-        ))}
       </div>
 
       <h2 className="section-heading">Produtos NEXUS</h2>
