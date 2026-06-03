@@ -67,9 +67,4 @@
   .kpi-grid {
     grid-template-columns: minmax(0, 1fr);
   }
-
-  .btn-primary {
-    width: 100%;
-    max-width: 100%;
-  }
 }

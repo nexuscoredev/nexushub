@@ -229,6 +229,8 @@ textarea {
   font-size: 1.5rem;
   font-weight: 600;
   letter-spacing: 0.02em;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .page-title {
@@ -304,6 +306,11 @@ textarea {
 .table-wrap {
   overflow-x: auto;
   border-radius: var(--radius-sm);
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-wrap > table.data-table {
+  min-width: 36rem;
 }
 
 table.data-table {

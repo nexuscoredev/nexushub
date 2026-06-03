@@ -794,7 +794,7 @@ export function FilaPage() {
                   </div>
                   <button
                     type="button"
-                    className={`btn-ghost ${styles.detailClose}`}
+                    className={styles.detailClose}
                     onClick={closeDetail}
                     aria-label="Fechar detalhes"
                   >
