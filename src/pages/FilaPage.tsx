@@ -295,6 +295,7 @@ export function FilaPage() {
   const handleProjectChange = (projectId: string) => {
     setSectionFilter('');
     setQuickFilter('');
+    setNewSectionId('');
     void refresh(projectId);
   };
 
@@ -309,6 +310,10 @@ export function FilaPage() {
 
   const handleAddTask = async () => {
     if (!newTaskTitle.trim()) return;
+    if (!selectedProjectId) {
+      setError('Selecione um cliente antes de adicionar a tarefa.');
+      return;
+    }
     const assignee = newAssigneeHub
       ? assigneeOptions.find((o) => o.hub === newAssigneeHub)
       : undefined;
@@ -491,6 +496,14 @@ export function FilaPage() {
       {viewTab === 'tasks' && (
         <>
           <div className={`card ${styles.addBar}`}>
+            {projects.length > 0 && (
+              <ProjectSelector
+                projects={projects}
+                value={selectedProjectId}
+                onChange={handleProjectChange}
+                disabled={loading || Boolean(quickFilter)}
+              />
+            )}
             <div className={styles.addRow}>
               <input
                 className={`input ${styles.addInput}`}
@@ -582,14 +595,6 @@ export function FilaPage() {
           </div>
 
           <div className={styles.filters}>
-            {projects.length > 0 && (
-              <ProjectSelector
-                projects={projects}
-                value={selectedProjectId}
-                onChange={handleProjectChange}
-                disabled={loading || Boolean(quickFilter)}
-              />
-            )}
             <div className={styles.chipRow}>
               {QUICK_FILTERS.map((f) => (
                 <Chip

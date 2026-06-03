@@ -21,7 +21,8 @@ export interface AssigneeOption extends TeamAssignee {
   uid: string | null;
 }
 
-function namesMatch(todoistFullName: string, expected: string): boolean {
+function namesMatch(todoistFullName: string | undefined | null, expected: string): boolean {
+  if (!todoistFullName) return false;
   const a = todoistFullName.trim().toLowerCase();
   const b = expected.trim().toLowerCase();
   return a === b || a.includes(b) || b.includes(a);
