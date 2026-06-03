@@ -204,6 +204,19 @@
   padding-left: 0.3rem;
 }
 
+.dateChipWrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.hiddenDateInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .chipUnavailable {
   opacity: 0.45;
 }

@@ -145,6 +145,28 @@ export function formatTodoistDueDisplay(due?: TodoistDue | null): string | null 
 
 export type TodoistDuePreset = '' | 'today' | 'tomorrow';
 
+const MONTHS_PT = [
+  'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+  'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
+];
+
+/** Texto de prazo para Quick Add / due_string (ex.: "dia 25 de junho"). */
+export function isoDateToTodoistDuePt(iso: string): string {
+  const [y, m, d] = iso.split('-').map(Number);
+  if (!y || !m || !d) return iso;
+  const month = MONTHS_PT[m - 1];
+  if (!month) return iso;
+  const yearSuffix = y !== new Date().getFullYear() ? ` de ${y}` : '';
+  return `dia ${d} de ${month}${yearSuffix}`;
+}
+
+/** Rótulo curto para chip de data (ex.: "25 jun"). */
+export function formatDueChipLabel(iso: string): string {
+  const d = new Date(`${iso}T12:00:00`);
+  if (Number.isNaN(d.getTime())) return 'Data';
+  return d.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }).replace('.', '');
+}
+
 /** Corpo para criar/atualizar prazo na API (português + due_lang). */
 export function todoistDuePresetToApi(
   preset: TodoistDuePreset,

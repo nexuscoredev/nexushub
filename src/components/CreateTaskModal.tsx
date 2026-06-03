@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTeamAvatarMap } from '../hooks/useTeamAvatarMap';
 import { NavIcon } from './NavIcon';
 import { ProjectSelector } from './ProjectSelector';
@@ -6,7 +6,7 @@ import { UserAvatar } from './UserAvatar';
 import type { AssigneeHub, AssigneeOption } from '../lib/todoistAssignees';
 import { TEAM_ASSIGNEES } from '../lib/todoistAssignees';
 import * as todoistApi from '../lib/todoistApi';
-import { type TodoistDuePreset } from '../lib/todoistDuePt';
+import { formatDueChipLabel, type TodoistDuePreset } from '../lib/todoistDuePt';
 import { buildQuickAddText } from '../lib/todoistQuickAdd';
 import type { TodoistLabel, TodoistProject, TodoistSection } from '../types/todoist';
 import styles from './CreateTaskModal.module.css';
@@ -97,9 +97,11 @@ export function CreateTaskModal({
   onCreated,
 }: CreateTaskModalProps) {
   const teamAvatars = useTeamAvatarMap();
+  const customDueInputRef = useRef<HTMLInputElement>(null);
   const [projectId, setProjectId] = useState(defaultProjectId);
   const [title, setTitle] = useState('');
   const [due, setDue] = useState<DuePreset>('');
+  const [customDueDate, setCustomDueDate] = useState('');
   const [priority, setPriority] = useState(4);
   const [sectionId, setSectionId] = useState('');
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
@@ -113,6 +115,7 @@ export function CreateTaskModal({
   const resetForm = useCallback(() => {
     setTitle('');
     setDue('');
+    setCustomDueDate('');
     setPriority(4);
     setSectionId('');
     setSelectedLabels([]);
@@ -193,7 +196,8 @@ export function CreateTaskModal({
       sectionName: section?.name,
       labels: selectedLabels,
       priorityHub: priority,
-      duePreset: due,
+      duePreset: due || undefined,
+      dueDateIso: !due && customDueDate ? customDueDate : undefined,
       assigneeTodoistName: assignee?.todoistName,
     });
 
@@ -294,10 +298,41 @@ export function CreateTaskModal({
             <span className={styles.fieldLabel}>Prazo</span>
             <div className={styles.chipRow}>
               {DUE_PRESETS.map((d) => (
-                <ModalChip key={d.id || 'none'} active={due === d.id} onClick={() => setDue(d.id)}>
+                <ModalChip
+                  key={d.id || 'none'}
+                  active={due === d.id && !customDueDate}
+                  onClick={() => {
+                    setDue(d.id);
+                    setCustomDueDate('');
+                  }}
+                >
                   {d.label}
                 </ModalChip>
               ))}
+              <span className={styles.dateChipWrap}>
+                <ModalChip
+                  active={Boolean(customDueDate)}
+                  onClick={() => {
+                    setDue('');
+                    customDueInputRef.current?.showPicker?.();
+                    customDueInputRef.current?.focus();
+                  }}
+                  title="Escolher data específica"
+                >
+                  {customDueDate ? formatDueChipLabel(customDueDate) : 'Data'}
+                </ModalChip>
+                <input
+                  ref={customDueInputRef}
+                  type="date"
+                  className={styles.hiddenDateInput}
+                  value={customDueDate}
+                  aria-label="Data do prazo"
+                  onChange={(e) => {
+                    setCustomDueDate(e.target.value);
+                    setDue('');
+                  }}
+                />
+              </span>
             </div>
           </div>
 
