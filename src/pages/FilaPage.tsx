@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { PageHeader } from '../components/PageHeader';
+import { ProjectSelector } from '../components/ProjectSelector';
 import * as todoistApi from '../lib/todoistApi';
 import type { AssigneeHub, AssigneeOption } from '../lib/todoistAssignees';
 import { TEAM_ASSIGNEES } from '../lib/todoistAssignees';
+import { matchProjectToSystem, sortProjectsByClient } from '../lib/systemLogos';
 import type {
   TodoistComment,
   TodoistLabel,
@@ -45,7 +47,9 @@ function pickProjectId(list: TodoistProject[], preferred?: string): string {
   if (preferred && list.some((p) => p.id === preferred)) return preferred;
   const stored = localStorage.getItem(PROJECT_STORAGE_KEY);
   if (stored && list.some((p) => p.id === stored)) return stored;
-  return list[0]?.id ?? '';
+  const sorted = sortProjectsByClient(list);
+  const firstClient = sorted.find((p) => matchProjectToSystem(p.name));
+  return firstClient?.id ?? sorted[0]?.id ?? '';
 }
 
 function priorityClass(priority: number): string {
@@ -565,19 +569,12 @@ export function FilaPage() {
 
           <div className={styles.filters}>
             {projects.length > 0 && (
-              <select
-                className={`input ${styles.projectSelect}`}
+              <ProjectSelector
+                projects={projects}
                 value={selectedProjectId}
-                onChange={(e) => handleProjectChange(e.target.value)}
+                onChange={handleProjectChange}
                 disabled={loading || Boolean(quickFilter)}
-                aria-label="Projeto"
-              >
-                {projects.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
+              />
             )}
             <div className={styles.chipRow}>
               {QUICK_FILTERS.map((f) => (
