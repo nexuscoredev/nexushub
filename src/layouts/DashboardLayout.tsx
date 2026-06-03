@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { HubLogo } from '../components/HubLogo';
+import { NovidadesSparkIcon } from '../components/NovidadesSparkIcon';
 import { NavIcon, type NavIconName } from '../components/NavIcon';
 import { UserAvatar } from '../components/UserAvatar';
 import { TechShell } from '../components/TechShell';
@@ -121,9 +122,7 @@ export function DashboardLayout() {
                 aria-label="Novidades"
                 title="Novidades"
               >
-                <span className={styles.novidadesEmoji} aria-hidden>
-                  ✨
-                </span>
+                <NovidadesSparkIcon className={styles.novidadesIcon} />
                 {novidadesBadge && <span className={styles.novidadesBadge} aria-hidden />}
               </button>
               <NavLink
@@ -203,9 +202,7 @@ export function DashboardLayout() {
                   aria-label="Novidades"
                   title="Novidades"
                 >
-                  <span className={styles.novidadesEmoji} aria-hidden>
-                    ✨
-                  </span>
+                  <NovidadesSparkIcon className={styles.novidadesIcon} />
                   {novidadesBadge && <span className={styles.mobileNovidadesDot} aria-hidden />}
                 </button>
                 <NavLink

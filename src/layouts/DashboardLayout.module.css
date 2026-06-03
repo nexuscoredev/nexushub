@@ -97,9 +97,16 @@
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-.novidadesEmoji {
-  font-size: 1.1rem;
-  line-height: 1;
+.novidadesIcon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.28));
+  transition: filter 0.15s ease;
+}
+
+.novidadesBtn:hover .novidadesIcon {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.45));
 }
 
 .novidadesBadge {
