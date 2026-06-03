@@ -13,8 +13,7 @@ import styles from './CreateTaskModal.module.css';
 
 type DuePreset = TodoistDuePreset;
 
-const DUE_PRESETS: { id: DuePreset; label: string }[] = [
-  { id: '', label: 'Sem prazo' },
+const DUE_PRESETS: { id: Exclude<DuePreset, ''>; label: string }[] = [
   { id: 'today', label: 'Hoje' },
   { id: 'tomorrow', label: 'Amanhã' },
 ];
