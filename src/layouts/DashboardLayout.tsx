@@ -118,11 +118,12 @@ export function DashboardLayout() {
                 type="button"
                 className={`btn-ghost ${styles.novidadesBtn}`}
                 onClick={openNovidades}
-                aria-label="Ver novidades do Hub"
+                aria-label="Novidades"
                 title="Novidades"
               >
-                <NavIcon name="sparkles" className={styles.novidadesIcon} />
-                <span className={styles.novidadesLabel}>Novidades</span>
+                <span className={styles.novidadesEmoji} aria-hidden>
+                  ✨
+                </span>
                 {novidadesBadge && <span className={styles.novidadesBadge} aria-hidden />}
               </button>
               <NavLink
@@ -194,14 +195,17 @@ export function DashboardLayout() {
               <div className={styles.mobileDrawerFoot}>
                 <button
                   type="button"
-                  className={styles.mobileFootLink}
+                  className={`${styles.mobileFootLink} ${styles.mobileNovidadesBtn}`}
                   onClick={() => {
                     closeMenu();
                     openNovidades();
                   }}
+                  aria-label="Novidades"
+                  title="Novidades"
                 >
-                  <NavIcon name="sparkles" className={styles.mobileNavIcon} />
-                  <span>Novidades</span>
+                  <span className={styles.novidadesEmoji} aria-hidden>
+                    ✨
+                  </span>
                   {novidadesBadge && <span className={styles.mobileNovidadesDot} aria-hidden />}
                 </button>
                 <NavLink
