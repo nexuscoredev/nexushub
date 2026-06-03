@@ -58,6 +58,9 @@ export async function fetchTasks(opts?: {
   sectionId?: string;
   label?: string;
   filterQuery?: string;
+  includeCompleted?: boolean;
+  completedOnly?: boolean;
+  skipProjects?: boolean;
 }): Promise<{
   tasks: TodoistTask[];
   projects: TodoistProject[];
@@ -71,16 +74,29 @@ export async function fetchTasks(opts?: {
       sectionId: opts?.sectionId,
       label: opts?.label,
       filterQuery: opts?.filterQuery,
+      includeCompleted: opts?.includeCompleted ? '1' : undefined,
+      completedOnly: opts?.completedOnly ? '1' : undefined,
+      skipProjects: opts?.skipProjects ? '1' : undefined,
     })}`,
   );
   const body = await parseJson<{
     tasks: TodoistTask[];
-    projects: TodoistProject[];
+    projects?: TodoistProject[];
     projectId: string | null;
     projectName: string | null;
     assigneeOptions?: AssigneeOption[];
   }>(res);
-  return { ...body, assigneeOptions: body.assigneeOptions ?? [] };
+  return {
+    ...body,
+    projects: body.projects ?? [],
+    assigneeOptions: body.assigneeOptions ?? [],
+  };
+}
+
+export async function fetchProjectAssignees(projectId: string): Promise<AssigneeOption[]> {
+  const res = await fetch(`/api/todoist/projects/${projectId}?assignees=1`);
+  const body = await parseJson<{ assigneeOptions: AssigneeOption[] }>(res);
+  return body.assigneeOptions ?? [];
 }
 
 export async function fetchTask(taskId: string): Promise<TodoistTask> {

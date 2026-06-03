@@ -121,14 +121,12 @@ export function CreateTaskModal({
     if (!pid) return;
     setLoadingMeta(true);
     try {
-      const [sectionsData, taskMeta] = await Promise.all([
+      const [sectionsData, assignees] = await Promise.all([
         todoistApi.fetchSections(pid),
-        todoistApi.fetchTasks({ projectId: pid }),
+        todoistApi.fetchProjectAssignees(pid),
       ]);
       setSections(sectionsData);
-      setAssigneeOptions(
-        taskMeta.assigneeOptions.length ? taskMeta.assigneeOptions : defaultAssigneeOptions(),
-      );
+      setAssigneeOptions(assignees.length ? assignees : defaultAssigneeOptions());
     } catch {
       setSections([]);
       setAssigneeOptions(defaultAssigneeOptions());

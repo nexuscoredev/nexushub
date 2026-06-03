@@ -1,8 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import {
+  buildAssigneeOptions,
   getTodoistToken,
   todoistArchiveProject,
   todoistDeleteProject,
+  todoistFetchCollaborators,
   todoistGetProject,
   todoistUnarchiveProject,
   todoistUpdateProject,
@@ -21,6 +23,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     if (req.method === 'GET') {
+      if (req.query.assignees === '1' || req.query.assignees === 'true') {
+        let assigneeOptions = buildAssigneeOptions([]);
+        try {
+          const collaborators = await todoistFetchCollaborators(projectId);
+          assigneeOptions = buildAssigneeOptions(collaborators);
+        } catch {
+          assigneeOptions = buildAssigneeOptions([]);
+        }
+        return res.status(200).json({ assigneeOptions });
+      }
       const project = await todoistGetProject(projectId);
       return res.status(200).json({ project });
     }

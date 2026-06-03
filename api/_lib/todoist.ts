@@ -521,6 +521,25 @@ export async function todoistFilterTasks(
   return items.map((t) => mapTodoistTask(t, false, collaborators));
 }
 
+function buildCompletedRangeQuery(
+  projectId?: string,
+  sectionId?: string,
+  days = 30,
+): Record<string, string | number | undefined> {
+  const until = new Date();
+  until.setUTCDate(until.getUTCDate() + 1);
+  const since = new Date();
+  since.setUTCDate(since.getUTCDate() - days);
+  const completedQuery: Record<string, string | number | undefined> = {
+    since: since.toISOString(),
+    until: until.toISOString(),
+    limit: 200,
+  };
+  if (projectId) completedQuery.project_id = projectId;
+  if (sectionId) completedQuery.section_id = sectionId;
+  return completedQuery;
+}
+
 export async function todoistFetchTasks(
   opts?: {
     projectId?: string;
@@ -528,6 +547,11 @@ export async function todoistFetchTasks(
     label?: string;
     filterQuery?: string;
     filterLang?: string;
+    /** Busca concluídas (padrão: só ativas — bem mais rápido). */
+    includeCompleted?: boolean;
+    /** Apenas tarefas concluídas (carregamento sob demanda). */
+    completedOnly?: boolean;
+    completedDays?: number;
   },
   collaborators: TodoistCollaborator[] = [],
 ): Promise<TodoistTaskRaw[]> {
@@ -540,26 +564,32 @@ export async function todoistFetchTasks(
   if (opts?.sectionId) query.section_id = opts.sectionId;
   if (opts?.label) query.label = opts.label;
 
-  const active = await todoistFetchAll<TodoistTaskV1>('/tasks', query);
+  const completedDays = opts?.completedDays ?? 30;
+
+  if (opts?.completedOnly) {
+    const completed = await todoistFetchAll<TodoistTaskV1>(
+      '/tasks/completed/by_completion_date',
+      buildCompletedRangeQuery(opts.projectId, opts.sectionId, completedDays),
+    );
+    return completed.map((t) => mapTodoistTask(t, true, collaborators));
+  }
+
+  const activePromise = todoistFetchAll<TodoistTaskV1>('/tasks', query);
+
+  if (!opts?.includeCompleted) {
+    const active = await activePromise;
+    return active.map((t) => mapTodoistTask(t, false, collaborators));
+  }
+
+  const [active, completed] = await Promise.all([
+    activePromise,
+    todoistFetchAll<TodoistTaskV1>(
+      '/tasks/completed/by_completion_date',
+      buildCompletedRangeQuery(opts.projectId, opts.sectionId, completedDays),
+    ),
+  ]);
+
   const activeMapped = active.map((t) => mapTodoistTask(t, false, collaborators));
-
-  const until = new Date();
-  until.setUTCDate(until.getUTCDate() + 1);
-  const since = new Date();
-  since.setUTCDate(since.getUTCDate() - 90);
-
-  const completedQuery: Record<string, string | number | undefined> = {
-    since: since.toISOString(),
-    until: until.toISOString(),
-    limit: 200,
-  };
-  if (opts?.projectId) completedQuery.project_id = opts.projectId;
-  if (opts?.sectionId) completedQuery.section_id = opts.sectionId;
-
-  const completed = await todoistFetchAll<TodoistTaskV1>(
-    '/tasks/completed/by_completion_date',
-    completedQuery,
-  );
   const completedMapped = completed.map((t) => mapTodoistTask(t, true, collaborators));
 
   const byId = new Map<string, TodoistTaskRaw>();

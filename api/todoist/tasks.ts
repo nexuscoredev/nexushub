@@ -30,11 +30,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const sectionId = queryString(req.query.sectionId);
       const label = queryString(req.query.label);
       const filterQuery = queryString(req.query.filterQuery);
+      const includeCompleted =
+        req.query.includeCompleted === '1' || req.query.includeCompleted === 'true';
+      const completedOnly =
+        req.query.completedOnly === '1' || req.query.completedOnly === 'true';
+      const skipProjects = req.query.skipProjects === '1' || req.query.skipProjects === 'true';
       const projectId = queryProjectId ?? process.env.TODOIST_PROJECT_ID;
       let projectName: string | null = null;
       let filterProjectId = projectId;
 
-      const projects = await todoistFetchProjects();
+      const projects = skipProjects ? [] : await todoistFetchProjects();
 
       if (!filterProjectId && !filterQuery) {
         const first = projects[0];
@@ -60,6 +65,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           label,
           filterQuery,
           filterLang: filterQuery ? 'pt' : undefined,
+          includeCompleted,
+          completedOnly,
         },
         collaborators,
       );
@@ -68,7 +75,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         configured: true,
         projectId: filterProjectId ?? null,
         projectName,
-        projects,
+        projects: skipProjects ? undefined : projects,
         tasks,
         assigneeOptions: buildAssigneeOptions(collaborators),
       });

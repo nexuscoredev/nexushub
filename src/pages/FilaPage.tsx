@@ -1,4 +1,13 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react';
 import { CreateTaskModal } from '../components/CreateTaskModal';
 import { PromptNameModal } from '../components/PromptNameModal';
 import { NavIcon } from '../components/NavIcon';
@@ -170,7 +179,7 @@ interface TaskRowProps {
   onSelect: (task: TodoistTask) => void;
 }
 
-function TaskRow({
+const TaskRow = memo(function TaskRow({
   task,
   depth = 0,
   sectionName,
@@ -257,7 +266,7 @@ function TaskRow({
       </div>
     </li>
   );
-}
+});
 
 export function FilaPage() {
   const [viewTab, setViewTab] = useState<ViewTab>('tasks');
@@ -285,6 +294,11 @@ export function FilaPage() {
   const [advancedFiltersOpen, setAdvancedFiltersOpen] = useState(false);
   const [collapsedTasks, setCollapsedTasks] = useState<Set<string>>(() => new Set());
   const [createPromptKind, setCreatePromptKind] = useState<CreatePromptKind | null>(null);
+  const [completedLoaded, setCompletedLoaded] = useState(false);
+  const [loadingCompleted, setLoadingCompleted] = useState(false);
+
+  const projectsRef = useRef<TodoistProject[]>([]);
+  projectsRef.current = projects;
 
   const sectionMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -301,15 +315,12 @@ export function FilaPage() {
     setLabels(labelsData);
   }, []);
 
-  const loadTasks = useCallback(
-    async (projectId: string, opts?: { sectionId?: string; label?: string; filterQuery?: string }) => {
-      const data = await todoistApi.fetchTasks({
-        projectId: opts?.filterQuery ? undefined : projectId,
-        sectionId: opts?.sectionId,
-        label: opts?.label,
-        filterQuery: opts?.filterQuery,
-      });
-      setTasks(data.tasks);
+  const mergeTaskInList = useCallback((updated: TodoistTask) => {
+    setTasks((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
+  }, []);
+
+  const applyTasksResponse = useCallback(
+    (data: Awaited<ReturnType<typeof todoistApi.fetchTasks>>, projectId: string) => {
       setAssigneeOptions(
         data.assigneeOptions.length
           ? data.assigneeOptions
@@ -326,12 +337,92 @@ export function FilaPage() {
     [],
   );
 
+  const fetchActiveTasks = useCallback(
+    async (projectId: string, opts?: { sectionId?: string; label?: string; filterQuery?: string }) => {
+      const data = await todoistApi.fetchTasks({
+        projectId: opts?.filterQuery ? undefined : projectId,
+        sectionId: opts?.sectionId,
+        label: opts?.label,
+        filterQuery: opts?.filterQuery,
+        skipProjects: true,
+        includeCompleted: false,
+      });
+      applyTasksResponse(data, projectId);
+      setTasks((prev) => {
+        const done = prev.filter((t) => t.is_completed);
+        return [...data.tasks, ...done];
+      });
+      return data;
+    },
+    [applyTasksResponse],
+  );
+
+  const loadCompletedTasks = useCallback(
+    async (projectId: string) => {
+      if (!projectId) return;
+      setLoadingCompleted(true);
+      try {
+        const data = await todoistApi.fetchTasks({
+          projectId,
+          sectionId: sectionFilter || undefined,
+          label: labelFilter || undefined,
+          completedOnly: true,
+          skipProjects: true,
+        });
+        setTasks((prev) => {
+          const active = prev.filter((t) => !t.is_completed);
+          return [...active, ...data.tasks];
+        });
+        setCompletedLoaded(true);
+      } catch {
+        /* mantém lista atual */
+      } finally {
+        setLoadingCompleted(false);
+      }
+    },
+    [labelFilter, sectionFilter],
+  );
+
+  const refreshTasksOnly = useCallback(
+    async (opts?: { silent?: boolean }) => {
+      const id = selectedProjectId;
+      const filterQ = filterQueryFor(quickFilter);
+      if (!id && !filterQ) return;
+      if (!opts?.silent) setLoading(true);
+      setError(null);
+      try {
+        await fetchActiveTasks(id, {
+          sectionId: sectionFilter || undefined,
+          label: labelFilter || undefined,
+          filterQuery: filterQ,
+        });
+        if (completedLoaded && id && !filterQ) {
+          await loadCompletedTasks(id);
+        }
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Erro ao carregar tarefas');
+      } finally {
+        if (!opts?.silent) setLoading(false);
+      }
+    },
+    [
+      completedLoaded,
+      fetchActiveTasks,
+      loadCompletedTasks,
+      quickFilter,
+      sectionFilter,
+      labelFilter,
+      selectedProjectId,
+    ],
+  );
+
   const refresh = useCallback(
     async (projectId?: string) => {
       setLoading(true);
       setError(null);
+      setCompletedLoaded(false);
       try {
-        let list = projects;
+        let list = projectsRef.current;
         if (list.length === 0) {
           list = await todoistApi.fetchProjects();
           setProjects(list);
@@ -346,7 +437,7 @@ export function FilaPage() {
         }
 
         if (id) await loadMeta(id);
-        await loadTasks(id, {
+        await fetchActiveTasks(id, {
           sectionId: sectionFilter || undefined,
           label: labelFilter || undefined,
           filterQuery: filterQ,
@@ -358,7 +449,7 @@ export function FilaPage() {
         setLoading(false);
       }
     },
-    [labelFilter, loadMeta, loadTasks, projects, quickFilter, sectionFilter, selectedProjectId],
+    [fetchActiveTasks, loadMeta, quickFilter, sectionFilter, labelFilter, selectedProjectId],
   );
 
   const skipFilterRefresh = useRef(true);
@@ -373,8 +464,17 @@ export function FilaPage() {
       return;
     }
     if (projects.length === 0) return;
-    void refresh(selectedProjectId);
-  }, [sectionFilter, labelFilter, quickFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+    const timer = window.setTimeout(() => {
+      setCompletedLoaded(false);
+      void refreshTasksOnly();
+    }, 280);
+    return () => window.clearTimeout(timer);
+  }, [sectionFilter, labelFilter, quickFilter, projects.length, refreshTasksOnly]);
+
+  useEffect(() => {
+    if (!completedOpen || !selectedProjectId || completedLoaded) return;
+    void loadCompletedTasks(selectedProjectId);
+  }, [completedOpen, completedLoaded, loadCompletedTasks, selectedProjectId]);
 
   const loadComments = useCallback(async (taskId: string) => {
     try {
@@ -413,6 +513,8 @@ export function FilaPage() {
     setSectionFilter('');
     setQuickFilter('');
     setCollapsedTasks(new Set());
+    setCompletedLoaded(false);
+    setCompletedOpen(false);
     void refresh(projectId);
   };
 
@@ -420,18 +522,18 @@ export function FilaPage() {
     if (projectId !== selectedProjectId) {
       void refresh(projectId);
     } else {
-      void refresh(selectedProjectId);
+      void refreshTasksOnly();
     }
   };
 
   const toggleTask = async (task: TodoistTask) => {
     try {
       setError(null);
-      await todoistApi.updateTask(task.id, { is_completed: !task.is_completed });
+      const updated = await todoistApi.updateTask(task.id, { is_completed: !task.is_completed });
+      mergeTaskInList(updated);
       if (selectedTask?.id === task.id) {
-        setSelectedTask({ ...task, is_completed: !task.is_completed });
+        setSelectedTask(updated);
       }
-      await refresh(selectedProjectId);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao atualizar');
     }
@@ -443,7 +545,7 @@ export function FilaPage() {
       setError(null);
       const updated = await todoistApi.updateTask(selectedTask.id, patch);
       setSelectedTask(updated);
-      await refresh(selectedProjectId);
+      mergeTaskInList(updated);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao salvar');
     }
@@ -463,7 +565,7 @@ export function FilaPage() {
       await todoistApi.deleteTask(selectedTask.id);
       setSelectedTask(null);
       setComments([]);
-      await refresh(selectedProjectId);
+      setTasks((prev) => prev.filter((t) => t.id !== selectedTask.id));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao excluir');
     }
@@ -706,7 +808,7 @@ export function FilaPage() {
                 </ul>
               </section>
 
-              {done.length > 0 && (
+              {selectedProjectId && !quickFilter && (
                 <div className={styles.accordionWrap}>
                   <button
                     type="button"
@@ -717,7 +819,7 @@ export function FilaPage() {
                     <span>
                       Concluídas
                       <span className={styles.sectionCount} style={{ marginLeft: '0.5rem' }}>
-                        {done.length}
+                        {loadingCompleted && !completedLoaded ? '…' : done.length}
                       </span>
                     </span>
                     <NavIcon
