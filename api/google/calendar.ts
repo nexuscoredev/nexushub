@@ -56,6 +56,9 @@ async function fetchGoogleEvents(
   }));
 }
 
+const DEFAULT_EMBED_RAFAEL =
+  'https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FSao_Paulo&src=cmFmYWVsc2FudG9zY2F2YWxjYW50ZTIyQGdtYWlsLmNvbQ&src=MTFhZmM0NmFjMGFhNDgyZTJmNTk0OWZiNWJiODc5NDYxODJjZGU2MjFkZDRkYmUwOGU2Njc5ODY3MTRhNDM0MkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=MTQzZDUyZjBkMDE2YzdlNzY2YjI2MDkzN2E1YzYzMzFiYzc4ZTY3ZmQ4ZDM2Njg3YThiMTJhNTliNjg5NTNjYUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=NDY1ZWUxYjBjMjIyMDI5OTE4OGI3YmJkZjE0N2FmN2U0YmE2MzJkMGIzNmZiNWE4MTMwMGZhMDlkNTRlY2ZlOUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=ODZjMmFjYTU3MDNjZGU4M2VjNTEyMDJiOTYxZDI4YWM0YmUwNGRiOTRiNDlmZWU2Mzg0YzBmZTQxM2RiZTE2MEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y2xhc3Nyb29tMTEwNDAzMDgxMDgyOTM3MDY0Mjc5QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&src=ZGY4M2MwMjI3NDdiZmJlYTc2NDlmZGMwOWU2Mjg4MmQ5ZTdjNjU3MDRhMWEwNzIxZDgxODhiOWQxOGY0ZGQzOEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=ZTJlYzNhOTEzZWU5MmM0Mzk3ZTEzNjFmYzZhMGE3MWRlYjE5NTgzOThkODk1NDkzYjFhMmQ3NmJlNTU5NjcwYUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=ZmFtaWx5MDY4NTAxMjQ1OTU2NTE4MzQ0MjJAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&color=%23039be5&color=%237cb342&color=%23d81b60&color=%238e24aa&color=%237cb342&color=%23a79b8e&color=%23f4511e&color=%23f09300&color=%23f09300';
+
 const DEFAULT_EMBED_VINICIUS =
   'https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FFortaleza&showPrint=0&title=Vin%C3%ADcius%20-%20Google%20Agenda&hl=pt_BR&mode=MONTH&src=viniciussantosdemorais2002%40gmail.com&color=%23039be5';
 
@@ -64,10 +67,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const embedRafael = process.env.GOOGLE_CALENDAR_EMBED_RAFAEL ?? '';
+  const embedRafael = process.env.GOOGLE_CALENDAR_EMBED_RAFAEL ?? DEFAULT_EMBED_RAFAEL;
   const embedVinicius =
     process.env.GOOGLE_CALENDAR_EMBED_VINICIUS ?? DEFAULT_EMBED_VINICIUS;
-  const idRafael = process.env.GOOGLE_CALENDAR_ID_RAFAEL ?? 'rafael@nexustech.com';
+  const idRafael =
+    process.env.GOOGLE_CALENDAR_ID_RAFAEL ?? 'rafaelsantoscavalcante22@gmail.com';
   const idVinicius =
     process.env.GOOGLE_CALENDAR_ID_VINICIUS ?? 'viniciussantosdemorais2002@gmail.com';
   const view = (req.query.view as string) ?? 'combinado';
