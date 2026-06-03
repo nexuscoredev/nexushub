@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { PageHeader } from '../components/PageHeader';
 import * as todoistApi from '../lib/todoistApi';
 import type {
@@ -13,6 +13,31 @@ import styles from './FilaPage.module.css';
 const PROJECT_STORAGE_KEY = 'nexushub-todoist-project';
 
 type ViewTab = 'tasks' | 'manage';
+type QuickFilter = '' | 'today' | 'tomorrow' | 'overdue' | 'p1';
+type DuePreset = '' | 'today' | 'tomorrow';
+
+const QUICK_FILTERS: { id: QuickFilter; label: string }[] = [
+  { id: '', label: 'Todas' },
+  { id: 'today', label: 'Hoje' },
+  { id: 'tomorrow', label: 'Amanhã' },
+  { id: 'overdue', label: 'Atrasadas' },
+  { id: 'p1', label: 'Urgentes' },
+];
+
+const DUE_PRESETS: { id: DuePreset; label: string }[] = [
+  { id: '', label: 'Sem prazo' },
+  { id: 'today', label: 'Hoje' },
+  { id: 'tomorrow', label: 'Amanhã' },
+];
+
+const PRIORITIES = [
+  { value: 1, label: 'P1', title: 'Urgente' },
+  { value: 2, label: 'P2', title: 'Alta' },
+  { value: 3, label: 'P3', title: 'Média' },
+  { value: 4, label: 'P4', title: 'Normal' },
+] as const;
+
+const COMMENT_PRESETS = ['Ok', 'Em andamento', 'Bloqueado', 'Precisa revisão'];
 
 function pickProjectId(list: TodoistProject[], preferred?: string): string {
   if (preferred && list.some((p) => p.id === preferred)) return preferred;
@@ -33,6 +58,32 @@ function formatDue(task: TodoistTask): string | null {
   if (task.due?.date) return task.due.date;
   if (task.due?.datetime) return task.due.datetime;
   return null;
+}
+
+function filterQueryFor(id: QuickFilter): string | undefined {
+  if (!id) return undefined;
+  if (id === 'p1') return 'p1';
+  return id;
+}
+
+interface ChipProps {
+  active?: boolean;
+  onClick: () => void;
+  children: ReactNode;
+  title?: string;
+}
+
+function Chip({ active, onClick, children, title }: ChipProps) {
+  return (
+    <button
+      type="button"
+      className={`${styles.chip} ${active ? styles.chipActive : ''}`}
+      onClick={onClick}
+      title={title}
+    >
+      {children}
+    </button>
+  );
 }
 
 interface TaskRowProps {
@@ -102,38 +153,19 @@ export function FilaPage() {
   const [projectName, setProjectName] = useState<string | null>(null);
   const [sectionFilter, setSectionFilter] = useState('');
   const [labelFilter, setLabelFilter] = useState('');
-  const [filterQuery, setFilterQuery] = useState('');
-  const [appliedFilterQuery, setAppliedFilterQuery] = useState('');
-  const [quickAddText, setQuickAddText] = useState('');
+  const [quickFilter, setQuickFilter] = useState<QuickFilter>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedTask, setSelectedTask] = useState<TodoistTask | null>(null);
   const [comments, setComments] = useState<TodoistComment[]>([]);
-  const [newComment, setNewComment] = useState('');
-  const [manageOpen, setManageOpen] = useState(false);
+  const [renamingTitle, setRenamingTitle] = useState(false);
+  const [titleDraft, setTitleDraft] = useState('');
 
-  const [createForm, setCreateForm] = useState({
-    content: '',
-    description: '',
-    due_date: '',
-    priority: 4,
-    section_id: '',
-    labels: [] as string[],
-  });
-
-  const [editForm, setEditForm] = useState({
-    content: '',
-    description: '',
-    due_date: '',
-    priority: 4,
-    section_id: '',
-    labels: [] as string[],
-  });
-
-  const [newProjectName, setNewProjectName] = useState('');
-  const [newSectionName, setNewSectionName] = useState('');
-  const [newLabelName, setNewLabelName] = useState('');
+  const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [newDue, setNewDue] = useState<DuePreset>('');
+  const [newPriority, setNewPriority] = useState(4);
+  const [newSectionId, setNewSectionId] = useState('');
+  const [newLabels, setNewLabels] = useState<string[]>([]);
 
   const sectionMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -182,7 +214,9 @@ export function FilaPage() {
         }
 
         const id = pickProjectId(list, projectId ?? selectedProjectId);
-        if (!id && !appliedFilterQuery) {
+        const filterQ = filterQueryFor(quickFilter);
+
+        if (!id && !filterQ) {
           setTasks([]);
           return;
         }
@@ -191,7 +225,7 @@ export function FilaPage() {
         await loadTasks(id, {
           sectionId: sectionFilter || undefined,
           label: labelFilter || undefined,
-          filterQuery: appliedFilterQuery || undefined,
+          filterQuery: filterQ,
         });
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Erro ao carregar fila');
@@ -200,25 +234,27 @@ export function FilaPage() {
         setLoading(false);
       }
     },
-    [
-      appliedFilterQuery,
-      labelFilter,
-      loadMeta,
-      loadTasks,
-      projects,
-      sectionFilter,
-      selectedProjectId,
-    ],
+    [labelFilter, loadMeta, loadTasks, projects, quickFilter, sectionFilter, selectedProjectId],
   );
+
+  const skipFilterRefresh = useRef(true);
 
   useEffect(() => {
     void refresh();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (skipFilterRefresh.current) {
+      skipFilterRefresh.current = false;
+      return;
+    }
+    if (projects.length === 0) return;
+    void refresh(selectedProjectId);
+  }, [sectionFilter, labelFilter, quickFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const loadComments = useCallback(async (taskId: string) => {
     try {
-      const list = await todoistApi.fetchComments(taskId);
-      setComments(list);
+      setComments(await todoistApi.fetchComments(taskId));
     } catch {
       setComments([]);
     }
@@ -227,14 +263,8 @@ export function FilaPage() {
   const selectTask = useCallback(
     async (task: TodoistTask) => {
       setSelectedTask(task);
-      setEditForm({
-        content: task.content,
-        description: task.description ?? '',
-        due_date: task.due?.date ?? '',
-        priority: task.priority,
-        section_id: task.section_id ?? '',
-        labels: task.labels ?? [],
-      });
+      setTitleDraft(task.content);
+      setRenamingTitle(false);
       await loadComments(task.id);
     },
     [loadComments],
@@ -242,55 +272,34 @@ export function FilaPage() {
 
   const handleProjectChange = (projectId: string) => {
     setSectionFilter('');
-    setAppliedFilterQuery('');
-    setFilterQuery('');
+    setQuickFilter('');
     void refresh(projectId);
   };
 
-  const applyFilters = () => {
-    setAppliedFilterQuery(filterQuery.trim());
-    void refresh(selectedProjectId);
+  const resetNewTask = () => {
+    setNewTaskTitle('');
+    setNewDue('');
+    setNewPriority(4);
+    setNewSectionId('');
+    setNewLabels([]);
   };
 
-  const handleQuickAdd = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!quickAddText.trim()) return;
-    try {
-      setError(null);
-      await todoistApi.quickAddTask(quickAddText.trim());
-      setQuickAddText('');
-      await refresh(selectedProjectId);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao adicionar');
-    }
-  };
-
-  const handleCreateTask = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!createForm.content.trim()) return;
+  const handleAddTask = async () => {
+    if (!newTaskTitle.trim()) return;
     try {
       setError(null);
       await todoistApi.createTask({
-        content: createForm.content.trim(),
-        description: createForm.description.trim() || undefined,
+        content: newTaskTitle.trim(),
         project_id: selectedProjectId,
-        section_id: createForm.section_id || undefined,
-        labels: createForm.labels.length ? createForm.labels : undefined,
-        priority: createForm.priority,
-        due_date: createForm.due_date || undefined,
+        section_id: newSectionId || undefined,
+        labels: newLabels.length ? newLabels : undefined,
+        priority: newPriority,
+        due_string: newDue === 'today' ? 'today' : newDue === 'tomorrow' ? 'tomorrow' : undefined,
       });
-      setCreateForm({
-        content: '',
-        description: '',
-        due_date: '',
-        priority: 4,
-        section_id: '',
-        labels: [],
-      });
-      setShowCreateForm(false);
+      resetNewTask();
       await refresh(selectedProjectId);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao criar tarefa');
+      setError(err instanceof Error ? err.message : 'Erro ao adicionar');
     }
   };
 
@@ -307,23 +316,22 @@ export function FilaPage() {
     }
   };
 
-  const saveTaskEdit = async () => {
+  const patchSelected = async (patch: Parameters<typeof todoistApi.updateTask>[1]) => {
     if (!selectedTask) return;
     try {
       setError(null);
-      const updated = await todoistApi.updateTask(selectedTask.id, {
-        content: editForm.content.trim(),
-        description: editForm.description.trim(),
-        due_date: editForm.due_date || undefined,
-        priority: editForm.priority,
-        section_id: editForm.section_id || undefined,
-        labels: editForm.labels,
-      });
+      const updated = await todoistApi.updateTask(selectedTask.id, patch);
       setSelectedTask(updated);
       await refresh(selectedProjectId);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao salvar');
     }
+  };
+
+  const saveTitle = async () => {
+    if (!selectedTask || !titleDraft.trim()) return;
+    await patchSelected({ content: titleDraft.trim() });
+    setRenamingTitle(false);
   };
 
   const deleteSelectedTask = async () => {
@@ -340,111 +348,56 @@ export function FilaPage() {
     }
   };
 
-  const addComment = async () => {
-    if (!selectedTask || !newComment.trim()) return;
+  const addComment = async (text: string) => {
+    if (!selectedTask || !text.trim()) return;
     try {
       setError(null);
-      await todoistApi.createComment(selectedTask.id, newComment.trim());
-      setNewComment('');
+      await todoistApi.createComment(selectedTask.id, text.trim());
       await loadComments(selectedTask.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao comentar');
     }
   };
 
-  const handleCreateProject = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newProjectName.trim()) return;
+  const promptCreate = async (kind: 'project' | 'section' | 'label') => {
+    const labels: Record<typeof kind, string> = {
+      project: 'Nome do novo projeto',
+      section: 'Nome da nova seção',
+      label: 'Nome da nova etiqueta',
+    };
+    const name = window.prompt(labels[kind]);
+    if (!name?.trim()) return;
     try {
       setError(null);
-      await todoistApi.createProject(newProjectName.trim());
-      setNewProjectName('');
-      const list = await todoistApi.fetchProjects();
-      setProjects(list);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao criar projeto');
-    }
-  };
-
-  const handleCreateSection = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newSectionName.trim() || !selectedProjectId) return;
-    try {
-      setError(null);
-      await todoistApi.createSection(newSectionName.trim(), selectedProjectId);
-      setNewSectionName('');
-      await loadMeta(selectedProjectId);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao criar seção');
-    }
-  };
-
-  const handleCreateLabel = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newLabelName.trim()) return;
-    try {
-      setError(null);
-      await todoistApi.createLabel(newLabelName.trim());
-      setNewLabelName('');
-      setLabels(await todoistApi.fetchLabels());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao criar etiqueta');
-    }
-  };
-
-  const handleDeleteProject = async (project: TodoistProject) => {
-    if (!window.confirm(`Excluir projeto "${project.name}" e todas as tarefas?`)) return;
-    try {
-      setError(null);
-      await todoistApi.deleteProject(project.id);
-      const list = await todoistApi.fetchProjects();
-      setProjects(list);
-      if (selectedProjectId === project.id) {
-        await refresh(list[0]?.id);
+      if (kind === 'project') {
+        await todoistApi.createProject(name.trim());
+        setProjects(await todoistApi.fetchProjects());
+      } else if (kind === 'section') {
+        if (!selectedProjectId) return;
+        await todoistApi.createSection(name.trim(), selectedProjectId);
+        await loadMeta(selectedProjectId);
+      } else {
+        await todoistApi.createLabel(name.trim());
+        setLabels(await todoistApi.fetchLabels());
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao excluir projeto');
+      setError(err instanceof Error ? err.message : 'Erro ao criar');
     }
   };
 
-  const handleDeleteSection = async (section: TodoistSection) => {
-    if (!window.confirm(`Excluir seção "${section.name}"?`)) return;
-    try {
-      setError(null);
-      await todoistApi.deleteSection(section.id);
-      await loadMeta(selectedProjectId);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao excluir seção');
-    }
+  const toggleNewLabel = (name: string) => {
+    setNewLabels((prev) =>
+      prev.includes(name) ? prev.filter((l) => l !== name) : [...prev, name],
+    );
   };
 
-  const handleDeleteLabel = async (label: TodoistLabel) => {
-    if (!window.confirm(`Excluir etiqueta "${label.name}"?`)) return;
-    try {
-      setError(null);
-      await todoistApi.deleteLabel(label.id);
-      setLabels(await todoistApi.fetchLabels());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao excluir etiqueta');
-    }
-  };
-
-  const toggleCreateLabel = (name: string) => {
-    setCreateForm((prev) => ({
-      ...prev,
-      labels: prev.labels.includes(name)
-        ? prev.labels.filter((l) => l !== name)
-        : [...prev.labels, name],
-    }));
-  };
-
-  const toggleEditLabel = (name: string) => {
-    setEditForm((prev) => ({
-      ...prev,
-      labels: prev.labels.includes(name)
-        ? prev.labels.filter((l) => l !== name)
-        : [...prev.labels, name],
-    }));
+  const toggleSelectedLabel = async (name: string) => {
+    if (!selectedTask) return;
+    const current = selectedTask.labels ?? [];
+    const next = current.includes(name)
+      ? current.filter((l) => l !== name)
+      : [...current, name];
+    await patchSelected({ labels: next });
   };
 
   const pending = tasks.filter((t) => !t.is_completed);
@@ -455,11 +408,7 @@ export function FilaPage() {
       <PageHeader
         badge="Ops"
         title="Fila operacional"
-        subtitle={
-          projectName
-            ? `Projeto: ${projectName}`
-            : 'Tarefas da equipe via Todoist'
-        }
+        subtitle={projectName ? `Projeto: ${projectName}` : 'Tarefas da equipe via Todoist'}
         actions={
           <>
             <button type="button" className="btn-ghost" onClick={() => void refresh()}>
@@ -502,248 +451,144 @@ export function FilaPage() {
 
       {viewTab === 'tasks' && (
         <>
-          <div className={styles.toolbar}>
-            <div className={styles.toolbarRow}>
-              {projects.length > 0 && (
-                <div className={styles.field}>
-                  <label className="label" htmlFor="todoist-project">
-                    Projeto
-                  </label>
-                  <select
-                    id="todoist-project"
-                    className={`input ${styles.inputWide}`}
-                    value={selectedProjectId}
-                    onChange={(e) => handleProjectChange(e.target.value)}
-                    disabled={loading || Boolean(appliedFilterQuery)}
-                  >
-                    {projects.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-              <div className={styles.field}>
-                <label className="label" htmlFor="section-filter">
-                  Seção
-                </label>
-                <select
-                  id="section-filter"
-                  className={`input ${styles.inputWide}`}
-                  value={sectionFilter}
-                  onChange={(e) => setSectionFilter(e.target.value)}
-                  disabled={loading || Boolean(appliedFilterQuery)}
-                >
-                  <option value="">Todas</option>
-                  {sections.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className={styles.field}>
-                <label className="label" htmlFor="label-filter">
-                  Etiqueta
-                </label>
-                <select
-                  id="label-filter"
-                  className={`input ${styles.inputWide}`}
-                  value={labelFilter}
-                  onChange={(e) => setLabelFilter(e.target.value)}
-                  disabled={loading || Boolean(appliedFilterQuery)}
-                >
-                  <option value="">Todas</option>
-                  {labels.map((l) => (
-                    <option key={l.id} value={l.name}>
-                      @{l.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+          <div className={`card ${styles.addBar}`}>
+            <div className={styles.addRow}>
+              <input
+                className={`input ${styles.addInput}`}
+                placeholder="Nova tarefa…"
+                value={newTaskTitle}
+                onChange={(e) => setNewTaskTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') void handleAddTask();
+                }}
+              />
               <button
                 type="button"
                 className="btn-primary"
-                onClick={() => {
-                  setAppliedFilterQuery('');
-                  void refresh(selectedProjectId);
-                }}
-                disabled={loading}
+                disabled={!newTaskTitle.trim()}
+                onClick={() => void handleAddTask()}
               >
-                Filtrar
-              </button>
-            </div>
-
-            <div className={styles.toolbarRow}>
-              <div className={`${styles.field} ${styles.fieldGrow}`}>
-                <label className="label" htmlFor="filter-query">
-                  Filtro Todoist
-                </label>
-                <input
-                  id="filter-query"
-                  className={`input ${styles.inputWide}`}
-                  placeholder="ex: today, #Projeto & p1"
-                  value={filterQuery}
-                  onChange={(e) => setFilterQuery(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') applyFilters();
-                  }}
-                />
-              </div>
-              <button type="button" className="btn-ghost" onClick={applyFilters} disabled={loading}>
-                Aplicar filtro
-              </button>
-              {appliedFilterQuery && (
-                <button
-                  type="button"
-                  className="btn-ghost"
-                  onClick={() => {
-                    setFilterQuery('');
-                    setAppliedFilterQuery('');
-                    void refresh(selectedProjectId);
-                  }}
-                >
-                  Limpar filtro
-                </button>
-              )}
-            </div>
-
-            <form className={styles.toolbarRow} onSubmit={(e) => void handleQuickAdd(e)}>
-              <div className={`${styles.field} ${styles.fieldGrow}`}>
-                <label className="label" htmlFor="quick-add">
-                  Adição rápida
-                </label>
-                <input
-                  id="quick-add"
-                  className={`input ${styles.inputWide}`}
-                  placeholder="Comprar leite amanhã #Projeto @urgente p1"
-                  value={quickAddText}
-                  onChange={(e) => setQuickAddText(e.target.value)}
-                />
-              </div>
-              <button type="submit" className="btn-primary" disabled={!quickAddText.trim()}>
                 Adicionar
               </button>
-            </form>
-          </div>
-
-          <div className="card" style={{ marginBottom: '1rem' }}>
-            <button
-              type="button"
-              className={styles.accordionHeader}
-              onClick={() => setShowCreateForm((v) => !v)}
-            >
-              <span>Nova tarefa</span>
-              <span>{showCreateForm ? '−' : '+'}</span>
-            </button>
-            {showCreateForm && (
-              <form className={styles.accordionBody} onSubmit={(e) => void handleCreateTask(e)}>
-                <div className={styles.createFormGrid}>
-                  <div className={styles.field}>
-                    <label className="label" htmlFor="create-content">
-                      Título
-                    </label>
-                    <input
-                      id="create-content"
-                      className="input"
-                      required
-                      value={createForm.content}
-                      onChange={(e) =>
-                        setCreateForm((p) => ({ ...p, content: e.target.value }))
-                      }
-                    />
-                  </div>
-                  <div className={styles.field}>
-                    <label className="label" htmlFor="create-due">
-                      Vencimento
-                    </label>
-                    <input
-                      id="create-due"
-                      type="date"
-                      className="input"
-                      value={createForm.due_date}
-                      onChange={(e) =>
-                        setCreateForm((p) => ({ ...p, due_date: e.target.value }))
-                      }
-                    />
-                  </div>
-                  <div className={styles.field}>
-                    <label className="label" htmlFor="create-priority">
-                      Prioridade
-                    </label>
-                    <select
-                      id="create-priority"
-                      className="input"
-                      value={createForm.priority}
-                      onChange={(e) =>
-                        setCreateForm((p) => ({ ...p, priority: Number(e.target.value) }))
-                      }
-                    >
-                      <option value={1}>P1 — Urgente</option>
-                      <option value={2}>P2 — Alta</option>
-                      <option value={3}>P3 — Média</option>
-                      <option value={4}>P4 — Normal</option>
-                    </select>
-                  </div>
-                  <div className={styles.field}>
-                    <label className="label" htmlFor="create-section">
-                      Seção
-                    </label>
-                    <select
-                      id="create-section"
-                      className="input"
-                      value={createForm.section_id}
-                      onChange={(e) =>
-                        setCreateForm((p) => ({ ...p, section_id: e.target.value }))
-                      }
-                    >
-                      <option value="">Nenhuma</option>
-                      {sections.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {s.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className={styles.field}>
-                  <label className="label" htmlFor="create-desc">
-                    Descrição
-                  </label>
-                  <textarea
-                    id="create-desc"
-                    className="input"
-                    rows={2}
-                    value={createForm.description}
-                    onChange={(e) =>
-                      setCreateForm((p) => ({ ...p, description: e.target.value }))
-                    }
-                  />
-                </div>
-                {labels.length > 0 && (
-                  <div className={styles.field}>
-                    <span className="label">Etiquetas</span>
-                    <div className={styles.checkboxRow}>
-                      {labels.map((l) => (
-                        <label key={l.id} className={styles.checkboxLabel}>
-                          <input
-                            type="checkbox"
-                            checked={createForm.labels.includes(l.name)}
-                            onChange={() => toggleCreateLabel(l.name)}
-                          />
-                          @{l.name}
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                <button type="submit" className="btn-primary">
-                  Criar tarefa
-                </button>
-              </form>
+            </div>
+            <div className={styles.chipRow}>
+              <span className={styles.chipGroupLabel}>Prazo</span>
+              {DUE_PRESETS.map((d) => (
+                <Chip key={d.id || 'none'} active={newDue === d.id} onClick={() => setNewDue(d.id)}>
+                  {d.label}
+                </Chip>
+              ))}
+            </div>
+            <div className={styles.chipRow}>
+              <span className={styles.chipGroupLabel}>Prioridade</span>
+              {PRIORITIES.map((p) => (
+                <Chip
+                  key={p.value}
+                  active={newPriority === p.value}
+                  onClick={() => setNewPriority(p.value)}
+                  title={p.title}
+                >
+                  {p.label}
+                </Chip>
+              ))}
+            </div>
+            {sections.length > 0 && (
+              <div className={styles.chipRow}>
+                <span className={styles.chipGroupLabel}>Seção</span>
+                <Chip active={!newSectionId} onClick={() => setNewSectionId('')}>
+                  Nenhuma
+                </Chip>
+                {sections.map((s) => (
+                  <Chip
+                    key={s.id}
+                    active={newSectionId === s.id}
+                    onClick={() => setNewSectionId(s.id)}
+                  >
+                    {s.name}
+                  </Chip>
+                ))}
+              </div>
+            )}
+            {labels.length > 0 && (
+              <div className={styles.chipRow}>
+                <span className={styles.chipGroupLabel}>Etiquetas</span>
+                {labels.map((l) => (
+                  <Chip
+                    key={l.id}
+                    active={newLabels.includes(l.name)}
+                    onClick={() => toggleNewLabel(l.name)}
+                  >
+                    @{l.name}
+                  </Chip>
+                ))}
+              </div>
             )}
           </div>
+
+          <div className={styles.filters}>
+            {projects.length > 0 && (
+              <select
+                className={`input ${styles.projectSelect}`}
+                value={selectedProjectId}
+                onChange={(e) => handleProjectChange(e.target.value)}
+                disabled={loading || Boolean(quickFilter)}
+                aria-label="Projeto"
+              >
+                {projects.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            )}
+            <div className={styles.chipRow}>
+              {QUICK_FILTERS.map((f) => (
+                <Chip
+                  key={f.id || 'all'}
+                  active={quickFilter === f.id}
+                  onClick={() => setQuickFilter(f.id)}
+                >
+                  {f.label}
+                </Chip>
+              ))}
+            </div>
+          </div>
+
+          {sections.length > 0 && !quickFilter && (
+            <div className={styles.chipRow} style={{ marginBottom: '0.75rem' }}>
+              <span className={styles.chipGroupLabel}>Filtrar seção</span>
+              <Chip active={!sectionFilter} onClick={() => setSectionFilter('')}>
+                Todas
+              </Chip>
+              {sections.map((s) => (
+                <Chip
+                  key={s.id}
+                  active={sectionFilter === s.id}
+                  onClick={() => setSectionFilter(s.id)}
+                >
+                  {s.name}
+                </Chip>
+              ))}
+            </div>
+          )}
+
+          {labels.length > 0 && !quickFilter && (
+            <div className={styles.chipRow} style={{ marginBottom: '1rem' }}>
+              <span className={styles.chipGroupLabel}>Filtrar etiqueta</span>
+              <Chip active={!labelFilter} onClick={() => setLabelFilter('')}>
+                Todas
+              </Chip>
+              {labels.map((l) => (
+                <Chip
+                  key={l.id}
+                  active={labelFilter === l.name}
+                  onClick={() => setLabelFilter(labelFilter === l.name ? '' : l.name)}
+                >
+                  @{l.name}
+                </Chip>
+              ))}
+            </div>
+          )}
 
           {loading && <p style={{ color: 'var(--muted)' }}>Carregando tarefas…</p>}
 
@@ -789,130 +634,148 @@ export function FilaPage() {
 
             {selectedTask && (
               <aside className={`card ${styles.detailPanel}`}>
-                <h2 className={styles.detailTitle}>Detalhe da tarefa</h2>
-                <div className={styles.detailForm}>
-                  <div className={styles.field}>
-                    <label className="label" htmlFor="edit-content">
-                      Título
-                    </label>
-                    <input
-                      id="edit-content"
-                      className="input"
-                      value={editForm.content}
-                      onChange={(e) =>
-                        setEditForm((p) => ({ ...p, content: e.target.value }))
-                      }
-                    />
-                  </div>
-                  <div className={styles.field}>
-                    <label className="label" htmlFor="edit-desc">
-                      Descrição
-                    </label>
-                    <textarea
-                      id="edit-desc"
-                      className="input"
-                      rows={3}
-                      value={editForm.description}
-                      onChange={(e) =>
-                        setEditForm((p) => ({ ...p, description: e.target.value }))
-                      }
-                    />
-                  </div>
-                  <div className={styles.createFormGrid}>
-                    <div className={styles.field}>
-                      <label className="label" htmlFor="edit-due">
-                        Vencimento
-                      </label>
+                <div className={styles.detailHeader}>
+                  {renamingTitle ? (
+                    <div className={styles.renameRow}>
                       <input
-                        id="edit-due"
-                        type="date"
                         className="input"
-                        value={editForm.due_date}
-                        onChange={(e) =>
-                          setEditForm((p) => ({ ...p, due_date: e.target.value }))
-                        }
+                        value={titleDraft}
+                        onChange={(e) => setTitleDraft(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') void saveTitle();
+                          if (e.key === 'Escape') setRenamingTitle(false);
+                        }}
+                        autoFocus
                       />
+                      <button type="button" className="btn-primary" onClick={() => void saveTitle()}>
+                        Ok
+                      </button>
                     </div>
-                    <div className={styles.field}>
-                      <label className="label" htmlFor="edit-priority">
-                        Prioridade
-                      </label>
-                      <select
-                        id="edit-priority"
-                        className="input"
-                        value={editForm.priority}
-                        onChange={(e) =>
-                          setEditForm((p) => ({ ...p, priority: Number(e.target.value) }))
-                        }
+                  ) : (
+                    <>
+                      <h2 className={styles.detailTitle}>{selectedTask.content}</h2>
+                      <button
+                        type="button"
+                        className="btn-ghost"
+                        style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem' }}
+                        onClick={() => setRenamingTitle(true)}
                       >
-                        <option value={1}>P1</option>
-                        <option value={2}>P2</option>
-                        <option value={3}>P3</option>
-                        <option value={4}>P4</option>
-                      </select>
-                    </div>
-                    <div className={styles.field}>
-                      <label className="label" htmlFor="edit-section">
-                        Seção
-                      </label>
-                      <select
-                        id="edit-section"
-                        className="input"
-                        value={editForm.section_id}
-                        onChange={(e) =>
-                          setEditForm((p) => ({ ...p, section_id: e.target.value }))
-                        }
-                      >
-                        <option value="">Nenhuma</option>
-                        {sections.map((s) => (
-                          <option key={s.id} value={s.id}>
-                            {s.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                  {labels.length > 0 && (
-                    <div className={styles.field}>
-                      <span className="label">Etiquetas</span>
-                      <div className={styles.checkboxRow}>
-                        {labels.map((l) => (
-                          <label key={l.id} className={styles.checkboxLabel}>
-                            <input
-                              type="checkbox"
-                              checked={editForm.labels.includes(l.name)}
-                              onChange={() => toggleEditLabel(l.name)}
-                            />
-                            @{l.name}
-                          </label>
-                        ))}
-                      </div>
-                    </div>
+                        Renomear
+                      </button>
+                    </>
                   )}
-                  <div className={styles.detailActions}>
-                    <button type="button" className="btn-primary" onClick={() => void saveTaskEdit()}>
-                      Salvar
-                    </button>
-                    <button type="button" className="btn-ghost" onClick={() => setSelectedTask(null)}>
-                      Fechar
-                    </button>
-                    <a
-                      href={selectedTask.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-ghost"
-                    >
-                      Abrir no Todoist
-                    </a>
-                    <button
-                      type="button"
-                      className="btn-ghost"
-                      style={{ color: 'var(--danger)' }}
-                      onClick={() => void deleteSelectedTask()}
-                    >
-                      Excluir
-                    </button>
+                </div>
+
+                <div className={styles.actionGroup}>
+                  <span className={styles.chipGroupLabel}>Prioridade</span>
+                  <div className={styles.chipRow}>
+                    {PRIORITIES.map((p) => (
+                      <Chip
+                        key={p.value}
+                        active={selectedTask.priority === p.value}
+                        onClick={() => void patchSelected({ priority: p.value })}
+                        title={p.title}
+                      >
+                        {p.label}
+                      </Chip>
+                    ))}
                   </div>
+                </div>
+
+                <div className={styles.actionGroup}>
+                  <span className={styles.chipGroupLabel}>Prazo</span>
+                  <div className={styles.chipRow}>
+                    {DUE_PRESETS.map((d) => (
+                      <Chip
+                        key={d.id || 'none'}
+                        active={
+                          d.id === ''
+                            ? !selectedTask.due
+                            : d.id === 'today'
+                              ? selectedTask.due?.string === 'today' ||
+                                selectedTask.due?.date === new Date().toISOString().slice(0, 10)
+                              : selectedTask.due?.string === 'tomorrow'
+                        }
+                        onClick={() =>
+                          void patchSelected({
+                            due_string:
+                              d.id === 'today' ? 'today' : d.id === 'tomorrow' ? 'tomorrow' : '',
+                          })
+                        }
+                      >
+                        {d.label}
+                      </Chip>
+                    ))}
+                  </div>
+                </div>
+
+                {sections.length > 0 && (
+                  <div className={styles.actionGroup}>
+                    <span className={styles.chipGroupLabel}>Seção</span>
+                    <div className={styles.chipRow}>
+                      <Chip
+                        active={!selectedTask.section_id}
+                        onClick={() => void patchSelected({ section_id: '' })}
+                      >
+                        Nenhuma
+                      </Chip>
+                      {sections.map((s) => (
+                        <Chip
+                          key={s.id}
+                          active={selectedTask.section_id === s.id}
+                          onClick={() => void patchSelected({ section_id: s.id })}
+                        >
+                          {s.name}
+                        </Chip>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {labels.length > 0 && (
+                  <div className={styles.actionGroup}>
+                    <span className={styles.chipGroupLabel}>Etiquetas</span>
+                    <div className={styles.chipRow}>
+                      {labels.map((l) => (
+                        <Chip
+                          key={l.id}
+                          active={(selectedTask.labels ?? []).includes(l.name)}
+                          onClick={() => void toggleSelectedLabel(l.name)}
+                        >
+                          @{l.name}
+                        </Chip>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className={styles.detailActions}>
+                  <button
+                    type="button"
+                    className="btn-primary"
+                    onClick={() => void toggleTask(selectedTask)}
+                  >
+                    {selectedTask.is_completed ? 'Reabrir' : 'Concluir'}
+                  </button>
+                  <a
+                    href={selectedTask.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-ghost"
+                  >
+                    Todoist
+                  </a>
+                  <button
+                    type="button"
+                    className="btn-ghost"
+                    style={{ color: 'var(--danger)' }}
+                    onClick={() => void deleteSelectedTask()}
+                  >
+                    Excluir
+                  </button>
+                  <button type="button" className="btn-ghost" onClick={() => setSelectedTask(null)}>
+                    Fechar
+                  </button>
                 </div>
 
                 <div className={styles.comments}>
@@ -932,26 +795,13 @@ export function FilaPage() {
                       <li className={styles.empty}>Nenhum comentário.</li>
                     )}
                   </ul>
-                  <div className={styles.field}>
-                    <label className="label" htmlFor="new-comment">
-                      Novo comentário
-                    </label>
-                    <textarea
-                      id="new-comment"
-                      className="input"
-                      rows={2}
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                    />
+                  <div className={styles.chipRow}>
+                    {COMMENT_PRESETS.map((preset) => (
+                      <Chip key={preset} onClick={() => void addComment(preset)}>
+                        {preset}
+                      </Chip>
+                    ))}
                   </div>
-                  <button
-                    type="button"
-                    className="btn-ghost"
-                    onClick={() => void addComment()}
-                    disabled={!newComment.trim()}
-                  >
-                    Adicionar comentário
-                  </button>
                 </div>
               </aside>
             )}
@@ -960,112 +810,94 @@ export function FilaPage() {
       )}
 
       {viewTab === 'manage' && (
-        <div className="card">
-          <button
-            type="button"
-            className={styles.accordionHeader}
-            onClick={() => setManageOpen((v) => !v)}
-          >
-            <span>Projetos, seções e etiquetas</span>
-            <span>{manageOpen ? '−' : '+'}</span>
-          </button>
-          {manageOpen && (
-            <div className={styles.accordionBody}>
-              <div className={styles.manageSection}>
-                <h3>Projetos</h3>
-                <ul className={styles.manageList}>
-                  {projects.map((p) => (
-                    <li key={p.id} className={styles.manageItem}>
-                      <span>{p.name}</span>
-                      <button
-                        type="button"
-                        className="btn-ghost"
-                        style={{ color: 'var(--danger)' }}
-                        onClick={() => void handleDeleteProject(p)}
-                      >
-                        Excluir
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-                <form className={styles.manageForm} onSubmit={(e) => void handleCreateProject(e)}>
-                  <input
-                    className="input"
-                    placeholder="Nome do projeto"
-                    value={newProjectName}
-                    onChange={(e) => setNewProjectName(e.target.value)}
-                  />
-                  <button type="submit" className="btn-primary" disabled={!newProjectName.trim()}>
-                    Criar projeto
-                  </button>
-                </form>
-              </div>
+        <div className="card" style={{ padding: '1.25rem' }}>
+          <div className={styles.manageActions}>
+            <button type="button" className="btn-primary" onClick={() => void promptCreate('project')}>
+              + Novo projeto
+            </button>
+            <button
+              type="button"
+              className="btn-primary"
+              disabled={!selectedProjectId}
+              onClick={() => void promptCreate('section')}
+            >
+              + Nova seção
+            </button>
+            <button type="button" className="btn-primary" onClick={() => void promptCreate('label')}>
+              + Nova etiqueta
+            </button>
+          </div>
 
-              <div className={styles.manageSection}>
-                <h3>Seções ({projectName ?? 'projeto selecionado'})</h3>
-                <ul className={styles.manageList}>
-                  {sections.map((s) => (
-                    <li key={s.id} className={styles.manageItem}>
-                      <span>{s.name}</span>
-                      <button
-                        type="button"
-                        className="btn-ghost"
-                        style={{ color: 'var(--danger)' }}
-                        onClick={() => void handleDeleteSection(s)}
-                      >
-                        Excluir
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-                <form className={styles.manageForm} onSubmit={(e) => void handleCreateSection(e)}>
-                  <input
-                    className="input"
-                    placeholder="Nome da seção"
-                    value={newSectionName}
-                    onChange={(e) => setNewSectionName(e.target.value)}
-                  />
+          <div className={styles.manageSection}>
+            <h3>Projetos</h3>
+            <ul className={styles.manageList}>
+              {projects.map((p) => (
+                <li key={p.id} className={styles.manageItem}>
+                  <span>{p.name}</span>
                   <button
-                    type="submit"
-                    className="btn-primary"
-                    disabled={!newSectionName.trim() || !selectedProjectId}
+                    type="button"
+                    className="btn-ghost"
+                    style={{ color: 'var(--danger)' }}
+                    onClick={() => {
+                      if (window.confirm(`Excluir projeto "${p.name}"?`)) {
+                        void todoistApi.deleteProject(p.id).then(() => refresh());
+                      }
+                    }}
                   >
-                    Criar seção
+                    Excluir
                   </button>
-                </form>
-              </div>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-              <div className={styles.manageSection}>
-                <h3>Etiquetas</h3>
-                <ul className={styles.manageList}>
-                  {labels.map((l) => (
-                    <li key={l.id} className={styles.manageItem}>
-                      <span>@{l.name}</span>
-                      <button
-                        type="button"
-                        className="btn-ghost"
-                        style={{ color: 'var(--danger)' }}
-                        onClick={() => void handleDeleteLabel(l)}
-                      >
-                        Excluir
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-                <form className={styles.manageForm} onSubmit={(e) => void handleCreateLabel(e)}>
-                  <input
-                    className="input"
-                    placeholder="Nome da etiqueta"
-                    value={newLabelName}
-                    onChange={(e) => setNewLabelName(e.target.value)}
-                  />
-                  <button type="submit" className="btn-primary" disabled={!newLabelName.trim()}>
-                    Criar etiqueta
+          <div className={styles.manageSection}>
+            <h3>Seções — {projectName ?? 'projeto'}</h3>
+            <ul className={styles.manageList}>
+              {sections.map((s) => (
+                <li key={s.id} className={styles.manageItem}>
+                  <span>{s.name}</span>
+                  <button
+                    type="button"
+                    className="btn-ghost"
+                    style={{ color: 'var(--danger)' }}
+                    onClick={() => {
+                      if (window.confirm(`Excluir seção "${s.name}"?`)) {
+                        void todoistApi.deleteSection(s.id).then(() => loadMeta(selectedProjectId));
+                      }
+                    }}
+                  >
+                    Excluir
                   </button>
-                </form>
-              </div>
-            </div>
-          )}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className={styles.manageSection}>
+            <h3>Etiquetas</h3>
+            <ul className={styles.manageList}>
+              {labels.map((l) => (
+                <li key={l.id} className={styles.manageItem}>
+                  <span>@{l.name}</span>
+                  <button
+                    type="button"
+                    className="btn-ghost"
+                    style={{ color: 'var(--danger)' }}
+                    onClick={() => {
+                      if (window.confirm(`Excluir etiqueta "${l.name}"?`)) {
+                        void todoistApi.deleteLabel(l.id).then(() =>
+                          todoistApi.fetchLabels().then(setLabels),
+                        );
+                      }
+                    }}
+                  >
+                    Excluir
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       )}
     </div>
