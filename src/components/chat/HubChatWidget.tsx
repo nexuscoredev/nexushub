@@ -358,7 +358,11 @@ export function HubChatWidget({
             </div>
             <div className={styles.messages}>
               {!conversaId ? (
-                <p className={styles.empty}>Escolha uma conversa ou uma pessoa.</p>
+                <p className={styles.messagesEmpty}>
+                  Escolha uma conversa na lista
+                  <br />
+                  ou abra alguém em <strong>Pessoas</strong>.
+                </p>
               ) : (
                 blocos.map((b) =>
                   b.tipo === 'dia' ? (
@@ -384,24 +388,33 @@ export function HubChatWidget({
               )}
               <div ref={fimRef} />
             </div>
-            <div className={styles.composer}>
-              <textarea
-                value={texto}
-                onChange={(e) => setTexto(e.target.value)}
-                onKeyDown={onComposerKey}
-                placeholder={conversaId ? 'Mensagem… (Enter envia)' : 'Selecione uma conversa'}
-                disabled={!conversaId || enviando}
-                rows={2}
-              />
-              <button
-                type="button"
-                className={styles.sendBtn}
-                disabled={!conversaId || enviando || !texto.trim()}
-                onClick={() => void enviar()}
-              >
-                Enviar
-              </button>
-            </div>
+            {conversaId ? (
+              <div className={styles.composer}>
+                <div className={styles.composerField}>
+                  <textarea
+                    value={texto}
+                    onChange={(e) => setTexto(e.target.value)}
+                    onKeyDown={onComposerKey}
+                    placeholder="Escreva uma mensagem… (Enter envia)"
+                    disabled={enviando}
+                    rows={1}
+                    aria-label="Mensagem"
+                  />
+                </div>
+                <button
+                  type="button"
+                  className={styles.sendBtn}
+                  disabled={enviando || !texto.trim()}
+                  onClick={() => void enviar()}
+                >
+                  Enviar
+                </button>
+              </div>
+            ) : (
+              <div className={styles.composerHint}>
+                O campo de mensagem aparece quando você selecionar uma conversa.
+              </div>
+            )}
           </section>
         ) : null}
       </div>

@@ -60,8 +60,8 @@
   right: 16px;
   bottom: 16px;
   z-index: 100;
-  width: min(440px, calc(100vw - 24px));
-  height: min(620px, calc(100vh - 24px));
+  width: min(560px, calc(100vw - 24px));
+  height: min(640px, calc(100vh - 24px));
   display: flex;
   flex-direction: column;
   border-radius: var(--radius);
@@ -113,8 +113,9 @@
 .body {
   flex: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  grid-template-columns: minmax(200px, 38%) minmax(0, 1fr);
   min-height: 0;
+  overflow: hidden;
 }
 
 .bodyMobile {
@@ -239,19 +240,42 @@
 }
 
 .threadHead {
-  padding: 10px 12px;
+  flex-shrink: 0;
+  padding: 12px 14px;
   border-bottom: 1px solid var(--border);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
+  background: color-mix(in srgb, var(--surface-elevated) 80%, transparent);
 }
 
 .messages {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
-  padding: 12px;
+  overflow-x: hidden;
+  padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--outline-variant) transparent;
+}
+
+.messagesEmpty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.messagesEmpty strong {
+  color: var(--text);
+  font-weight: 600;
 }
 
 .dayLabel {
@@ -295,47 +319,102 @@
 }
 
 .composer {
+  flex-shrink: 0;
   display: flex;
-  gap: 8px;
-  padding: 10px 12px;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 12px 14px;
   border-top: 1px solid var(--border);
+  background: var(--surface-elevated);
+}
+
+.composerField {
+  flex: 1;
+  min-width: 0;
 }
 
 .composer textarea {
-  flex: 1;
-  min-height: 40px;
-  max-height: 120px;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 44px;
+  max-height: 128px;
   resize: none;
-  padding: 8px 10px;
+  padding: 11px 12px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text);
+  font-size: 14px;
+  line-height: 1.4;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--outline-variant) transparent;
+}
+
+.composer textarea::placeholder {
+  color: var(--muted);
+}
+
+.composer textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.composer textarea::-webkit-scrollbar-thumb {
+  background: var(--outline-variant);
+  border-radius: 4px;
+}
+
+.composer textarea:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--primary) 40%, var(--border));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.composerHint {
+  flex-shrink: 0;
+  padding: 14px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-elevated);
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.45;
 }
 
 .sendBtn {
-  align-self: flex-end;
-  padding: 8px 14px;
+  flex-shrink: 0;
+  height: 44px;
+  min-width: 76px;
+  padding: 0 16px;
   border: none;
   border-radius: var(--radius-sm);
   background: var(--primary);
   color: var(--bg);
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.sendBtn:hover:not(:disabled) {
+  filter: brightness(1.05);
 }
 
 .sendBtn:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
 .erro {
-  margin: 8px 12px;
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--danger) 15%, transparent);
+  flex-shrink: 0;
+  margin: 0;
+  padding: 10px 14px;
+  border-bottom: 1px solid color-mix(in srgb, var(--danger) 25%, transparent);
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
   color: var(--danger);
   font-size: 12px;
+  line-height: 1.4;
 }
 
 .empty {
