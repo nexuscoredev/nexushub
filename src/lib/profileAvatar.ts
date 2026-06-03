@@ -41,7 +41,7 @@ export function validateAvatarFile(file: File): string | null {
 function avatarSetupHint(err: unknown): string | null {
   const msg = supabaseErrorMessage(err).toLowerCase();
   if (
-    /bucket not found|hub-avatars|could not find|schema cache|pgrst205|avatar_url/i.test(
+    /bucket not found|hub-avatars|hub_pode_gerenciar|could not find|schema cache|pgrst205|avatar_url/i.test(
       msg,
     )
   ) {

@@ -1,7 +1,47 @@
 -- =============================================================================
 -- NEXUS Hub — Foto de perfil: rode no SQL Editor se "Erro ao enviar foto"
--- (bucket hub-avatars, coluna avatar_url, policies de storage)
+-- ou "hub_pode_gerenciar() does not exist"
 -- =============================================================================
+
+-- Pré-requisitos (funções usadas pelo trigger e pelas policies RLS)
+create or replace function public.hub_current_email()
+returns text
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select lower(coalesce(auth.jwt() ->> 'email', ''));
+$$;
+
+create or replace function public.hub_is_authenticated_active()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1 from public.hub_profiles p
+    where p.id = auth.uid() and p.ativo = true
+  );
+$$;
+
+create or replace function public.hub_pode_gerenciar()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.hub_profiles p
+    where p.id = auth.uid()
+      and p.ativo = true
+      and p.cargo in ('CEO', 'CTO', 'Administrador')
+  );
+$$;
 
 alter table public.hub_profiles
   add column if not exists avatar_url text;
@@ -95,4 +135,10 @@ select 'hub_profiles.avatar_url' as check_item, exists (
 union all
 select 'bucket hub-avatars', exists (
   select 1 from storage.buckets where id = 'hub-avatars'
+)
+union all
+select 'hub_pode_gerenciar()', exists (
+  select 1 from pg_proc p
+  join pg_namespace n on n.oid = p.pronamespace
+  where n.nspname = 'public' and p.proname = 'hub_pode_gerenciar'
 );
