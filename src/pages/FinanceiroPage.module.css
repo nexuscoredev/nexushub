@@ -89,11 +89,6 @@
   vertical-align: top;
 }
 
-.tableReceivables .cellCliente {
-  vertical-align: top;
-  min-width: 8rem;
-}
-
 .tableReceivables .cellPagamento {
   min-width: 10rem;
   max-width: 22rem;
@@ -159,30 +154,49 @@
   margin-left: 0.5rem;
 }
 
-.dropZoneActive {
-  outline: 2px dashed rgba(255, 255, 255, 0.35);
-  outline-offset: 4px;
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 8px;
+.sectionDropTarget.dropZoneActive {
+  outline: 2px dashed rgba(140, 200, 255, 0.55);
+  outline-offset: 2px;
+  background: rgba(140, 200, 255, 0.06);
 }
 
-.dragHandleCell {
-  cursor: grab;
-  user-select: none;
-  white-space: nowrap;
+.sectionDropTarget {
+  transition: outline-color 0.15s ease, background 0.15s ease;
 }
 
-.dragHandleCell:active {
-  cursor: grabbing;
+.cellCliente {
+  vertical-align: top;
+  min-width: 8rem;
 }
 
-.dragHandleIcon {
-  display: inline-block;
-  margin-right: 0.45rem;
+.cellClienteInner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.dragHandle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  padding: 0.15rem 0.2rem;
   color: var(--muted);
   font-size: 0.85rem;
-  letter-spacing: -0.15em;
-  vertical-align: middle;
+  letter-spacing: -0.12em;
+  cursor: grab;
+  user-select: none;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.dragHandle:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dragHandle:active {
+  cursor: grabbing;
 }
 
 .rowDragging {

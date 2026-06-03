@@ -32,7 +32,12 @@ import {
   totalSaidasPorResponsavel,
 } from '../lib/financeiro';
 import { formatBRL, formatDate } from '../lib/format';
-import { moveReceivableToSecao, RECEIVABLE_DRAG_MIME } from '../lib/receivableDrag';
+import {
+  isReceivableDragEvent,
+  moveReceivableToSecao,
+  readReceivableDragId,
+  setActiveReceivableDragId,
+} from '../lib/receivableDrag';
 import { valorPagoReceivable } from '../lib/receivableParcelas';
 import { supabase, supabaseErrorMessage } from '../lib/supabase';
 import type {
@@ -190,6 +195,9 @@ export function FinanceiroPage() {
                   receivables={receivablesBySecao.mensalidades}
                   fluxoSecao={{ fluxo: 'entrada', secao: 'mensalidades' }}
                   onRefresh={load}
+                  onMoveToSecao={async (row, target) => {
+                    await handleDropReceivable(row.id, target);
+                  }}
                 />
               ) : (
                 <ReceivablesTable
@@ -197,6 +205,9 @@ export function FinanceiroPage() {
                   fluxoSecao={{ fluxo: 'entrada', secao: secao.id }}
                   onRefresh={load}
                   compactParcelas
+                  onMoveToSecao={async (row, target) => {
+                    await handleDropReceivable(row.id, target);
+                  }}
                 />
               )}
             </FinanceQueueSection>
@@ -270,24 +281,54 @@ function FinanceQueueSection({
 }) {
   const [dropActive, setDropActive] = useState(false);
 
-  const handleDragOver = (e: DragEvent) => {
-    if (!entradaSecao || !onDropReceivable) return;
-    if (!e.dataTransfer.types.includes(RECEIVABLE_DRAG_MIME)) return;
+  const canDrop = Boolean(entradaSecao && onDropReceivable);
+
+  const handleDragEnter = (e: DragEvent) => {
+    if (!canDrop || !isReceivableDragEvent(e)) return;
     e.preventDefault();
+    setDropActive(true);
+  };
+
+  const handleDragOver = (e: DragEvent) => {
+    if (!canDrop || !isReceivableDragEvent(e)) return;
+    e.preventDefault();
+    e.stopPropagation();
     e.dataTransfer.dropEffect = 'move';
     setDropActive(true);
   };
 
-  const handleDrop = (e: DragEvent) => {
-    if (!entradaSecao || !onDropReceivable) return;
-    e.preventDefault();
+  const handleDragLeave = (e: DragEvent) => {
+    const next = e.relatedTarget as Node | null;
+    if (next && e.currentTarget.contains(next)) return;
     setDropActive(false);
-    const id = e.dataTransfer.getData(RECEIVABLE_DRAG_MIME);
-    if (id) void onDropReceivable(id, entradaSecao);
   };
 
+  const handleDrop = (e: DragEvent) => {
+    if (!canDrop) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setDropActive(false);
+    setActiveReceivableDragId(null);
+    const id = readReceivableDragId(e.dataTransfer);
+    if (id && entradaSecao) void onDropReceivable!(id, entradaSecao);
+  };
+
+  const sectionClass = [
+    styles.section,
+    canDrop ? styles.sectionDropTarget : '',
+    dropActive ? styles.dropZoneActive : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <section className={styles.section}>
+    <section
+      className={sectionClass}
+      onDragEnter={canDrop ? handleDragEnter : undefined}
+      onDragOver={canDrop ? handleDragOver : undefined}
+      onDragLeave={canDrop ? handleDragLeave : undefined}
+      onDrop={canDrop ? handleDrop : undefined}
+    >
       <div className={styles.sectionHeader}>
         <h2 className={styles.sectionTitle}>
           {title}
@@ -295,14 +336,7 @@ function FinanceQueueSection({
         </h2>
         <span className={styles.sectionMeta}>{totalLabel}</span>
       </div>
-      <div
-        className={`${styles.sectionBody} ${dropActive ? styles.dropZoneActive : ''}`}
-        onDragOver={handleDragOver}
-        onDragLeave={() => setDropActive(false)}
-        onDrop={handleDrop}
-      >
-        {children}
-      </div>
+      <div className={styles.sectionBody}>{children}</div>
     </section>
   );
 }

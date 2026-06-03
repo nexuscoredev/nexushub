@@ -1,6 +1,7 @@
-import { useState, type DragEvent } from 'react';
-import type { FinanceFluxoSecao } from '../lib/financeCategories';
-import { RECEIVABLE_DRAG_MIME } from '../lib/receivableDrag';
+import { useState } from 'react';
+import type { EntradaSecao, FinanceFluxoSecao } from '../lib/financeCategories';
+import { setActiveReceivableDragId } from '../lib/receivableDrag';
+import { ReceivableDragHandle } from './ReceivableDragHandle';
 import { formatBRL, formatDate } from '../lib/format';
 import {
   parseParcelasFromReceivable,
@@ -31,6 +32,7 @@ interface ReceivablesTableProps {
   addOnly?: boolean;
   /** Permite arrastar para outra fila (Implantações / Mensalidades) */
   draggable?: boolean;
+  onMoveToSecao?: (row: HubFinanceReceivable, secao: EntradaSecao) => void;
 }
 
 export function ReceivablesTable({
@@ -43,17 +45,12 @@ export function ReceivablesTable({
   compactParcelas,
   addOnly,
   draggable = true,
+  onMoveToSecao,
 }: ReceivablesTableProps) {
   const [openAdd, setOpenAdd] = useState(false);
   const [editing, setEditing] = useState<HubFinanceReceivable | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
-
-  const onDragStart = (e: DragEvent<HTMLTableCellElement>, rowId: string) => {
-    e.dataTransfer.setData(RECEIVABLE_DRAG_MIME, rowId);
-    e.dataTransfer.effectAllowed = 'move';
-    setDraggingId(rowId);
-  };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Excluir este registro?')) return;
@@ -180,14 +177,20 @@ export function ReceivablesTable({
 
             return (
               <tr key={row.id} className={draggingId === row.id ? styles.rowDragging : undefined}>
-                <td
-                  className={`${styles.cellCliente} ${draggable ? styles.dragHandleCell : ''}`}
-                  draggable={draggable && !busy}
-                  onDragStart={draggable ? (e) => onDragStart(e, row.id) : undefined}
-                  onDragEnd={draggable ? () => setDraggingId(null) : undefined}
-                >
-                  {draggable && <span className={styles.dragHandleIcon} aria-hidden>⋮⋮</span>}
-                  {row.cliente_descricao}
+                <td className={styles.cellCliente}>
+                  <div className={styles.cellClienteInner}>
+                    {draggable && !busy && (
+                      <ReceivableDragHandle
+                        receivableId={row.id}
+                        label={row.cliente_descricao}
+                        onDragStateChange={(d) => {
+                          setDraggingId(d ? row.id : null);
+                          if (!d) setActiveReceivableDragId(null);
+                        }}
+                      />
+                    )}
+                    <span>{row.cliente_descricao}</span>
+                  </div>
                 </td>
                 <td>{formatBRL(Number(row.valor))}</td>
                 <td className={pagoClass}>{formatBRL(pago)}</td>
@@ -227,6 +230,24 @@ export function ReceivablesTable({
                 <td>{formatDate(row.data_prevista)}</td>
                 <td>{stripUserNotas(row.notas) || '—'}</td>
                 <td style={{ whiteSpace: 'nowrap' }}>
+                  {onMoveToSecao && fluxoSecao.fluxo === 'entrada' && (
+                    <select
+                      className="input"
+                      style={{ width: 'auto', minWidth: '7.5rem', marginRight: '0.35rem', fontSize: '0.8rem' }}
+                      defaultValue=""
+                      onChange={(e) => {
+                        const v = e.target.value as EntradaSecao | '';
+                        if (!v) return;
+                        e.target.value = '';
+                        void onMoveToSecao(row, v);
+                      }}
+                      aria-label="Mover para outra fila"
+                    >
+                      <option value="">Mover…</option>
+                      <option value="implantacoes">Implantações</option>
+                      <option value="mensalidades">Mensalidades</option>
+                    </select>
+                  )}
                   <button type="button" className="btn-ghost" onClick={() => setEditing(row)}>
                     Editar
                   </button>
