@@ -1,3 +1,4 @@
+import { secaoEntradaReceivable } from './financeCategories';
 import type { HubFinanceReceivable } from '../types/database';
 
 function norm(s: string): string {
@@ -32,6 +33,7 @@ export function groupReceivablesBySubscription(
   const groups = subscriptions.map((sub) => {
     const linked = receivables.filter((r) => {
       if (used.has(r.id)) return false;
+      if (secaoEntradaReceivable(r) !== 'mensalidades') return false;
       if (!matchesSubscriptionReceivable(r, sub.nome)) return false;
       used.add(r.id);
       return true;

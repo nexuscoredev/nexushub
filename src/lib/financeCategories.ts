@@ -52,18 +52,34 @@ function readEntradaSecaoFromNotas(notas: string | null | undefined): EntradaSec
   return m ? (m[1] as EntradaSecao) : null;
 }
 
+/** Regras pelo nome do cliente (prioridade sobre tag errada em notas). */
+export function inferEntradaSecaoFromCliente(clienteDescricao: string): EntradaSecao | null {
+  const d = clienteDescricao.toLowerCase();
+  if (d.includes('implanta') || d.includes('(sistema)')) {
+    return 'implantacoes';
+  }
+  if (d.includes('(app)') || d.includes('mensal')) {
+    return 'mensalidades';
+  }
+  return null;
+}
+
 function readSaidaSecaoFromNotas(notas: string | null | undefined): SaidaSecao | null {
   const m = notas?.match(/^#saida:(assinaturas|transporte|outras)/);
   return m ? (m[1] as SaidaSecao) : null;
 }
 
 export function secaoEntradaReceivable(r: HubFinanceReceivable): EntradaSecao {
-  const fromTag = readEntradaSecaoFromNotas(r.notas);
-  if (fromTag) return fromTag;
+  const fromCliente = inferEntradaSecaoFromCliente(r.cliente_descricao);
+  if (fromCliente) return fromCliente;
+
   const cat = (r.categoria ?? '').toLowerCase();
   if (cat === 'implantacao' || cat === 'implantações') return 'implantacoes';
   if (cat === 'mensalidade' || cat === 'mensalidades') return 'mensalidades';
-  if (r.cliente_descricao.toLowerCase().includes('implanta')) return 'implantacoes';
+
+  const fromTag = readEntradaSecaoFromNotas(r.notas);
+  if (fromTag) return fromTag;
+
   return 'mensalidades';
 }
 
