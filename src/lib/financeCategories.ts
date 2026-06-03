@@ -55,10 +55,10 @@ function readEntradaSecaoFromNotas(notas: string | null | undefined): EntradaSec
 /** Sugestão pelo nome do cliente (quando não há tag de arraste/salvamento). */
 export function inferEntradaSecaoFromCliente(clienteDescricao: string): EntradaSecao | null {
   const d = clienteDescricao.toLowerCase();
-  if (d.includes('implanta') || d.includes('(sistema)')) {
+  if (d.includes('implanta') || d.includes('(sistema)') || d.includes('(app)')) {
     return 'implantacoes';
   }
-  if (d.includes('(app)') || d.includes('mensal')) {
+  if (d.includes('mensal')) {
     return 'mensalidades';
   }
   return null;
