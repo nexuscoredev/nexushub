@@ -463,14 +463,49 @@ export async function todoistMoveTask(taskId: string, data: MoveTaskInput): Prom
   return mapTodoistTask(raw);
 }
 
-export async function todoistQuickAddTask(
-  text: string,
-  note?: string,
-): Promise<TodoistTaskV1> {
-  return todoistFetch<TodoistTaskV1>('/tasks/quick', {
+export interface QuickAddTaskInput {
+  text: string;
+  note?: string;
+  /** Garante projeto mesmo sem # no texto */
+  project_id?: string;
+  /** Move para a seção após criar, se o parser não aplicar */
+  section_id?: string;
+}
+
+export async function todoistQuickAddTask(input: QuickAddTaskInput): Promise<TodoistTaskV1> {
+  let text = input.text.trim();
+  if (!text) throw new Error('Texto da tarefa obrigatório');
+
+  if (input.project_id && !/#/.test(text)) {
+    try {
+      const project = await todoistGetProject(input.project_id);
+      if (project?.name) {
+        const token = project.name.includes(' ')
+          ? `#${project.name.replace(/\\/g, '\\\\').replace(/ /g, '\\ ')}`
+          : `#${project.name}`;
+        text = `${text} ${token}`;
+      }
+    } catch {
+      /* segue sem hashtag se projeto não resolver */
+    }
+  }
+
+  const raw = await todoistFetch<TodoistTaskV1>('/tasks/quick', {
     method: 'POST',
-    body: JSON.stringify({ text, ...(note ? { note } : {}) }),
+    body: JSON.stringify({
+      text,
+      ...(input.note ? { note: input.note } : {}),
+    }),
   });
+
+  if (input.section_id && raw.section_id !== input.section_id) {
+    return todoistFetch<TodoistTaskV1>(`/tasks/${raw.id}/move`, {
+      method: 'POST',
+      body: JSON.stringify({ section_id: input.section_id }),
+    });
+  }
+
+  return raw;
 }
 
 export async function todoistFilterTasks(

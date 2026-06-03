@@ -4,7 +4,8 @@ import { ProjectSelector } from './ProjectSelector';
 import type { AssigneeHub, AssigneeOption } from '../lib/todoistAssignees';
 import { TEAM_ASSIGNEES } from '../lib/todoistAssignees';
 import * as todoistApi from '../lib/todoistApi';
-import { todoistDuePresetForCreate, type TodoistDuePreset } from '../lib/todoistDuePt';
+import { type TodoistDuePreset } from '../lib/todoistDuePt';
+import { buildQuickAddText } from '../lib/todoistQuickAdd';
 import type { TodoistLabel, TodoistProject, TodoistSection } from '../types/todoist';
 import styles from './CreateTaskModal.module.css';
 
@@ -184,19 +185,26 @@ export function CreateTaskModal({
       );
       return;
     }
+    const project = projects.find((p) => p.id === projectId);
+    const section = sections.find((s) => s.id === sectionId);
+    const quickText = buildQuickAddText(title, {
+      projectName: project?.name,
+      sectionName: section?.name,
+      labels: selectedLabels,
+      priorityHub: priority,
+      duePreset: due,
+      assigneeTodoistName: assignee?.todoistName,
+    });
+
     setSubmitting(true);
     setError(null);
     try {
-      await todoistApi.createTask({
-        content: title.trim(),
+      const created = await todoistApi.quickAddTask({
+        text: quickText,
         project_id: projectId,
         section_id: sectionId || undefined,
-        labels: selectedLabels.length ? selectedLabels : undefined,
-        priority,
-        ...todoistDuePresetForCreate(due),
-        assignee_id: assignee?.uid ?? assignee?.assignee_id ?? undefined,
       });
-      onCreated(projectId);
+      onCreated(created.project_id || projectId);
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao criar tarefa');
@@ -248,7 +256,7 @@ export function CreateTaskModal({
             <input
               id="create-task-title-input"
               className="input"
-              placeholder="O que precisa ser feito?"
+              placeholder="Ex.: Planejar rotina p1 dia 25 de junho"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               onKeyDown={(e) => {
@@ -256,6 +264,12 @@ export function CreateTaskModal({
               }}
               autoFocus
             />
+            <p className={styles.hint}>
+              Linguagem natural como no Todoist: <strong>p1</strong>–<strong>p4</strong>,{' '}
+              <strong>hoje</strong>, <strong>amanhã</strong>, <strong>dia 25 de junho</strong>,{' '}
+              <strong>@etiqueta</strong>, <strong>#projeto</strong>. O cliente selecionado acima
+              também é aplicado automaticamente.
+            </p>
           </div>
 
           <div className={styles.field}>

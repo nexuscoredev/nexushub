@@ -1,5 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getTodoistToken, mapTodoistTask, todoistQuickAddTask } from '../../_lib/todoist.js';
+import {
+  getTodoistToken,
+  mapTodoistTask,
+  todoistFetchCollaborators,
+  todoistQuickAddTask,
+} from '../../_lib/todoist.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
@@ -12,12 +17,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const body = req.body as { text?: string; note?: string };
+    const body = req.body as {
+      text?: string;
+      note?: string;
+      project_id?: string;
+      section_id?: string;
+    };
     if (!body?.text?.trim()) {
       return res.status(400).json({ error: 'text obrigatório' });
     }
-    const raw = await todoistQuickAddTask(body.text.trim(), body.note?.trim());
-    const task = mapTodoistTask(raw);
+
+    const raw = await todoistQuickAddTask({
+      text: body.text.trim(),
+      note: body.note?.trim(),
+      project_id: body.project_id?.trim(),
+      section_id: body.section_id?.trim(),
+    });
+
+    let collaborators = [];
+    if (raw.project_id) {
+      try {
+        collaborators = await todoistFetchCollaborators(raw.project_id);
+      } catch {
+        collaborators = [];
+      }
+    }
+
+    const task = mapTodoistTask(raw, false, collaborators);
     return res.status(200).json({ task });
   } catch (e) {
     return res.status(500).json({

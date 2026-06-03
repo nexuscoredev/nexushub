@@ -114,11 +114,16 @@ export async function deleteTask(taskId: string): Promise<void> {
   await parseJson<{ ok: boolean }>(res);
 }
 
-export async function quickAddTask(text: string, note?: string): Promise<TodoistTask> {
+export async function quickAddTask(opts: {
+  text: string;
+  note?: string;
+  project_id?: string;
+  section_id?: string;
+}): Promise<TodoistTask> {
   const res = await fetch('/api/todoist/tasks/quick', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text, note }),
+    body: JSON.stringify(opts),
   });
   const body = await parseJson<{ task: TodoistTask }>(res);
   return body.task;
