@@ -1,4 +1,4 @@
-import { valorPagoReceivable } from './receivableParcelas';
+import { valorPagoReceivable, valorRestanteReceivable } from './receivableParcelas';
 import type {
   HubFinanceInvestment,
   HubFinanceReceivable,
@@ -11,6 +11,16 @@ export function totalMensalAssinaturas(
   return items
     .filter((s) => s.ativo)
     .reduce((sum, s) => sum + Number(s.valor_mensal), 0);
+}
+
+/** Soma do valor total de todas as entradas (recebíveis). */
+export function totalGeralEntradas(items: HubFinanceReceivable[]): number {
+  return items.reduce((sum, r) => sum + Number(r.valor), 0);
+}
+
+/** O que ainda falta receber (considera parcelas pagas). */
+export function totalAReceber(items: HubFinanceReceivable[]): number {
+  return items.reduce((sum, r) => sum + valorRestanteReceivable(r), 0);
 }
 
 export function totalRecebido(items: HubFinanceReceivable[]): number {

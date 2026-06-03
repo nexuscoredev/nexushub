@@ -19,10 +19,11 @@ import {
   type SaidaSecao,
 } from '../lib/financeCategories';
 import {
+  totalAReceber,
+  totalGeralEntradas,
   totalMensalAssinaturas,
   totalRecebido,
   totalSaidas,
-  totalSaidasPorResponsavel,
 } from '../lib/financeiro';
 import { formatBRL, formatDate } from '../lib/format';
 import { moveReceivableToSecao, receivableWithEntradaSecao } from '../lib/receivableDrag';
@@ -102,8 +103,11 @@ export function FinanceiroPage() {
     return map;
   }, [investments]);
 
-  const split = totalSaidasPorResponsavel(investments);
   const totalMensalidadesRecorrentes = totalMensalAssinaturas(subscriptions);
+  const kpiAReceber = totalAReceber(receivables);
+  const kpiGeralEntradas = totalGeralEntradas(receivables);
+  const kpiRecebido = totalRecebido(receivables);
+  const kpiSaidas = totalSaidas(investments);
 
   const handleMoveReceivable = useCallback(
     async (receivableId: string, targetSecao: EntradaSecao) => {
@@ -158,22 +162,20 @@ export function FinanceiroPage() {
 
       <div className="kpi-grid">
         <div className="kpi">
-          <div className="kpi-label">Mensalidades / mês</div>
-          <div className="kpi-value">{formatBRL(totalMensalidadesRecorrentes)}</div>
+          <div className="kpi-label">Total a receber</div>
+          <div className="kpi-value">{formatBRL(kpiAReceber)}</div>
+        </div>
+        <div className="kpi">
+          <div className="kpi-label">Total geral (entradas)</div>
+          <div className="kpi-value">{formatBRL(kpiGeralEntradas)}</div>
         </div>
         <div className="kpi">
           <div className="kpi-label">Total recebido</div>
-          <div className="kpi-value">{formatBRL(totalRecebido(receivables))}</div>
+          <div className="kpi-value">{formatBRL(kpiRecebido)}</div>
         </div>
         <div className="kpi">
           <div className="kpi-label">Total saídas</div>
-          <div className="kpi-value">{formatBRL(totalSaidas(investments))}</div>
-        </div>
-        <div className="kpi">
-          <div className="kpi-label">Saídas por sócio</div>
-          <div className="kpi-value" style={{ fontSize: '0.85rem' }}>
-            Rafael {formatBRL(split.Rafael ?? 0)} · Vinícius {formatBRL(split['Vinícius'] ?? 0)}
-          </div>
+          <div className="kpi-value">{formatBRL(kpiSaidas)}</div>
         </div>
       </div>
 
