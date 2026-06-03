@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { FinanceKpiStrip } from '../components/FinanceKpiStrip';
 import { MensalidadesEntradaView } from '../components/MensalidadesEntradaView';
 import { ReceivablesTable } from '../components/ReceivablesTable';
 import {
@@ -37,7 +38,7 @@ import type {
 import styles from './FinanceiroPage.module.css';
 
 /** Atualize ao publicar — confirme na tela Financeiro que esta versão aparece. */
-export const FINANCE_UI_VERSION = 'parcelas-notas-v3';
+export const FINANCE_UI_VERSION = 'finance-pills-v4';
 
 const CATEGORIA_LABELS: Record<string, string> = {
   implantacao: 'Implantação',
@@ -160,24 +161,14 @@ export function FinanceiroPage() {
       {error && <div className="error-banner" style={{ marginBottom: '1rem' }}>{error}</div>}
       {successMsg && <div className={styles.successBanner}>{successMsg}</div>}
 
-      <div className="kpi-grid">
-        <div className="kpi">
-          <div className="kpi-label">Total a receber</div>
-          <div className="kpi-value">{formatBRL(kpiAReceber)}</div>
-        </div>
-        <div className="kpi">
-          <div className="kpi-label">Total geral (entradas)</div>
-          <div className="kpi-value">{formatBRL(kpiGeralEntradas)}</div>
-        </div>
-        <div className="kpi">
-          <div className="kpi-label">Total recebido</div>
-          <div className="kpi-value">{formatBRL(kpiRecebido)}</div>
-        </div>
-        <div className="kpi">
-          <div className="kpi-label">Total saídas</div>
-          <div className="kpi-value">{formatBRL(kpiSaidas)}</div>
-        </div>
-      </div>
+      <FinanceKpiStrip
+        values={{
+          aReceber: kpiAReceber,
+          geralEntradas: kpiGeralEntradas,
+          recebido: kpiRecebido,
+          saidas: kpiSaidas,
+        }}
+      />
 
       <div className="tabs">
         {(

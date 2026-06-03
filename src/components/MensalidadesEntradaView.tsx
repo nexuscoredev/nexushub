@@ -3,6 +3,7 @@ import { groupReceivablesBySubscription } from '../lib/matchSubscriptionReceivab
 import type { EntradaSecao, FinanceFluxoSecao } from '../lib/financeCategories';
 import type { HubFinanceReceivable, HubFinanceSubscription } from '../types/database';
 import styles from '../pages/FinanceiroPage.module.css';
+import { ClienteComLogo } from './ClienteComLogo';
 import { ReceivablesTable } from './ReceivablesTable';
 
 interface MensalidadesEntradaViewProps {
@@ -29,7 +30,7 @@ export function MensalidadesEntradaView({
         return (
           <div key={g.subscriptionId} className={styles.clientBlock}>
             <div className={styles.clientContractRow}>
-              <span className={styles.clientContractName}>{g.nome}</span>
+              <ClienteComLogo descricao={g.nome} />
               <span>{formatBRL(Number(sub?.valor_mensal ?? 0))}/mês</span>
               <span style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>
                 venc. dia {sub?.dia_vencimento ?? '—'}

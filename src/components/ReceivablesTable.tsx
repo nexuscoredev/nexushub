@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { EntradaSecao, FinanceFluxoSecao } from '../lib/financeCategories';
+import { ClienteComLogo } from './ClienteComLogo';
 import { ReceivableMoveButtons } from './ReceivableMoveButtons';
 import { formatBRL, formatDate } from '../lib/format';
 import {
@@ -182,7 +183,9 @@ export function ReceivablesTable({
 
             return (
               <tr key={row.id}>
-                <td className={styles.cellCliente}>{row.cliente_descricao}</td>
+                <td className={styles.cellCliente}>
+                  <ClienteComLogo descricao={row.cliente_descricao} />
+                </td>
                 <td>{formatBRL(Number(row.valor))}</td>
                 <td className={pagoClass}>{formatBRL(pago)}</td>
                 <td>{formatBRL(falta)}</td>
