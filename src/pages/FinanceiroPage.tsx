@@ -127,6 +127,7 @@ export function FinanceiroPage() {
           aReceber: kpiAReceber,
           geralEntradas: kpiGeralEntradas,
           recebido: kpiRecebido,
+          mensalidade: totalMensalidadesRecorrentes,
           saidas: kpiSaidas,
         }}
       />
