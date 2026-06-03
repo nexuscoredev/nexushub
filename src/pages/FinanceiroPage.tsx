@@ -7,14 +7,14 @@ import {
 } from '../components/FinanceCrudBar';
 import { PageHeader } from '../components/PageHeader';
 import {
-  categoriaEntradaReceivable,
-  categoriaSaidaInvestment,
   ENTRADA_SECOES,
   SAIDA_SECOES,
   secaoEntradaReceivable,
   secaoSaidaInvestment,
+  stripFluxoTag,
   type EntradaSecao,
   type FinanceFluxo,
+  type FinanceFluxoSecao,
   type SaidaSecao,
 } from '../lib/financeCategories';
 import {
@@ -170,7 +170,6 @@ export function FinanceiroPage() {
                   table="hub_finance_subscriptions"
                   rows={subscriptions}
                   columns={['nome', 'valor_mensal', 'dia_vencimento', 'ativo', 'notas']}
-                  preset={{ categoria: 'mensalidade' }}
                   onRefresh={load}
                   compact
                 />
@@ -180,7 +179,7 @@ export function FinanceiroPage() {
                 table="hub_finance_receivables"
                 rows={receivablesBySecao[secao.id]}
                 columns={['cliente_descricao', 'valor', 'data_prevista', 'status', 'notas']}
-                preset={{ categoria: categoriaEntradaReceivable(secao.id) }}
+                fluxoSecao={{ fluxo: 'entrada', secao: secao.id }}
                 onRefresh={load}
                 compact={secao.id === 'mensalidades'}
               />
@@ -199,10 +198,8 @@ export function FinanceiroPage() {
                 table="hub_finance_investments"
                 rows={investmentsBySecao[secao.id]}
                 columns={['titulo', 'valor', 'responsavel', 'status', 'data_investimento']}
-                preset={{
-                  tipo: 'Saída',
-                  categoria: categoriaSaidaInvestment(secao.id),
-                }}
+                preset={{ tipo: 'Saída' }}
+                fluxoSecao={{ fluxo: 'saida', secao: secao.id }}
                 onRefresh={load}
                 hideTitle
               />
@@ -248,6 +245,7 @@ function FinanceTable<T extends { id: string }>({
   rows,
   columns,
   preset,
+  fluxoSecao,
   onRefresh,
   compact,
   hideTitle,
@@ -257,6 +255,7 @@ function FinanceTable<T extends { id: string }>({
   rows: T[];
   columns: string[];
   preset?: Record<string, unknown>;
+  fluxoSecao?: FinanceFluxoSecao;
   onRefresh: () => void;
   compact?: boolean;
   hideTitle?: boolean;
@@ -283,13 +282,19 @@ function FinanceTable<T extends { id: string }>({
       {title && !hideTitle && (
         <h3 style={{ fontSize: '0.88rem', marginBottom: '0.65rem', color: 'var(--muted)' }}>{title}</h3>
       )}
-      <FinanceCrudBar table={table} onSaved={onRefresh} preset={preset} />
+      <FinanceCrudBar
+        table={table}
+        onSaved={onRefresh}
+        preset={preset}
+        fluxoSecao={fluxoSecao}
+      />
       {editing && (
         <FinanceRecordForm
           table={table}
           recordId={editing.id}
           initialValues={editing as Record<string, unknown>}
           preset={preset}
+          fluxoSecao={fluxoSecao}
           onSaved={() => {
             setEditing(null);
             onRefresh();
@@ -315,6 +320,7 @@ function FinanceTable<T extends { id: string }>({
                 if (col === 'valor' || col === 'valor_mensal') display = formatBRL(Number(val));
                 else if (col.includes('data')) display = formatDate(String(val ?? ''));
                 else if (col === 'categoria') display = CATEGORIA_LABELS[String(val)] ?? String(val ?? '—');
+                else if (col === 'notas') display = stripFluxoTag(String(val ?? '')) || '—';
                 else if (typeof val === 'boolean') display = val ? 'Sim' : 'Não';
                 else display = String(val ?? '—');
                 return <td key={col}>{display}</td>;

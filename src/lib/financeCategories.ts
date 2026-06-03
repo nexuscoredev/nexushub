@@ -1,10 +1,19 @@
 import type { HubFinanceInvestment, HubFinanceReceivable } from '../types/database';
 
+export type FinanceTable =
+  | 'hub_finance_receivables'
+  | 'hub_finance_subscriptions'
+  | 'hub_finance_investments';
+
 export type FinanceFluxo = 'entrada' | 'saida';
 
 export type EntradaSecao = 'implantacoes' | 'mensalidades';
 
 export type SaidaSecao = 'assinaturas' | 'transporte' | 'outras';
+
+export type FinanceFluxoSecao =
+  | { fluxo: 'entrada'; secao: EntradaSecao }
+  | { fluxo: 'saida'; secao: SaidaSecao };
 
 export const ENTRADA_SECOES: { id: EntradaSecao; label: string }[] = [
   { id: 'implantacoes', label: 'Implantações' },
@@ -17,7 +26,40 @@ export const SAIDA_SECOES: { id: SaidaSecao; label: string }[] = [
   { id: 'outras', label: 'Outras despesas da empresa' },
 ];
 
+const ENTRADA_TAG_RE = /^#entrada:(implantacoes|mensalidades)\s*/;
+const SAIDA_TAG_RE = /^#saida:(assinaturas|transporte|outras)\s*/;
+
+/** Remove marcador interno de fila — só para exibição/edição. */
+export function stripFluxoTag(notas: string | null | undefined): string {
+  return (notas ?? '').replace(ENTRADA_TAG_RE, '').replace(SAIDA_TAG_RE, '').trim();
+}
+
+export function withEntradaTag(
+  secao: EntradaSecao,
+  notas: string | null | undefined,
+): string {
+  const body = stripFluxoTag(notas);
+  return body ? `#entrada:${secao} ${body}` : `#entrada:${secao}`;
+}
+
+export function withSaidaTag(secao: SaidaSecao, notas: string | null | undefined): string {
+  const body = stripFluxoTag(notas);
+  return body ? `#saida:${secao} ${body}` : `#saida:${secao}`;
+}
+
+function readEntradaSecaoFromNotas(notas: string | null | undefined): EntradaSecao | null {
+  const m = notas?.match(/^#entrada:(implantacoes|mensalidades)/);
+  return m ? (m[1] as EntradaSecao) : null;
+}
+
+function readSaidaSecaoFromNotas(notas: string | null | undefined): SaidaSecao | null {
+  const m = notas?.match(/^#saida:(assinaturas|transporte|outras)/);
+  return m ? (m[1] as SaidaSecao) : null;
+}
+
 export function secaoEntradaReceivable(r: HubFinanceReceivable): EntradaSecao {
+  const fromTag = readEntradaSecaoFromNotas(r.notas);
+  if (fromTag) return fromTag;
   const cat = (r.categoria ?? '').toLowerCase();
   if (cat === 'implantacao' || cat === 'implantações') return 'implantacoes';
   if (cat === 'mensalidade' || cat === 'mensalidades') return 'mensalidades';
@@ -26,6 +68,8 @@ export function secaoEntradaReceivable(r: HubFinanceReceivable): EntradaSecao {
 }
 
 export function secaoSaidaInvestment(i: HubFinanceInvestment): SaidaSecao {
+  const fromTag = readSaidaSecaoFromNotas(i.notas);
+  if (fromTag) return fromTag;
   const cat = (i.categoria ?? '').toLowerCase();
   if (cat === 'assinatura' || cat === 'assinaturas') return 'assinaturas';
   if (cat === 'transporte') return 'transporte';
@@ -37,10 +81,49 @@ export function secaoSaidaInvestment(i: HubFinanceInvestment): SaidaSecao {
   return 'outras';
 }
 
-export function categoriaEntradaReceivable(secao: EntradaSecao): string {
-  return secao === 'implantacoes' ? 'implantacao' : 'mensalidade';
-}
+/** Colunas que o app envia ao Supabase (sem categoria em receivables/investments). */
+export const FINANCE_PAYLOAD_KEYS: Record<FinanceTable, readonly string[]> = {
+  hub_finance_receivables: [
+    'cliente_descricao',
+    'valor',
+    'data_prevista',
+    'status',
+    'notas',
+  ],
+  hub_finance_subscriptions: [
+    'nome',
+    'valor_mensal',
+    'dia_vencimento',
+    'categoria',
+    'ativo',
+    'notas',
+  ],
+  hub_finance_investments: [
+    'titulo',
+    'valor',
+    'tipo',
+    'responsavel',
+    'status',
+    'data_investimento',
+    'notas',
+  ],
+};
 
-export function categoriaSaidaInvestment(secao: SaidaSecao): string {
-  return secao;
+export function applyFluxoToPayload(
+  table: FinanceTable,
+  payload: Record<string, unknown>,
+  fluxoSecao?: FinanceFluxoSecao,
+): Record<string, unknown> {
+  const out = { ...payload };
+  delete out.categoria;
+
+  if (!fluxoSecao) return out;
+
+  if (table === 'hub_finance_receivables' && fluxoSecao.fluxo === 'entrada') {
+    out.notas = withEntradaTag(fluxoSecao.secao, out.notas as string | undefined);
+  }
+  if (table === 'hub_finance_investments' && fluxoSecao.fluxo === 'saida') {
+    out.notas = withSaidaTag(fluxoSecao.secao, out.notas as string | undefined);
+  }
+  return out;
 }

@@ -1,10 +1,14 @@
 import { FormEvent, useState } from 'react';
+import {
+  applyFluxoToPayload,
+  FINANCE_PAYLOAD_KEYS,
+  stripFluxoTag,
+  type FinanceFluxoSecao,
+  type FinanceTable,
+} from '../lib/financeCategories';
 import { supabase, supabaseErrorMessage } from '../lib/supabase';
 
-export type FinanceTable =
-  | 'hub_finance_receivables'
-  | 'hub_finance_subscriptions'
-  | 'hub_finance_investments';
+export type { FinanceTable };
 
 export interface FinanceField {
   name: string;
@@ -21,16 +25,6 @@ export function getFinanceFields(table: FinanceTable): FinanceField[] {
       { name: 'cliente_descricao', label: 'Cliente', type: 'text' },
       { name: 'valor', label: 'Valor', type: 'number' },
       { name: 'data_prevista', label: 'Data', type: 'date' },
-      {
-        name: 'categoria',
-        label: 'Tipo de entrada',
-        type: 'select',
-        options: [
-          { value: 'implantacao', label: 'Implantação' },
-          { value: 'mensalidade', label: 'Mensalidade' },
-        ],
-        defaultValue: 'implantacao',
-      },
       { name: 'status', label: 'Status', type: 'text', defaultValue: 'pendente' },
       { name: 'notas', label: 'Notas', type: 'text', required: false },
     ];
@@ -48,17 +42,6 @@ export function getFinanceFields(table: FinanceTable): FinanceField[] {
     { name: 'titulo', label: 'Descrição', type: 'text' },
     { name: 'valor', label: 'Valor', type: 'number' },
     { name: 'tipo', label: 'Tipo', type: 'text', defaultValue: 'Saída' },
-    {
-      name: 'categoria',
-      label: 'Tipo de saída',
-      type: 'select',
-      options: [
-        { value: 'assinatura', label: 'Assinatura' },
-        { value: 'transporte', label: 'Transporte' },
-        { value: 'outras', label: 'Outras despesas' },
-      ],
-      defaultValue: 'outras',
-    },
     { name: 'responsavel', label: 'Responsável', type: 'text', defaultValue: 'Rafael' },
     { name: 'status', label: 'Status', type: 'text', defaultValue: 'pago' },
     { name: 'data_investimento', label: 'Data', type: 'date', required: false },
@@ -67,7 +50,7 @@ export function getFinanceFields(table: FinanceTable): FinanceField[] {
 }
 
 function buildPayload(fd: FormData, table: FinanceTable): Record<string, unknown> {
-  const allowed = new Set(getFinanceFields(table).map((f) => f.name));
+  const allowed = new Set(FINANCE_PAYLOAD_KEYS[table]);
   const payload: Record<string, unknown> = {};
   fd.forEach((v, k) => {
     if (!allowed.has(k)) return;
@@ -93,7 +76,7 @@ function sanitizePayload(
   payload: Record<string, unknown>,
   opts?: { defaultAtivoFalse?: boolean },
 ): Record<string, unknown> {
-  const allowed = new Set(getFinanceFields(table).map((f) => f.name));
+  const allowed = new Set(FINANCE_PAYLOAD_KEYS[table]);
   const out: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(payload)) {
     if (allowed.has(key)) out[key] = value;
@@ -109,6 +92,7 @@ function fieldDefaultValue(
   if (!initial) return 'defaultValue' in field ? field.defaultValue : undefined;
   const val = initial[field.name];
   if (field.type === 'date' && val != null) return String(val).slice(0, 10);
+  if (field.name === 'notas') return stripFluxoTag(val == null ? null : String(val)) || undefined;
   if (val == null) return undefined;
   return String(val);
 }
@@ -118,6 +102,7 @@ interface FinanceRecordFormProps {
   recordId?: string;
   initialValues?: Record<string, unknown>;
   preset?: Record<string, unknown>;
+  fluxoSecao?: FinanceFluxoSecao;
   onSaved: () => void;
   onCancel?: () => void;
 }
@@ -127,6 +112,7 @@ export function FinanceRecordForm({
   recordId,
   initialValues,
   preset,
+  fluxoSecao,
   onSaved,
   onCancel,
 }: FinanceRecordFormProps) {
@@ -139,9 +125,10 @@ export function FinanceRecordForm({
     e.preventDefault();
     if (!supabase) return;
     setError(null);
-    const payload = sanitizePayload(
+    const payload = applyFluxoToPayload(
       table,
-      buildPayload(new FormData(e.currentTarget), table),
+      sanitizePayload(table, buildPayload(new FormData(e.currentTarget), table)),
+      fluxoSecao,
     );
 
     const { error: err } = isEdit
@@ -240,9 +227,10 @@ interface FinanceCrudBarProps {
   table: FinanceTable;
   onSaved: () => void;
   preset?: Record<string, unknown>;
+  fluxoSecao?: FinanceFluxoSecao;
 }
 
-export function FinanceCrudBar({ table, onSaved, preset }: FinanceCrudBarProps) {
+export function FinanceCrudBar({ table, onSaved, preset, fluxoSecao }: FinanceCrudBarProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -255,6 +243,7 @@ export function FinanceCrudBar({ table, onSaved, preset }: FinanceCrudBarProps) 
           <FinanceRecordForm
             table={table}
             preset={preset}
+            fluxoSecao={fluxoSecao}
             onSaved={() => {
               setOpen(false);
               onSaved();
