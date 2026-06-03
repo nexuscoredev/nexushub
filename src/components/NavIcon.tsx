@@ -9,7 +9,9 @@ export type NavIconName =
   | 'users'
   | 'settings'
   | 'menu'
-  | 'close';
+  | 'close'
+  | 'refresh'
+  | 'external';
 
 interface NavIconProps {
   name: NavIconName;
@@ -68,6 +70,17 @@ const paths: Record<NavIconName, ReactNode> = {
   close: (
     <>
       <path d="M18 6 6 18M6 6l12 12" />
+    </>
+  ),
+  refresh: (
+    <>
+      <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+      <path d="M21 3v6h-6" />
+    </>
+  ),
+  external: (
+    <>
+      <path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
     </>
   ),
 };

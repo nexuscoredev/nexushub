@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { NavIcon } from '../components/NavIcon';
 import { PageHeader } from '../components/PageHeader';
 import { ProjectSelector } from '../components/ProjectSelector';
+import { TodoistIcon } from '../components/TodoistIcon';
 import * as todoistApi from '../lib/todoistApi';
 import type { AssigneeHub, AssigneeOption } from '../lib/todoistAssignees';
 import { TEAM_ASSIGNEES } from '../lib/todoistAssignees';
@@ -435,19 +437,31 @@ export function FilaPage() {
         title="Fila operacional"
         subtitle={projectName ? `Projeto: ${projectName}` : 'Tarefas da equipe via Todoist'}
         actions={
-          <>
-            <button type="button" className="btn-ghost" onClick={() => void refresh()}>
-              Atualizar
+          <div className={styles.headerActions}>
+            <button
+              type="button"
+              className={`btn-ghost ${styles.iconBtnRound}`}
+              onClick={() => void refresh()}
+              aria-label="Atualizar"
+              title="Atualizar"
+            >
+              <NavIcon
+                name="refresh"
+                className={`${styles.headerIcon} ${loading ? styles.spin : ''}`}
+              />
             </button>
             <a
               href="https://todoist.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-ghost"
+              className={`btn-ghost ${styles.iconBtn}`}
+              aria-label="Abrir Todoist"
+              title="Abrir Todoist"
             >
-              Abrir Todoist
+              <TodoistIcon className={styles.todoistIcon} />
+              <NavIcon name="external" className={styles.headerIconSm} />
             </a>
-          </>
+          </div>
         }
       />
 

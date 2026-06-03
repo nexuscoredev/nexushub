@@ -1,3 +1,52 @@
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.iconBtnRound {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.65rem;
+}
+
+.headerIcon {
+  width: 18px;
+  height: 18px;
+  color: var(--polished-silver);
+}
+
+.headerIconSm {
+  width: 15px;
+  height: 15px;
+  color: var(--muted);
+  opacity: 0.85;
+}
+
+.todoistIcon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .chip:disabled {
   opacity: 0.35;
   cursor: not-allowed;
