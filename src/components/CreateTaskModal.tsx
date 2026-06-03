@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { useTeamAvatarMap } from '../hooks/useTeamAvatarMap';
 import { NavIcon } from './NavIcon';
 import { ProjectSelector } from './ProjectSelector';
+import { UserAvatar } from './UserAvatar';
 import type { AssigneeHub, AssigneeOption } from '../lib/todoistAssignees';
 import { TEAM_ASSIGNEES } from '../lib/todoistAssignees';
 import * as todoistApi from '../lib/todoistApi';
@@ -94,6 +96,7 @@ export function CreateTaskModal({
   defaultProjectId,
   onCreated,
 }: CreateTaskModalProps) {
+  const teamAvatars = useTeamAvatarMap();
   const [projectId, setProjectId] = useState(defaultProjectId);
   const [title, setTitle] = useState('');
   const [due, setDue] = useState<DuePreset>('');
@@ -304,21 +307,33 @@ export function CreateTaskModal({
               <ModalChip active={!assigneeHub} onClick={() => setAssigneeHub('')}>
                 Ninguém
               </ModalChip>
-              {assigneeOptions.map((o) => (
-                <ModalChip
-                  key={o.hub}
-                  active={assigneeHub === o.hub}
-                  unavailable={!o.uid && o.assignee_id == null}
-                  onClick={() => setAssigneeHub(o.hub)}
-                  title={
-                    o.uid || o.assignee_id != null
-                      ? `Todoist: ${o.todoistName}`
-                      : `${o.label} — não encontrado neste projeto`
-                  }
-                >
-                  {o.label}
-                </ModalChip>
-              ))}
+              {assigneeOptions.map((o) => {
+                const avatar = teamAvatars[o.hub];
+                return (
+                  <ModalChip
+                    key={o.hub}
+                    active={assigneeHub === o.hub}
+                    unavailable={!o.uid && o.assignee_id == null}
+                    onClick={() => setAssigneeHub(o.hub)}
+                    title={
+                      o.uid || o.assignee_id != null
+                        ? `Todoist: ${o.todoistName}`
+                        : `${o.label} — não encontrado neste projeto`
+                    }
+                  >
+                    <span className={styles.chipAssignee}>
+                      <UserAvatar
+                        size="xs"
+                        name={avatar?.name ?? o.label}
+                        email={avatar?.email}
+                        avatarUrl={avatar?.avatarUrl}
+                        className={styles.chipAvatar}
+                      />
+                      <span>{o.label}</span>
+                    </span>
+                  </ModalChip>
+                );
+              })}
             </div>
             {assigneeHub && !selectedAssignee?.uid && selectedAssignee?.assignee_id == null && (
               <p className={`${styles.hint} ${styles.hintWarn}`}>

@@ -82,6 +82,17 @@
   gap: 0.4rem;
 }
 
+.chipAssignee {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.chipAvatar {
+  flex-shrink: 0;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
 .chip {
   display: inline-flex;
   align-items: center;
@@ -187,6 +198,10 @@
   border-color: rgba(255, 255, 255, 0.32);
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.1) 100%);
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.12);
+}
+
+.chip:has(.chipAssignee) {
+  padding-left: 0.3rem;
 }
 
 .chipUnavailable {
