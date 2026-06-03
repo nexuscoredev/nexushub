@@ -16,9 +16,10 @@ import { PageHeader } from '../components/PageHeader';
 import { ProjectSelector } from '../components/ProjectSelector';
 import { TodoistIcon } from '../components/TodoistIcon';
 import * as todoistApi from '../lib/todoistApi';
+import { useAuth } from '../contexts/AuthContext';
 import { useTeamAvatarMap, type TeamAvatarMap } from '../hooks/useTeamAvatarMap';
 import type { AssigneeHub, AssigneeOption } from '../lib/todoistAssignees';
-import { TEAM_ASSIGNEES } from '../lib/todoistAssignees';
+import { hubFromUsuario, taskIsAssignedToHub, TEAM_ASSIGNEES } from '../lib/todoistAssignees';
 import { matchProjectToSystem, sortProjectsByClient } from '../lib/systemLogos';
 import {
   buildTodoistTaskDisplayList,
@@ -299,8 +300,11 @@ const TaskRow = memo(function TaskRow({
 });
 
 export function FilaPage() {
+  const { profile } = useAuth();
   const teamAvatars = useTeamAvatarMap();
+  const myHub = hubFromUsuario(profile?.usuario);
   const [viewTab, setViewTab] = useState<ViewTab>('tasks');
+  const [onlyMyTasks, setOnlyMyTasks] = useState(false);
   const [tasks, setTasks] = useState<TodoistTask[]>([]);
   const [projects, setProjects] = useState<TodoistProject[]>([]);
   const [sections, setSections] = useState<TodoistSection[]>([]);
@@ -649,8 +653,29 @@ export function FilaPage() {
     });
   };
 
-  const pending = tasks.filter((t) => !t.is_completed);
-  const done = tasks.filter((t) => t.is_completed);
+  const filterByAssignee = useCallback(
+    (list: TodoistTask[]) => {
+      if (!onlyMyTasks || !myHub) return list;
+      return list.filter((t) => taskIsAssignedToHub(t, myHub, assigneeOptions));
+    },
+    [onlyMyTasks, myHub, assigneeOptions],
+  );
+
+  const pending = useMemo(
+    () => filterByAssignee(tasks.filter((t) => !t.is_completed)),
+    [tasks, filterByAssignee],
+  );
+  const done = useMemo(
+    () => filterByAssignee(tasks.filter((t) => t.is_completed)),
+    [tasks, filterByAssignee],
+  );
+
+  useEffect(() => {
+    if (!onlyMyTasks || !myHub || !selectedTask) return;
+    if (!taskIsAssignedToHub(selectedTask, myHub, assigneeOptions)) {
+      closeDetail();
+    }
+  }, [onlyMyTasks, myHub, selectedTask, assigneeOptions, closeDetail]);
   const pendingParents = useMemo(() => getParentIdsWithChildren(pending), [pending]);
   const doneParents = useMemo(() => getParentIdsWithChildren(done), [done]);
   const pendingDisplay = useMemo(
@@ -761,6 +786,18 @@ export function FilaPage() {
                   {f.label}
                 </Chip>
               ))}
+              <Chip
+                active={onlyMyTasks}
+                disabled={!myHub}
+                onClick={() => setOnlyMyTasks((v) => !v)}
+                title={
+                  myHub
+                    ? `Mostrar só tarefas de ${profile?.nome ?? myHub}`
+                    : 'Perfil sem vínculo com a equipe Todoist'
+                }
+              >
+                Minhas tarefas
+              </Chip>
             </div>
             {(sections.length > 0 || labels.length > 0) && !quickFilter && (
               <button
@@ -835,7 +872,11 @@ export function FilaPage() {
                     />
                   ))}
                   {!loading && pendingDisplay.length === 0 && (
-                    <li className={styles.empty}>Nenhuma tarefa pendente.</li>
+                    <li className={styles.empty}>
+                      {onlyMyTasks
+                        ? 'Nenhuma tarefa sua neste filtro.'
+                        : 'Nenhuma tarefa pendente.'}
+                    </li>
                   )}
                 </ul>
               </section>

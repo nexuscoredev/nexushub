@@ -47,6 +47,22 @@ export function totalSaidas(items: HubFinanceInvestment[]): number {
     .reduce((sum, i) => sum + Number(i.valor), 0);
 }
 
+/** Valor pendente na fila Implantações. */
+export function totalImplantacaoAReceber(items: HubFinanceReceivable[]): number {
+  return items
+    .filter((r) => secaoEntradaReceivable(r) === 'implantacoes')
+    .reduce((sum, r) => sum + valorRestanteReceivable(r), 0);
+}
+
+/** Lucro mensal estimado: receita recorrente/mês menos saídas cadastradas. */
+export function lucroMensalEstimado(
+  subscriptions: HubFinanceSubscription[],
+  receivables: HubFinanceReceivable[],
+  investments: HubFinanceInvestment[],
+): number {
+  return totalMensalidade(subscriptions, receivables) - totalSaidas(investments);
+}
+
 export function totalSaidasPorResponsavel(
   items: HubFinanceInvestment[],
 ): Record<string, number> {

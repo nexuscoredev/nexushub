@@ -227,12 +227,6 @@ export function DashboardLayout() {
               </div>
             </nav>
           </div>
-
-          <div className={styles.commandMeta}>
-            <span className={styles.metaUser}>{profile?.nome ?? user?.email}</span>
-            <span className={styles.metaDot} aria-hidden />
-            <span className={styles.metaRole}>{profile?.cargo ?? '—'}</span>
-          </div>
         </header>
 
         <main className={styles.main}>

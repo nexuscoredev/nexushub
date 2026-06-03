@@ -282,47 +282,6 @@
   color: #fff;
 }
 
-/* Meta linha abaixo do dock */
-.commandMeta {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 0.65rem;
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.metaUser {
-  color: var(--polished-silver);
-}
-
-.metaDot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--success);
-  box-shadow: 0 0 6px rgba(198, 232, 208, 0.5);
-  animation: pulse 2s ease infinite;
-}
-
-.metaRole {
-  opacity: 0.85;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.45;
-  }
-}
-
 /* ── Conteúdo ── */
 .main {
   flex: 1;
@@ -403,13 +362,6 @@
     scroll-margin-inline: 0.35rem;
   }
 
-  .commandMeta {
-    margin-top: 0.5rem;
-    font-size: 0.58rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    text-align: center;
-  }
 }
 
 @media (max-width: 768px) {
@@ -698,10 +650,6 @@
     min-width: 44px;
     min-height: 44px;
     -webkit-tap-highlight-color: transparent;
-  }
-
-  .commandMeta {
-    display: none;
   }
 
   .main {
