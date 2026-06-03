@@ -197,3 +197,12 @@ flowchart TD
 | FAB + badge | `ChatLauncher` + `resumoInboxChat` |
 
 Ver `ligeirinhohub/docs/chat-ligeirinho-rollout.md` para o que foi alterado e como testar.
+
+---
+
+## NEXUS Hub central (implementado no app)
+
+- UI: `src/components/chat/HubChatLauncher.tsx`, `HubChatWidget.tsx`
+- API: `src/lib/hubChat.ts` → tabelas `hub_chat_*`
+- Rota `/chat` + item **Chat** no dock; FAB canto inferior direito
+- SQL: `supabase/migrations/20260612120000_hub_chat_interno.sql`

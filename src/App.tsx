@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AuthProvider } from './contexts/AuthContext';
+import { ChatFloatProvider } from './contexts/ChatFloatContext';
 import { DashboardLayout } from './layouts/DashboardLayout';
 import { AgendaPage } from './pages/AgendaPage';
 import { DashboardPage } from './pages/DashboardPage';
@@ -11,10 +12,12 @@ import { LoginPage } from './pages/LoginPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { SystemsPage } from './pages/SystemsPage';
 import { UsersPage } from './pages/UsersPage';
+import { ChatPage } from './pages/ChatPage';
 
 export default function App() {
   return (
     <AuthProvider>
+      <ChatFloatProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -22,6 +25,7 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<DashboardLayout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/chat" element={<ChatPage />} />
               <Route path="/sistemas" element={<SystemsPage />} />
               <Route path="/fila" element={<FilaPage />} />
               <Route path="/configuracoes" element={<SettingsPage />} />
@@ -37,6 +41,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
+      </ChatFloatProvider>
     </AuthProvider>
   );
 }

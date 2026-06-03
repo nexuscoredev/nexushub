@@ -2,6 +2,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { HubLogo } from '../components/HubLogo';
 import { NavIcon, type NavIconName } from '../components/NavIcon';
 import { TechShell } from '../components/TechShell';
+import { HubChatLauncher } from '../components/chat/HubChatLauncher';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './DashboardLayout.module.css';
 
@@ -25,6 +26,7 @@ export function DashboardLayout() {
     { to: '/dashboard', label: 'Painel', icon: 'dashboard', show: true },
     { to: '/agenda', label: 'Agenda', icon: 'calendar', show: podeFinanceiroAgenda },
     { to: '/financeiro', label: 'Financeiro', icon: 'finance', show: podeFinanceiroAgenda },
+    { to: '/chat', label: 'Chat', icon: 'chat', show: true },
     { to: '/fila', label: 'Fila', icon: 'queue', show: true },
     { to: '/sistemas', label: 'Sistemas', icon: 'systems', show: true },
     { to: '/usuarios', label: 'Usuários', icon: 'users', show: podeGestao },
@@ -86,6 +88,7 @@ export function DashboardLayout() {
         <main className={styles.main}>
           <Outlet />
         </main>
+        {profile ? <HubChatLauncher profile={profile} /> : null}
       </div>
     </TechShell>
   );
