@@ -9,10 +9,30 @@ import type {
   UpdateTaskInput,
 } from '../types/todoist';
 
+function translateTodoistError(message: string): string {
+  const m = message.trim();
+  const rules: [RegExp, string][] = [
+    [/task not found/i, 'Tarefa não encontrada'],
+    [/project not found/i, 'Projeto não encontrado'],
+    [/section not found/i, 'Seção não encontrada'],
+    [/label not found/i, 'Etiqueta não encontrada'],
+    [/method not allowed/i, 'Método não permitido'],
+    [/bad request/i, 'Requisição inválida'],
+    [/forbidden/i, 'Sem permissão'],
+    [/unauthorized/i, 'Não autorizado'],
+    [/content is required/i, 'O título da tarefa é obrigatório'],
+  ];
+  for (const [pattern, pt] of rules) {
+    if (pattern.test(m)) return pt;
+  }
+  return m;
+}
+
 async function parseJson<T>(res: Response): Promise<T & { error?: string; configured?: boolean }> {
   const body = (await res.json()) as T & { error?: string; configured?: boolean };
   if (!res.ok) {
-    throw new Error(body.error ?? `Erro HTTP ${res.status}`);
+    const raw = body.error ?? `Erro HTTP ${res.status}`;
+    throw new Error(translateTodoistError(raw));
   }
   if (body.configured === false) {
     throw new Error(

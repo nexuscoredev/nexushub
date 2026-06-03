@@ -97,6 +97,7 @@ export interface CreateTaskInput {
   priority?: number;
   due_string?: string;
   due_date?: string;
+  due_lang?: string;
   assignee_id?: number | string | null;
 }
 
@@ -107,6 +108,7 @@ export interface UpdateTaskInput {
   priority?: number;
   due_string?: string;
   due_date?: string;
+  due_lang?: string;
   section_id?: string;
   assignee_id?: number | string | null;
 }
@@ -131,11 +133,15 @@ export { TEAM_ASSIGNEES, buildAssigneeOptions } from './todoistAssignees.js';
 function buildTaskWriteBody(
   data: CreateTaskInput | UpdateTaskInput,
 ): Record<string, unknown> {
-  const { assignee_id, priority, section_id: _section, ...rest } = data as CreateTaskInput &
-    UpdateTaskInput & { section_id?: string };
+  const { assignee_id, priority, section_id: _section, due_string, due_lang, ...rest } =
+    data as CreateTaskInput & UpdateTaskInput & { section_id?: string };
   const out: Record<string, unknown> = { ...rest };
   if (priority !== undefined) {
     out.priority = hubPriorityToTodoistApi(priority);
+  }
+  if (due_string !== undefined) {
+    out.due_string = due_string;
+    out.due_lang = due_lang ?? (due_string.trim() ? 'pt' : undefined);
   }
   Object.assign(out, assigneeFieldsForTodoistApi(assignee_id));
   return out;
@@ -486,11 +492,12 @@ export async function todoistFetchTasks(
     sectionId?: string;
     label?: string;
     filterQuery?: string;
+    filterLang?: string;
   },
   collaborators: TodoistCollaborator[] = [],
 ): Promise<TodoistTaskRaw[]> {
   if (opts?.filterQuery) {
-    return todoistFilterTasks(opts.filterQuery, undefined, collaborators);
+    return todoistFilterTasks(opts.filterQuery, opts.filterLang ?? 'pt', collaborators);
   }
 
   const query: Record<string, string | number | undefined> = { limit: 200 };

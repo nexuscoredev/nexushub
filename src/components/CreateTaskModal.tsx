@@ -4,10 +4,11 @@ import { ProjectSelector } from './ProjectSelector';
 import type { AssigneeHub, AssigneeOption } from '../lib/todoistAssignees';
 import { TEAM_ASSIGNEES } from '../lib/todoistAssignees';
 import * as todoistApi from '../lib/todoistApi';
+import { todoistDuePresetForCreate, type TodoistDuePreset } from '../lib/todoistDuePt';
 import type { TodoistLabel, TodoistProject, TodoistSection } from '../types/todoist';
 import styles from './CreateTaskModal.module.css';
 
-type DuePreset = '' | 'today' | 'tomorrow';
+type DuePreset = TodoistDuePreset;
 
 const DUE_PRESETS: { id: DuePreset; label: string }[] = [
   { id: '', label: 'Sem prazo' },
@@ -192,7 +193,7 @@ export function CreateTaskModal({
         section_id: sectionId || undefined,
         labels: selectedLabels.length ? selectedLabels : undefined,
         priority,
-        due_string: due === 'today' ? 'today' : due === 'tomorrow' ? 'tomorrow' : undefined,
+        ...todoistDuePresetForCreate(due),
         assignee_id: assignee?.uid ?? assignee?.assignee_id ?? undefined,
       });
       onCreated(projectId);

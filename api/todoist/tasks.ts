@@ -59,6 +59,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           sectionId,
           label,
           filterQuery,
+          filterLang: filterQuery ? 'pt' : undefined,
         },
         collaborators,
       );

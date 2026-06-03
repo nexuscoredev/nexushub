@@ -67,6 +67,7 @@ export interface CreateTaskInput {
   priority?: number;
   due_string?: string;
   due_date?: string;
+  due_lang?: string;
   parent_id?: string | null;
   assignee_id?: number | string | null;
 }
@@ -78,6 +79,7 @@ export interface UpdateTaskInput {
   priority?: number;
   due_string?: string;
   due_date?: string;
+  due_lang?: string;
   section_id?: string;
   is_completed?: boolean;
   assignee_id?: number | string | null;

@@ -18,6 +18,12 @@ import {
   TodoistTaskContent,
   todoistPlainText,
 } from '../lib/todoistContent';
+import {
+  formatTodoistDueDisplay,
+  taskMatchesDuePreset,
+  todoistDuePresetToApi,
+  type TodoistDuePreset,
+} from '../lib/todoistDuePt';
 import type {
   TodoistComment,
   TodoistLabel,
@@ -31,7 +37,7 @@ const PROJECT_STORAGE_KEY = 'nexushub-todoist-project';
 
 type ViewTab = 'tasks' | 'manage';
 type QuickFilter = '' | 'today' | 'tomorrow' | 'overdue' | 'p1';
-type DuePreset = '' | 'today' | 'tomorrow';
+type DuePreset = TodoistDuePreset;
 
 const QUICK_FILTERS: { id: QuickFilter; label: string }[] = [
   { id: '', label: 'Todas' },
@@ -99,17 +105,16 @@ function priorityClass(priority: number): string {
   return styles.p4;
 }
 
-function formatDue(task: TodoistTask): string | null {
-  if (task.due?.string) return task.due.string;
-  if (task.due?.date) return task.due.date;
-  if (task.due?.datetime) return task.due.datetime;
-  return null;
-}
+const FILTER_QUERY_PT: Record<Exclude<QuickFilter, ''>, string> = {
+  today: 'hoje',
+  tomorrow: 'amanhã',
+  overdue: 'atrasado',
+  p1: 'p1',
+};
 
 function filterQueryFor(id: QuickFilter): string | undefined {
   if (!id) return undefined;
-  if (id === 'p1') return 'p1';
-  return id;
+  return FILTER_QUERY_PT[id];
 }
 
 interface ChipProps {
@@ -176,7 +181,7 @@ function TaskRow({
   onToggleCollapse,
   onSelect,
 }: TaskRowProps) {
-  const due = formatDue(task);
+  const due = formatTodoistDueDisplay(task.due);
   const heading = isTodoistHeadingContent(task.content);
   const plainTitle = todoistPlainText(task.content);
   const priority = getPriorityInfo(task.priority);
@@ -826,20 +831,8 @@ export function FilaPage() {
                       {DUE_PRESETS.map((d) => (
                         <Chip
                           key={d.id || 'none'}
-                          active={
-                            d.id === ''
-                              ? !selectedTask.due
-                              : d.id === 'today'
-                                ? selectedTask.due?.string === 'today' ||
-                                  selectedTask.due?.date === new Date().toISOString().slice(0, 10)
-                                : selectedTask.due?.string === 'tomorrow'
-                          }
-                          onClick={() =>
-                            void patchSelected({
-                              due_string:
-                                d.id === 'today' ? 'today' : d.id === 'tomorrow' ? 'tomorrow' : '',
-                            })
-                          }
+                          active={taskMatchesDuePreset(selectedTask, d.id)}
+                          onClick={() => void patchSelected(todoistDuePresetToApi(d.id))}
                         >
                           {d.label}
                         </Chip>
