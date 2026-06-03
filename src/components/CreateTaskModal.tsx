@@ -16,10 +16,10 @@ const DUE_PRESETS: { id: DuePreset; label: string }[] = [
 ];
 
 const PRIORITIES = [
-  { value: 1, label: 'P1', title: 'Urgente' },
-  { value: 2, label: 'P2', title: 'Alta' },
-  { value: 3, label: 'P3', title: 'Média' },
-  { value: 4, label: 'P4', title: 'Normal' },
+  { value: 1, label: 'P1', title: 'Urgente (vermelho)' },
+  { value: 2, label: 'P2', title: 'Alta (amarelo)' },
+  { value: 3, label: 'P3', title: 'Média (verde)' },
+  { value: 4, label: 'P4', title: 'Baixa (cinza)' },
 ] as const;
 
 interface CreateTaskModalProps {

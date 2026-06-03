@@ -57,20 +57,19 @@
   margin-left: auto;
 }
 
-.avatar {
-  width: 36px;
-  height: 36px;
+.avatarLink {
+  display: inline-flex;
   border-radius: 50%;
-  background: linear-gradient(145deg, #2a2a2a, #0a0a0a);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.85rem;
-  color: var(--primary);
-  box-shadow: 0 0 16px rgba(255, 255, 255, 0.06);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.avatarLink:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.12);
+}
+
+.avatarLink:global(.active) {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
 }
 
 .signOutBtn {

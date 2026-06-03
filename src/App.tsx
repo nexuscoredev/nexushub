@@ -9,6 +9,7 @@ import { FilaPage } from './pages/FilaPage';
 import { FinanceiroPage } from './pages/FinanceiroPage';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
+import { ProfilePage } from './pages/ProfilePage';
 import { SettingsPage } from './pages/SettingsPage';
 import { SystemsPage } from './pages/SystemsPage';
 import { UsersPage } from './pages/UsersPage';
@@ -28,6 +29,7 @@ export default function App() {
               <Route path="/chat" element={<ChatPage />} />
               <Route path="/sistemas" element={<SystemsPage />} />
               <Route path="/fila" element={<FilaPage />} />
+              <Route path="/perfil" element={<ProfilePage />} />
               <Route path="/configuracoes" element={<SettingsPage />} />
               <Route element={<ProtectedRoute requireGestao />}>
                 <Route path="/usuarios" element={<UsersPage />} />

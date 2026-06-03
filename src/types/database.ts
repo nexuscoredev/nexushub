@@ -12,6 +12,7 @@ export interface HubProfile {
   usuario: string;
   nome: string;
   cargo: HubCargo;
+  avatar_url?: string | null;
   ativo: boolean;
   created_at: string;
   updated_at: string;

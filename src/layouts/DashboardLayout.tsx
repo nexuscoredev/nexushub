@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { HubLogo } from '../components/HubLogo';
 import { NavIcon, type NavIconName } from '../components/NavIcon';
+import { UserAvatar } from '../components/UserAvatar';
 import { TechShell } from '../components/TechShell';
 import { HubChatLauncher } from '../components/chat/HubChatLauncher';
 import { useAuth } from '../contexts/AuthContext';
@@ -11,11 +12,6 @@ interface NavItem {
   label: string;
   icon: NavIconName;
   show: boolean;
-}
-
-function userInitial(name: string | undefined, email: string | undefined): string {
-  const n = (name ?? email ?? '?').trim();
-  return n.charAt(0).toUpperCase();
 }
 
 export function DashboardLayout() {
@@ -69,9 +65,18 @@ export function DashboardLayout() {
             </nav>
 
             <div className={styles.userCompact}>
-              <div className={styles.avatar} title={profile?.nome ?? user?.email}>
-                {userInitial(profile?.nome, user?.email)}
-              </div>
+              <NavLink
+                to="/perfil"
+                className={styles.avatarLink}
+                title="Meu perfil"
+                aria-label="Meu perfil"
+              >
+                <UserAvatar
+                  name={profile?.nome}
+                  email={user?.email}
+                  avatarUrl={profile?.avatar_url}
+                />
+              </NavLink>
               <button type="button" className={`btn-ghost ${styles.signOutBtn}`} onClick={handleSignOut}>
                 Sair
               </button>

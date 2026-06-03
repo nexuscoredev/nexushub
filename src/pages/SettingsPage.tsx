@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { PageHeader } from '../components/PageHeader';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './SettingsPage.module.css';
@@ -16,6 +17,13 @@ export function SettingsPage() {
       <div className={styles.grid}>
         <section className="card">
           <h2 className={styles.cardTitle}>Sessão</h2>
+          <p style={{ marginBottom: '1rem', fontSize: '0.9rem', color: 'var(--muted)' }}>
+            Foto, nome e senha em{' '}
+            <Link to="/perfil" style={{ color: 'var(--primary)' }}>
+              Meu perfil
+            </Link>
+            .
+          </p>
           <dl className={styles.dl}>
             <div>
               <dt>Usuário</dt>

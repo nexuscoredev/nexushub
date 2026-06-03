@@ -114,7 +114,7 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* Prioridades Todoist — P1 urgente … P4 baixa */
+/* Prioridades — P1 vermelho, P2 amarelo, P3 verde, P4 cinza */
 .chipPriority1 {
   border-color: rgba(255, 112, 102, 0.5);
   color: #ff9f98;
@@ -136,43 +136,43 @@
 }
 
 .chipPriority2 {
-  border-color: rgba(255, 154, 20, 0.5);
-  color: #ffc46a;
-  background: rgba(255, 154, 20, 0.12);
+  border-color: rgba(245, 210, 70, 0.55);
+  color: #ffe566;
+  background: rgba(245, 210, 70, 0.12);
 }
 
 .chipPriority2:hover {
-  color: #ffd899;
-  border-color: rgba(255, 154, 20, 0.65);
-  background: rgba(255, 154, 20, 0.2);
+  color: #fff3a8;
+  border-color: rgba(245, 210, 70, 0.7);
+  background: rgba(245, 210, 70, 0.2);
 }
 
 .chipPriority2Active,
 .chipPriority2.chipPriority2Active:hover {
-  color: #1a1208;
-  border-color: #ff9a14;
-  background: linear-gradient(145deg, #ffb020 0%, #e8880a 100%);
-  box-shadow: 0 0 14px rgba(255, 154, 20, 0.4);
+  color: #1a1608;
+  border-color: #f5d547;
+  background: linear-gradient(145deg, #ffe566 0%, #e8c320 100%);
+  box-shadow: 0 0 14px rgba(245, 210, 70, 0.45);
 }
 
 .chipPriority3 {
-  border-color: rgba(82, 156, 201, 0.5);
-  color: #8ec8ea;
-  background: rgba(82, 156, 201, 0.12);
+  border-color: rgba(74, 222, 128, 0.5);
+  color: #86efac;
+  background: rgba(74, 222, 128, 0.1);
 }
 
 .chipPriority3:hover {
-  color: #b3dcf5;
-  border-color: rgba(82, 156, 201, 0.65);
-  background: rgba(82, 156, 201, 0.2);
+  color: #bbf7d0;
+  border-color: rgba(74, 222, 128, 0.65);
+  background: rgba(74, 222, 128, 0.18);
 }
 
 .chipPriority3Active,
 .chipPriority3.chipPriority3Active:hover {
-  color: #fff;
-  border-color: #529cc9;
-  background: linear-gradient(145deg, #4a94c4 0%, #2f6fa0 100%);
-  box-shadow: 0 0 14px rgba(82, 156, 201, 0.45);
+  color: #052e16;
+  border-color: #4ade80;
+  background: linear-gradient(145deg, #6ee7a0 0%, #22c55e 100%);
+  box-shadow: 0 0 14px rgba(74, 222, 128, 0.4);
 }
 
 .chipPriority4 {
@@ -631,15 +631,15 @@
 }
 
 .p2 {
-  color: #ffc46a;
-  background: rgba(255, 154, 20, 0.14);
-  border-color: rgba(255, 154, 20, 0.42);
+  color: #ffe566;
+  background: rgba(245, 210, 70, 0.14);
+  border-color: rgba(245, 210, 70, 0.45);
 }
 
 .p3 {
-  color: #8ec8ea;
-  background: rgba(82, 156, 201, 0.14);
-  border-color: rgba(82, 156, 201, 0.42);
+  color: #86efac;
+  background: rgba(74, 222, 128, 0.12);
+  border-color: rgba(74, 222, 128, 0.42);
 }
 
 .p4 {
