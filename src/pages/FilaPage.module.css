@@ -229,6 +229,83 @@
   flex-shrink: 0;
 }
 
+@media (max-width: 1024px) {
+  .tasksToolbar {
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  .toolbarRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .field,
+  .fieldGrow {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .createBtn {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .tasksToolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .manageActions {
+    flex-direction: column;
+  }
+
+  .manageActions :global(.btn-primary) {
+    width: 100%;
+  }
+
+  .tabs {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabs :global(.tab) {
+    flex-shrink: 0;
+  }
+
+  .taskModalBackdrop {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .taskModalDialog {
+    width: 100%;
+    max-height: 94vh;
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 1rem 1rem 1.25rem;
+  }
+
+  .detailActions {
+    flex-direction: column-reverse;
+  }
+
+  .detailActionBtn {
+    width: 100%;
+  }
+
+  .taskItem {
+    padding-left: calc(0.35rem + var(--depth, 0) * 0.55rem);
+  }
+
+  .chipRow {
+    gap: 0.35rem;
+  }
+}
+
 @media (max-width: 640px) {
   .createBtn {
     margin-left: 0;
@@ -271,13 +348,28 @@
 
 .detailClose {
   flex-shrink: 0;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   padding: 0;
-  border-radius: var(--radius-sm);
+  border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--polished-silver);
+}
+
+.detailClose:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.detailCloseIcon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
 .detailFields {

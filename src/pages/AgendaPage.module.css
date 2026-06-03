@@ -45,6 +45,22 @@
   gap: 0.4rem;
 }
 
+@media (max-width: 768px) {
+  .embedGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .embedFrame {
+    height: min(480px, 55vh);
+  }
+
+  .eventItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}
+
 .eventItem {
   display: flex;
   justify-content: space-between;

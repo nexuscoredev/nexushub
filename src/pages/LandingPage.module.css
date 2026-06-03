@@ -103,3 +103,34 @@
   height: 32px;
   background: var(--border);
 }
+
+@media (max-width: 768px) {
+  .page {
+    padding: 1.25rem 1rem;
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+
+  .stats {
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .statDivider {
+    width: 100%;
+    height: 1px;
+  }
+
+  .actions :global(.btn-primary) {
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tagline {
+    font-size: 0.95rem;
+  }
+}

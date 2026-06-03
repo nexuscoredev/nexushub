@@ -79,3 +79,9 @@
   font-size: 0.75rem;
   color: var(--muted);
 }
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

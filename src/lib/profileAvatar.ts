@@ -90,8 +90,10 @@ export async function removeProfileAvatar(userId: string): Promise<void> {
     .list(userId);
 
   if (listError) {
+    const msg = supabaseErrorMessage(listError);
+    if (/bucket not found/i.test(msg)) return;
     const hint = avatarSetupHint(listError);
-    throw new Error(hint ?? supabaseErrorMessage(listError));
+    throw new Error(hint ?? msg);
   }
 
   const paths = (listed ?? [])

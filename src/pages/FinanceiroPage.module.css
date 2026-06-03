@@ -194,6 +194,46 @@
   margin-left: 0.5rem;
 }
 
+@media (max-width: 1024px) {
+  .sectionHeader {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .sectionMeta {
+    text-align: left;
+    width: 100%;
+  }
+
+  .clientContractRow {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+    align-items: start;
+  }
+}
+
+@media (max-width: 768px) {
+  .sectionBody {
+    padding: 0.85rem 0.75rem;
+  }
+
+  .sectionHeader {
+    padding: 0.75rem 0.85rem;
+  }
+
+  .dropBar {
+    max-width: calc(100% - 1rem);
+    white-space: normal;
+    text-align: center;
+    font-size: 0.75rem;
+  }
+
+  .tableReceivables .cellPagamento {
+    min-width: 0;
+    max-width: none;
+  }
+}
+
 .sectionDropTarget.dropZoneActive {
   outline: 2px dashed rgba(140, 200, 255, 0.55);
   outline-offset: 2px;

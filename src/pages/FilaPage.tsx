@@ -798,7 +798,7 @@ export function FilaPage() {
                     onClick={closeDetail}
                     aria-label="Fechar detalhes"
                   >
-                    <NavIcon name="close" className={styles.headerIconSm} />
+                    <NavIcon name="close" className={styles.detailCloseIcon} />
                   </button>
                 </div>
 

@@ -1,0 +1,75 @@
+/* NEXUS Hub — ajustes globais mobile / tablet */
+
+@media (max-width: 1024px) {
+  .tabs {
+    width: 100%;
+    max-width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  }
+
+  .tab {
+    flex-shrink: 0;
+  }
+
+  .table-wrap {
+    margin: 0 -0.25rem;
+    padding-bottom: 0.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+  }
+
+  .product-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .link-grid {
+    gap: 0.5rem;
+  }
+
+  table.data-table {
+    font-size: 0.8125rem;
+  }
+
+  table.data-table th,
+  table.data-table td {
+    padding: 0.55rem 0.65rem;
+  }
+
+  .btn-primary,
+  .btn-ghost {
+    min-height: 44px;
+  }
+
+  .page-subtitle {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .kpi-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .btn-primary {
+    width: 100%;
+    max-width: 100%;
+  }
+}

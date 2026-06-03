@@ -86,3 +86,19 @@
 .back a:hover {
   color: var(--primary);
 }
+
+@media (max-width: 480px) {
+  .page {
+    padding: 1rem;
+    align-items: flex-start;
+    padding-top: 1.5rem;
+  }
+
+  .card {
+    padding: 1.5rem 1.15rem;
+  }
+
+  .title {
+    font-size: 1.45rem;
+  }
+}

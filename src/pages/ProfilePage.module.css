@@ -9,6 +9,28 @@
   .layout {
     grid-template-columns: 1fr;
   }
+
+  .photoActions {
+    width: 100%;
+  }
+
+  .photoActions :global(.btn-primary),
+  .photoActions :global(.btn-ghost) {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions :global(.btn-primary) {
+    width: 100%;
+  }
+
+  .grid2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .photoCard {
