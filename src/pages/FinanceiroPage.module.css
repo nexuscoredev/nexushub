@@ -151,3 +151,40 @@
 .pagoParcial {
   color: #e8c468;
 }
+
+.dropHint {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-weight: 400;
+  margin-left: 0.5rem;
+}
+
+.dropZoneActive {
+  outline: 2px dashed rgba(255, 255, 255, 0.35);
+  outline-offset: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+}
+
+.dragHandleCell {
+  cursor: grab;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.dragHandleCell:active {
+  cursor: grabbing;
+}
+
+.dragHandleIcon {
+  display: inline-block;
+  margin-right: 0.45rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  letter-spacing: -0.15em;
+  vertical-align: middle;
+}
+
+.rowDragging {
+  opacity: 0.45;
+}

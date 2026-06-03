@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type DragEvent,
+  type ReactNode,
+} from 'react';
 import { MensalidadesEntradaView } from '../components/MensalidadesEntradaView';
 import { ReceivablesTable } from '../components/ReceivablesTable';
 import {
@@ -25,6 +32,7 @@ import {
   totalSaidasPorResponsavel,
 } from '../lib/financeiro';
 import { formatBRL, formatDate } from '../lib/format';
+import { moveReceivableToSecao, RECEIVABLE_DRAG_MIME } from '../lib/receivableDrag';
 import { valorPagoReceivable } from '../lib/receivableParcelas';
 import { supabase, supabaseErrorMessage } from '../lib/supabase';
 import type {
@@ -100,6 +108,17 @@ export function FinanceiroPage() {
   const split = totalSaidasPorResponsavel(investments);
   const totalMensalidadesRecorrentes = totalMensalAssinaturas(subscriptions);
 
+  const handleDropReceivable = useCallback(
+    async (receivableId: string, targetSecao: EntradaSecao) => {
+      const row = receivables.find((r) => r.id === receivableId);
+      if (!row || secaoEntradaReceivable(row) === targetSecao) return;
+      const err = await moveReceivableToSecao(row, targetSecao);
+      if (err) setError(err);
+      else await load();
+    },
+    [receivables, load],
+  );
+
   return (
     <div>
       <PageHeader
@@ -157,6 +176,9 @@ export function FinanceiroPage() {
             <FinanceQueueSection
               key={secao.id}
               title={secao.label}
+              dropHint="Arraste registros para aqui"
+              entradaSecao={secao.id}
+              onDropReceivable={handleDropReceivable}
               totalLabel={formatReceivableSectionMeta(
                 receivablesBySecao[secao.id],
                 secao.id === 'mensalidades' ? totalMensalidadesRecorrentes : 0,
@@ -235,18 +257,52 @@ function FinanceQueueSection({
   title,
   totalLabel,
   children,
+  dropHint,
+  entradaSecao,
+  onDropReceivable,
 }: {
   title: string;
   totalLabel: string;
   children: ReactNode;
+  dropHint?: string;
+  entradaSecao?: EntradaSecao;
+  onDropReceivable?: (receivableId: string, secao: EntradaSecao) => void;
 }) {
+  const [dropActive, setDropActive] = useState(false);
+
+  const handleDragOver = (e: DragEvent) => {
+    if (!entradaSecao || !onDropReceivable) return;
+    if (!e.dataTransfer.types.includes(RECEIVABLE_DRAG_MIME)) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDropActive(true);
+  };
+
+  const handleDrop = (e: DragEvent) => {
+    if (!entradaSecao || !onDropReceivable) return;
+    e.preventDefault();
+    setDropActive(false);
+    const id = e.dataTransfer.getData(RECEIVABLE_DRAG_MIME);
+    if (id) void onDropReceivable(id, entradaSecao);
+  };
+
   return (
     <section className={styles.section}>
       <div className={styles.sectionHeader}>
-        <h2 className={styles.sectionTitle}>{title}</h2>
+        <h2 className={styles.sectionTitle}>
+          {title}
+          {dropHint && <span className={styles.dropHint}>{dropHint}</span>}
+        </h2>
         <span className={styles.sectionMeta}>{totalLabel}</span>
       </div>
-      <div className={styles.sectionBody}>{children}</div>
+      <div
+        className={`${styles.sectionBody} ${dropActive ? styles.dropZoneActive : ''}`}
+        onDragOver={handleDragOver}
+        onDragLeave={() => setDropActive(false)}
+        onDrop={handleDrop}
+      >
+        {children}
+      </div>
     </section>
   );
 }

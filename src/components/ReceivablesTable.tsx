@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, type DragEvent } from 'react';
 import type { FinanceFluxoSecao } from '../lib/financeCategories';
+import { RECEIVABLE_DRAG_MIME } from '../lib/receivableDrag';
 import { formatBRL, formatDate } from '../lib/format';
 import {
   parseParcelasFromReceivable,
@@ -28,6 +29,8 @@ interface ReceivablesTableProps {
   compactParcelas?: boolean;
   /** Só botão de adicionar (sem tabela vazia) */
   addOnly?: boolean;
+  /** Permite arrastar para outra fila (Implantações / Mensalidades) */
+  draggable?: boolean;
 }
 
 export function ReceivablesTable({
@@ -39,10 +42,18 @@ export function ReceivablesTable({
   embedded,
   compactParcelas,
   addOnly,
+  draggable = true,
 }: ReceivablesTableProps) {
   const [openAdd, setOpenAdd] = useState(false);
   const [editing, setEditing] = useState<HubFinanceReceivable | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+
+  const onDragStart = (e: DragEvent<HTMLTableCellElement>, rowId: string) => {
+    e.dataTransfer.setData(RECEIVABLE_DRAG_MIME, rowId);
+    e.dataTransfer.effectAllowed = 'move';
+    setDraggingId(rowId);
+  };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Excluir este registro?')) return;
@@ -168,8 +179,16 @@ export function ReceivablesTable({
               : (n: number) => `${n}ª (${formatBRL(valorParcela(Number(row.valor), p))})`;
 
             return (
-              <tr key={row.id}>
-                <td className={styles.cellCliente}>{row.cliente_descricao}</td>
+              <tr key={row.id} className={draggingId === row.id ? styles.rowDragging : undefined}>
+                <td
+                  className={`${styles.cellCliente} ${draggable ? styles.dragHandleCell : ''}`}
+                  draggable={draggable && !busy}
+                  onDragStart={draggable ? (e) => onDragStart(e, row.id) : undefined}
+                  onDragEnd={draggable ? () => setDraggingId(null) : undefined}
+                >
+                  {draggable && <span className={styles.dragHandleIcon} aria-hidden>⋮⋮</span>}
+                  {row.cliente_descricao}
+                </td>
                 <td>{formatBRL(Number(row.valor))}</td>
                 <td className={pagoClass}>{formatBRL(pago)}</td>
                 <td>{formatBRL(falta)}</td>
