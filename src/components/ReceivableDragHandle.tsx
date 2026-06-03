@@ -39,7 +39,7 @@ export function ReceivableDragHandle({ receivableId, label }: ReceivableDragHand
       role="button"
       tabIndex={0}
       className={styles.dragHandle}
-      title={`Arrastar ${label} para Implantações ou Mensalidades`}
+      title={`Segure ⋮⋮, arraste e clique em "Soltar em Implantações" ou "Soltar em Mensalidades"`}
       aria-label={`Arrastar ${label}`}
       onPointerDown={onPointerDown}
     >

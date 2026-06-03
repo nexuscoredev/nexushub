@@ -15,9 +15,33 @@
 .dropCaptureLayer {
   position: absolute;
   inset: 0;
-  z-index: 40;
+  z-index: 50;
   pointer-events: auto;
   border-radius: inherit;
+}
+
+.dropBar {
+  position: absolute;
+  top: 0.65rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 2px dashed rgba(140, 200, 255, 0.75);
+  background: rgba(20, 40, 70, 0.92);
+  color: #b8dcff;
+  cursor: pointer;
+  pointer-events: auto;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.dropBar:hover {
+  background: rgba(40, 80, 130, 0.95);
+  border-color: #b8dcff;
 }
 
 .sectionHeader {

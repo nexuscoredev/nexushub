@@ -1,4 +1,4 @@
-import { withEntradaTag, type FinanceFluxoSecao } from './financeCategories';
+import type { FinanceFluxoSecao } from './financeCategories';
 import type { HubFinanceReceivable } from '../types/database';
 
 export interface ParcelasState {
@@ -94,18 +94,19 @@ export function withParcelasInNotas(
   p: ParcelasState,
   fluxoSecao?: FinanceFluxoSecao,
 ): string {
-  let base = stripUserNotas(notas);
-  if (fluxoSecao?.fluxo === 'entrada') {
-    base = stripUserNotas(withEntradaTag(fluxoSecao.secao, base));
-  }
-  const entradaPrefix = (notas ?? '').match(ENTRADA_TAG_RE)?.[0];
-  const tag = `#parcelas:${JSON.stringify({
+  const userBody = stripUserNotas(notas);
+  const parcelasTag = `#parcelas:${JSON.stringify({
     parcelado: p.parcelado,
     qtd: p.qtd_parcelas,
     pagas: p.parcelas_pagas,
   })}`;
-  const head = entradaPrefix ? `${entradaPrefix} ${tag}` : tag;
-  return base ? `${head} ${base}` : head;
+
+  if (fluxoSecao?.fluxo === 'entrada') {
+    const head = `#entrada:${fluxoSecao.secao} ${parcelasTag}`;
+    return userBody ? `${head} ${userBody}` : head;
+  }
+
+  return userBody ? `${parcelasTag} ${userBody}` : parcelasTag;
 }
 
 export function buildReceivableSavePayload(

@@ -195,7 +195,11 @@ export function FinanceiroPage() {
               <FinanceQueueSection
                 key={secao.id}
                 title={secao.label}
-                dropHint="Solte aqui ou use → Implantações / → Mensalidades"
+                dropHint={
+                  secao.id === 'implantacoes'
+                    ? 'Implantações (em cima) — arraste ⋮⋮ ou use os botões →'
+                    : 'Mensalidades (embaixo) — arraste ⋮⋮ ou use os botões →'
+                }
                 entradaSecao={secao.id}
                 totalLabel={formatReceivableSectionMeta(
                   receivablesBySecao[secao.id],
@@ -298,20 +302,27 @@ function FinanceQueueSection({
     .filter(Boolean)
     .join(' ');
 
+  const isDragging = Boolean(drag?.draggingId);
+
   return (
     <section
       className={sectionClass}
       data-drop-secao={entradaSecao}
     >
-      {entradaSecao && <EntradaSectionDropLayer secao={entradaSecao} />}
       <div className={styles.sectionHeader}>
         <h2 className={styles.sectionTitle}>
           {title}
-          {dropHint && <span className={styles.dropHint}>{dropHint}</span>}
+          {dropHint && !isDragging && <span className={styles.dropHint}>{dropHint}</span>}
         </h2>
         <span className={styles.sectionMeta}>{totalLabel}</span>
       </div>
-      <div className={styles.sectionBody}>{children}</div>
+      <div
+        className={styles.sectionBody}
+        style={isDragging ? { pointerEvents: 'none' } : undefined}
+      >
+        {children}
+      </div>
+      {entradaSecao && <EntradaSectionDropLayer secao={entradaSecao} label={title} />}
     </section>
   );
 }

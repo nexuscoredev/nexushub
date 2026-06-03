@@ -70,10 +70,13 @@ function readSaidaSecaoFromNotas(notas: string | null | undefined): SaidaSecao |
 }
 
 export function secaoEntradaReceivable(r: HubFinanceReceivable): EntradaSecao {
-  const fromTag = readEntradaSecaoFromNotas(r.notas);
-  if (fromTag) return fromTag;
-
   const fromCliente = inferEntradaSecaoFromCliente(r.cliente_descricao);
+  const fromTag = readEntradaSecaoFromNotas(r.notas);
+
+  // Implantação (sistema/app/nome) sempre na fila de cima, mesmo com tag antiga errada
+  if (fromCliente === 'implantacoes') return 'implantacoes';
+
+  if (fromTag) return fromTag;
   if (fromCliente) return fromCliente;
 
   const cat = (r.categoria ?? '').toLowerCase();
