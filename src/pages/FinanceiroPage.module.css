@@ -60,6 +60,13 @@
   margin: 0;
 }
 
+.sectionSubtitle {
+  margin: 0.2rem 0 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-weight: 400;
+}
+
 .sectionMeta {
   font-size: 0.8rem;
   color: var(--muted);
@@ -263,6 +270,33 @@
 .moveBtn:disabled {
   opacity: 0.5;
   cursor: wait;
+}
+
+.moveBtnPrimary {
+  font-size: 0.78rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 6px;
+  border: 1px solid rgba(140, 200, 255, 0.45);
+  background: rgba(60, 100, 160, 0.35);
+  color: #d4e8ff;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.moveBtnPrimary:hover:not(:disabled) {
+  background: rgba(80, 130, 200, 0.55);
+  border-color: #b8dcff;
+}
+
+.moveBtnPrimary:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.cellMover {
+  min-width: 9rem;
+  vertical-align: top;
 }
 
 .successBanner {

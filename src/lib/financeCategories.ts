@@ -47,8 +47,9 @@ export function withSaidaTag(secao: SaidaSecao, notas: string | null | undefined
   return body ? `#saida:${secao} ${body}` : `#saida:${secao}`;
 }
 
-function readEntradaSecaoFromNotas(notas: string | null | undefined): EntradaSecao | null {
-  const m = notas?.match(/^#entrada:(implantacoes|mensalidades)/);
+/** Fila salva em notas (#entrada:…) — tem prioridade sobre o nome do cliente. */
+export function entradaSecaoFromNotas(notas: string | null | undefined): EntradaSecao | null {
+  const m = notas?.match(/#entrada:(implantacoes|mensalidades)/);
   return m ? (m[1] as EntradaSecao) : null;
 }
 
@@ -70,13 +71,10 @@ function readSaidaSecaoFromNotas(notas: string | null | undefined): SaidaSecao |
 }
 
 export function secaoEntradaReceivable(r: HubFinanceReceivable): EntradaSecao {
-  const fromCliente = inferEntradaSecaoFromCliente(r.cliente_descricao);
-  const fromTag = readEntradaSecaoFromNotas(r.notas);
-
-  // Implantação (sistema/app/nome) sempre na fila de cima, mesmo com tag antiga errada
-  if (fromCliente === 'implantacoes') return 'implantacoes';
-
+  const fromTag = entradaSecaoFromNotas(r.notas);
   if (fromTag) return fromTag;
+
+  const fromCliente = inferEntradaSecaoFromCliente(r.cliente_descricao);
   if (fromCliente) return fromCliente;
 
   const cat = (r.categoria ?? '').toLowerCase();

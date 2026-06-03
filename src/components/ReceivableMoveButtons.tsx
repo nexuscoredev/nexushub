@@ -16,35 +16,45 @@ export function ReceivableMoveButtons({ row, onMove }: ReceivableMoveButtonsProp
   const current = secaoEntradaReceivable(row);
 
   const handleMove = async (target: EntradaSecao) => {
-    if (busy || current === target) return;
+    if (busy) return;
+    if (current === target) {
+      alert(
+        target === 'implantacoes'
+          ? 'Este registro já está em Implantações.'
+          : 'Este registro já está em Mensalidades.',
+      );
+      return;
+    }
     setBusy(true);
     try {
       await onMove(row, target);
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Erro ao mover registro.');
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <div className={styles.moveActions}>
+    <div className={styles.moveActions} onClick={(e) => e.stopPropagation()}>
       {current !== 'implantacoes' && (
         <button
           type="button"
-          className={styles.moveBtn}
+          className={styles.moveBtnPrimary}
           disabled={busy}
           onClick={() => void handleMove('implantacoes')}
         >
-          → Implantações
+          ↑ Implantações
         </button>
       )}
       {current !== 'mensalidades' && (
         <button
           type="button"
-          className={styles.moveBtn}
+          className={styles.moveBtnPrimary}
           disabled={busy}
           onClick={() => void handleMove('mensalidades')}
         >
-          → Mensalidades
+          ↓ Mensalidades
         </button>
       )}
     </div>

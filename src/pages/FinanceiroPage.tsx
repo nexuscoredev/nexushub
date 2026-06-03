@@ -1,6 +1,4 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { EntradaDragProvider, useEntradaDragOptional } from '../contexts/EntradaDragContext';
-import { EntradaSectionDropLayer } from '../components/EntradaSectionDropLayer';
 import { MensalidadesEntradaView } from '../components/MensalidadesEntradaView';
 import { ReceivablesTable } from '../components/ReceivablesTable';
 import {
@@ -27,7 +25,7 @@ import {
   totalSaidasPorResponsavel,
 } from '../lib/financeiro';
 import { formatBRL, formatDate } from '../lib/format';
-import { moveReceivableToSecao } from '../lib/receivableDrag';
+import { moveReceivableToSecao, receivableWithEntradaSecao } from '../lib/receivableDrag';
 import { valorPagoReceivable } from '../lib/receivableParcelas';
 import { supabase, supabaseErrorMessage } from '../lib/supabase';
 import type {
@@ -126,12 +124,15 @@ export function FinanceiroPage() {
         alert(`Não foi possível mover: ${err}`);
         return;
       }
+      setReceivables((prev) =>
+        prev.map((r) => (r.id === receivableId ? receivableWithEntradaSecao(r, targetSecao) : r)),
+      );
       setSuccessMsg(
         targetSecao === 'implantacoes'
-          ? 'Registro movido para Implantações.'
-          : 'Registro movido para Mensalidades.',
+          ? 'Registro movido para Implantações (em cima).'
+          : 'Registro movido para Mensalidades (embaixo).',
       );
-      await load();
+      void load();
     },
     [receivables, load],
   );
@@ -189,44 +190,41 @@ export function FinanceiroPage() {
       {loading ? (
         <p style={{ color: 'var(--muted)' }}>Carregando…</p>
       ) : fluxo === 'entrada' ? (
-        <EntradaDragProvider onMoveReceivable={handleMoveReceivable}>
-          <div className={styles.sections}>
-            {ENTRADA_SECOES.map((secao) => (
-              <FinanceQueueSection
-                key={secao.id}
-                title={secao.label}
-                dropHint={
-                  secao.id === 'implantacoes'
-                    ? 'Implantações (em cima) — arraste ⋮⋮ ou use os botões →'
-                    : 'Mensalidades (embaixo) — arraste ⋮⋮ ou use os botões →'
-                }
-                entradaSecao={secao.id}
-                totalLabel={formatReceivableSectionMeta(
-                  receivablesBySecao[secao.id],
-                  secao.id === 'mensalidades' ? totalMensalidadesRecorrentes : 0,
-                )}
-              >
-                {secao.id === 'mensalidades' ? (
-                  <MensalidadesEntradaView
-                    subscriptions={subscriptions}
-                    receivables={receivablesBySecao.mensalidades}
-                    fluxoSecao={{ fluxo: 'entrada', secao: 'mensalidades' }}
-                    onRefresh={load}
-                    onMoveToSecao={(row, target) => handleMoveReceivable(row.id, target)}
-                  />
-                ) : (
-                  <ReceivablesTable
-                    rows={receivablesBySecao[secao.id]}
-                    fluxoSecao={{ fluxo: 'entrada', secao: secao.id }}
-                    onRefresh={load}
-                    compactParcelas
-                    onMoveToSecao={(row, target) => handleMoveReceivable(row.id, target)}
-                  />
-                )}
-              </FinanceQueueSection>
-            ))}
-          </div>
-        </EntradaDragProvider>
+        <div className={styles.sections}>
+          {ENTRADA_SECOES.map((secao) => (
+            <FinanceQueueSection
+              key={secao.id}
+              title={secao.label}
+              subtitle={
+                secao.id === 'implantacoes'
+                  ? 'Projetos de implantação (sistema, app, setup)'
+                  : 'Mensalidades e recebimentos recorrentes'
+              }
+              totalLabel={formatReceivableSectionMeta(
+                receivablesBySecao[secao.id],
+                secao.id === 'mensalidades' ? totalMensalidadesRecorrentes : 0,
+              )}
+            >
+              {secao.id === 'mensalidades' ? (
+                <MensalidadesEntradaView
+                  subscriptions={subscriptions}
+                  receivables={receivablesBySecao.mensalidades}
+                  fluxoSecao={{ fluxo: 'entrada', secao: 'mensalidades' }}
+                  onRefresh={load}
+                  onMoveToSecao={(row, target) => handleMoveReceivable(row.id, target)}
+                />
+              ) : (
+                <ReceivablesTable
+                  rows={receivablesBySecao[secao.id]}
+                  fluxoSecao={{ fluxo: 'entrada', secao: secao.id }}
+                  onRefresh={load}
+                  compactParcelas
+                  onMoveToSecao={(row, target) => handleMoveReceivable(row.id, target)}
+                />
+              )}
+            </FinanceQueueSection>
+          ))}
+        </div>
       ) : (
         <div className={styles.sections}>
           {SAIDA_SECOES.map((secao) => (
@@ -280,49 +278,25 @@ function sumInvestments(items: HubFinanceInvestment[]): number {
 
 function FinanceQueueSection({
   title,
+  subtitle,
   totalLabel,
   children,
-  dropHint,
-  entradaSecao,
 }: {
   title: string;
+  subtitle?: string;
   totalLabel: string;
   children: ReactNode;
-  dropHint?: string;
-  entradaSecao?: EntradaSecao;
 }) {
-  const drag = useEntradaDragOptional();
-  const dropActive = entradaSecao && drag?.hoverDropSecao === entradaSecao;
-
-  const sectionClass = [
-    styles.section,
-    entradaSecao ? styles.sectionDropTarget : '',
-    dropActive ? styles.dropZoneActive : '',
-  ]
-    .filter(Boolean)
-    .join(' ');
-
-  const isDragging = Boolean(drag?.draggingId);
-
   return (
-    <section
-      className={sectionClass}
-      data-drop-secao={entradaSecao}
-    >
+    <section className={styles.section}>
       <div className={styles.sectionHeader}>
-        <h2 className={styles.sectionTitle}>
-          {title}
-          {dropHint && !isDragging && <span className={styles.dropHint}>{dropHint}</span>}
-        </h2>
+        <div>
+          <h2 className={styles.sectionTitle}>{title}</h2>
+          {subtitle && <p className={styles.sectionSubtitle}>{subtitle}</p>}
+        </div>
         <span className={styles.sectionMeta}>{totalLabel}</span>
       </div>
-      <div
-        className={styles.sectionBody}
-        style={isDragging ? { pointerEvents: 'none' } : undefined}
-      >
-        {children}
-      </div>
-      {entradaSecao && <EntradaSectionDropLayer secao={entradaSecao} label={title} />}
+      <div className={styles.sectionBody}>{children}</div>
     </section>
   );
 }

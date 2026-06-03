@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import type { EntradaSecao, FinanceFluxoSecao } from '../lib/financeCategories';
-import { useEntradaDragOptional } from '../contexts/EntradaDragContext';
-import { ReceivableDragHandle } from './ReceivableDragHandle';
 import { ReceivableMoveButtons } from './ReceivableMoveButtons';
 import { formatBRL, formatDate } from '../lib/format';
 import {
@@ -31,8 +29,6 @@ interface ReceivablesTableProps {
   compactParcelas?: boolean;
   /** Só botão de adicionar (sem tabela vazia) */
   addOnly?: boolean;
-  /** Permite arrastar para outra fila (Implantações / Mensalidades) */
-  draggable?: boolean;
   onMoveToSecao?: (row: HubFinanceReceivable, secao: EntradaSecao) => Promise<void>;
 }
 
@@ -45,13 +41,11 @@ export function ReceivablesTable({
   embedded,
   compactParcelas,
   addOnly,
-  draggable = true,
   onMoveToSecao,
 }: ReceivablesTableProps) {
   const [openAdd, setOpenAdd] = useState(false);
   const [editing, setEditing] = useState<HubFinanceReceivable | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
-  const entradaDrag = useEntradaDragOptional();
 
   const handleDelete = async (id: string) => {
     if (!confirm('Excluir este registro?')) return;
@@ -161,6 +155,7 @@ export function ReceivablesTable({
             <th>pagamento</th>
             <th>data</th>
             <th>notas</th>
+            <th>mover fila</th>
             <th />
           </tr>
         </thead>
@@ -177,18 +172,8 @@ export function ReceivablesTable({
               : (n: number) => `${n}ª (${formatBRL(valorParcela(Number(row.valor), p))})`;
 
             return (
-              <tr
-                key={row.id}
-                className={entradaDrag?.draggingId === row.id ? styles.rowDragging : undefined}
-              >
-                <td className={styles.cellCliente}>
-                  <div className={styles.cellClienteInner}>
-                    {draggable && !busy && (
-                      <ReceivableDragHandle receivableId={row.id} label={row.cliente_descricao} />
-                    )}
-                    <span>{row.cliente_descricao}</span>
-                  </div>
-                </td>
+              <tr key={row.id}>
+                <td className={styles.cellCliente}>{row.cliente_descricao}</td>
                 <td>{formatBRL(Number(row.valor))}</td>
                 <td className={pagoClass}>{formatBRL(pago)}</td>
                 <td>{formatBRL(falta)}</td>
@@ -226,10 +211,14 @@ export function ReceivablesTable({
                 </td>
                 <td>{formatDate(row.data_prevista)}</td>
                 <td>{stripUserNotas(row.notas) || '—'}</td>
-                <td style={{ whiteSpace: 'nowrap', minWidth: '11rem' }}>
-                  {onMoveToSecao && (
+                <td className={styles.cellMover}>
+                  {onMoveToSecao ? (
                     <ReceivableMoveButtons row={row} onMove={onMoveToSecao} />
+                  ) : (
+                    '—'
                   )}
+                </td>
+                <td style={{ whiteSpace: 'nowrap' }}>
                   <button type="button" className="btn-ghost" onClick={() => setEditing(row)}>
                     Editar
                   </button>
