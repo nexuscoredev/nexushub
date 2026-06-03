@@ -1,11 +1,6 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type DragEvent,
-  type ReactNode,
-} from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEntradaDragOptional } from '../contexts/EntradaDragContext';
+import { EntradaDragProvider } from '../contexts/EntradaDragContext';
 import { MensalidadesEntradaView } from '../components/MensalidadesEntradaView';
 import { ReceivablesTable } from '../components/ReceivablesTable';
 import {
@@ -32,12 +27,7 @@ import {
   totalSaidasPorResponsavel,
 } from '../lib/financeiro';
 import { formatBRL, formatDate } from '../lib/format';
-import {
-  isReceivableDragEvent,
-  moveReceivableToSecao,
-  readReceivableDragId,
-  setActiveReceivableDragId,
-} from '../lib/receivableDrag';
+import { moveReceivableToSecao } from '../lib/receivableDrag';
 import { valorPagoReceivable } from '../lib/receivableParcelas';
 import { supabase, supabaseErrorMessage } from '../lib/supabase';
 import type {
@@ -61,6 +51,7 @@ export function FinanceiroPage() {
   const [subscriptions, setSubscriptions] = useState<HubFinanceSubscription[]>([]);
   const [investments, setInvestments] = useState<HubFinanceInvestment[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
@@ -113,13 +104,34 @@ export function FinanceiroPage() {
   const split = totalSaidasPorResponsavel(investments);
   const totalMensalidadesRecorrentes = totalMensalAssinaturas(subscriptions);
 
-  const handleDropReceivable = useCallback(
+  const handleMoveReceivable = useCallback(
     async (receivableId: string, targetSecao: EntradaSecao) => {
+      setSuccessMsg(null);
       const row = receivables.find((r) => r.id === receivableId);
-      if (!row || secaoEntradaReceivable(row) === targetSecao) return;
+      if (!row) {
+        alert('Registro não encontrado. Atualize a página.');
+        return;
+      }
+      if (secaoEntradaReceivable(row) === targetSecao) {
+        setSuccessMsg(
+          targetSecao === 'implantacoes'
+            ? 'Este registro já está em Implantações.'
+            : 'Este registro já está em Mensalidades.',
+        );
+        return;
+      }
       const err = await moveReceivableToSecao(row, targetSecao);
-      if (err) setError(err);
-      else await load();
+      if (err) {
+        setError(err);
+        alert(`Não foi possível mover: ${err}`);
+        return;
+      }
+      setSuccessMsg(
+        targetSecao === 'implantacoes'
+          ? 'Registro movido para Implantações.'
+          : 'Registro movido para Mensalidades.',
+      );
+      await load();
     },
     [receivables, load],
   );
@@ -133,6 +145,7 @@ export function FinanceiroPage() {
       />
 
       {error && <div className="error-banner" style={{ marginBottom: '1rem' }}>{error}</div>}
+      {successMsg && <div className={styles.successBanner}>{successMsg}</div>}
 
       <div className="kpi-grid">
         <div className="kpi">
@@ -176,43 +189,40 @@ export function FinanceiroPage() {
       {loading ? (
         <p style={{ color: 'var(--muted)' }}>Carregando…</p>
       ) : fluxo === 'entrada' ? (
-        <div className={styles.sections}>
-          {ENTRADA_SECOES.map((secao) => (
-            <FinanceQueueSection
-              key={secao.id}
-              title={secao.label}
-              dropHint="Arraste registros para aqui"
-              entradaSecao={secao.id}
-              onDropReceivable={handleDropReceivable}
-              totalLabel={formatReceivableSectionMeta(
-                receivablesBySecao[secao.id],
-                secao.id === 'mensalidades' ? totalMensalidadesRecorrentes : 0,
-              )}
-            >
-              {secao.id === 'mensalidades' ? (
-                <MensalidadesEntradaView
-                  subscriptions={subscriptions}
-                  receivables={receivablesBySecao.mensalidades}
-                  fluxoSecao={{ fluxo: 'entrada', secao: 'mensalidades' }}
-                  onRefresh={load}
-                  onMoveToSecao={async (row, target) => {
-                    await handleDropReceivable(row.id, target);
-                  }}
-                />
-              ) : (
-                <ReceivablesTable
-                  rows={receivablesBySecao[secao.id]}
-                  fluxoSecao={{ fluxo: 'entrada', secao: secao.id }}
-                  onRefresh={load}
-                  compactParcelas
-                  onMoveToSecao={async (row, target) => {
-                    await handleDropReceivable(row.id, target);
-                  }}
-                />
-              )}
-            </FinanceQueueSection>
-          ))}
-        </div>
+        <EntradaDragProvider onMoveReceivable={handleMoveReceivable}>
+          <div className={styles.sections}>
+            {ENTRADA_SECOES.map((secao) => (
+              <FinanceQueueSection
+                key={secao.id}
+                title={secao.label}
+                dropHint="Solte aqui ou use → Implantações / → Mensalidades"
+                entradaSecao={secao.id}
+                totalLabel={formatReceivableSectionMeta(
+                  receivablesBySecao[secao.id],
+                  secao.id === 'mensalidades' ? totalMensalidadesRecorrentes : 0,
+                )}
+              >
+                {secao.id === 'mensalidades' ? (
+                  <MensalidadesEntradaView
+                    subscriptions={subscriptions}
+                    receivables={receivablesBySecao.mensalidades}
+                    fluxoSecao={{ fluxo: 'entrada', secao: 'mensalidades' }}
+                    onRefresh={load}
+                    onMoveToSecao={(row, target) => handleMoveReceivable(row.id, target)}
+                  />
+                ) : (
+                  <ReceivablesTable
+                    rows={receivablesBySecao[secao.id]}
+                    fluxoSecao={{ fluxo: 'entrada', secao: secao.id }}
+                    onRefresh={load}
+                    compactParcelas
+                    onMoveToSecao={(row, target) => handleMoveReceivable(row.id, target)}
+                  />
+                )}
+              </FinanceQueueSection>
+            ))}
+          </div>
+        </EntradaDragProvider>
       ) : (
         <div className={styles.sections}>
           {SAIDA_SECOES.map((secao) => (
@@ -270,52 +280,19 @@ function FinanceQueueSection({
   children,
   dropHint,
   entradaSecao,
-  onDropReceivable,
 }: {
   title: string;
   totalLabel: string;
   children: ReactNode;
   dropHint?: string;
   entradaSecao?: EntradaSecao;
-  onDropReceivable?: (receivableId: string, secao: EntradaSecao) => void;
 }) {
-  const [dropActive, setDropActive] = useState(false);
-
-  const canDrop = Boolean(entradaSecao && onDropReceivable);
-
-  const handleDragEnter = (e: DragEvent) => {
-    if (!canDrop || !isReceivableDragEvent(e)) return;
-    e.preventDefault();
-    setDropActive(true);
-  };
-
-  const handleDragOver = (e: DragEvent) => {
-    if (!canDrop || !isReceivableDragEvent(e)) return;
-    e.preventDefault();
-    e.stopPropagation();
-    e.dataTransfer.dropEffect = 'move';
-    setDropActive(true);
-  };
-
-  const handleDragLeave = (e: DragEvent) => {
-    const next = e.relatedTarget as Node | null;
-    if (next && e.currentTarget.contains(next)) return;
-    setDropActive(false);
-  };
-
-  const handleDrop = (e: DragEvent) => {
-    if (!canDrop) return;
-    e.preventDefault();
-    e.stopPropagation();
-    setDropActive(false);
-    setActiveReceivableDragId(null);
-    const id = readReceivableDragId(e.dataTransfer);
-    if (id && entradaSecao) void onDropReceivable!(id, entradaSecao);
-  };
+  const drag = useEntradaDragOptional();
+  const dropActive = entradaSecao && drag?.hoverDropSecao === entradaSecao;
 
   const sectionClass = [
     styles.section,
-    canDrop ? styles.sectionDropTarget : '',
+    entradaSecao ? styles.sectionDropTarget : '',
     dropActive ? styles.dropZoneActive : '',
   ]
     .filter(Boolean)
@@ -324,10 +301,7 @@ function FinanceQueueSection({
   return (
     <section
       className={sectionClass}
-      onDragEnter={canDrop ? handleDragEnter : undefined}
-      onDragOver={canDrop ? handleDragOver : undefined}
-      onDragLeave={canDrop ? handleDragLeave : undefined}
-      onDrop={canDrop ? handleDrop : undefined}
+      data-drop-secao={entradaSecao}
     >
       <div className={styles.sectionHeader}>
         <h2 className={styles.sectionTitle}>

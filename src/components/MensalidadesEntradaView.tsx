@@ -10,7 +10,7 @@ interface MensalidadesEntradaViewProps {
   receivables: HubFinanceReceivable[];
   fluxoSecao: FinanceFluxoSecao;
   onRefresh: () => void;
-  onMoveToSecao?: (row: HubFinanceReceivable, secao: EntradaSecao) => void;
+  onMoveToSecao?: (row: HubFinanceReceivable, secao: EntradaSecao) => Promise<void>;
 }
 
 export function MensalidadesEntradaView({
