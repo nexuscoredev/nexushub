@@ -31,6 +31,13 @@ import {
   todoistPlainText,
 } from '../lib/todoistContent';
 import {
+  FILA_TASK_SORT_OPTIONS,
+  FILA_TASK_SORT_STORAGE_KEY,
+  getFilaTaskCompare,
+  isFilaTaskSortMode,
+  type FilaTaskSortMode,
+} from '../lib/filaTaskSort';
+import {
   formatTodoistDueDisplay,
   taskMatchesDuePreset,
   todoistDuePresetToApi,
@@ -305,6 +312,15 @@ export function FilaPage() {
   const myHub = hubFromUsuario(profile?.usuario);
   const [viewTab, setViewTab] = useState<ViewTab>('tasks');
   const [onlyMyTasks, setOnlyMyTasks] = useState(false);
+  const [taskSort, setTaskSort] = useState<FilaTaskSortMode>(() => {
+    try {
+      const stored = localStorage.getItem(FILA_TASK_SORT_STORAGE_KEY);
+      if (isFilaTaskSortMode(stored)) return stored;
+    } catch {
+      /* ignore */
+    }
+    return 'default';
+  });
   const [tasks, setTasks] = useState<TodoistTask[]>([]);
   const [projects, setProjects] = useState<TodoistProject[]>([]);
   const [sections, setSections] = useState<TodoistSection[]>([]);
@@ -678,14 +694,29 @@ export function FilaPage() {
   }, [onlyMyTasks, myHub, selectedTask, assigneeOptions, closeDetail]);
   const pendingParents = useMemo(() => getParentIdsWithChildren(pending), [pending]);
   const doneParents = useMemo(() => getParentIdsWithChildren(done), [done]);
+  const sortCompare = useMemo(
+    () => getFilaTaskCompare(taskSort, sectionMap),
+    [taskSort, sectionMap],
+  );
   const pendingDisplay = useMemo(
-    () => filterCollapsedTasks(buildTodoistTaskDisplayList(pending), pending, collapsedTasks),
-    [pending, collapsedTasks],
+    () =>
+      filterCollapsedTasks(buildTodoistTaskDisplayList(pending, sortCompare), pending, collapsedTasks),
+    [pending, collapsedTasks, sortCompare],
   );
   const doneDisplay = useMemo(
-    () => filterCollapsedTasks(buildTodoistTaskDisplayList(done), done, collapsedTasks),
-    [done, collapsedTasks],
+    () =>
+      filterCollapsedTasks(buildTodoistTaskDisplayList(done, sortCompare), done, collapsedTasks),
+    [done, collapsedTasks, sortCompare],
   );
+
+  const handleTaskSortChange = (mode: FilaTaskSortMode) => {
+    setTaskSort(mode);
+    try {
+      localStorage.setItem(FILA_TASK_SORT_STORAGE_KEY, mode);
+    } catch {
+      /* ignore */
+    }
+  };
 
   return (
     <div className={styles.filaPage}>
@@ -851,10 +882,28 @@ export function FilaPage() {
           <div className={styles.layout}>
             <div className={styles.listColumn}>
               <section className={`card ${styles.taskListCard}`}>
-                <h2 className={styles.sectionTitle}>
-                  Pendentes
-                  <span className={styles.sectionCount}>{pending.length}</span>
-                </h2>
+                <div className={styles.listCardHead}>
+                  <h2 className={styles.sectionTitle}>
+                    Pendentes
+                    <span className={styles.sectionCount}>{pending.length}</span>
+                  </h2>
+                  <div className={styles.sortBar}>
+                    <span className={styles.sortLabel}>Ordenar</span>
+                    <div className={styles.sortChips}>
+                      {FILA_TASK_SORT_OPTIONS.map((opt) => (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          className={`${styles.sortChip} ${taskSort === opt.id ? styles.sortChipActive : ''}`}
+                          onClick={() => handleTaskSortChange(opt.id)}
+                          title={opt.title}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
                 <ul className={`${styles.taskList} ${styles.taskListScroll}`}>
                   {pendingDisplay.map(({ task, depth }) => (
                     <TaskRow

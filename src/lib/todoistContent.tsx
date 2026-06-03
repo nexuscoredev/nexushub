@@ -181,7 +181,10 @@ export function countDescendants(taskId: string, tasks: TodoistTask[]): number {
 }
 
 /** Ordena tarefas como no Todoist: pais primeiro, subtarefas aninhadas por parent_id. */
-export function buildTodoistTaskDisplayList(tasks: TodoistTask[]): TaskDisplayItem[] {
+export function buildTodoistTaskDisplayList(
+  tasks: TodoistTask[],
+  compare: (a: TodoistTask, b: TodoistTask) => number = compareTaskOrder,
+): TaskDisplayItem[] {
   if (tasks.length === 0) return [];
 
   const idSet = new Set(tasks.map((t) => t.id));
@@ -199,7 +202,7 @@ export function buildTodoistTaskDisplayList(tasks: TodoistTask[]): TaskDisplayIt
   }
 
   for (const list of byParent.values()) {
-    list.sort(compareTaskOrder);
+    list.sort(compare);
   }
 
   const result: TaskDisplayItem[] = [];
