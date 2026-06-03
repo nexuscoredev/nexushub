@@ -7,11 +7,11 @@ export interface ParcelasState {
   parcelas_pagas: number[];
 }
 
-const PARCELAS_TAG_RE = /^#parcelas:(\{.*?\})\s*/;
-const ENTRADA_TAG_RE = /^#entrada:(implantacoes|mensalidades)\s*/;
+const PARCELAS_TAG_RE = /#parcelas:(\{.*?\})/;
+const ENTRADA_TAG_RE = /#entrada:(implantacoes|mensalidades)\s*/g;
 
 export function stripParcelasTag(notas: string | null | undefined): string {
-  return (notas ?? '').replace(PARCELAS_TAG_RE, '').trim();
+  return (notas ?? '').replace(/#parcelas:\{.*?\}\s*/g, '').trim();
 }
 
 /** Notas visíveis ao usuário (sem marcadores internos). */
@@ -41,6 +41,9 @@ function parseParcelasTag(notas: string | null | undefined): ParcelasState | nul
 }
 
 export function parseParcelasFromReceivable(r: HubFinanceReceivable): ParcelasState {
+  const fromNotas = parseParcelasTag(r.notas);
+  if (fromNotas) return fromNotas;
+
   if (typeof r.parcelado === 'boolean') {
     return {
       parcelado: r.parcelado,
@@ -48,8 +51,6 @@ export function parseParcelasFromReceivable(r: HubFinanceReceivable): ParcelasSt
       parcelas_pagas: [...(r.parcelas_pagas ?? [])].sort((a, b) => a - b),
     };
   }
-  const fromNotas = parseParcelasTag(r.notas);
-  if (fromNotas) return fromNotas;
   if (r.status === 'recebido') {
     return { parcelado: false, qtd_parcelas: 1, parcelas_pagas: [1] };
   }

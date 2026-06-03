@@ -91,6 +91,15 @@ export function ReceivablesTable({
     });
   };
 
+  const enableParcelas = (row: HubFinanceReceivable) => {
+    const p = parseParcelasFromReceivable(row);
+    void saveParcelas(row, {
+      parcelado: true,
+      qtd_parcelas: p.parcelado ? p.qtd_parcelas : 5,
+      parcelas_pagas: [],
+    });
+  };
+
   const wrapClass = [
     'table-wrap',
     embedded ? styles.embeddedTable : '',
@@ -198,15 +207,26 @@ export function ReceivablesTable({
                       ))}
                     </div>
                   ) : (
-                    <label className={styles.parcelaChip}>
-                      <input
-                        type="checkbox"
+                    <div className={styles.parcelasRow}>
+                      <label className={styles.parcelaChip}>
+                        <input
+                          type="checkbox"
+                          disabled={busy}
+                          checked={p.parcelas_pagas.length > 0}
+                          onChange={(e) => toggleAvista(row, e.target.checked)}
+                        />
+                        À vista
+                      </label>
+                      <button
+                        type="button"
+                        className="btn-ghost"
+                        style={{ fontSize: '0.75rem', padding: '0.2rem 0.45rem' }}
                         disabled={busy}
-                        checked={p.parcelas_pagas.length > 0}
-                        onChange={(e) => toggleAvista(row, e.target.checked)}
-                      />
-                      À vista
-                    </label>
+                        onClick={() => enableParcelas(row)}
+                      >
+                        Parcelar
+                      </button>
+                    </div>
                   )}
                 </td>
                 <td>{formatDate(row.data_prevista)}</td>

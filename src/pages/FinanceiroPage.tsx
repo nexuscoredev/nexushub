@@ -36,7 +36,7 @@ import type {
 import styles from './FinanceiroPage.module.css';
 
 /** Atualize ao publicar — confirme na tela Financeiro que esta versão aparece. */
-export const FINANCE_UI_VERSION = 'entrada-secao-v2';
+export const FINANCE_UI_VERSION = 'parcelas-notas-v3';
 
 const CATEGORIA_LABELS: Record<string, string> = {
   implantacao: 'Implantação',
