@@ -101,11 +101,13 @@
   width: 18px;
   height: 18px;
   flex-shrink: 0;
+  color: var(--primary);
   filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.28));
-  transition: filter 0.15s ease;
+  transition: color 0.15s ease, filter 0.15s ease;
 }
 
 .novidadesBtn:hover .novidadesIcon {
+  color: #fff;
   filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.45));
 }
 

@@ -77,7 +77,7 @@ const paths: Record<NavIconName, ReactNode> = {
   ),
   close: (
     <>
-      <path d="M18 6 6 18M6 6l12 12" />
+      <path d="M6 6 L18 18 M18 6 L6 18" />
     </>
   ),
   refresh: (
@@ -98,8 +98,16 @@ const paths: Record<NavIconName, ReactNode> = {
   ),
   sparkles: (
     <>
-      <path d="M9.5 2 10 7.5 4 9.5 7.5 10 2 9.5 7.5 4 9.5 10 7.5 9.5 2Z" />
-      <path d="M18 14.5 18.3 17 16 17.3 16.5 19.5 14 18 14.5 17 16 16.5 19.5 14 17.3 14.5 18Z" />
+      <path
+        fill="currentColor"
+        stroke="none"
+        d="M12 2 L13.09 8.26 L20 9 L13.09 9.74 L12 16 L10.91 9.74 L4 9 L10.91 8.26 Z"
+      />
+      <path
+        fill="currentColor"
+        stroke="none"
+        d="M18 14 L18.65 16.35 L21 17 L18.65 17.65 L18 20 L17.35 17.65 L15 17 L17.35 16.35 Z"
+      />
     </>
   ),
 };

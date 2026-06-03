@@ -1,35 +1,18 @@
-import { useId } from 'react';
-
 interface NovidadesSparkIconProps {
   className?: string;
 }
 
-/** Brilhos no estilo Nexus (prata / liquid silver). */
+/** Brilhos no estilo Nexus (prata via currentColor + glow no CSS). */
 export function NovidadesSparkIcon({ className = '' }: NovidadesSparkIconProps) {
-  const gradId = useId().replace(/:/g, '');
-
   return (
     <svg
       className={className}
       viewBox="0 0 24 24"
-      fill="none"
+      fill="currentColor"
       aria-hidden
     >
-      <defs>
-        <linearGradient id={gradId} x1="4" y1="2" x2="20" y2="20" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#ffffff" />
-          <stop offset="45%" stopColor="#c0c0c0" />
-          <stop offset="100%" stopColor="#6e6e6e" />
-        </linearGradient>
-      </defs>
-      <path
-        fill={`url(#${gradId})`}
-        d="M9.5 2 10 7.5 4 9.5 7.5 10 2 9.5 7.5 4 9.5 10 7.5 9.5 2Z"
-      />
-      <path
-        fill={`url(#${gradId})`}
-        d="M18 14.5 18.3 17 16 17.3 16.5 19.5 14 18 14.5 17 16 16.5 19.5 14 17.3 14.5 18Z"
-      />
+      <path d="M12 2 L13.09 8.26 L20 9 L13.09 9.74 L12 16 L10.91 9.74 L4 9 L10.91 8.26 Z" />
+      <path d="M18 14 L18.65 16.35 L21 17 L18.65 17.65 L18 20 L17.35 17.65 L15 17 L17.35 16.35 Z" />
     </svg>
   );
 }

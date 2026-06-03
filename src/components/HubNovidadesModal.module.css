@@ -61,6 +61,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  color: var(--polished-silver);
+}
+
+.closeBtn:hover {
+  color: #fff;
+}
+
+.closeBtnIcon {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.25;
 }
 
 .scroll {

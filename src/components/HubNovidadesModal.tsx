@@ -58,7 +58,7 @@ export function HubNovidadesModal({ open, onClose }: HubNovidadesModalProps) {
             onClick={onClose}
             aria-label="Fechar novidades"
           >
-            <NavIcon name="close" />
+            <NavIcon name="close" className={styles.closeBtnIcon} />
           </button>
         </div>
 
