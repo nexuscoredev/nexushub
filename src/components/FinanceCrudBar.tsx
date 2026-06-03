@@ -60,10 +60,24 @@ function buildPayload(fd: FormData, table: FinanceTable): Record<string, unknown
       payload[k] = v;
     }
   });
-  if (table === 'hub_finance_subscriptions' && !fd.has('ativo')) {
-    payload.ativo = false;
+  return sanitizePayload(table, payload, {
+    defaultAtivoFalse: table === 'hub_finance_subscriptions' && !fd.has('ativo'),
+  });
+}
+
+/** Garante que só colunas da tabela atual vão ao Supabase (evita ex.: ativo em receivables). */
+function sanitizePayload(
+  table: FinanceTable,
+  payload: Record<string, unknown>,
+  opts?: { defaultAtivoFalse?: boolean },
+): Record<string, unknown> {
+  const allowed = new Set(getFinanceFields(table).map((f) => f.name));
+  const out: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(payload)) {
+    if (allowed.has(key)) out[key] = value;
   }
-  return payload;
+  if (opts?.defaultAtivoFalse) out.ativo = false;
+  return out;
 }
 
 function fieldDefaultValue(
@@ -100,7 +114,10 @@ export function FinanceRecordForm({
     e.preventDefault();
     if (!supabase) return;
     setError(null);
-    const payload = buildPayload(new FormData(e.currentTarget), table);
+    const payload = sanitizePayload(
+      table,
+      buildPayload(new FormData(e.currentTarget), table),
+    );
 
     const { error: err } = isEdit
       ? await supabase.from(table).update(payload).eq('id', recordId!)
