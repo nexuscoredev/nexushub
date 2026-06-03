@@ -38,21 +38,84 @@
   padding: 1rem 1.1rem 1.1rem;
 }
 
+.mensalidadesStack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.clientBlock {
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.clientBlock:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.clientContractRow {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 0.75rem 1.25rem;
+  align-items: center;
+  padding: 0.65rem 0.25rem;
+  font-size: 0.9rem;
+}
+
+.clientContractName {
+  font-weight: 600;
+}
+
+.clientRecebimentos {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.embeddedTable {
+  margin-bottom: 0;
+  padding-top: 0;
+}
+
+.recebimentosLabel {
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0.25rem 0 0.35rem 0.25rem;
+}
+
+.tableReceivables td {
+  vertical-align: top;
+}
+
+.tableReceivables .cellCliente {
+  vertical-align: top;
+  min-width: 8rem;
+}
+
+.tableReceivables .cellPagamento {
+  min-width: 10rem;
+  max-width: 22rem;
+}
+
 .parcelasRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 0.75rem;
-  align-items: center;
+  gap: 0.35rem 0.5rem;
+  align-items: flex-start;
+  flex-direction: row;
 }
 
 .parcelaChip {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--muted);
   cursor: pointer;
   user-select: none;
+  white-space: nowrap;
 }
 
 .parcelaChip input {

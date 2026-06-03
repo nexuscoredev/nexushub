@@ -22,6 +22,12 @@ interface ReceivablesTableProps {
   fluxoSecao: FinanceFluxoSecao;
   onRefresh: () => void;
   compact?: boolean;
+  /** Sem margem extra — encaixa sob o contrato do cliente */
+  embedded?: boolean;
+  /** Chips de parcela em linha, só "1ª", "2ª"… */
+  compactParcelas?: boolean;
+  /** Só botão de adicionar (sem tabela vazia) */
+  addOnly?: boolean;
 }
 
 export function ReceivablesTable({
@@ -30,6 +36,9 @@ export function ReceivablesTable({
   fluxoSecao,
   onRefresh,
   compact,
+  embedded,
+  compactParcelas,
+  addOnly,
 }: ReceivablesTableProps) {
   const [openAdd, setOpenAdd] = useState(false);
   const [editing, setEditing] = useState<HubFinanceReceivable | null>(null);
@@ -79,23 +88,34 @@ export function ReceivablesTable({
     });
   };
 
+  const wrapClass = [
+    'table-wrap',
+    embedded ? styles.embeddedTable : '',
+    styles.tableReceivables,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <div
-      className="table-wrap"
+      className={wrapClass}
       style={{
-        marginBottom: compact ? '1rem' : 0,
-        padding: compact ? '0' : undefined,
-        border: compact ? 'none' : undefined,
-        background: compact ? 'transparent' : undefined,
+        marginBottom: embedded || compact ? 0 : undefined,
+        padding: embedded || compact ? 0 : undefined,
+        border: embedded || compact ? 'none' : undefined,
+        background: embedded || compact ? 'transparent' : undefined,
       }}
     >
-      {title && (
+      {title && !embedded && (
         <h3 style={{ fontSize: '0.88rem', marginBottom: '0.65rem', color: 'var(--muted)' }}>{title}</h3>
       )}
+      {title && embedded && (
+        <p className={styles.recebimentosLabel}>{title}</p>
+      )}
 
-      <div style={{ marginBottom: '1rem' }}>
+      <div style={{ marginBottom: embedded ? '0.5rem' : '1rem' }}>
         <button type="button" className="btn-primary" onClick={() => setOpenAdd(!openAdd)}>
-          {openAdd ? 'Cancelar' : 'Adicionar registro'}
+          {openAdd ? 'Cancelar' : addOnly ? 'Adicionar registro' : 'Adicionar registro'}
         </button>
       </div>
       {openAdd && (
@@ -121,6 +141,7 @@ export function ReceivablesTable({
         />
       )}
 
+      {!addOnly && (
       <table className="data-table">
         <thead>
           <tr>
@@ -142,15 +163,24 @@ export function ReceivablesTable({
             const busy = savingId === row.id;
             const pagoClass = falta === 0 ? styles.pagoOk : pago > 0 ? styles.pagoParcial : '';
 
+            const parcelaLabel = compactParcelas
+              ? (n: number) => `${n}ª`
+              : (n: number) => `${n}ª (${formatBRL(valorParcela(Number(row.valor), p))})`;
+
             return (
               <tr key={row.id}>
-                <td>{row.cliente_descricao}</td>
+                <td className={styles.cellCliente}>{row.cliente_descricao}</td>
                 <td>{formatBRL(Number(row.valor))}</td>
                 <td className={pagoClass}>{formatBRL(pago)}</td>
                 <td>{formatBRL(falta)}</td>
-                <td>
+                <td className={styles.cellPagamento}>
                   {p.parcelado ? (
                     <div className={styles.parcelasRow}>
+                      {compactParcelas && (
+                        <span style={{ fontSize: '0.75rem', color: 'var(--muted)', width: '100%', marginBottom: '0.15rem' }}>
+                          {formatBRL(valorParcela(Number(row.valor), p))}/parcela
+                        </span>
+                      )}
                       {Array.from({ length: Math.max(1, p.qtd_parcelas) }, (_, i) => i + 1).map((n) => (
                         <label key={n} className={styles.parcelaChip}>
                           <input
@@ -159,7 +189,7 @@ export function ReceivablesTable({
                             checked={p.parcelas_pagas.includes(n)}
                             onChange={(e) => toggleInlineParcela(row, n, e.target.checked)}
                           />
-                          {n}ª ({formatBRL(valorParcela(Number(row.valor), p))})
+                          {parcelaLabel(n)}
                         </label>
                       ))}
                     </div>
@@ -190,7 +220,8 @@ export function ReceivablesTable({
           })}
         </tbody>
       </table>
-      {rows.length === 0 && (
+      )}
+      {!addOnly && rows.length === 0 && (
         <p style={{ color: 'var(--muted)', padding: '0.75rem 0' }}>Nenhum registro nesta fila.</p>
       )}
     </div>

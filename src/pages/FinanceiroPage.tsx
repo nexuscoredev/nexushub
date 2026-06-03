@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { MensalidadesEntradaView } from '../components/MensalidadesEntradaView';
 import { ReceivablesTable } from '../components/ReceivablesTable';
 import {
   deleteFinanceRow,
@@ -161,23 +162,21 @@ export function FinanceiroPage() {
                 secao.id === 'mensalidades' ? totalMensalidadesRecorrentes : 0,
               )}
             >
-              {secao.id === 'mensalidades' && (
-                <FinanceTable
-                  title="Contratos mensais (clientes)"
-                  table="hub_finance_subscriptions"
-                  rows={subscriptions}
-                  columns={['nome', 'valor_mensal', 'dia_vencimento', 'ativo', 'notas']}
+              {secao.id === 'mensalidades' ? (
+                <MensalidadesEntradaView
+                  subscriptions={subscriptions}
+                  receivables={receivablesBySecao.mensalidades}
+                  fluxoSecao={{ fluxo: 'entrada', secao: 'mensalidades' }}
                   onRefresh={load}
-                  compact
+                />
+              ) : (
+                <ReceivablesTable
+                  rows={receivablesBySecao[secao.id]}
+                  fluxoSecao={{ fluxo: 'entrada', secao: secao.id }}
+                  onRefresh={load}
+                  compactParcelas
                 />
               )}
-              <ReceivablesTable
-                title={secao.id === 'mensalidades' ? 'Recebimentos' : undefined}
-                rows={receivablesBySecao[secao.id]}
-                fluxoSecao={{ fluxo: 'entrada', secao: secao.id }}
-                onRefresh={load}
-                compact={secao.id === 'mensalidades'}
-              />
             </FinanceQueueSection>
           ))}
         </div>
