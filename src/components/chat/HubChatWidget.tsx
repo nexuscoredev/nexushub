@@ -2,28 +2,36 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   hubChatCarregarConversas,
   hubChatCarregarMensagens,
+  hubChatEnviarAnexo,
   hubChatEnviarTexto,
   hubChatGetOrCreateDirect,
+  hubChatListarSolicitacoesFila,
   hubChatListarUsuariosAtivos,
   hubChatMarcarLida,
+  hubChatObterLastReadAt,
   hubChatTabelasIndisponiveis,
 } from '../../lib/hubChat';
-import {
-  blocosMensagensComDia,
-  formatarHoraChat,
-  previewLista,
-} from '../../lib/hubChatFormat';
+import { hubChatVeColunaSolicitacoes, hubChatPodeGerirChat } from '../../lib/hubChatPermissions';
 import { supabase } from '../../lib/supabase';
 import type { HubProfile } from '../../types/database';
-import type { HubChatConversaLista, HubChatUsuarioLista } from '../../types/hubChat';
+import type { HubChatConversaLista, HubChatSolicitacaoFilaItem, HubChatUsuarioLista } from '../../types/hubChat';
+import { HubChatSidebar } from './HubChatSidebar';
+import { HubChatSolicitacoes } from './HubChatSolicitacoes';
+import { HubChatThread } from './HubChatThread';
+import {
+  HUB_CHAT_HEAD_THEME_IDS,
+  HUB_CHAT_HEAD_THEMES,
+  type HubChatHeadThemeId,
+} from './hubChatThemes';
 import styles from './HubChat.module.css';
 
-type Aba = 'conversas' | 'pessoas';
-type PainelMobile = 'lista' | 'thread';
+const THEME_STORAGE_KEY = 'nexus-hub-chat-head-theme';
 
-function iniciais(nome: string): string {
-  const p = nome.trim().charAt(0);
-  return p ? p.toUpperCase() : '?';
+function parseTheme(raw: string | null): HubChatHeadThemeId {
+  if (raw && HUB_CHAT_HEAD_THEME_IDS.includes(raw as HubChatHeadThemeId)) {
+    return raw as HubChatHeadThemeId;
+  }
+  return 'prata';
 }
 
 function filtrar<T>(itens: T[], busca: string, texto: (item: T) => string): T[] {
@@ -32,52 +40,57 @@ function filtrar<T>(itens: T[], busca: string, texto: (item: T) => string): T[] 
   return itens.filter((i) => texto(i).toLowerCase().includes(q));
 }
 
+type Props = {
+  profile: HubProfile;
+  pendingPeerId?: string | null;
+  onPendingPeerHandled?: () => void;
+  onFechar: () => void;
+  onNaoLidasChange?: (n: number) => void;
+};
+
 export function HubChatWidget({
   profile,
   pendingPeerId,
   onPendingPeerHandled,
   onFechar,
   onNaoLidasChange,
-}: {
-  profile: HubProfile;
-  pendingPeerId?: string | null;
-  onPendingPeerHandled?: () => void;
-  onFechar: () => void;
-  onNaoLidasChange?: (n: number) => void;
-}) {
+}: Props) {
   const meuId = profile.id;
-  const [aba, setAba] = useState<Aba>('conversas');
-  const [busca, setBusca] = useState('');
-  const [erro, setErro] = useState<string | null>(null);
-  const [mobilePainel, setMobilePainel] = useState<PainelMobile>('lista');
-  const [conversas, setConversas] = useState<HubChatConversaLista[]>([]);
-  const [usuarios, setUsuarios] = useState<HubChatUsuarioLista[]>([]);
-  const [conversaId, setConversaId] = useState<string | null>(null);
-  const [mensagens, setMensagens] = useState<Awaited<ReturnType<typeof hubChatCarregarMensagens>>>([]);
-  const [texto, setTexto] = useState('');
-  const [enviando, setEnviando] = useState(false);
-  const [carregando, setCarregando] = useState(false);
-  const fimRef = useRef<HTMLDivElement>(null);
-  const [mobile, setMobile] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 720px)');
-    const apply = () => setMobile(mq.matches);
-    apply();
-    mq.addEventListener('change', apply);
-    return () => mq.removeEventListener('change', apply);
-  }, []);
+  const veColunaSolicitacoes = hubChatVeColunaSolicitacoes(profile.cargo);
+  const podeGerir = hubChatPodeGerirChat(profile.cargo);
 
-  const conversaAtual = useMemo(
-    () => conversas.find((c) => c.id === conversaId) ?? null,
-    [conversas, conversaId],
+  const [erro, setErro] = useState('');
+  const [tab, setTab] = useState<'conversas' | 'pessoas'>('conversas');
+  const [busca, setBusca] = useState('');
+  const [usuarios, setUsuarios] = useState<HubChatUsuarioLista[]>([]);
+  const [conversas, setConversas] = useState<HubChatConversaLista[]>([]);
+  const [solicitacoes, setSolicitacoes] = useState<HubChatSolicitacaoFilaItem[]>([]);
+  const [carregandoLista, setCarregandoLista] = useState(false);
+  const [carregandoSolic, setCarregandoSolic] = useState(false);
+
+  const [conversaId, setConversaId] = useState<string | null>(null);
+  const [outroId, setOutroId] = useState<string | null>(null);
+  const [mensagens, setMensagens] = useState<Awaited<ReturnType<typeof hubChatCarregarMensagens>>>([]);
+  const [carregandoMensagens, setCarregandoMensagens] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [outroLastReadAt, setOutroLastReadAt] = useState<string | null>(null);
+  const [abrindoPessoa, setAbrindoPessoa] = useState(false);
+
+  const [tema, setTema] = useState<HubChatHeadThemeId>(() =>
+    typeof window !== 'undefined' ? parseTheme(localStorage.getItem(THEME_STORAGE_KEY)) : 'prata',
   );
+  const [menuTemaAberto, setMenuTemaAberto] = useState(false);
+  const menuTemaRef = useRef<HTMLDivElement>(null);
+
+  const usuariosPorId = useMemo(() => new Map(usuarios.map((u) => [u.id, u])), [usuarios]);
 
   const conversasFiltradas = useMemo(
     () =>
-      filtrar(conversas, busca, (c) =>
-        [c.outro?.nome, c.outro?.cargo, c.ultima_preview].filter(Boolean).join(' '),
-      ),
-    [conversas, busca],
+      filtrar(conversas, busca, (c) => {
+        const u = usuariosPorId.get(c.outro_id) ?? c.outro;
+        return [u?.nome, u?.cargo, c.ultima_preview].filter(Boolean).join(' ');
+      }),
+    [conversas, busca, usuariosPorId],
   );
 
   const usuariosFiltrados = useMemo(
@@ -85,52 +98,112 @@ export function HubChatWidget({
     [usuarios, busca],
   );
 
-  const blocos = useMemo(() => blocosMensagensComDia(mensagens), [mensagens]);
+  const outroMeta = useMemo(() => {
+    if (!outroId) return null;
+    return usuariosPorId.get(outroId) ?? conversas.find((c) => c.outro_id === outroId)?.outro ?? null;
+  }, [outroId, usuariosPorId, conversas]);
 
-  const atualizarLista = useCallback(async () => {
-    try {
-      const [conv, users] = await Promise.all([
-        hubChatCarregarConversas(),
-        hubChatListarUsuariosAtivos(meuId),
-      ]);
-      setConversas(conv);
-      setUsuarios(users);
-      setErro(null);
-      onNaoLidasChange?.(conv.reduce((s, c) => s + c.unread, 0));
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : 'Erro ao carregar chat.';
-      setErro(msg);
-      if (!hubChatTabelasIndisponiveis(e)) console.error(e);
-    }
+  const outroNome = outroMeta?.nome?.trim() || outroMeta?.email || 'Utilizador';
+  const mostrarThread = Boolean(conversaId && outroId);
+
+  const recarregarConversas = useCallback(async () => {
+    const [conv, users] = await Promise.all([
+      hubChatCarregarConversas(),
+      hubChatListarUsuariosAtivos(meuId),
+    ]);
+    setConversas(conv);
+    setUsuarios(users);
+    onNaoLidasChange?.(conv.reduce((s, c) => s + c.unread, 0));
   }, [meuId, onNaoLidasChange]);
 
-  const carregarThread = useCallback(async () => {
-    if (!conversaId) return;
+  const recarregarSolicitacoes = useCallback(async () => {
+    if (!veColunaSolicitacoes) return;
+    setCarregandoSolic(true);
+    try {
+      const itens = await hubChatListarSolicitacoesFila(meuId);
+      setSolicitacoes(itens);
+    } catch {
+      setSolicitacoes([]);
+    } finally {
+      setCarregandoSolic(false);
+    }
+  }, [meuId, veColunaSolicitacoes]);
+
+  const recarregarTudo = useCallback(async () => {
+    setCarregandoLista(true);
+    setErro('');
+    try {
+      await Promise.all([recarregarConversas(), recarregarSolicitacoes()]);
+    } catch (e) {
+      if (hubChatTabelasIndisponiveis(e)) {
+        setErro(
+          'Chat não configurado no Supabase. Rode a migration 20260612120000_hub_chat_interno.sql.',
+        );
+      } else {
+        setErro(e instanceof Error ? e.message : 'Erro ao carregar chat.');
+      }
+    } finally {
+      setCarregandoLista(false);
+    }
+  }, [recarregarConversas, recarregarSolicitacoes]);
+
+  const abrirConversa = useCallback(
+    async (id: string, opts?: { outroId?: string }) => {
+      setConversaId(id);
+      const conv = conversas.find((c) => c.id === id);
+      const oid = opts?.outroId ?? conv?.outro_id ?? null;
+      setOutroId(oid);
+      setTab('conversas');
+    },
+    [conversas],
+  );
+
+  const iniciarComUsuario = useCallback(
+    async (peerId: string) => {
+      setAbrindoPessoa(true);
+      setErro('');
+      try {
+        const id = await hubChatGetOrCreateDirect(peerId);
+        await recarregarConversas();
+        await abrirConversa(id, { outroId: peerId });
+      } catch (e) {
+        setErro(e instanceof Error ? e.message : 'Não foi possível abrir a conversa.');
+      } finally {
+        setAbrindoPessoa(false);
+      }
+    },
+    [abrirConversa, recarregarConversas],
+  );
+
+  const carregarMensagens = useCallback(async () => {
+    if (!conversaId || !outroId) return;
+    setCarregandoMensagens(true);
     try {
       const msgs = await hubChatCarregarMensagens(conversaId);
       setMensagens(msgs);
       await hubChatMarcarLida(conversaId);
-      setErro(null);
-      await atualizarLista();
-      queueMicrotask(() => fimRef.current?.scrollIntoView({ block: 'end' }));
+      setOutroLastReadAt(await hubChatObterLastReadAt(conversaId, outroId));
+      await recarregarConversas();
     } catch (e) {
       setErro(e instanceof Error ? e.message : 'Erro ao carregar mensagens.');
+    } finally {
+      setCarregandoMensagens(false);
     }
-  }, [conversaId, atualizarLista]);
+  }, [conversaId, outroId, recarregarConversas]);
 
   useEffect(() => {
-    setCarregando(true);
-    void atualizarLista().finally(() => setCarregando(false));
-  }, [atualizarLista]);
+    void recarregarTudo();
+  }, [recarregarTudo]);
 
   useEffect(() => {
-    void carregarThread();
-  }, [carregarThread]);
+    void carregarMensagens();
+  }, [carregarMensagens]);
 
   useEffect(() => {
-    if (!conversaId || !supabase) return;
-    const ch = supabase
-      .channel(`hub-chat-${conversaId}`)
+    const client = supabase;
+    if (!conversaId || !client) return;
+    const ch = client
+      .channel(`hub-chat-thread-${conversaId}`)
       .on(
         'postgres_changes',
         {
@@ -139,36 +212,13 @@ export function HubChatWidget({
           table: 'hub_chat_mensagens',
           filter: `conversa_id=eq.${conversaId}`,
         },
-        () => void carregarThread(),
+        () => void carregarMensagens(),
       )
       .subscribe();
     return () => {
-      if (supabase) void supabase.removeChannel(ch);
+      void client.removeChannel(ch);
     };
-  }, [conversaId, carregarThread]);
-
-  useEffect(() => {
-    if (!supabase) return;
-    const ch = supabase
-      .channel('hub-chat-inbox')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'hub_chat_mensagens' },
-        () => void atualizarLista(),
-      )
-      .subscribe();
-    return () => {
-      if (supabase) void supabase.removeChannel(ch);
-    };
-  }, [atualizarLista]);
-
-  useEffect(() => {
-    function onKey(ev: KeyboardEvent) {
-      if (ev.key === 'Escape') onFechar();
-    }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onFechar]);
+  }, [conversaId, carregarMensagens]);
 
   useEffect(() => {
     if (!pendingPeerId || pendingPeerId === meuId) {
@@ -176,250 +226,179 @@ export function HubChatWidget({
       return;
     }
     let cancel = false;
-    void (async () => {
-      try {
-        const id = await hubChatGetOrCreateDirect(pendingPeerId);
-        if (cancel) return;
-        await atualizarLista();
-        setConversaId(id);
-        setAba('conversas');
-        if (mobile) setMobilePainel('thread');
-      } catch (e) {
-        if (!cancel) setErro(e instanceof Error ? e.message : 'Erro ao abrir conversa.');
-      } finally {
-        if (!cancel) onPendingPeerHandled?.();
-      }
-    })();
+    void iniciarComUsuario(pendingPeerId).finally(() => {
+      if (!cancel) onPendingPeerHandled?.();
+    });
     return () => {
       cancel = true;
     };
-  }, [pendingPeerId, meuId, atualizarLista, onPendingPeerHandled, mobile]);
+  }, [pendingPeerId, meuId, iniciarComUsuario, onPendingPeerHandled]);
 
-  function selecionarConversa(id: string) {
-    setConversaId(id);
-    if (mobile) setMobilePainel('thread');
-  }
+  useEffect(() => {
+    if (!menuTemaAberto) return;
+    const onDown = (e: MouseEvent) => {
+      if (menuTemaRef.current && !menuTemaRef.current.contains(e.target as Node)) {
+        setMenuTemaAberto(false);
+      }
+    };
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
+  }, [menuTemaAberto]);
 
-  async function abrirComUsuario(peerId: string) {
-    try {
-      const id = await hubChatGetOrCreateDirect(peerId);
-      await atualizarLista();
-      selecionarConversa(id);
-      setAba('conversas');
-    } catch (e) {
-      setErro(e instanceof Error ? e.message : 'Erro ao abrir conversa.');
+  useEffect(() => {
+    function onKey(ev: KeyboardEvent) {
+      if (ev.key !== 'Escape') return;
+      if (menuTemaAberto) {
+        setMenuTemaAberto(false);
+        return;
+      }
+      onFechar();
     }
-  }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onFechar, menuTemaAberto]);
 
-  async function enviar() {
-    if (!conversaId || enviando) return;
-    const body = texto.trim();
-    if (!body) return;
-    setEnviando(true);
-    setTexto('');
-    try {
-      await hubChatEnviarTexto(conversaId, body);
-      await carregarThread();
-    } catch (e) {
-      setErro(e instanceof Error ? e.message : 'Erro ao enviar.');
-      setTexto(body);
-    } finally {
-      setEnviando(false);
-    }
-  }
-
-  function onComposerKey(ev: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (ev.key === 'Enter' && !ev.shiftKey) {
-      ev.preventDefault();
-      void enviar();
-    }
-  }
-
-  const mostrarLista = !mobile || mobilePainel === 'lista';
-  const mostrarThread = !mobile || mobilePainel === 'thread';
+  const headNeve = tema === 'neve';
 
   return (
-    <div className={styles.shell} role="dialog" aria-label="Chat interno NEXUS">
-      <header className={styles.header}>
-        <div className={styles.headerMain}>
-          <img src="/img/favicon.png" alt="" className={styles.headerMark} width={32} height={32} />
-          <div className={styles.headerTitle}>
-            <strong>Chat interno</strong>
-            <span>{profile.nome}</span>
+    <div className={styles.hcOpen}>
+      <div className={styles.hcBackdrop} aria-hidden onClick={onFechar} />
+      <div
+        className={`${styles.sheet} ${veColunaSolicitacoes ? styles.sheetComFila : ''}`}
+        role="dialog"
+        aria-label="Chat interno NEXUS"
+      >
+        <header
+          className={`${styles.sheetHead} ${headNeve ? styles.sheetHeadNeve : ''}`}
+          style={{ background: HUB_CHAT_HEAD_THEMES[tema].gradient }}
+        >
+          <h2 className={styles.sheetTitle}>CHAT INTERNO</h2>
+          <div className={styles.headLogoWrap}>
+            <img className={styles.headLogo} src="/logo-nexus-mark.svg" alt="NEXUS" decoding="async" />
           </div>
-        </div>
-        <div className={styles.headerActions}>
-          <button
-            type="button"
-            className={styles.iconBtn}
-            onClick={() => void atualizarLista()}
-            aria-label="Atualizar"
-            title="Atualizar"
-          >
-            ↻
-          </button>
-          <button type="button" className={styles.iconBtn} onClick={onFechar} aria-label="Fechar">
-            ✕
-          </button>
-        </div>
-      </header>
-
-      {erro ? <div className={styles.erro}>{erro}</div> : null}
-
-      <div className={`${styles.body} ${mobile ? styles.bodyMobile : ''}`}>
-        {mostrarLista ? (
-          <aside className={`${styles.listPane} ${mobile && mobilePainel === 'thread' ? styles.hideOnMobile : ''}`}>
-            <div className={styles.tabs}>
+          <div className={styles.headActions}>
+            <div className={styles.headMenuWrap} ref={menuTemaRef}>
               <button
                 type="button"
-                className={`${styles.tab} ${aba === 'conversas' ? styles.tabActive : ''}`}
-                onClick={() => setAba('conversas')}
+                className={styles.headBtn}
+                aria-label="Cor do cabeçalho"
+                aria-expanded={menuTemaAberto}
+                onClick={() => setMenuTemaAberto((v) => !v)}
               >
-                Conversas
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                  <circle cx="12" cy="6" r="1.85" />
+                  <circle cx="12" cy="12" r="1.85" />
+                  <circle cx="12" cy="18" r="1.85" />
+                </svg>
               </button>
-              <button
-                type="button"
-                className={`${styles.tab} ${aba === 'pessoas' ? styles.tabActive : ''}`}
-                onClick={() => setAba('pessoas')}
-              >
-                Pessoas
-              </button>
-            </div>
-            <label className={styles.search}>
-              <span className={styles.visuallyHidden}>Buscar</span>
-              <input
-                type="search"
-                value={busca}
-                onChange={(e) => setBusca(e.target.value)}
-                placeholder={aba === 'pessoas' ? 'Buscar pessoa…' : 'Buscar conversa…'}
-              />
-            </label>
-            <div className={styles.list}>
-              {carregando && !conversas.length && !usuarios.length ? (
-                <p className={styles.empty}>Carregando…</p>
-              ) : null}
-              {aba === 'conversas' ? (
-                conversasFiltradas.length === 0 ? (
-                  <p className={styles.empty}>Nenhuma conversa. Abra em Pessoas.</p>
-                ) : (
-                  conversasFiltradas.map((c) => (
-                    <button
-                      key={c.id}
-                      type="button"
-                      className={`${styles.listItem} ${c.id === conversaId ? styles.listItemActive : ''}`}
-                      onClick={() => selecionarConversa(c.id)}
-                    >
-                      <span className={styles.avatar}>{iniciais(c.outro?.nome ?? '?')}</span>
-                      <span className={styles.listMeta}>
-                        <strong>{c.outro?.nome ?? 'Utilizador'}</strong>
-                        <span>{previewLista(c.ultima_preview)}</span>
-                      </span>
-                      {c.ultima_em ? (
-                        <span className={styles.listTime}>{formatarHoraChat(c.ultima_em)}</span>
-                      ) : null}
-                      {c.unread > 0 ? <span className={styles.unreadDot} aria-label="Não lida" /> : null}
-                    </button>
-                  ))
-                )
-              ) : usuariosFiltrados.length === 0 ? (
-                <p className={styles.empty}>Nenhum utilizador ativo.</p>
-              ) : (
-                usuariosFiltrados.map((u) => (
-                  <button
-                    key={u.id}
-                    type="button"
-                    className={styles.listItem}
-                    onClick={() => void abrirComUsuario(u.id)}
-                  >
-                    <span className={styles.avatar}>{iniciais(u.nome)}</span>
-                    <span className={styles.listMeta}>
-                      <strong>{u.nome}</strong>
-                      <span>{u.cargo}</span>
-                    </span>
-                  </button>
-                ))
-              )}
-            </div>
-          </aside>
-        ) : null}
-
-        {mostrarThread ? (
-          <section
-            className={`${styles.threadPane} ${mobile && mobilePainel === 'lista' ? styles.hideOnMobile : ''}`}
-          >
-            {mobile ? (
-              <button
-                type="button"
-                className={styles.backBtn}
-                onClick={() => setMobilePainel('lista')}
-              >
-                ← Conversas
-              </button>
-            ) : null}
-            <div className={styles.threadHead}>
-              {conversaAtual?.outro?.nome ?? 'Selecione uma conversa'}
-            </div>
-            <div className={styles.messages}>
-              {!conversaId ? (
-                <p className={styles.messagesEmpty}>
-                  Escolha uma conversa na lista
-                  <br />
-                  ou abra alguém em <strong>Pessoas</strong>.
-                </p>
-              ) : (
-                blocos.map((b) =>
-                  b.tipo === 'dia' ? (
-                    <span key={b.chave} className={styles.dayLabel}>
-                      {b.rotulo}
-                    </span>
-                  ) : (
-                    <div
-                      key={b.mensagem.id}
-                      className={`${styles.bubbleRow} ${b.mensagem.remetente_id === meuId ? styles.bubbleRowMine : ''}`}
-                    >
-                      <div
-                        className={`${styles.bubble} ${b.mensagem.remetente_id === meuId ? styles.bubbleMine : ''}`}
+              {menuTemaAberto ? (
+                <ul className={styles.themeMenu} role="menu">
+                  {HUB_CHAT_HEAD_THEME_IDS.map((id) => (
+                    <li key={id} role="none">
+                      <button
+                        type="button"
+                        role="menuitemradio"
+                        aria-checked={tema === id}
+                        className={styles.themeOption}
+                        onClick={() => {
+                          setTema(id);
+                          setMenuTemaAberto(false);
+                          try {
+                            localStorage.setItem(THEME_STORAGE_KEY, id);
+                          } catch {
+                            /* ignore */
+                          }
+                        }}
                       >
-                        {b.mensagem.conteudo}
-                        <span className={styles.bubbleTime}>
-                          {formatarHoraChat(b.mensagem.created_at)}
-                        </span>
-                      </div>
-                    </div>
-                  ),
-                )
-              )}
-              <div ref={fimRef} />
+                        <span
+                          className={styles.themeSwatch}
+                          style={{ background: HUB_CHAT_HEAD_THEMES[id].gradient }}
+                          aria-hidden
+                        />
+                        {HUB_CHAT_HEAD_THEMES[id].label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </div>
-            {conversaId ? (
-              <div className={styles.composer}>
-                <div className={styles.composerField}>
-                  <textarea
-                    value={texto}
-                    onChange={(e) => setTexto(e.target.value)}
-                    onKeyDown={onComposerKey}
-                    placeholder="Escreva uma mensagem… (Enter envia)"
-                    disabled={enviando}
-                    rows={1}
-                    aria-label="Mensagem"
-                  />
-                </div>
-                <button
-                  type="button"
-                  className={styles.sendBtn}
-                  disabled={enviando || !texto.trim()}
-                  onClick={() => void enviar()}
-                >
-                  Enviar
-                </button>
-              </div>
-            ) : (
-              <div className={styles.composerHint}>
-                O campo de mensagem aparece quando você selecionar uma conversa.
-              </div>
-            )}
-          </section>
-        ) : null}
+            <button type="button" className={styles.headBtn} aria-label="Fechar chat" onClick={onFechar}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden>
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        {erro ? <div className={styles.alert}>{erro}</div> : null}
+
+        <div className={styles.shell}>
+          <HubChatSidebar
+            meuId={meuId}
+            tab={tab}
+            onTab={setTab}
+            busca={busca}
+            onBusca={setBusca}
+            conversas={conversasFiltradas}
+            usuariosFiltrados={usuariosFiltrados}
+            totalUsuarios={usuarios.length}
+            usuariosPorId={usuariosPorId}
+            conversaSelecionadaId={conversaId}
+            onSelectConversa={(id) => void abrirConversa(id)}
+            onStartComUsuario={(id) => void iniciarComUsuario(id)}
+            carregando={carregandoLista || abrindoPessoa}
+          />
+
+          {veColunaSolicitacoes ? (
+            <HubChatSolicitacoes
+              itens={solicitacoes}
+              carregando={carregandoSolic}
+              onAbrirConversa={(cid, oid) => void abrirConversa(cid, { outroId: oid })}
+            />
+          ) : null}
+
+          {mostrarThread ? (
+            <HubChatThread
+              meuId={meuId}
+              outroNome={outroNome}
+              mensagens={mensagens}
+              carregando={carregandoMensagens}
+              enviando={enviando}
+              outroLastReadAt={outroLastReadAt}
+              ocultarSolicitacoes={podeGerir}
+              onEnviarTexto={async (texto) => {
+                if (!conversaId) return;
+                setEnviando(true);
+                try {
+                  await hubChatEnviarTexto(conversaId, texto);
+                  await carregarMensagens();
+                  await recarregarSolicitacoes();
+                } catch (e) {
+                  setErro(e instanceof Error ? e.message : 'Erro ao enviar.');
+                  throw e;
+                } finally {
+                  setEnviando(false);
+                }
+              }}
+              onEnviarFicheiro={async (f, legenda) => {
+                if (!conversaId) return;
+                setEnviando(true);
+                try {
+                  await hubChatEnviarAnexo(conversaId, f, legenda);
+                  await carregarMensagens();
+                } catch (e) {
+                  setErro(e instanceof Error ? e.message : 'Erro ao enviar anexo.');
+                } finally {
+                  setEnviando(false);
+                }
+              }}
+            />
+          ) : (
+            <div className={styles.emptyMain}>
+              <p>Seleccione uma conversa ou escolha uma pessoa para começar.</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

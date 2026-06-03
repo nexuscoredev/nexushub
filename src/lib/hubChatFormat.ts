@@ -43,3 +43,30 @@ export function previewLista(texto: string | null | undefined, max = 72): string
   if (!t) return 'Sem mensagens';
   return t.length <= max ? t : `${t.slice(0, max - 1)}…`;
 }
+
+export function formatarPreviewLista(
+  ultima: string | null,
+  ultimaRemetente: string | null,
+  meuId: string,
+): string {
+  if (!ultima) return 'Sem mensagens';
+  const prefix = ultimaRemetente && ultimaRemetente === meuId ? 'Você: ' : '';
+  const t = ultima.trim();
+  if (t.startsWith('[Solicitação')) return `${prefix}Pedido de ajuste`;
+  if (t.startsWith('📎') || t.includes('Anexo')) return `${prefix}Anexo`;
+  return `${prefix}${previewLista(t, 80)}`;
+}
+
+export function formatarHoraCurta(iso: string | null): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toLocaleString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+export const HUB_CHAT_PREFIXO_SOLICITACAO = '[Solicitação de ajuste no sistema]';

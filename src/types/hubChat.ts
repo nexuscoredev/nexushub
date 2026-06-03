@@ -22,5 +22,19 @@ export interface HubChatMensagem {
   conversa_id: string;
   remetente_id: string;
   conteudo: string | null;
+  anexo_bucket: string | null;
+  anexo_path: string | null;
+  anexo_nome: string | null;
+  anexo_mime: string | null;
+  anexo_size: number | null;
+  created_at: string;
+}
+
+export interface HubChatSolicitacaoFilaItem {
+  mensagem_id: string;
+  conversa_id: string;
+  remetente_id: string;
+  solicitante_nome: string;
+  preview: string;
   created_at: string;
 }

@@ -1,13 +1,20 @@
 import type { PostgrestError } from '@supabase/supabase-js';
 import { supabase, supabaseErrorMessage } from './supabase';
+import { HUB_CHAT_PREFIXO_SOLICITACAO } from './hubChatFormat';
 import type {
   HubChatConversaLista,
   HubChatMensagem,
+  HubChatSolicitacaoFilaItem,
   HubChatSystemId,
   HubChatUsuarioLista,
 } from '../types/hubChat';
 
 export const HUB_CHAT_SYSTEM_PADRAO: HubChatSystemId = 'nexus-hub';
+const BUCKET_ANEXOS = 'hub-chat-anexos';
+
+function sanitizarNomeFicheiro(nome: string): string {
+  return nome.replace(/[^\w.\-()\s\u00C0-\u024F]/gi, '_').slice(0, 180) || 'ficheiro';
+}
 
 export function hubChatTabelasIndisponiveis(err: unknown): boolean {
   const msg =
@@ -197,7 +204,9 @@ export async function hubChatCarregarMensagens(conversaId: string, limite = 200)
   if (!supabase) return [];
   const { data, error } = await supabase
     .from('hub_chat_mensagens')
-    .select('id, conversa_id, remetente_id, conteudo, created_at')
+    .select(
+      'id, conversa_id, remetente_id, conteudo, anexo_bucket, anexo_path, anexo_nome, anexo_mime, anexo_size, created_at',
+    )
     .eq('conversa_id', conversaId)
     .order('created_at', { ascending: false })
     .limit(limite);
@@ -237,4 +246,138 @@ export async function hubChatMarcarLida(conversaId: string): Promise<void> {
     .eq('conversa_id', conversaId)
     .eq('user_id', user.id);
   if (error) throw new Error(supabaseErrorMessage(error));
+}
+
+export async function hubChatObterLastReadAt(
+  conversaId: string,
+  userId: string,
+): Promise<string | null> {
+  if (!supabase) return null;
+  const { data, error } = await supabase
+    .from('hub_chat_participantes')
+    .select('last_read_at')
+    .eq('conversa_id', conversaId)
+    .eq('user_id', userId)
+    .maybeSingle();
+  if (error) throw new Error(supabaseErrorMessage(error));
+  return data?.last_read_at ?? null;
+}
+
+export function hubChatMensagemLidaPeloOutro(
+  createdAt: string,
+  outroLastReadAt: string | null | undefined,
+): boolean {
+  if (!outroLastReadAt) return false;
+  return new Date(outroLastReadAt).getTime() >= new Date(createdAt).getTime();
+}
+
+export async function hubChatEnviarAnexo(
+  conversaId: string,
+  ficheiro: File,
+  legendaOpcional?: string,
+): Promise<void> {
+  if (!supabase) throw new Error('Supabase não configurado.');
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user?.id) throw new Error('Sessão inválida.');
+
+  const path = `${conversaId}/${crypto.randomUUID()}_${sanitizarNomeFicheiro(ficheiro.name)}`;
+  const { error: upErr } = await supabase.storage.from(BUCKET_ANEXOS).upload(path, ficheiro, {
+    cacheControl: '3600',
+    upsert: false,
+    contentType: ficheiro.type || undefined,
+  });
+  if (upErr) throw new Error(supabaseErrorMessage(upErr));
+
+  const legenda = legendaOpcional?.trim() ?? '';
+  const { error } = await supabase.from('hub_chat_mensagens').insert({
+    conversa_id: conversaId,
+    remetente_id: user.id,
+    conteudo: legenda || null,
+    anexo_bucket: BUCKET_ANEXOS,
+    anexo_path: path,
+    anexo_nome: ficheiro.name,
+    anexo_mime: ficheiro.type || null,
+    anexo_size: ficheiro.size,
+  });
+  if (error) throw new Error(supabaseErrorMessage(error));
+}
+
+export async function hubChatUrlAssinadaAnexo(path: string, segundos = 3600): Promise<string | null> {
+  if (!supabase) return null;
+  const { data, error } = await supabase.storage.from(BUCKET_ANEXOS).createSignedUrl(path, segundos);
+  if (error) {
+    console.error(error);
+    return null;
+  }
+  return data?.signedUrl ?? null;
+}
+
+/** Pedidos de ajuste detectados por prefixo na mensagem (paridade RG sem tabela extra). */
+export async function hubChatListarSolicitacoesFila(
+  meuId: string,
+): Promise<HubChatSolicitacaoFilaItem[]> {
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from('hub_chat_mensagens')
+    .select('id, conversa_id, remetente_id, conteudo, created_at')
+    .ilike('conteudo', `${HUB_CHAT_PREFIXO_SOLICITACAO}%`)
+    .neq('remetente_id', meuId)
+    .order('created_at', { ascending: false })
+    .limit(40);
+  if (error) {
+    if (hubChatTabelasIndisponiveis(error)) return [];
+    throw new Error(supabaseErrorMessage(error));
+  }
+  const rows = data ?? [];
+  if (!rows.length) return [];
+
+  const remetenteIds = [...new Set(rows.map((r) => (r as { remetente_id: string }).remetente_id))];
+  const { data: perfis } = await supabase
+    .from('hub_profiles')
+    .select('id, nome, email')
+    .in('id', remetenteIds);
+  const nomes = new Map(
+    (perfis ?? []).map((p) => {
+      const row = p as { id: string; nome: string; email: string };
+      return [row.id, row.nome?.trim() || row.email] as const;
+    }),
+  );
+
+  return rows.map((r) => {
+    const row = r as {
+      id: string;
+      conversa_id: string;
+      remetente_id: string;
+      conteudo: string | null;
+      created_at: string;
+    };
+    const corpo = (row.conteudo ?? '').replace(HUB_CHAT_PREFIXO_SOLICITACAO, '').trim();
+    const linhas = corpo.split('\n').filter(Boolean);
+    const preview = linhas.find((l) => !l.startsWith('Página:') && !l.startsWith('—')) ?? corpo;
+    return {
+      mensagem_id: row.id,
+      conversa_id: row.conversa_id,
+      remetente_id: row.remetente_id,
+      solicitante_nome: nomes.get(row.remetente_id) ?? 'Utilizador',
+      preview: preview.slice(0, 120),
+      created_at: row.created_at,
+    };
+  });
+}
+
+export function hubChatMensagemEhSolicitacao(conteudo: string | null): boolean {
+  return Boolean(conteudo?.trim().startsWith(HUB_CHAT_PREFIXO_SOLICITACAO));
+}
+
+export async function hubChatEnviarSolicitacaoSistema(texto: string, destinoId: string): Promise<string> {
+  const trimmed = texto.trim();
+  if (!trimmed) throw new Error('Descreva a solicitação antes de enviar.');
+  const conversaId = await hubChatGetOrCreateDirect(destinoId);
+  const pagina =
+    typeof window !== 'undefined' ? `${window.location.pathname}${window.location.search}` : '';
+  const corpo = `${HUB_CHAT_PREFIXO_SOLICITACAO}\n\n${trimmed}\n\nPágina: ${pagina || '—'}`;
+  await hubChatEnviarTexto(conversaId, corpo);
+  return conversaId;
 }
