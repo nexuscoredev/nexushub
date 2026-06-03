@@ -34,15 +34,26 @@ export function ReceivableFinanceForm({
 
   const [error, setError] = useState<string | null>(null);
   const [parcelado, setParcelado] = useState(initialParcelas?.parcelado ?? false);
-  const [qtdParcelas, setQtdParcelas] = useState(initialParcelas?.qtd_parcelas ?? 2);
+  const [qtdParcelasInput, setQtdParcelasInput] = useState(
+    String(initialParcelas?.parcelado ? Math.max(1, initialParcelas.qtd_parcelas) : 2),
+  );
   const [pagas, setPagas] = useState<number[]>(initialParcelas?.parcelas_pagas ?? []);
   const [avistaPago, setAvistaPago] = useState(
     () => !(initialParcelas?.parcelado ?? false) && (initialParcelas?.parcelas_pagas.length ?? 0) > 0,
   );
   const [valor, setValor] = useState(String(initialValues?.valor ?? ''));
 
+  const qtdParcelasParsed = Math.min(
+    60,
+    Math.max(1, parseInt(qtdParcelasInput.replace(/\D/g, ''), 10) || 1),
+  );
+
   const parcelasState: ParcelasState = parcelado
-    ? { parcelado: true, qtd_parcelas: Math.max(1, qtdParcelas), parcelas_pagas: [...pagas].sort((a, b) => a - b) }
+    ? {
+        parcelado: true,
+        qtd_parcelas: qtdParcelasParsed,
+        parcelas_pagas: [...pagas].sort((a, b) => a - b),
+      }
     : { parcelado: false, qtd_parcelas: 1, parcelas_pagas: avistaPago ? [1] : [] };
 
   const valorNum = Number(valor) || 0;
@@ -56,6 +67,10 @@ export function ReceivableFinanceForm({
     e.preventDefault();
     if (!supabase) return;
     setError(null);
+    if (parcelado && !qtdParcelasInput.trim()) {
+      setError('Informe a quantidade de parcelas.');
+      return;
+    }
     const fd = new FormData(e.currentTarget);
 
     const err = await persistReceivable(
@@ -147,7 +162,10 @@ export function ReceivableFinanceForm({
               type="radio"
               name="parcelado_ui"
               checked={parcelado}
-              onChange={() => setParcelado(true)}
+              onChange={() => {
+                setParcelado(true);
+                if (!qtdParcelasInput.trim()) setQtdParcelasInput('2');
+              }}
             />
             Sim
           </label>
@@ -170,14 +188,21 @@ export function ReceivableFinanceForm({
               </label>
               <input
                 id="qtd_parcelas"
-                type="number"
-                min={1}
-                max={60}
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 className="input"
-                value={qtdParcelas}
+                placeholder="Ex.: 5"
+                value={qtdParcelasInput}
                 onChange={(e) => {
-                  const n = Math.max(1, Number(e.target.value) || 1);
-                  setQtdParcelas(n);
+                  const raw = e.target.value.replace(/\D/g, '');
+                  setQtdParcelasInput(raw);
+                  const n = parseInt(raw, 10);
+                  if (n >= 1) setPagas((prev) => prev.filter((p) => p <= n));
+                }}
+                onBlur={() => {
+                  const n = Math.min(60, Math.max(1, parseInt(qtdParcelasInput, 10) || 1));
+                  setQtdParcelasInput(String(n));
                   setPagas((prev) => prev.filter((p) => p <= n));
                 }}
               />
@@ -186,7 +211,13 @@ export function ReceivableFinanceForm({
               Parcelas pagas ({resumoParcela} cada)
             </span>
             <div className={styles.parcelasRow}>
-              {Array.from({ length: Math.max(1, qtdParcelas) }, (_, i) => i + 1).map((n) => (
+              {Array.from(
+                {
+                  length:
+                    qtdParcelasInput.trim() === '' ? 0 : qtdParcelasParsed,
+                },
+                (_, i) => i + 1,
+              ).map((n) => (
                 <label key={n} className={styles.parcelaChip}>
                   <input
                     type="checkbox"
