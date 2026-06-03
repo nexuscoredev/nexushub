@@ -56,13 +56,17 @@ async function fetchGoogleEvents(
   }));
 }
 
+const DEFAULT_EMBED_VINICIUS =
+  'https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FFortaleza&showPrint=0&title=Vin%C3%ADcius%20-%20Google%20Agenda&hl=pt_BR&mode=MONTH&src=viniciussantosdemorais2002%40gmail.com&color=%23039be5';
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const embedRafael = process.env.GOOGLE_CALENDAR_EMBED_RAFAEL ?? '';
-  const embedVinicius = process.env.GOOGLE_CALENDAR_EMBED_VINICIUS ?? '';
+  const embedVinicius =
+    process.env.GOOGLE_CALENDAR_EMBED_VINICIUS ?? DEFAULT_EMBED_VINICIUS;
   const idRafael = process.env.GOOGLE_CALENDAR_ID_RAFAEL ?? 'rafael@nexustech.com';
   const idVinicius =
     process.env.GOOGLE_CALENDAR_ID_VINICIUS ?? 'viniciussantosdemorais2002@gmail.com';

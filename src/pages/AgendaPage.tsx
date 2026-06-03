@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { PageHeader } from '../components/PageHeader';
 import { formatDateTime } from '../lib/format';
 import type { CalendarEvent } from '../types/database';
+import styles from './AgendaPage.module.css';
 
 type AgendaTab = 'combinado' | 'rafael' | 'vinicius';
 
@@ -38,7 +39,7 @@ export function AgendaPage() {
       setEvents(body.events ?? []);
       setEmbedRafael(body.embedRafael ?? '');
       setEmbedVinicius(body.embedVinicius ?? '');
-      setUseEmbed(Boolean(body.useEmbed));
+      setUseEmbed(Boolean(body.useEmbed || body.embedVinicius || body.embedRafael));
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erro ao carregar agenda');
     } finally {
@@ -54,6 +55,10 @@ export function AgendaPage() {
     tab === 'combinado'
       ? events
       : events.filter((e) => e.calendar === tab);
+
+  const showRafaelEmbed = Boolean(embedRafael) && (tab === 'combinado' || tab === 'rafael');
+  const showViniciusEmbed = Boolean(embedVinicius) && (tab === 'combinado' || tab === 'vinicius');
+  const showEmbedView = showRafaelEmbed || showViniciusEmbed;
 
   return (
     <div>
@@ -87,26 +92,32 @@ export function AgendaPage() {
 
       {error && <div className="error-banner" style={{ marginBottom: '1rem' }}>{error}</div>}
 
-      {useEmbed ? (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: '1rem',
-          }}
-        >
-          {(tab === 'combinado' || tab === 'rafael') && embedRafael && (
-            <div className="card" style={{ padding: 0, overflow: 'hidden', minHeight: 400 }}>
-              <iframe title="Rafael Agenda" src={embedRafael} style={{ width: '100%', height: 420, border: 0 }} />
+      {showEmbedView && (
+        <div className={styles.embedGrid}>
+          {showRafaelEmbed && (
+            <div className={`card ${styles.embedCard}`}>
+              <div className={styles.embedHeader}>Rafael</div>
+              <iframe
+                title="Agenda Rafael"
+                src={embedRafael}
+                className={styles.embedFrame}
+              />
             </div>
           )}
-          {(tab === 'combinado' || tab === 'vinicius') && embedVinicius && (
-            <div className="card" style={{ padding: 0, overflow: 'hidden', minHeight: 400 }}>
-              <iframe title="Vinícius Agenda" src={embedVinicius} style={{ width: '100%', height: 420, border: 0 }} />
+          {showViniciusEmbed && (
+            <div className={`card ${styles.embedCard}`}>
+              <div className={styles.embedHeader}>Vinícius</div>
+              <iframe
+                title="Agenda Vinícius"
+                src={embedVinicius}
+                className={styles.embedFrame}
+              />
             </div>
           )}
         </div>
-      ) : (
+      )}
+
+      {!showEmbedView && (
         <>
           {loading && <p style={{ color: 'var(--muted)' }}>Carregando eventos…</p>}
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -136,6 +147,20 @@ export function AgendaPage() {
             )}
           </ul>
         </>
+      )}
+
+      {showEmbedView && !useEmbed && events.length > 0 && (
+        <section className={styles.eventFallback}>
+          <h2 className={styles.eventFallbackTitle}>Próximos eventos (API)</h2>
+          <ul className={styles.eventList}>
+            {filtered.slice(0, 8).map((ev) => (
+              <li key={ev.id} className={styles.eventItem}>
+                <strong>{ev.title}</strong>
+                <span>{formatDateTime(ev.start)}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
     </div>
   );
