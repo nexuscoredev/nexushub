@@ -1,3 +1,12 @@
+body.nexushub-entrada-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+body.nexushub-entrada-dragging * {
+  cursor: grabbing;
+}
+
 :root {
   --bg: #0a0a0a;
   --surface: rgba(14, 14, 14, 0.88);

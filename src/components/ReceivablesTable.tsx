@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { EntradaSecao, FinanceFluxoSecao } from '../lib/financeCategories';
+import { useEntradaDragOptional } from '../contexts/EntradaDragContext';
 import { ReceivableDragHandle } from './ReceivableDragHandle';
 import { ReceivableMoveButtons } from './ReceivableMoveButtons';
 import { formatBRL, formatDate } from '../lib/format';
@@ -50,6 +51,8 @@ export function ReceivablesTable({
   const [openAdd, setOpenAdd] = useState(false);
   const [editing, setEditing] = useState<HubFinanceReceivable | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
+  const entradaDrag = useEntradaDragOptional();
+
   const handleDelete = async (id: string) => {
     if (!confirm('Excluir este registro?')) return;
     const err = await deleteFinanceRow('hub_finance_receivables', id);
@@ -174,7 +177,10 @@ export function ReceivablesTable({
               : (n: number) => `${n}ª (${formatBRL(valorParcela(Number(row.valor), p))})`;
 
             return (
-              <tr key={row.id}>
+              <tr
+                key={row.id}
+                className={entradaDrag?.draggingId === row.id ? styles.rowDragging : undefined}
+              >
                 <td className={styles.cellCliente}>
                   <div className={styles.cellClienteInner}>
                     {draggable && !busy && (

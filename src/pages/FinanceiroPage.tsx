@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { useEntradaDragOptional } from '../contexts/EntradaDragContext';
-import { EntradaDragProvider } from '../contexts/EntradaDragContext';
+import { EntradaDragProvider, useEntradaDragOptional } from '../contexts/EntradaDragContext';
+import { EntradaSectionDropLayer } from '../components/EntradaSectionDropLayer';
 import { MensalidadesEntradaView } from '../components/MensalidadesEntradaView';
 import { ReceivablesTable } from '../components/ReceivablesTable';
 import {
@@ -303,6 +303,7 @@ function FinanceQueueSection({
       className={sectionClass}
       data-drop-secao={entradaSecao}
     >
+      {entradaSecao && <EntradaSectionDropLayer secao={entradaSecao} />}
       <div className={styles.sectionHeader}>
         <h2 className={styles.sectionTitle}>
           {title}
