@@ -124,6 +124,62 @@ function compareTaskOrder(a: TodoistTask, b: TodoistTask): number {
   return a.content.localeCompare(b.content, 'pt-BR');
 }
 
+/** IDs de tarefas que possuem subtarefas na lista atual. */
+export function getParentIdsWithChildren(tasks: TodoistTask[]): Set<string> {
+  const ids = new Set(tasks.map((t) => t.id));
+  const parents = new Set<string>();
+  for (const task of tasks) {
+    if (task.parent_id && ids.has(task.parent_id)) {
+      parents.add(task.parent_id);
+    }
+  }
+  return parents;
+}
+
+/** Oculta subtarefas quando algum ancestral está recolhido. */
+export function filterCollapsedTasks(
+  items: TaskDisplayItem[],
+  tasks: TodoistTask[],
+  collapsed: ReadonlySet<string>,
+): TaskDisplayItem[] {
+  if (collapsed.size === 0) return items;
+
+  const idSet = new Set(tasks.map((t) => t.id));
+  const parentById = new Map(tasks.map((t) => [t.id, t.parent_id ?? null]));
+
+  function isHidden(taskId: string): boolean {
+    let parentId = parentById.get(taskId) ?? null;
+    while (parentId && idSet.has(parentId)) {
+      if (collapsed.has(parentId)) return true;
+      parentId = parentById.get(parentId) ?? null;
+    }
+    return false;
+  }
+
+  return items.filter(({ task }) => !isHidden(task.id));
+}
+
+/** Conta descendentes diretos + indiretos visíveis na árvore. */
+export function countDescendants(taskId: string, tasks: TodoistTask[]): number {
+  const byParent = new Map<string, TodoistTask[]>();
+  for (const task of tasks) {
+    const pid = task.parent_id;
+    if (!pid) continue;
+    const list = byParent.get(pid) ?? [];
+    list.push(task);
+    byParent.set(pid, list);
+  }
+  let count = 0;
+  function walk(id: string) {
+    for (const child of byParent.get(id) ?? []) {
+      count++;
+      walk(child.id);
+    }
+  }
+  walk(taskId);
+  return count;
+}
+
 /** Ordena tarefas como no Todoist: pais primeiro, subtarefas aninhadas por parent_id. */
 export function buildTodoistTaskDisplayList(tasks: TodoistTask[]): TaskDisplayItem[] {
   if (tasks.length === 0) return [];

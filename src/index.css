@@ -33,7 +33,7 @@ body.nexushub-entrada-dragging * {
   --font-serif: 'Noto Serif', Georgia, 'Times New Roman', serif;
   --font-display: 'Inter', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
-  --font-mono: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --shadow-glow: 0 0 40px rgba(255, 255, 255, 0.04);
 }
 

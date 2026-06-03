@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { CreateTaskModal } from '../components/CreateTaskModal';
 import { NavIcon } from '../components/NavIcon';
 import { PageHeader } from '../components/PageHeader';
@@ -10,6 +10,9 @@ import { TEAM_ASSIGNEES } from '../lib/todoistAssignees';
 import { matchProjectToSystem, sortProjectsByClient } from '../lib/systemLogos';
 import {
   buildTodoistTaskDisplayList,
+  countDescendants,
+  filterCollapsedTasks,
+  getParentIdsWithChildren,
   isTodoistHeadingContent,
   TodoistTaskContent,
   todoistPlainText,
@@ -108,19 +111,54 @@ interface TaskRowProps {
   depth?: number;
   sectionName?: string;
   selected: boolean;
+  hasChildren?: boolean;
+  collapsed?: boolean;
+  childCount?: number;
+  onToggleCollapse?: (taskId: string) => void;
   onSelect: (task: TodoistTask) => void;
   onToggle: (task: TodoistTask) => void;
 }
 
-function TaskRow({ task, depth = 0, sectionName, selected, onSelect, onToggle }: TaskRowProps) {
+function TaskRow({
+  task,
+  depth = 0,
+  sectionName,
+  selected,
+  hasChildren = false,
+  collapsed = false,
+  childCount = 0,
+  onToggleCollapse,
+  onSelect,
+  onToggle,
+}: TaskRowProps) {
   const due = formatDue(task);
   const heading = isTodoistHeadingContent(task.content);
   const plainTitle = todoistPlainText(task.content);
   return (
     <li
       className={`${styles.taskItem} ${task.is_completed ? styles.taskDone : ''} ${selected ? styles.taskItemSelected : ''} ${depth > 0 ? styles.taskSubtask : ''} ${heading ? styles.taskHeading : ''}`}
-      style={depth > 0 ? { paddingLeft: `calc(0.5rem + ${depth} * 1.1rem)` } : undefined}
+      style={{ '--depth': depth } as CSSProperties}
     >
+      {hasChildren ? (
+        <button
+          type="button"
+          className={styles.expandBtn}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleCollapse?.(task.id);
+          }}
+          aria-expanded={!collapsed}
+          aria-label={collapsed ? `Expandir ${plainTitle}` : `Recolher ${plainTitle}`}
+          title={collapsed ? `Expandir (${childCount} subtarefas)` : 'Recolher'}
+        >
+          <NavIcon
+            name="chevronDown"
+            className={`${styles.expandIcon} ${!collapsed ? styles.expandIconOpen : ''}`}
+          />
+        </button>
+      ) : (
+        <span className={styles.expandSpacer} aria-hidden />
+      )}
       <input
         type="checkbox"
         checked={task.is_completed}
@@ -151,6 +189,9 @@ function TaskRow({ task, depth = 0, sectionName, selected, onSelect, onToggle }:
           className={`${styles.taskTitle} ${task.is_completed ? styles.taskDoneText : ''} ${heading ? styles.taskTitleHeading : ''}`}
         >
           <TodoistTaskContent content={task.content} />
+          {hasChildren && collapsed && childCount > 0 && (
+            <span className={styles.childCountBadge}>{childCount}</span>
+          )}
           {(task.note_count ?? 0) > 0 && (
             <span className={styles.noteCount}>{task.note_count} coment.</span>
           )}
@@ -196,6 +237,7 @@ export function FilaPage() {
   );
   const [completedOpen, setCompletedOpen] = useState(false);
   const [advancedFiltersOpen, setAdvancedFiltersOpen] = useState(false);
+  const [collapsedTasks, setCollapsedTasks] = useState<Set<string>>(() => new Set());
 
   const sectionMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -295,6 +337,12 @@ export function FilaPage() {
     }
   }, []);
 
+  const closeDetail = useCallback(() => {
+    setSelectedTask(null);
+    setRenamingTitle(false);
+    setComments([]);
+  }, []);
+
   const selectTask = useCallback(
     async (task: TodoistTask) => {
       setSelectedTask(task);
@@ -305,9 +353,19 @@ export function FilaPage() {
     [loadComments],
   );
 
+  useEffect(() => {
+    if (!selectedTask) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !renamingTitle) closeDetail();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selectedTask, renamingTitle, closeDetail]);
+
   const handleProjectChange = (projectId: string) => {
     setSectionFilter('');
     setQuickFilter('');
+    setCollapsedTasks(new Set());
     void refresh(projectId);
   };
 
@@ -410,13 +468,30 @@ export function FilaPage() {
     await patchSelected({ labels: next });
   };
 
+  const toggleTaskCollapse = (taskId: string) => {
+    setCollapsedTasks((prev) => {
+      const next = new Set(prev);
+      if (next.has(taskId)) next.delete(taskId);
+      else next.add(taskId);
+      return next;
+    });
+  };
+
   const pending = tasks.filter((t) => !t.is_completed);
   const done = tasks.filter((t) => t.is_completed);
-  const pendingDisplay = useMemo(() => buildTodoistTaskDisplayList(pending), [pending]);
-  const doneDisplay = useMemo(() => buildTodoistTaskDisplayList(done), [done]);
+  const pendingParents = useMemo(() => getParentIdsWithChildren(pending), [pending]);
+  const doneParents = useMemo(() => getParentIdsWithChildren(done), [done]);
+  const pendingDisplay = useMemo(
+    () => filterCollapsedTasks(buildTodoistTaskDisplayList(pending), pending, collapsedTasks),
+    [pending, collapsedTasks],
+  );
+  const doneDisplay = useMemo(
+    () => filterCollapsedTasks(buildTodoistTaskDisplayList(done), done, collapsedTasks),
+    [done, collapsedTasks],
+  );
 
   return (
-    <div>
+    <div className={styles.filaPage}>
       <PageHeader
         badge="Ops"
         title="Fila operacional"
@@ -564,7 +639,7 @@ export function FilaPage() {
 
           {loading && <p style={{ color: 'var(--muted)' }}>Carregando tarefas…</p>}
 
-          <div className={`${styles.layout} ${selectedTask ? styles.layoutWithDetail : ''}`}>
+          <div className={styles.layout}>
             <div className={styles.listColumn}>
               <section className={`card ${styles.taskListCard}`}>
                 <h2 className={styles.sectionTitle}>
@@ -579,6 +654,10 @@ export function FilaPage() {
                       depth={depth}
                       sectionName={task.section_id ? sectionMap.get(task.section_id) : undefined}
                       selected={selectedTask?.id === task.id}
+                      hasChildren={pendingParents.has(task.id)}
+                      collapsed={collapsedTasks.has(task.id)}
+                      childCount={countDescendants(task.id, pending)}
+                      onToggleCollapse={toggleTaskCollapse}
                       onSelect={(task) => void selectTask(task)}
                       onToggle={toggleTask}
                     />
@@ -618,6 +697,10 @@ export function FilaPage() {
                             depth={depth}
                             sectionName={task.section_id ? sectionMap.get(task.section_id) : undefined}
                             selected={selectedTask?.id === task.id}
+                            hasChildren={doneParents.has(task.id)}
+                            collapsed={collapsedTasks.has(task.id)}
+                            childCount={countDescendants(task.id, done)}
+                            onToggleCollapse={toggleTaskCollapse}
                             onSelect={(task) => void selectTask(task)}
                             onToggle={toggleTask}
                           />
@@ -628,9 +711,22 @@ export function FilaPage() {
                 </div>
               )}
             </div>
+          </div>
 
-            {selectedTask && (
-              <aside className={`card ${styles.detailPanel}`}>
+          {selectedTask && (
+            <div
+              className={styles.taskModalBackdrop}
+              role="presentation"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) closeDetail();
+              }}
+            >
+              <div
+                className={styles.taskModalDialog}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="task-detail-title"
+              >
                 <div className={styles.detailHeader}>
                   <div className={styles.detailHeaderMain}>
                     {renamingTitle ? (
@@ -651,7 +747,7 @@ export function FilaPage() {
                       </div>
                     ) : (
                       <>
-                        <h2 className={styles.detailTitle}>
+                        <h2 id="task-detail-title" className={styles.detailTitle}>
                           <TodoistTaskContent content={selectedTask.content} />
                         </h2>
                         <button
@@ -667,7 +763,7 @@ export function FilaPage() {
                   <button
                     type="button"
                     className={`btn-ghost ${styles.detailClose}`}
-                    onClick={() => setSelectedTask(null)}
+                    onClick={closeDetail}
                     aria-label="Fechar detalhes"
                   >
                     <NavIcon name="close" className={styles.headerIconSm} />
@@ -835,9 +931,9 @@ export function FilaPage() {
                     ))}
                   </div>
                 </div>
-              </aside>
-            )}
-          </div>
+              </div>
+            </div>
+          )}
         </>
       )}
 
