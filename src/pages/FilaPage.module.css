@@ -461,14 +461,6 @@
   font-style: normal;
 }
 
-.taskItem input[type='checkbox'] {
-  width: 15px;
-  height: 15px;
-  margin-top: 0.2rem;
-  accent-color: var(--primary);
-  flex-shrink: 0;
-}
-
 .taskItem:hover {
   background: var(--glass);
   border-color: var(--border);

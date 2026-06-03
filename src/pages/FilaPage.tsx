@@ -116,7 +116,6 @@ interface TaskRowProps {
   childCount?: number;
   onToggleCollapse?: (taskId: string) => void;
   onSelect: (task: TodoistTask) => void;
-  onToggle: (task: TodoistTask) => void;
 }
 
 function TaskRow({
@@ -129,7 +128,6 @@ function TaskRow({
   childCount = 0,
   onToggleCollapse,
   onSelect,
-  onToggle,
 }: TaskRowProps) {
   const due = formatDue(task);
   const heading = isTodoistHeadingContent(task.content);
@@ -159,16 +157,6 @@ function TaskRow({
       ) : (
         <span className={styles.expandSpacer} aria-hidden />
       )}
-      <input
-        type="checkbox"
-        checked={task.is_completed}
-        onChange={(e) => {
-          e.stopPropagation();
-          void onToggle(task);
-        }}
-        onClick={(e) => e.stopPropagation()}
-        aria-label={task.is_completed ? `Reabrir ${plainTitle}` : `Concluir ${plainTitle}`}
-      />
       {!heading && (
         <span className={`${styles.priority} ${priorityClass(task.priority)}`} aria-hidden />
       )}
@@ -659,7 +647,6 @@ export function FilaPage() {
                       childCount={countDescendants(task.id, pending)}
                       onToggleCollapse={toggleTaskCollapse}
                       onSelect={(task) => void selectTask(task)}
-                      onToggle={toggleTask}
                     />
                   ))}
                   {!loading && pendingDisplay.length === 0 && (
@@ -702,7 +689,6 @@ export function FilaPage() {
                             childCount={countDescendants(task.id, done)}
                             onToggleCollapse={toggleTaskCollapse}
                             onSelect={(task) => void selectTask(task)}
-                            onToggle={toggleTask}
                           />
                         ))}
                       </ul>
