@@ -64,6 +64,10 @@ function pickProjectId(list: TodoistProject[], preferred?: string): string {
   return firstClient?.id ?? sorted[0]?.id ?? '';
 }
 
+function getPriorityInfo(priority: number) {
+  return PRIORITIES.find((p) => p.value === priority) ?? PRIORITIES[3];
+}
+
 function priorityClass(priority: number): string {
   if (priority === 1) return styles.p1;
   if (priority === 2) return styles.p2;
@@ -132,6 +136,7 @@ function TaskRow({
   const due = formatDue(task);
   const heading = isTodoistHeadingContent(task.content);
   const plainTitle = todoistPlainText(task.content);
+  const priority = getPriorityInfo(task.priority);
   return (
     <li
       className={`${styles.taskItem} ${task.is_completed ? styles.taskDone : ''} ${selected ? styles.taskItemSelected : ''} ${depth > 0 ? styles.taskSubtask : ''} ${heading ? styles.taskHeading : ''}`}
@@ -158,7 +163,12 @@ function TaskRow({
         <span className={styles.expandSpacer} aria-hidden />
       )}
       {!heading && (
-        <span className={`${styles.priority} ${priorityClass(task.priority)}`} aria-hidden />
+        <span
+          className={`${styles.priorityTag} ${priorityClass(task.priority)}`}
+          title={`Prioridade ${priority.title}`}
+        >
+          {priority.label}
+        </span>
       )}
       {heading && <span className={styles.headingMarker} aria-hidden />}
       <div
@@ -870,25 +880,17 @@ export function FilaPage() {
                 <div className={styles.detailActions}>
                   <button
                     type="button"
-                    className={`btn-primary ${styles.detailActionPrimary}`}
-                    onClick={() => void toggleTask(selectedTask)}
-                  >
-                    {selectedTask.is_completed ? 'Reabrir tarefa' : 'Concluir tarefa'}
-                  </button>
-                  <a
-                    href={selectedTask.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-ghost"
-                  >
-                    Todoist
-                  </a>
-                  <button
-                    type="button"
-                    className={`btn-ghost ${styles.detailActionDanger}`}
+                    className={`${styles.detailActionBtn} ${styles.detailActionDanger}`}
                     onClick={() => void deleteSelectedTask()}
                   >
                     Excluir
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.detailActionBtn} ${styles.detailActionComplete}`}
+                    onClick={() => void toggleTask(selectedTask)}
+                  >
+                    {selectedTask.is_completed ? 'Reabrir' : 'Concluir'}
                   </button>
                 </div>
 

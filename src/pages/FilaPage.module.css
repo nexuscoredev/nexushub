@@ -517,28 +517,43 @@
   padding: 0.5rem 0;
 }
 
-.priority {
-  display: inline-block;
-  width: 0.45rem;
-  height: 0.45rem;
-  border-radius: 50%;
+.priorityTag {
+  display: inline-flex;
+  align-items: center;
   flex-shrink: 0;
+  margin-top: 0.12rem;
+  padding: 0.14rem 0.42rem;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  border: 1px solid;
+  font-variant-numeric: tabular-nums;
 }
 
 .p1 {
-  background: #ff7066;
+  color: #ffb4ae;
+  background: rgba(255, 112, 102, 0.14);
+  border-color: rgba(255, 112, 102, 0.42);
 }
 
 .p2 {
-  background: #ff9a14;
+  color: #ffc46a;
+  background: rgba(255, 154, 20, 0.14);
+  border-color: rgba(255, 154, 20, 0.42);
 }
 
 .p3 {
-  background: #529cc9;
+  color: #8ec8ea;
+  background: rgba(82, 156, 201, 0.14);
+  border-color: rgba(82, 156, 201, 0.42);
 }
 
 .p4 {
-  background: var(--outline-variant);
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .labelChip {
@@ -581,20 +596,57 @@
 }
 
 .detailActions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   gap: 0.5rem;
-  margin-top: 1rem;
-  padding-top: 1rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
   border-top: 1px solid var(--border);
 }
 
-.detailActionPrimary {
-  grid-column: 1 / -1;
+.detailActionBtn {
+  flex: 1;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s,
+    transform 0.15s,
+    box-shadow 0.15s;
+}
+
+.detailActionComplete {
+  border: none;
+  background: var(--silver-gradient);
+  color: #000;
+  box-shadow: 0 2px 12px rgba(255, 255, 255, 0.08);
+}
+
+.detailActionComplete:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.12);
 }
 
 .detailActionDanger {
+  border: 1px solid rgba(255, 100, 100, 0.28);
+  background: rgba(255, 255, 255, 0.04);
   color: var(--danger);
+}
+
+.detailActionDanger:hover {
+  color: #ff8a8a;
+  border-color: rgba(255, 100, 100, 0.45);
+  background: rgba(255, 80, 80, 0.1);
 }
 
 .comments {
