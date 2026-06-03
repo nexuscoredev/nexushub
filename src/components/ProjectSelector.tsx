@@ -37,7 +37,7 @@ export function ProjectSelector({ projects, value, onChange, disabled }: Project
                 <img
                   src={projectLogoUrl(p.name)}
                   alt=""
-                  className={styles.logo}
+                  className={`${styles.logo} brand-logo ${active ? 'brand-logo-active' : ''}`}
                   aria-hidden
                 />
               </span>

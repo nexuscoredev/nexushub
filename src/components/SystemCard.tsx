@@ -14,7 +14,7 @@ export function SystemCard({ system, variant = 'button' }: SystemCardProps) {
   const body = (
     <>
       <div className={styles.logoWrap}>
-        <img src={logo} alt="" className={styles.logo} aria-hidden />
+        <img src={logo} alt="" className={`${styles.logo} brand-logo brand-logo-active`} aria-hidden />
       </div>
       <h3 className={styles.title}>{system.nome}</h3>
       <p className={styles.desc}>{system.descricao}</p>

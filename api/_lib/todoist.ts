@@ -114,6 +114,7 @@ export interface MoveTaskInput {
 
 import {
   buildAssigneeOptions,
+  collaboratorDisplayName,
   type TodoistCollaborator,
 } from './todoistAssignees.js';
 
@@ -201,7 +202,7 @@ export function mapTodoistTask(
     labels: task.labels ?? [],
     note_count: task.note_count ?? 0,
     responsible_uid: task.responsible_uid ?? null,
-    assignee_name: matched?.label ?? collab?.full_name ?? null,
+    assignee_name: matched?.label ?? (collab ? collaboratorDisplayName(collab) : null) ?? null,
     assignee_hub: matched?.hub ?? null,
   };
 }

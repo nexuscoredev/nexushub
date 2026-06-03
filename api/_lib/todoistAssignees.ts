@@ -12,13 +12,18 @@ export const TEAM_ASSIGNEES: TeamAssignee[] = [
 
 export interface TodoistCollaborator {
   id: string;
-  full_name: string;
+  full_name?: string;
+  name?: string;
   email?: string;
 }
 
 export interface AssigneeOption extends TeamAssignee {
   assignee_id: number | null;
   uid: string | null;
+}
+
+export function collaboratorDisplayName(c: TodoistCollaborator): string {
+  return (c.full_name ?? c.name ?? c.email ?? '').trim();
 }
 
 function namesMatch(todoistFullName: string | undefined | null, expected: string): boolean {
@@ -30,11 +35,13 @@ function namesMatch(todoistFullName: string | undefined | null, expected: string
 
 export function buildAssigneeOptions(collaborators: TodoistCollaborator[]): AssigneeOption[] {
   return TEAM_ASSIGNEES.map((team) => {
-    const collab = collaborators.find((c) => namesMatch(c.full_name, team.todoistName));
-    const id = collab?.id;
+    const collab = collaborators.find((c) =>
+      namesMatch(collaboratorDisplayName(c), team.todoistName),
+    );
+    const id = collab?.id ?? null;
     return {
       ...team,
-      uid: id ?? null,
+      uid: id,
       assignee_id: id ? Number(id) : null,
     };
   });
@@ -47,8 +54,10 @@ export function hubLabelFromUid(
   if (!uid) return null;
   const collab = collaborators.find((c) => c.id === uid);
   if (!collab) return null;
-  const team = TEAM_ASSIGNEES.find((t) => namesMatch(collab.full_name, t.todoistName));
-  return team?.label ?? collab.full_name;
+  const team = TEAM_ASSIGNEES.find((t) =>
+    namesMatch(collaboratorDisplayName(collab), t.todoistName),
+  );
+  return team?.label ?? collaboratorDisplayName(collab) ?? null;
 }
 
 export function assigneeIdForHub(

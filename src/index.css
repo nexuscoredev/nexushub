@@ -331,3 +331,17 @@ table.data-table th {
 table.data-table tbody tr:hover td {
   background: rgba(255, 255, 255, 0.03);
 }
+
+/* Logos de clientes — monocromático prata NEXUS */
+.brand-logo {
+  filter: grayscale(100%) brightness(1.22) contrast(0.82);
+  opacity: 0.82;
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.brand-logo-active,
+.optionActive .brand-logo,
+a:hover .brand-logo {
+  filter: grayscale(100%) brightness(1.42) contrast(0.92);
+  opacity: 1;
+}

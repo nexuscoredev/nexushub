@@ -1,7 +1,7 @@
 /** Logos placeholder — substituir por assets oficiais de cada produto em public/img/systems/ */
 const SYSTEM_LOGOS: Record<string, string> = {
-  'rh-ambiental': '/img/systems/rh-ambiental.svg',
-  ligeirinho: '/img/systems/ligeirinho.svg',
+  'rh-ambiental': '/img/systems/rh-ambiental.png',
+  ligeirinho: '/img/systems/ligeirinho.png',
   contabil: '/img/systems/contabil.svg',
 };
 
@@ -15,13 +15,13 @@ export interface ClientSystem {
 export const CLIENT_SYSTEMS: ClientSystem[] = [
   {
     id: 'rh-ambiental',
-    nome: 'RH Ambiental',
-    aliases: ['rh ambiental', 'rg ambiental', 'ambiental', 'rh-ambiental'],
+    nome: 'RG Ambiental',
+    aliases: ['rh ambiental', 'rg ambiental', 'ambiental', 'rh-ambiental', 'rg-ambiental'],
   },
   {
     id: 'ligeirinho',
     nome: 'Ligeirinho Hub',
-    aliases: ['ligeirinho', 'ligeirinho hub', 'ligeirinhohub'],
+    aliases: ['ligeirinho', 'ligeirinho hub', 'ligeirinhohub', 'ligeirinho bebidas'],
   },
   {
     id: 'contabil',

@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { CreateTaskModal } from '../components/CreateTaskModal';
 import { NavIcon } from '../components/NavIcon';
 import { PageHeader } from '../components/PageHeader';
 import { ProjectSelector } from '../components/ProjectSelector';
 import { TodoistIcon } from '../components/TodoistIcon';
 import * as todoistApi from '../lib/todoistApi';
-import type { AssigneeHub, AssigneeOption } from '../lib/todoistAssignees';
+import type { AssigneeOption } from '../lib/todoistAssignees';
 import { TEAM_ASSIGNEES } from '../lib/todoistAssignees';
 import { matchProjectToSystem, sortProjectsByClient } from '../lib/systemLogos';
 import type {
@@ -174,15 +175,12 @@ export function FilaPage() {
   const [renamingTitle, setRenamingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState('');
 
-  const [newTaskTitle, setNewTaskTitle] = useState('');
-  const [newDue, setNewDue] = useState<DuePreset>('');
-  const [newPriority, setNewPriority] = useState(4);
-  const [newSectionId, setNewSectionId] = useState('');
-  const [newLabels, setNewLabels] = useState<string[]>([]);
-  const [newAssigneeHub, setNewAssigneeHub] = useState<AssigneeHub | ''>('');
+  const [createOpen, setCreateOpen] = useState(false);
   const [assigneeOptions, setAssigneeOptions] = useState<AssigneeOption[]>(
     TEAM_ASSIGNEES.map((t) => ({ ...t, assignee_id: null, uid: null })),
   );
+  const [completedOpen, setCompletedOpen] = useState(false);
+  const [advancedFiltersOpen, setAdvancedFiltersOpen] = useState(false);
 
   const sectionMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -295,43 +293,14 @@ export function FilaPage() {
   const handleProjectChange = (projectId: string) => {
     setSectionFilter('');
     setQuickFilter('');
-    setNewSectionId('');
     void refresh(projectId);
   };
 
-  const resetNewTask = () => {
-    setNewTaskTitle('');
-    setNewDue('');
-    setNewPriority(4);
-    setNewSectionId('');
-    setNewLabels([]);
-    setNewAssigneeHub('');
-  };
-
-  const handleAddTask = async () => {
-    if (!newTaskTitle.trim()) return;
-    if (!selectedProjectId) {
-      setError('Selecione um cliente antes de adicionar a tarefa.');
-      return;
-    }
-    const assignee = newAssigneeHub
-      ? assigneeOptions.find((o) => o.hub === newAssigneeHub)
-      : undefined;
-    try {
-      setError(null);
-      await todoistApi.createTask({
-        content: newTaskTitle.trim(),
-        project_id: selectedProjectId,
-        section_id: newSectionId || undefined,
-        labels: newLabels.length ? newLabels : undefined,
-        priority: newPriority,
-        due_string: newDue === 'today' ? 'today' : newDue === 'tomorrow' ? 'tomorrow' : undefined,
-        assignee_id: assignee?.assignee_id ?? undefined,
-      });
-      resetNewTask();
-      await refresh(selectedProjectId);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao adicionar');
+  const handleTaskCreated = (projectId: string) => {
+    if (projectId !== selectedProjectId) {
+      void refresh(projectId);
+    } else {
+      void refresh(selectedProjectId);
     }
   };
 
@@ -417,12 +386,6 @@ export function FilaPage() {
     }
   };
 
-  const toggleNewLabel = (name: string) => {
-    setNewLabels((prev) =>
-      prev.includes(name) ? prev.filter((l) => l !== name) : [...prev, name],
-    );
-  };
-
   const toggleSelectedLabel = async (name: string) => {
     if (!selectedTask) return;
     const current = selectedTask.labels ?? [];
@@ -495,7 +458,7 @@ export function FilaPage() {
 
       {viewTab === 'tasks' && (
         <>
-          <div className={`card ${styles.addBar}`}>
+          <div className={styles.tasksToolbar}>
             {projects.length > 0 && (
               <ProjectSelector
                 projects={projects}
@@ -504,97 +467,26 @@ export function FilaPage() {
                 disabled={loading || Boolean(quickFilter)}
               />
             )}
-            <div className={styles.addRow}>
-              <input
-                className={`input ${styles.addInput}`}
-                placeholder="Nova tarefa…"
-                value={newTaskTitle}
-                onChange={(e) => setNewTaskTitle(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') void handleAddTask();
-                }}
-              />
-              <button
-                type="button"
-                className="btn-primary"
-                disabled={!newTaskTitle.trim()}
-                onClick={() => void handleAddTask()}
-              >
-                Adicionar
-              </button>
-            </div>
-            <div className={styles.chipRow}>
-              <span className={styles.chipGroupLabel}>Prazo</span>
-              {DUE_PRESETS.map((d) => (
-                <Chip key={d.id || 'none'} active={newDue === d.id} onClick={() => setNewDue(d.id)}>
-                  {d.label}
-                </Chip>
-              ))}
-            </div>
-            <div className={styles.chipRow}>
-              <span className={styles.chipGroupLabel}>Prioridade</span>
-              {PRIORITIES.map((p) => (
-                <Chip
-                  key={p.value}
-                  active={newPriority === p.value}
-                  onClick={() => setNewPriority(p.value)}
-                  title={p.title}
-                >
-                  {p.label}
-                </Chip>
-              ))}
-            </div>
-            <div className={styles.chipRow}>
-              <span className={styles.chipGroupLabel}>Responsável</span>
-              <Chip active={!newAssigneeHub} onClick={() => setNewAssigneeHub('')}>
-                Ninguém
-              </Chip>
-              {assigneeOptions.map((o) => (
-                <Chip
-                  key={o.hub}
-                  active={newAssigneeHub === o.hub}
-                  onClick={() => setNewAssigneeHub(o.hub)}
-                  title={`Todoist: ${o.todoistName}`}
-                  disabled={!o.assignee_id}
-                >
-                  {o.label}
-                </Chip>
-              ))}
-            </div>
-            {sections.length > 0 && (
-              <div className={styles.chipRow}>
-                <span className={styles.chipGroupLabel}>Seção</span>
-                <Chip active={!newSectionId} onClick={() => setNewSectionId('')}>
-                  Nenhuma
-                </Chip>
-                {sections.map((s) => (
-                  <Chip
-                    key={s.id}
-                    active={newSectionId === s.id}
-                    onClick={() => setNewSectionId(s.id)}
-                  >
-                    {s.name}
-                  </Chip>
-                ))}
-              </div>
-            )}
-            {labels.length > 0 && (
-              <div className={styles.chipRow}>
-                <span className={styles.chipGroupLabel}>Etiquetas</span>
-                {labels.map((l) => (
-                  <Chip
-                    key={l.id}
-                    active={newLabels.includes(l.name)}
-                    onClick={() => toggleNewLabel(l.name)}
-                  >
-                    @{l.name}
-                  </Chip>
-                ))}
-              </div>
-            )}
+            <button
+              type="button"
+              className={`btn-primary ${styles.createBtn}`}
+              onClick={() => setCreateOpen(true)}
+              disabled={loading || projects.length === 0}
+            >
+              + Criar tarefa
+            </button>
           </div>
 
-          <div className={styles.filters}>
+          <CreateTaskModal
+            open={createOpen}
+            onClose={() => setCreateOpen(false)}
+            projects={projects}
+            labels={labels}
+            defaultProjectId={selectedProjectId}
+            onCreated={handleTaskCreated}
+          />
+
+          <div className={styles.filterBar}>
             <div className={styles.chipRow}>
               {QUICK_FILTERS.map((f) => (
                 <Chip
@@ -606,11 +498,20 @@ export function FilaPage() {
                 </Chip>
               ))}
             </div>
+            {(sections.length > 0 || labels.length > 0) && !quickFilter && (
+              <button
+                type="button"
+                className={`btn-ghost ${styles.filterToggle}`}
+                onClick={() => setAdvancedFiltersOpen((o) => !o)}
+              >
+                {advancedFiltersOpen ? 'Menos filtros' : 'Mais filtros'}
+              </button>
+            )}
           </div>
 
-          {sections.length > 0 && !quickFilter && (
-            <div className={styles.chipRow} style={{ marginBottom: '0.75rem' }}>
-              <span className={styles.chipGroupLabel}>Filtrar seção</span>
+          {advancedFiltersOpen && !quickFilter && sections.length > 0 && (
+            <div className={styles.chipRow} style={{ marginBottom: '0.65rem' }}>
+              <span className={styles.chipGroupLabel}>Seção</span>
               <Chip active={!sectionFilter} onClick={() => setSectionFilter('')}>
                 Todas
               </Chip>
@@ -626,9 +527,9 @@ export function FilaPage() {
             </div>
           )}
 
-          {labels.length > 0 && !quickFilter && (
+          {advancedFiltersOpen && !quickFilter && labels.length > 0 && (
             <div className={styles.chipRow} style={{ marginBottom: '1rem' }}>
-              <span className={styles.chipGroupLabel}>Filtrar etiqueta</span>
+              <span className={styles.chipGroupLabel}>Etiqueta</span>
               <Chip active={!labelFilter} onClick={() => setLabelFilter('')}>
                 Todas
               </Chip>
@@ -647,10 +548,13 @@ export function FilaPage() {
           {loading && <p style={{ color: 'var(--muted)' }}>Carregando tarefas…</p>}
 
           <div className={`${styles.layout} ${selectedTask ? styles.layoutWithDetail : ''}`}>
-            <div className={styles.grid}>
-              <section className="card">
-                <h2 className={styles.sectionTitle}>Pendentes ({pending.length})</h2>
-                <ul className={styles.taskList}>
+            <div className={styles.listColumn}>
+              <section className={`card ${styles.taskListCard}`}>
+                <h2 className={styles.sectionTitle}>
+                  Pendentes
+                  <span className={styles.sectionCount}>{pending.length}</span>
+                </h2>
+                <ul className={`${styles.taskList} ${styles.taskListScroll}`}>
                   {pending.map((t) => (
                     <TaskRow
                       key={t.id}
@@ -666,173 +570,207 @@ export function FilaPage() {
                   )}
                 </ul>
               </section>
-              <section className="card">
-                <h2 className={styles.sectionTitle}>Concluídas ({done.length})</h2>
-                <ul className={styles.taskList}>
-                  {done.map((t) => (
-                    <TaskRow
-                      key={t.id}
-                      task={t}
-                      sectionName={t.section_id ? sectionMap.get(t.section_id) : undefined}
-                      selected={selectedTask?.id === t.id}
-                      onSelect={(task) => void selectTask(task)}
-                      onToggle={toggleTask}
+
+              {done.length > 0 && (
+                <div className={styles.accordionWrap}>
+                  <button
+                    type="button"
+                    className={styles.accordionHeader}
+                    onClick={() => setCompletedOpen((o) => !o)}
+                    aria-expanded={completedOpen}
+                  >
+                    <span>
+                      Concluídas
+                      <span className={styles.sectionCount} style={{ marginLeft: '0.5rem' }}>
+                        {done.length}
+                      </span>
+                    </span>
+                    <NavIcon
+                      name="chevronDown"
+                      className={`${styles.accordionChevron} ${completedOpen ? styles.accordionChevronOpen : ''}`}
                     />
-                  ))}
-                  {!loading && done.length === 0 && (
-                    <li className={styles.empty}>Nenhuma tarefa concluída recente.</li>
+                  </button>
+                  {completedOpen && (
+                    <div className={styles.accordionBody}>
+                      <ul className={`${styles.taskList} ${styles.taskListScroll}`}>
+                        {done.map((t) => (
+                          <TaskRow
+                            key={t.id}
+                            task={t}
+                            sectionName={t.section_id ? sectionMap.get(t.section_id) : undefined}
+                            selected={selectedTask?.id === t.id}
+                            onSelect={(task) => void selectTask(task)}
+                            onToggle={toggleTask}
+                          />
+                        ))}
+                      </ul>
+                    </div>
                   )}
-                </ul>
-              </section>
+                </div>
+              )}
             </div>
 
             {selectedTask && (
               <aside className={`card ${styles.detailPanel}`}>
                 <div className={styles.detailHeader}>
-                  {renamingTitle ? (
-                    <div className={styles.renameRow}>
-                      <input
-                        className="input"
-                        value={titleDraft}
-                        onChange={(e) => setTitleDraft(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') void saveTitle();
-                          if (e.key === 'Escape') setRenamingTitle(false);
-                        }}
-                        autoFocus
-                      />
-                      <button type="button" className="btn-primary" onClick={() => void saveTitle()}>
-                        Ok
-                      </button>
+                  <div className={styles.detailHeaderMain}>
+                    {renamingTitle ? (
+                      <div className={styles.renameRow}>
+                        <input
+                          className="input"
+                          value={titleDraft}
+                          onChange={(e) => setTitleDraft(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') void saveTitle();
+                            if (e.key === 'Escape') setRenamingTitle(false);
+                          }}
+                          autoFocus
+                        />
+                        <button type="button" className="btn-primary" onClick={() => void saveTitle()}>
+                          Ok
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <h2 className={styles.detailTitle}>{selectedTask.content}</h2>
+                        <button
+                          type="button"
+                          className={`btn-ghost ${styles.detailRename}`}
+                          onClick={() => setRenamingTitle(true)}
+                        >
+                          Renomear
+                        </button>
+                      </>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    className={`btn-ghost ${styles.detailClose}`}
+                    onClick={() => setSelectedTask(null)}
+                    aria-label="Fechar detalhes"
+                  >
+                    <NavIcon name="close" className={styles.headerIconSm} />
+                  </button>
+                </div>
+
+                <div className={styles.detailFields}>
+                  <div className={styles.actionGroup}>
+                    <span className={styles.fieldLabel}>Prioridade</span>
+                    <div className={styles.chipRow}>
+                      {PRIORITIES.map((p) => (
+                        <Chip
+                          key={p.value}
+                          active={selectedTask.priority === p.value}
+                          onClick={() => void patchSelected({ priority: p.value })}
+                          title={p.title}
+                        >
+                          {p.label}
+                        </Chip>
+                      ))}
                     </div>
-                  ) : (
-                    <>
-                      <h2 className={styles.detailTitle}>{selectedTask.content}</h2>
-                      <button
-                        type="button"
-                        className="btn-ghost"
-                        style={{ fontSize: '0.75rem', padding: '0.3rem 0.6rem' }}
-                        onClick={() => setRenamingTitle(true)}
+                  </div>
+
+                  <div className={styles.actionGroup}>
+                    <span className={styles.fieldLabel}>Prazo</span>
+                    <div className={styles.chipRow}>
+                      {DUE_PRESETS.map((d) => (
+                        <Chip
+                          key={d.id || 'none'}
+                          active={
+                            d.id === ''
+                              ? !selectedTask.due
+                              : d.id === 'today'
+                                ? selectedTask.due?.string === 'today' ||
+                                  selectedTask.due?.date === new Date().toISOString().slice(0, 10)
+                                : selectedTask.due?.string === 'tomorrow'
+                          }
+                          onClick={() =>
+                            void patchSelected({
+                              due_string:
+                                d.id === 'today' ? 'today' : d.id === 'tomorrow' ? 'tomorrow' : '',
+                            })
+                          }
+                        >
+                          {d.label}
+                        </Chip>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className={styles.actionGroup}>
+                    <span className={styles.fieldLabel}>Responsável</span>
+                    <div className={styles.chipRow}>
+                      <Chip
+                        active={!selectedTask.assignee_hub}
+                        onClick={() => void patchSelected({ assignee_id: null })}
                       >
-                        Renomear
-                      </button>
-                    </>
+                        Ninguém
+                      </Chip>
+                      {assigneeOptions.map((o) => (
+                        <Chip
+                          key={o.hub}
+                          active={selectedTask.assignee_hub === o.hub}
+                          onClick={() => void patchSelected({ assignee_id: o.assignee_id })}
+                          title={
+                            o.assignee_id
+                              ? `Todoist: ${o.todoistName}`
+                              : `${o.label} — não encontrado neste projeto`
+                          }
+                        >
+                          {o.label}
+                        </Chip>
+                      ))}
+                    </div>
+                  </div>
+
+                  {sections.length > 0 && (
+                    <div className={styles.actionGroup}>
+                      <span className={styles.fieldLabel}>Seção</span>
+                      <div className={styles.chipRow}>
+                        <Chip
+                          active={!selectedTask.section_id}
+                          onClick={() => void patchSelected({ section_id: '' })}
+                        >
+                          Nenhuma
+                        </Chip>
+                        {sections.map((s) => (
+                          <Chip
+                            key={s.id}
+                            active={selectedTask.section_id === s.id}
+                            onClick={() => void patchSelected({ section_id: s.id })}
+                          >
+                            {s.name}
+                          </Chip>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {labels.length > 0 && (
+                    <div className={styles.actionGroup}>
+                      <span className={styles.fieldLabel}>Etiquetas</span>
+                      <div className={styles.chipRow}>
+                        {labels.map((l) => (
+                          <Chip
+                            key={l.id}
+                            active={(selectedTask.labels ?? []).includes(l.name)}
+                            onClick={() => void toggleSelectedLabel(l.name)}
+                          >
+                            @{l.name}
+                          </Chip>
+                        ))}
+                      </div>
+                    </div>
                   )}
                 </div>
-
-                <div className={styles.actionGroup}>
-                  <span className={styles.chipGroupLabel}>Prioridade</span>
-                  <div className={styles.chipRow}>
-                    {PRIORITIES.map((p) => (
-                      <Chip
-                        key={p.value}
-                        active={selectedTask.priority === p.value}
-                        onClick={() => void patchSelected({ priority: p.value })}
-                        title={p.title}
-                      >
-                        {p.label}
-                      </Chip>
-                    ))}
-                  </div>
-                </div>
-
-                <div className={styles.actionGroup}>
-                  <span className={styles.chipGroupLabel}>Prazo</span>
-                  <div className={styles.chipRow}>
-                    {DUE_PRESETS.map((d) => (
-                      <Chip
-                        key={d.id || 'none'}
-                        active={
-                          d.id === ''
-                            ? !selectedTask.due
-                            : d.id === 'today'
-                              ? selectedTask.due?.string === 'today' ||
-                                selectedTask.due?.date === new Date().toISOString().slice(0, 10)
-                              : selectedTask.due?.string === 'tomorrow'
-                        }
-                        onClick={() =>
-                          void patchSelected({
-                            due_string:
-                              d.id === 'today' ? 'today' : d.id === 'tomorrow' ? 'tomorrow' : '',
-                          })
-                        }
-                      >
-                        {d.label}
-                      </Chip>
-                    ))}
-                  </div>
-                </div>
-
-                <div className={styles.actionGroup}>
-                  <span className={styles.chipGroupLabel}>Responsável</span>
-                  <div className={styles.chipRow}>
-                    <Chip
-                      active={!selectedTask.assignee_hub}
-                      onClick={() => void patchSelected({ assignee_id: null })}
-                    >
-                      Ninguém
-                    </Chip>
-                    {assigneeOptions.map((o) => (
-                      <Chip
-                        key={o.hub}
-                        active={selectedTask.assignee_hub === o.hub}
-                        onClick={() => void patchSelected({ assignee_id: o.assignee_id })}
-                        title={`Todoist: ${o.todoistName}`}
-                        disabled={!o.assignee_id}
-                      >
-                        {o.label}
-                      </Chip>
-                    ))}
-                  </div>
-                </div>
-
-                {sections.length > 0 && (
-                  <div className={styles.actionGroup}>
-                    <span className={styles.chipGroupLabel}>Seção</span>
-                    <div className={styles.chipRow}>
-                      <Chip
-                        active={!selectedTask.section_id}
-                        onClick={() => void patchSelected({ section_id: '' })}
-                      >
-                        Nenhuma
-                      </Chip>
-                      {sections.map((s) => (
-                        <Chip
-                          key={s.id}
-                          active={selectedTask.section_id === s.id}
-                          onClick={() => void patchSelected({ section_id: s.id })}
-                        >
-                          {s.name}
-                        </Chip>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {labels.length > 0 && (
-                  <div className={styles.actionGroup}>
-                    <span className={styles.chipGroupLabel}>Etiquetas</span>
-                    <div className={styles.chipRow}>
-                      {labels.map((l) => (
-                        <Chip
-                          key={l.id}
-                          active={(selectedTask.labels ?? []).includes(l.name)}
-                          onClick={() => void toggleSelectedLabel(l.name)}
-                        >
-                          @{l.name}
-                        </Chip>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
                 <div className={styles.detailActions}>
                   <button
                     type="button"
-                    className="btn-primary"
+                    className={`btn-primary ${styles.detailActionPrimary}`}
                     onClick={() => void toggleTask(selectedTask)}
                   >
-                    {selectedTask.is_completed ? 'Reabrir' : 'Concluir'}
+                    {selectedTask.is_completed ? 'Reabrir tarefa' : 'Concluir tarefa'}
                   </button>
                   <a
                     href={selectedTask.url}
@@ -844,19 +782,15 @@ export function FilaPage() {
                   </a>
                   <button
                     type="button"
-                    className="btn-ghost"
-                    style={{ color: 'var(--danger)' }}
+                    className={`btn-ghost ${styles.detailActionDanger}`}
                     onClick={() => void deleteSelectedTask()}
                   >
                     Excluir
                   </button>
-                  <button type="button" className="btn-ghost" onClick={() => setSelectedTask(null)}>
-                    Fechar
-                  </button>
                 </div>
 
                 <div className={styles.comments}>
-                  <h3 className={styles.sectionTitle}>Comentários</h3>
+                  <h3 className={styles.commentsTitle}>Comentários</h3>
                   <ul className={styles.commentList}>
                     {comments.map((c) => (
                       <li key={c.id} className={styles.commentItem}>
