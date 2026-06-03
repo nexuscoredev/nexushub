@@ -114,6 +114,87 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
+/* Prioridades Todoist — P1 urgente … P4 baixa */
+.chipPriority1 {
+  border-color: rgba(255, 112, 102, 0.5);
+  color: #ff9f98;
+  background: rgba(255, 112, 102, 0.12);
+}
+
+.chipPriority1:hover {
+  color: #ffc4bf;
+  border-color: rgba(255, 112, 102, 0.65);
+  background: rgba(255, 112, 102, 0.2);
+}
+
+.chipPriority1Active,
+.chipPriority1.chipPriority1Active:hover {
+  color: #fff;
+  border-color: #ff7066;
+  background: linear-gradient(145deg, #e85a52 0%, #c43d35 100%);
+  box-shadow: 0 0 14px rgba(255, 112, 102, 0.45);
+}
+
+.chipPriority2 {
+  border-color: rgba(255, 154, 20, 0.5);
+  color: #ffc46a;
+  background: rgba(255, 154, 20, 0.12);
+}
+
+.chipPriority2:hover {
+  color: #ffd899;
+  border-color: rgba(255, 154, 20, 0.65);
+  background: rgba(255, 154, 20, 0.2);
+}
+
+.chipPriority2Active,
+.chipPriority2.chipPriority2Active:hover {
+  color: #1a1208;
+  border-color: #ff9a14;
+  background: linear-gradient(145deg, #ffb020 0%, #e8880a 100%);
+  box-shadow: 0 0 14px rgba(255, 154, 20, 0.4);
+}
+
+.chipPriority3 {
+  border-color: rgba(82, 156, 201, 0.5);
+  color: #8ec8ea;
+  background: rgba(82, 156, 201, 0.12);
+}
+
+.chipPriority3:hover {
+  color: #b3dcf5;
+  border-color: rgba(82, 156, 201, 0.65);
+  background: rgba(82, 156, 201, 0.2);
+}
+
+.chipPriority3Active,
+.chipPriority3.chipPriority3Active:hover {
+  color: #fff;
+  border-color: #529cc9;
+  background: linear-gradient(145deg, #4a94c4 0%, #2f6fa0 100%);
+  box-shadow: 0 0 14px rgba(82, 156, 201, 0.45);
+}
+
+.chipPriority4 {
+  border-color: rgba(255, 255, 255, 0.14);
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.chipPriority4:hover {
+  color: rgba(255, 255, 255, 0.75);
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.chipPriority4Active,
+.chipPriority4.chipPriority4Active:hover {
+  color: rgba(255, 255, 255, 0.92);
+  border-color: rgba(255, 255, 255, 0.32);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.1) 100%);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.12);
+}
+
 .chipRow {
   display: flex;
   flex-wrap: wrap;

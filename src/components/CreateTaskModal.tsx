@@ -41,15 +41,43 @@ interface ModalChipProps {
   onClick: () => void;
   children: ReactNode;
   title?: string;
+  priorityTone?: 1 | 2 | 3 | 4;
 }
 
-function ModalChip({ active, unavailable, onClick, children, title }: ModalChipProps) {
+const PRIORITY_CHIP_CLASS: Record<
+  1 | 2 | 3 | 4,
+  { base: string; active: string }
+> = {
+  1: { base: styles.chipPriority1, active: styles.chipPriority1Active },
+  2: { base: styles.chipPriority2, active: styles.chipPriority2Active },
+  3: { base: styles.chipPriority3, active: styles.chipPriority3Active },
+  4: { base: styles.chipPriority4, active: styles.chipPriority4Active },
+};
+
+function ModalChip({
+  active,
+  unavailable,
+  onClick,
+  children,
+  title,
+  priorityTone,
+}: ModalChipProps) {
+  const priority =
+    priorityTone !== undefined ? PRIORITY_CHIP_CLASS[priorityTone] : null;
   return (
     <button
       type="button"
-      className={`${styles.chip} ${active ? styles.chipActive : ''} ${unavailable ? styles.chipUnavailable : ''}`}
+      className={[
+        styles.chip,
+        priority?.base,
+        active && (priority ? priority.active : styles.chipActive),
+        unavailable ? styles.chipUnavailable : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
       onClick={onClick}
       title={title}
+      disabled={unavailable}
     >
       {children}
     </button>
@@ -235,6 +263,7 @@ export function CreateTaskModal({
               {PRIORITIES.map((p) => (
                 <ModalChip
                   key={p.value}
+                  priorityTone={p.value}
                   active={priority === p.value}
                   onClick={() => setPriority(p.value)}
                   title={p.title}

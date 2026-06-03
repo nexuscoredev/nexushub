@@ -118,13 +118,32 @@ interface ChipProps {
   onClick: () => void;
   children: ReactNode;
   title?: string;
+  priorityTone?: 1 | 2 | 3 | 4;
 }
 
-function Chip({ active, disabled, onClick, children, title }: ChipProps) {
+const PRIORITY_CHIP_CLASS: Record<
+  1 | 2 | 3 | 4,
+  { base: string; active: string }
+> = {
+  1: { base: styles.chipPriority1, active: styles.chipPriority1Active },
+  2: { base: styles.chipPriority2, active: styles.chipPriority2Active },
+  3: { base: styles.chipPriority3, active: styles.chipPriority3Active },
+  4: { base: styles.chipPriority4, active: styles.chipPriority4Active },
+};
+
+function Chip({ active, disabled, onClick, children, title, priorityTone }: ChipProps) {
+  const priority =
+    priorityTone !== undefined ? PRIORITY_CHIP_CLASS[priorityTone] : null;
   return (
     <button
       type="button"
-      className={`${styles.chip} ${active ? styles.chipActive : ''}`}
+      className={[
+        styles.chip,
+        priority?.base,
+        active && (priority ? priority.active : styles.chipActive),
+      ]
+        .filter(Boolean)
+        .join(' ')}
       onClick={onClick}
       title={title}
       disabled={disabled}
@@ -790,6 +809,7 @@ export function FilaPage() {
                       {PRIORITIES.map((p) => (
                         <Chip
                           key={p.value}
+                          priorityTone={p.value}
                           active={selectedTask.priority === p.value}
                           onClick={() => void patchSelected({ priority: p.value })}
                           title={p.title}
@@ -897,17 +917,17 @@ export function FilaPage() {
                 <div className={styles.detailActions}>
                   <button
                     type="button"
-                    className={`${styles.detailActionBtn} ${styles.detailActionDanger}`}
-                    onClick={() => void deleteSelectedTask()}
-                  >
-                    Excluir
-                  </button>
-                  <button
-                    type="button"
                     className={`${styles.detailActionBtn} ${styles.detailActionComplete}`}
                     onClick={() => void toggleTask(selectedTask)}
                   >
                     {selectedTask.is_completed ? 'Reabrir' : 'Concluir'}
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.detailActionBtn} ${styles.detailActionDanger}`}
+                    onClick={() => void deleteSelectedTask()}
+                  >
+                    Excluir
                   </button>
                 </div>
 

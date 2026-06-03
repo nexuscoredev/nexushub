@@ -37,9 +37,6 @@ import type {
 } from '../types/database';
 import styles from './FinanceiroPage.module.css';
 
-/** Atualize ao publicar — confirme na tela Financeiro que esta versão aparece. */
-export const FINANCE_UI_VERSION = 'finance-pills-v4';
-
 const CATEGORIA_LABELS: Record<string, string> = {
   implantacao: 'Implantação',
   mensalidade: 'Mensalidade',
@@ -117,11 +114,6 @@ export function FinanceiroPage() {
         title="Financeiro"
         subtitle="Implantações em cima · Mensalidades embaixo."
       />
-
-      <p className={styles.versionTag}>
-        Interface {FINANCE_UI_VERSION}
-        {supabase ? '' : ' — Supabase não configurado'}
-      </p>
 
       {error && <div className="error-banner" style={{ marginBottom: '1rem' }}>{error}</div>}
       <FinanceKpiStrip
