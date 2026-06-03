@@ -20,7 +20,11 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTeamAvatarMap, type TeamAvatarMap } from '../hooks/useTeamAvatarMap';
 import type { AssigneeHub, AssigneeOption } from '../lib/todoistAssignees';
 import { hubFromUsuario, taskIsAssignedToHub, TEAM_ASSIGNEES } from '../lib/todoistAssignees';
-import { matchProjectToSystem, sortProjectsByClient } from '../lib/systemLogos';
+import {
+  filaOperacionalProjects,
+  matchProjectToSystem,
+  sortProjectsByClient,
+} from '../lib/systemLogos';
 import {
   buildTodoistTaskDisplayList,
   countDescendants,
@@ -106,10 +110,11 @@ const CREATE_PROMPT: Record<
 };
 
 function pickProjectId(list: TodoistProject[], preferred?: string): string {
-  if (preferred && list.some((p) => p.id === preferred)) return preferred;
+  const visible = filaOperacionalProjects(list);
+  if (preferred && visible.some((p) => p.id === preferred)) return preferred;
   const stored = localStorage.getItem(PROJECT_STORAGE_KEY);
-  if (stored && list.some((p) => p.id === stored)) return stored;
-  const sorted = sortProjectsByClient(list);
+  if (stored && visible.some((p) => p.id === stored)) return stored;
+  const sorted = sortProjectsByClient(visible);
   const firstClient = sorted.find((p) => matchProjectToSystem(p.name));
   return firstClient?.id ?? sorted[0]?.id ?? '';
 }
@@ -799,7 +804,7 @@ export function FilaPage() {
           <div className={styles.tasksToolbar}>
             {projects.length > 0 && (
               <ProjectSelector
-                projects={projects}
+                projects={filaOperacionalProjects(projects)}
                 value={selectedProjectId}
                 onChange={handleProjectChange}
                 disabled={loading || Boolean(quickFilter)}

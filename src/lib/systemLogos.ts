@@ -38,13 +38,30 @@ function normalize(text: string): string {
     .trim();
 }
 
+const GENERAL_PROJECT_NAMES = ['projeto geral', 'geral'];
+
+/** Projeto Geral da equipe (substitui o Inbox na Fila). */
+export function isGeneralProject(name: string): boolean {
+  const n = normalize(name);
+  return GENERAL_PROJECT_NAMES.some((token) => n === token || n.startsWith(`${token} `));
+}
+
+export function isInboxProject(name: string): boolean {
+  return normalize(name) === 'inbox';
+}
+
+/** Projetos visíveis na Fila operacional (sem Inbox). */
+export function filaOperacionalProjects<T extends { name: string }>(projects: T[]): T[] {
+  return projects.filter((p) => !isInboxProject(p.name));
+}
+
 export function systemLogoUrl(systemId: string): string {
   return SYSTEM_LOGOS[systemId] ?? '/img/favicon.png';
 }
 
 export function matchProjectToSystem(projectName: string): ClientSystem | null {
   const n = normalize(projectName);
-  if (!n || n === 'inbox') return null;
+  if (!n || isInboxProject(projectName) || isGeneralProject(projectName)) return null;
 
   for (const sys of CLIENT_SYSTEMS) {
     if (normalize(sys.nome) === n) return sys;
@@ -56,6 +73,9 @@ export function matchProjectToSystem(projectName: string): ClientSystem | null {
 }
 
 export function projectLogoUrl(projectName: string): string {
+  if (isGeneralProject(projectName) || isInboxProject(projectName)) {
+    return '/img/favicon.png';
+  }
   const sys = matchProjectToSystem(projectName);
   return sys ? systemLogoUrl(sys.id) : '/img/favicon.png';
 }
@@ -66,10 +86,16 @@ export function projectDisplayName(projectName: string): string {
 
 export function sortProjectsByClient<T extends { name: string }>(projects: T[]): T[] {
   return [...projects].sort((a, b) => {
-    const aInbox = normalize(a.name) === 'inbox';
-    const bInbox = normalize(b.name) === 'inbox';
+    const aGeneral = isGeneralProject(a.name);
+    const bGeneral = isGeneralProject(b.name);
+    if (aGeneral && !bGeneral) return -1;
+    if (!aGeneral && bGeneral) return 1;
+
+    const aInbox = isInboxProject(a.name);
+    const bInbox = isInboxProject(b.name);
     if (aInbox && !bInbox) return 1;
     if (!aInbox && bInbox) return -1;
+
     const aClient = matchProjectToSystem(a.name);
     const bClient = matchProjectToSystem(b.name);
     if (aClient && !bClient) return -1;
