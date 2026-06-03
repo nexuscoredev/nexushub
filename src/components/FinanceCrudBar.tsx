@@ -9,9 +9,10 @@ export type FinanceTable =
 export interface FinanceField {
   name: string;
   label: string;
-  type: 'text' | 'number' | 'date' | 'checkbox';
+  type: 'text' | 'number' | 'date' | 'checkbox' | 'select';
   defaultValue?: string;
   required?: boolean;
+  options?: { value: string; label: string }[];
 }
 
 export function getFinanceFields(table: FinanceTable): FinanceField[] {
@@ -20,6 +21,16 @@ export function getFinanceFields(table: FinanceTable): FinanceField[] {
       { name: 'cliente_descricao', label: 'Cliente', type: 'text' },
       { name: 'valor', label: 'Valor', type: 'number' },
       { name: 'data_prevista', label: 'Data', type: 'date' },
+      {
+        name: 'categoria',
+        label: 'Tipo de entrada',
+        type: 'select',
+        options: [
+          { value: 'implantacao', label: 'Implantação' },
+          { value: 'mensalidade', label: 'Mensalidade' },
+        ],
+        defaultValue: 'implantacao',
+      },
       { name: 'status', label: 'Status', type: 'text', defaultValue: 'pendente' },
       { name: 'notas', label: 'Notas', type: 'text', required: false },
     ];
@@ -37,6 +48,17 @@ export function getFinanceFields(table: FinanceTable): FinanceField[] {
     { name: 'titulo', label: 'Descrição', type: 'text' },
     { name: 'valor', label: 'Valor', type: 'number' },
     { name: 'tipo', label: 'Tipo', type: 'text', defaultValue: 'Saída' },
+    {
+      name: 'categoria',
+      label: 'Tipo de saída',
+      type: 'select',
+      options: [
+        { value: 'assinatura', label: 'Assinatura' },
+        { value: 'transporte', label: 'Transporte' },
+        { value: 'outras', label: 'Outras despesas' },
+      ],
+      defaultValue: 'outras',
+    },
     { name: 'responsavel', label: 'Responsável', type: 'text', defaultValue: 'Rafael' },
     { name: 'status', label: 'Status', type: 'text', defaultValue: 'pago' },
     { name: 'data_investimento', label: 'Data', type: 'date', required: false },
@@ -95,6 +117,7 @@ interface FinanceRecordFormProps {
   table: FinanceTable;
   recordId?: string;
   initialValues?: Record<string, unknown>;
+  preset?: Record<string, unknown>;
   onSaved: () => void;
   onCancel?: () => void;
 }
@@ -103,12 +126,14 @@ export function FinanceRecordForm({
   table,
   recordId,
   initialValues,
+  preset,
   onSaved,
   onCancel,
 }: FinanceRecordFormProps) {
   const [error, setError] = useState<string | null>(null);
   const isEdit = Boolean(recordId);
   const fields = getFinanceFields(table);
+  const mergedInitial = { ...preset, ...initialValues };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -136,39 +161,66 @@ export function FinanceRecordForm({
       <h3 style={{ fontSize: '0.9rem', margin: 0 }}>
         {isEdit ? 'Editar registro' : 'Novo registro'}
       </h3>
-      {fields.map((f) => (
-        <div key={f.name}>
-          {f.type === 'checkbox' ? (
-            <label className="label" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <input
-                id={f.name}
-                name={f.name}
-                type="checkbox"
-                defaultChecked={
-                  initialValues
-                    ? Boolean(initialValues[f.name])
-                    : f.name === 'ativo'
-                }
-              />
-              {f.label}
-            </label>
-          ) : (
-            <>
-              <label className="label" htmlFor={f.name}>
+      {fields.map((f) => {
+        const presetVal = preset?.[f.name];
+        if (presetVal !== undefined && presetVal !== '' && !isEdit) {
+          return <input key={f.name} type="hidden" name={f.name} value={String(presetVal)} />;
+        }
+        return (
+          <div key={f.name}>
+            {f.type === 'checkbox' ? (
+              <label className="label" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <input
+                  id={f.name}
+                  name={f.name}
+                  type="checkbox"
+                  defaultChecked={
+                    mergedInitial[f.name] !== undefined
+                      ? Boolean(mergedInitial[f.name])
+                      : f.name === 'ativo'
+                  }
+                />
                 {f.label}
               </label>
-              <input
-                id={f.name}
-                name={f.name}
-                type={f.type}
-                className="input"
-                defaultValue={fieldDefaultValue(f, initialValues)}
-                required={f.required !== false && f.name !== 'notas' && f.name !== 'categoria'}
-              />
-            </>
-          )}
-        </div>
-      ))}
+            ) : f.type === 'select' ? (
+              <>
+                <label className="label" htmlFor={f.name}>
+                  {f.label}
+                </label>
+                <select
+                  id={f.name}
+                  name={f.name}
+                  className="input"
+                  defaultValue={
+                    fieldDefaultValue(f, mergedInitial) ?? f.defaultValue ?? f.options?.[0]?.value
+                  }
+                  required={f.required !== false}
+                >
+                  {f.options?.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+              </>
+            ) : (
+              <>
+                <label className="label" htmlFor={f.name}>
+                  {f.label}
+                </label>
+                <input
+                  id={f.name}
+                  name={f.name}
+                  type={f.type}
+                  className="input"
+                  defaultValue={fieldDefaultValue(f, mergedInitial)}
+                  required={f.required !== false && f.name !== 'notas'}
+                />
+              </>
+            )}
+          </div>
+        );
+      })}
       {error && <div className="error-banner">{error}</div>}
       <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
         <button type="submit" className="btn-primary">
@@ -187,9 +239,10 @@ export function FinanceRecordForm({
 interface FinanceCrudBarProps {
   table: FinanceTable;
   onSaved: () => void;
+  preset?: Record<string, unknown>;
 }
 
-export function FinanceCrudBar({ table, onSaved }: FinanceCrudBarProps) {
+export function FinanceCrudBar({ table, onSaved, preset }: FinanceCrudBarProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -201,6 +254,7 @@ export function FinanceCrudBar({ table, onSaved }: FinanceCrudBarProps) {
         <div style={{ marginTop: '0.75rem' }}>
           <FinanceRecordForm
             table={table}
+            preset={preset}
             onSaved={() => {
               setOpen(false);
               onSaved();

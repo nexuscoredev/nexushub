@@ -1,6 +1,22 @@
-import { useCallback, useEffect, useState } from 'react';
-import { deleteFinanceRow, FinanceCrudBar, FinanceRecordForm } from '../components/FinanceCrudBar';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import {
+  deleteFinanceRow,
+  FinanceCrudBar,
+  FinanceRecordForm,
+  type FinanceTable,
+} from '../components/FinanceCrudBar';
 import { PageHeader } from '../components/PageHeader';
+import {
+  categoriaEntradaReceivable,
+  categoriaSaidaInvestment,
+  ENTRADA_SECOES,
+  SAIDA_SECOES,
+  secaoEntradaReceivable,
+  secaoSaidaInvestment,
+  type EntradaSecao,
+  type FinanceFluxo,
+  type SaidaSecao,
+} from '../lib/financeCategories';
 import {
   totalMensalAssinaturas,
   totalRecebido,
@@ -14,11 +30,18 @@ import type {
   HubFinanceReceivable,
   HubFinanceSubscription,
 } from '../types/database';
+import styles from './FinanceiroPage.module.css';
 
-type Tab = 'entradas' | 'assinaturas' | 'investimentos' | 'saidas';
+const CATEGORIA_LABELS: Record<string, string> = {
+  implantacao: 'Implantação',
+  mensalidade: 'Mensalidade',
+  assinatura: 'Assinatura',
+  transporte: 'Transporte',
+  outras: 'Outras',
+};
 
 export function FinanceiroPage() {
-  const [tab, setTab] = useState<Tab>('entradas');
+  const [fluxo, setFluxo] = useState<FinanceFluxo>('entrada');
   const [receivables, setReceivables] = useState<HubFinanceReceivable[]>([]);
   const [subscriptions, setSubscriptions] = useState<HubFinanceSubscription[]>([]);
   const [investments, setInvestments] = useState<HubFinanceInvestment[]>([]);
@@ -48,24 +71,47 @@ export function FinanceiroPage() {
     void load();
   }, [load]);
 
-  const saidas = investments.filter((x) => x.tipo === 'Saída');
-  const investOnly = investments.filter((x) => x.tipo === 'investimento');
+  const receivablesBySecao = useMemo(() => {
+    const map: Record<EntradaSecao, HubFinanceReceivable[]> = {
+      implantacoes: [],
+      mensalidades: [],
+    };
+    for (const r of receivables) {
+      map[secaoEntradaReceivable(r)].push(r);
+    }
+    return map;
+  }, [receivables]);
+
+  const investmentsBySecao = useMemo(() => {
+    const map: Record<SaidaSecao, HubFinanceInvestment[]> = {
+      assinaturas: [],
+      transporte: [],
+      outras: [],
+    };
+    for (const i of investments) {
+      if (i.tipo !== 'Saída' && i.tipo !== 'investimento') continue;
+      map[secaoSaidaInvestment(i)].push(i);
+    }
+    return map;
+  }, [investments]);
+
   const split = totalSaidasPorResponsavel(investments);
+  const totalMensalidadesRecorrentes = totalMensalAssinaturas(subscriptions);
 
   return (
     <div>
       <PageHeader
         badge="Finance"
         title="Financeiro"
-        subtitle="Gestão financeira NEXUS — acesso restrito aos sócios."
+        subtitle="Entradas e saídas organizadas por tipo de movimento."
       />
 
       {error && <div className="error-banner" style={{ marginBottom: '1rem' }}>{error}</div>}
 
       <div className="kpi-grid">
         <div className="kpi">
-          <div className="kpi-label">Assinaturas / mês</div>
-          <div className="kpi-value">{formatBRL(totalMensalAssinaturas(subscriptions))}</div>
+          <div className="kpi-label">Mensalidades / mês</div>
+          <div className="kpi-value">{formatBRL(totalMensalidadesRecorrentes)}</div>
         </div>
         <div className="kpi">
           <div className="kpi-label">Total recebido</div>
@@ -86,17 +132,15 @@ export function FinanceiroPage() {
       <div className="tabs">
         {(
           [
-            ['entradas', 'Entradas'],
-            ['assinaturas', 'Assinaturas'],
-            ['investimentos', 'Investimentos'],
-            ['saidas', 'Saídas'],
+            ['entrada', 'Entrada'],
+            ['saida', 'Saída'],
           ] as const
         ).map(([id, label]) => (
           <button
             key={id}
             type="button"
-            className={`tab ${tab === id ? 'active' : ''}`}
-            onClick={() => setTab(id)}
+            className={`tab ${fluxo === id ? 'active' : ''}`}
+            onClick={() => setFluxo(id)}
           >
             {label}
           </button>
@@ -105,47 +149,96 @@ export function FinanceiroPage() {
 
       {loading ? (
         <p style={{ color: 'var(--muted)' }}>Carregando…</p>
+      ) : fluxo === 'entrada' ? (
+        <div className={styles.sections}>
+          {ENTRADA_SECOES.map((secao) => (
+            <FinanceQueueSection
+              key={secao.id}
+              title={secao.label}
+              totalLabel={
+                secao.id === 'mensalidades'
+                  ? formatBRL(
+                      totalMensalidadesRecorrentes +
+                        sumReceivables(receivablesBySecao.mensalidades),
+                    )
+                  : formatBRL(sumReceivables(receivablesBySecao.implantacoes))
+              }
+            >
+              {secao.id === 'mensalidades' && (
+                <FinanceTable
+                  title="Contratos mensais (clientes)"
+                  table="hub_finance_subscriptions"
+                  rows={subscriptions}
+                  columns={['nome', 'valor_mensal', 'dia_vencimento', 'ativo', 'notas']}
+                  preset={{ categoria: 'mensalidade' }}
+                  onRefresh={load}
+                  compact
+                />
+              )}
+              <FinanceTable
+                title={secao.id === 'mensalidades' ? 'Recebimentos' : undefined}
+                table="hub_finance_receivables"
+                rows={receivablesBySecao[secao.id]}
+                columns={['cliente_descricao', 'valor', 'data_prevista', 'status', 'notas']}
+                preset={{ categoria: categoriaEntradaReceivable(secao.id) }}
+                onRefresh={load}
+                compact={secao.id === 'mensalidades'}
+              />
+            </FinanceQueueSection>
+          ))}
+        </div>
       ) : (
-        <>
-          {tab === 'entradas' && (
-            <FinanceTable
-              title="Entradas / a receber"
-              table="hub_finance_receivables"
-              rows={receivables}
-              columns={['cliente_descricao', 'valor', 'data_prevista', 'status', 'notas']}
-              onRefresh={load}
-            />
-          )}
-          {tab === 'assinaturas' && (
-            <FinanceTable
-              title="Assinaturas mensais"
-              table="hub_finance_subscriptions"
-              rows={subscriptions}
-              columns={['nome', 'valor_mensal', 'dia_vencimento', 'categoria', 'ativo']}
-              onRefresh={load}
-            />
-          )}
-          {tab === 'investimentos' && (
-            <FinanceTable
-              title="Investimentos"
-              table="hub_finance_investments"
-              rows={investOnly}
-              columns={['titulo', 'valor', 'responsavel', 'status', 'data_investimento']}
-              onRefresh={load}
-            />
-          )}
-          {tab === 'saidas' && (
-            <FinanceTable
-              title="Saídas"
-              table="hub_finance_investments"
-              rows={saidas}
-              columns={['titulo', 'valor', 'responsavel', 'status', 'data_investimento']}
-              onRefresh={load}
-            />
-          )}
-        </>
+        <div className={styles.sections}>
+          {SAIDA_SECOES.map((secao) => (
+            <FinanceQueueSection
+              key={secao.id}
+              title={secao.label}
+              totalLabel={formatBRL(sumInvestments(investmentsBySecao[secao.id]))}
+            >
+              <FinanceTable
+                table="hub_finance_investments"
+                rows={investmentsBySecao[secao.id]}
+                columns={['titulo', 'valor', 'responsavel', 'status', 'data_investimento']}
+                preset={{
+                  tipo: 'Saída',
+                  categoria: categoriaSaidaInvestment(secao.id),
+                }}
+                onRefresh={load}
+                hideTitle
+              />
+            </FinanceQueueSection>
+          ))}
+        </div>
       )}
     </div>
+  );
+}
+
+function sumReceivables(items: HubFinanceReceivable[]): number {
+  return items.reduce((s, r) => s + Number(r.valor), 0);
+}
+
+function sumInvestments(items: HubFinanceInvestment[]): number {
+  return items.reduce((s, i) => s + Number(i.valor), 0);
+}
+
+function FinanceQueueSection({
+  title,
+  totalLabel,
+  children,
+}: {
+  title: string;
+  totalLabel: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className={styles.section}>
+      <div className={styles.sectionHeader}>
+        <h2 className={styles.sectionTitle}>{title}</h2>
+        <span className={styles.sectionMeta}>{totalLabel}</span>
+      </div>
+      <div className={styles.sectionBody}>{children}</div>
+    </section>
   );
 }
 
@@ -154,13 +247,19 @@ function FinanceTable<T extends { id: string }>({
   table,
   rows,
   columns,
+  preset,
   onRefresh,
+  compact,
+  hideTitle,
 }: {
-  title: string;
-  table: 'hub_finance_receivables' | 'hub_finance_subscriptions' | 'hub_finance_investments';
+  title?: string;
+  table: FinanceTable;
   rows: T[];
   columns: string[];
+  preset?: Record<string, unknown>;
   onRefresh: () => void;
+  compact?: boolean;
+  hideTitle?: boolean;
 }) {
   const [editing, setEditing] = useState<T | null>(null);
 
@@ -172,14 +271,25 @@ function FinanceTable<T extends { id: string }>({
   };
 
   return (
-    <div className="card table-wrap">
-      <h2 style={{ fontSize: '0.95rem', marginBottom: '0.75rem' }}>{title}</h2>
-      <FinanceCrudBar table={table} onSaved={onRefresh} />
+    <div
+      className="table-wrap"
+      style={{
+        marginBottom: compact ? '1rem' : 0,
+        padding: compact ? '0' : undefined,
+        border: compact ? 'none' : undefined,
+        background: compact ? 'transparent' : undefined,
+      }}
+    >
+      {title && !hideTitle && (
+        <h3 style={{ fontSize: '0.88rem', marginBottom: '0.65rem', color: 'var(--muted)' }}>{title}</h3>
+      )}
+      <FinanceCrudBar table={table} onSaved={onRefresh} preset={preset} />
       {editing && (
         <FinanceRecordForm
           table={table}
           recordId={editing.id}
           initialValues={editing as Record<string, unknown>}
+          preset={preset}
           onSaved={() => {
             setEditing(null);
             onRefresh();
@@ -204,16 +314,13 @@ function FinanceTable<T extends { id: string }>({
                 let display: string;
                 if (col === 'valor' || col === 'valor_mensal') display = formatBRL(Number(val));
                 else if (col.includes('data')) display = formatDate(String(val ?? ''));
+                else if (col === 'categoria') display = CATEGORIA_LABELS[String(val)] ?? String(val ?? '—');
                 else if (typeof val === 'boolean') display = val ? 'Sim' : 'Não';
                 else display = String(val ?? '—');
                 return <td key={col}>{display}</td>;
               })}
               <td style={{ whiteSpace: 'nowrap' }}>
-                <button
-                  type="button"
-                  className="btn-ghost"
-                  onClick={() => setEditing(row)}
-                >
+                <button type="button" className="btn-ghost" onClick={() => setEditing(row)}>
                   Editar
                 </button>
                 <button type="button" className="btn-ghost" onClick={() => void handleDelete(row.id)}>
@@ -225,7 +332,7 @@ function FinanceTable<T extends { id: string }>({
         </tbody>
       </table>
       {rows.length === 0 && (
-        <p style={{ color: 'var(--muted)', padding: '1rem 0' }}>Nenhum registro.</p>
+        <p style={{ color: 'var(--muted)', padding: '0.75rem 0' }}>Nenhum registro nesta fila.</p>
       )}
     </div>
   );

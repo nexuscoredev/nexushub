@@ -43,6 +43,7 @@ export interface HubFinanceInvestment {
   titulo: string;
   valor: number;
   tipo: 'investimento' | 'Saída';
+  categoria: string | null;
   responsavel: 'Rafael' | 'Vinícius';
   status: string;
   data_investimento: string | null;
@@ -54,6 +55,7 @@ export interface HubFinanceReceivable {
   id: string;
   cliente_descricao: string;
   valor: number;
+  categoria: string | null;
   data_prevista: string;
   status: 'pendente' | 'recebido' | 'atrasado';
   notas: string | null;

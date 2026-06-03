@@ -6,10 +6,16 @@ Itens que **você** precisa fazer (secrets / contas). O resto já está no repos
 
 URL: `https://ndcenckgtezerlmggola.supabase.co`
 
-1. Dashboard → **SQL Editor** → executar na ordem:
-   - `supabase/migrations/20260602100000_initial_schema.sql`
+1. Dashboard → **SQL Editor** → executar **um arquivo por vez**, nesta ordem:
+   - `supabase/migrations/20260602100000_initial_schema.sql` ← cria tabelas financeiras
    - `supabase/migrations/20260602100001_rls_policies.sql`
    - `supabase/migrations/20260602100002_seed_data.sql`
+   - `supabase/migrations/20260602220000_fix_seed_hub_auth_user.sql` (se usar auth)
+   - `supabase/migrations/20260603120000_hub_usuario_login.sql`
+   - `supabase/migrations/20260603180000_align_finance_investments_columns.sql`
+   - `supabase/migrations/20260604120000_finance_categoria.sql` ← filas Entrada/Saída no app
+
+   Se aparecer `relation "hub_finance_receivables" does not exist`, você pulou o **initial_schema** — rode-o antes do arquivo de categoria.
 2. **Settings → API** → copiar **anon public** key.
 3. Local: `cp .env.example .env.local` e preencher `VITE_SUPABASE_ANON_KEY`.
 4. Seed usuários (só com **service role**, nunca no Git):
