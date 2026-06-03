@@ -78,6 +78,50 @@
   letter-spacing: 0.06em;
 }
 
+/* Mobile hamburger (hidden on desktop) */
+.menuBtn {
+  display: none;
+}
+
+.mobileNav {
+  display: none;
+}
+
+.menuBars {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 22px;
+  height: 18px;
+}
+
+.menuBar {
+  display: block;
+  height: 2px;
+  width: 100%;
+  border-radius: 2px;
+  background: var(--polished-silver);
+  transition:
+    transform 0.25s ease,
+    opacity 0.2s ease,
+    width 0.25s ease;
+  transform-origin: center;
+}
+
+.menuBtnOpen .menuBar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.menuBtnOpen .menuBar:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.menuBtnOpen .menuBar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
 /* ── Dock de navegação central ── */
 .commandDock {
   flex: 0 1 auto;
@@ -323,17 +367,262 @@
   .commandMain {
     gap: 0.55rem 0.65rem;
     align-items: center;
+    flex-wrap: nowrap;
   }
 
   .brandDock {
     order: 1;
-    max-width: calc(100% - 128px);
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .menuBtn {
+    display: inline-flex;
+    order: 2;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    margin-left: auto;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--polished-silver);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .menuBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .menuBtnOpen {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.28);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
   }
 
   .userCompact {
-    order: 2;
-    margin-left: auto;
+    order: 3;
+    margin-left: 0;
     gap: 0.35rem;
+  }
+
+  .signOutBtn {
+    display: none;
+  }
+
+  .commandDock {
+    display: none;
+  }
+
+  .mobileNav {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  .mobileNavOpen {
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  .mobileBackdrop {
+    position: absolute;
+    inset: 0;
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 0.28s ease;
+  }
+
+  .mobileNavOpen .mobileBackdrop {
+    opacity: 1;
+  }
+
+  .mobileDrawer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(20rem, calc(100vw - 3rem));
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: max(0.75rem, env(safe-area-inset-top, 0px)) 0
+      max(0.75rem, env(safe-area-inset-bottom, 0px));
+    background: rgba(12, 12, 12, 0.98);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 8px 0 48px rgba(0, 0, 0, 0.65);
+    transform: translateX(-105%);
+    transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+    overflow: hidden;
+  }
+
+  .mobileNavOpen .mobileDrawer {
+    transform: translateX(0);
+  }
+
+  .mobileDrawerHead {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+  }
+
+  .mobileUser {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  .mobileUserName {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+    word-break: break-word;
+  }
+
+  .mobileUserRole {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .mobileClose {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--polished-silver);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobileCloseIcon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .mobileNavList {
+    list-style: none;
+    margin: 0;
+    padding: 0.75rem 0.65rem;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  .mobileNavList li {
+    margin: 0;
+  }
+
+  .mobileNavLink {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.85rem 1rem;
+    margin-bottom: 0.25rem;
+    border-radius: var(--radius-sm);
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+    min-height: 48px;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      color 0.2s ease,
+      background 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .mobileNavIcon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: rgba(255, 255, 255, 0.45);
+    transition: color 0.2s ease;
+  }
+
+  .mobileNavLinkActive {
+    color: #fff;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.14),
+      rgba(255, 255, 255, 0.05)
+    );
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 0 24px rgba(255, 255, 255, 0.06);
+  }
+
+  .mobileNavLinkActive .mobileNavIcon {
+    color: #fff;
+  }
+
+  .mobileDrawerFoot {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.85rem 1rem max(1rem, env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.25);
+  }
+
+  .mobileFootLink {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: var(--radius-sm);
+    color: var(--polished-silver);
+    font-size: 0.875rem;
+    font-weight: 500;
+    min-height: 48px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobileFootLink:global(.active) {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .mobileSignOut {
+    width: 100%;
+    min-height: 44px;
+    justify-content: center;
+    font-size: 0.8rem;
   }
 
   .avatarLink {
@@ -343,40 +632,6 @@
     min-width: 44px;
     min-height: 44px;
     -webkit-tap-highlight-color: transparent;
-  }
-
-  .signOutBtn {
-    padding: 0.45rem 0.75rem;
-    font-size: 0.7rem;
-    min-height: 44px;
-    min-width: 44px;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .commandDock {
-    order: 3;
-  }
-
-  .dockTrack {
-    flex-direction: row;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.3rem 0.35rem;
-  }
-
-  .dockLink {
-    flex-shrink: 0;
-    justify-content: center;
-    border-radius: 999px;
-    min-height: 44px;
-    padding: 0.5rem 0.85rem;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .dockLinkActive {
-    box-shadow:
-      0 0 20px rgba(255, 255, 255, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.14);
   }
 
   .commandMeta {
@@ -390,14 +645,13 @@
 }
 
 @media (max-width: 768px) and (hover: none) {
-  .dockLink:active {
-    color: rgba(255, 255, 255, 0.92);
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.12);
+  .menuBtn:active {
+    background: rgba(255, 255, 255, 0.12);
   }
 
-  .dockLink:active .dockIcon {
-    color: rgba(255, 255, 255, 0.85);
+  .mobileNavLink:active {
+    color: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.08);
   }
 
   .avatarLink:active {
@@ -416,30 +670,8 @@
   }
 
   .brandDock {
-    max-width: calc(100% - 112px);
-  }
-
-  .signOutBtn {
-    padding-inline: 0.6rem;
-    font-size: 0.65rem;
-  }
-
-  .dockLabel {
-    font-size: 0.75rem;
-  }
-
-  .dockIcon {
-    width: 16px;
-    height: 16px;
-  }
-
-  .dockLink {
-    padding: 0.45rem 0.7rem;
-    gap: 0.35rem;
-  }
-
-  .dockTrack {
-    scroll-snap-type: x mandatory;
+    flex: 1;
+    min-width: 0;
   }
 
   .main {
