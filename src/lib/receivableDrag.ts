@@ -8,7 +8,7 @@ import { supabase, supabaseErrorMessage } from './supabase';
 import type { HubFinanceReceivable } from '../types/database';
 
 function isMissingEntradaSecaoColumn(message: string): boolean {
-  return message.includes('entrada_secao') || message.includes('schema cache');
+  return message.includes('entrada_secao');
 }
 
 export function receivableWithEntradaSecao(

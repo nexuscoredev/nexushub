@@ -149,25 +149,30 @@ export function buildReceivableSavePayloadSafe(
   fluxoSecao?: FinanceFluxoSecao,
 ): Record<string, unknown> {
   const full = buildReceivableSavePayload(fields, parcelas, fluxoSecao);
-  const minimal: Record<string, unknown> = {
+  return {
     cliente_descricao: full.cliente_descricao,
     valor: full.valor,
     data_prevista: full.data_prevista,
     status: full.status,
     notas: full.notas,
   };
-  if (full.entrada_secao) minimal.entrada_secao = full.entrada_secao;
-  return minimal;
 }
 
-function isMissingColumnError(message: string): boolean {
+function isMissingEntradaSecaoColumn(message: string): boolean {
+  return message.includes('entrada_secao');
+}
+
+function isMissingParcelasColumn(message: string): boolean {
   return (
     message.includes('parcelado') ||
     message.includes('qtd_parcelas') ||
-    message.includes('parcelas_pagas') ||
-    message.includes('entrada_secao') ||
-    message.includes('schema cache')
+    message.includes('parcelas_pagas')
   );
+}
+
+function withoutEntradaSecao(body: Record<string, unknown>): Record<string, unknown> {
+  const { entrada_secao: _e, ...rest } = body;
+  return rest;
 }
 
 export async function persistReceivable(
@@ -191,8 +196,18 @@ export async function persistReceivable(
       : supabase.from('hub_finance_receivables').insert(body);
 
   let res = await run(full);
-  if (res.error && isMissingColumnError(res.error.message)) {
+
+  if (res.error && isMissingEntradaSecaoColumn(res.error.message)) {
+    res = await run(withoutEntradaSecao(full));
+  }
+
+  if (res.error && isMissingParcelasColumn(res.error.message)) {
     res = await run(minimal);
   }
+
+  if (res.error?.message.includes('schema cache')) {
+    res = await run(minimal);
+  }
+
   return res.error?.message ?? null;
 }
