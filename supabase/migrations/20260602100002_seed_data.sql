@@ -1,6 +1,6 @@
 -- Seed sistemas NEXUS
 insert into public.hub_systems (id, nome, url, descricao, ordem) values
-  ('rh-ambiental', 'RH Ambiental', 'https://rh-ambiental-sistema.vercel.app', 'RH e operação ambiental', 1),
+  ('rh-ambiental', 'RG Ambiental', 'https://rh-ambiental-sistema.vercel.app', 'Coleta de resíduos e gestão ambiental.', 1),
   ('ligeirinho', 'Ligeirinho Hub', 'https://ligeirinhohub.vercel.app', 'PDV, operação, fiscal', 2),
   ('contabil', 'Contábil Hub', 'https://contabil-hub.vercel.app', 'Gestão contábil', 3)
 on conflict (id) do update set
