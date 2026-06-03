@@ -15,6 +15,7 @@ import { hubChatVeColunaSolicitacoes, hubChatPodeGerirChat } from '../../lib/hub
 import { supabase } from '../../lib/supabase';
 import type { HubProfile } from '../../types/database';
 import type { HubChatConversaLista, HubChatSolicitacaoFilaItem, HubChatUsuarioLista } from '../../types/hubChat';
+import { HubLogo } from '../HubLogo';
 import { HubChatSidebar } from './HubChatSidebar';
 import { HubChatSolicitacoes } from './HubChatSolicitacoes';
 import { HubChatThread } from './HubChatThread';
@@ -31,7 +32,7 @@ function parseTheme(raw: string | null): HubChatHeadThemeId {
   if (raw && HUB_CHAT_HEAD_THEME_IDS.includes(raw as HubChatHeadThemeId)) {
     return raw as HubChatHeadThemeId;
   }
-  return 'prata';
+  return 'grafite';
 }
 
 function filtrar<T>(itens: T[], busca: string, texto: (item: T) => string): T[] {
@@ -77,7 +78,7 @@ export function HubChatWidget({
   const [abrindoPessoa, setAbrindoPessoa] = useState(false);
 
   const [tema, setTema] = useState<HubChatHeadThemeId>(() =>
-    typeof window !== 'undefined' ? parseTheme(localStorage.getItem(THEME_STORAGE_KEY)) : 'prata',
+    typeof window !== 'undefined' ? parseTheme(localStorage.getItem(THEME_STORAGE_KEY)) : 'grafite',
   );
   const [menuTemaAberto, setMenuTemaAberto] = useState(false);
   const menuTemaRef = useRef<HTMLDivElement>(null);
@@ -268,13 +269,14 @@ export function HubChatWidget({
         role="dialog"
         aria-label="Chat interno NEXUS"
       >
+        <span className={styles.sheetGlow} aria-hidden />
         <header
           className={`${styles.sheetHead} ${headNeve ? styles.sheetHeadNeve : ''}`}
           style={{ background: HUB_CHAT_HEAD_THEMES[tema].gradient }}
         >
           <h2 className={styles.sheetTitle}>CHAT INTERNO</h2>
           <div className={styles.headLogoWrap}>
-            <img className={styles.headLogo} src="/logo-nexus-mark.svg" alt="NEXUS" decoding="async" />
+            <HubLogo size="sm" showSubtitle={false} variant="mark" />
           </div>
           <div className={styles.headActions}>
             <div className={styles.headMenuWrap} ref={menuTemaRef}>
