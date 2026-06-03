@@ -8,6 +8,12 @@ import * as todoistApi from '../lib/todoistApi';
 import type { AssigneeOption } from '../lib/todoistAssignees';
 import { TEAM_ASSIGNEES } from '../lib/todoistAssignees';
 import { matchProjectToSystem, sortProjectsByClient } from '../lib/systemLogos';
+import {
+  buildTodoistTaskDisplayList,
+  isTodoistHeadingContent,
+  TodoistTaskContent,
+  todoistPlainText,
+} from '../lib/todoistContent';
 import type {
   TodoistComment,
   TodoistLabel,
@@ -99,17 +105,21 @@ function Chip({ active, disabled, onClick, children, title }: ChipProps) {
 
 interface TaskRowProps {
   task: TodoistTask;
+  depth?: number;
   sectionName?: string;
   selected: boolean;
   onSelect: (task: TodoistTask) => void;
   onToggle: (task: TodoistTask) => void;
 }
 
-function TaskRow({ task, sectionName, selected, onSelect, onToggle }: TaskRowProps) {
+function TaskRow({ task, depth = 0, sectionName, selected, onSelect, onToggle }: TaskRowProps) {
   const due = formatDue(task);
+  const heading = isTodoistHeadingContent(task.content);
+  const plainTitle = todoistPlainText(task.content);
   return (
     <li
-      className={`${styles.taskItem} ${task.is_completed ? styles.taskDone : ''} ${selected ? styles.taskItemSelected : ''}`}
+      className={`${styles.taskItem} ${task.is_completed ? styles.taskDone : ''} ${selected ? styles.taskItemSelected : ''} ${depth > 0 ? styles.taskSubtask : ''} ${heading ? styles.taskHeading : ''}`}
+      style={depth > 0 ? { paddingLeft: `calc(0.5rem + ${depth} * 1.1rem)` } : undefined}
     >
       <input
         type="checkbox"
@@ -119,9 +129,12 @@ function TaskRow({ task, sectionName, selected, onSelect, onToggle }: TaskRowPro
           void onToggle(task);
         }}
         onClick={(e) => e.stopPropagation()}
-        aria-label={task.is_completed ? `Reabrir ${task.content}` : `Concluir ${task.content}`}
+        aria-label={task.is_completed ? `Reabrir ${plainTitle}` : `Concluir ${plainTitle}`}
       />
-      <span className={`${styles.priority} ${priorityClass(task.priority)}`} aria-hidden />
+      {!heading && (
+        <span className={`${styles.priority} ${priorityClass(task.priority)}`} aria-hidden />
+      )}
+      {heading && <span className={styles.headingMarker} aria-hidden />}
       <div
         className={styles.taskBody}
         role="button"
@@ -134,8 +147,10 @@ function TaskRow({ task, sectionName, selected, onSelect, onToggle }: TaskRowPro
           }
         }}
       >
-        <div className={`${styles.taskTitle} ${task.is_completed ? styles.taskDoneText : ''}`}>
-          {task.content}
+        <div
+          className={`${styles.taskTitle} ${task.is_completed ? styles.taskDoneText : ''} ${heading ? styles.taskTitleHeading : ''}`}
+        >
+          <TodoistTaskContent content={task.content} />
           {(task.note_count ?? 0) > 0 && (
             <span className={styles.noteCount}>{task.note_count} coment.</span>
           )}
@@ -397,6 +412,8 @@ export function FilaPage() {
 
   const pending = tasks.filter((t) => !t.is_completed);
   const done = tasks.filter((t) => t.is_completed);
+  const pendingDisplay = useMemo(() => buildTodoistTaskDisplayList(pending), [pending]);
+  const doneDisplay = useMemo(() => buildTodoistTaskDisplayList(done), [done]);
 
   return (
     <div>
@@ -555,17 +572,18 @@ export function FilaPage() {
                   <span className={styles.sectionCount}>{pending.length}</span>
                 </h2>
                 <ul className={`${styles.taskList} ${styles.taskListScroll}`}>
-                  {pending.map((t) => (
+                  {pendingDisplay.map(({ task, depth }) => (
                     <TaskRow
-                      key={t.id}
-                      task={t}
-                      sectionName={t.section_id ? sectionMap.get(t.section_id) : undefined}
-                      selected={selectedTask?.id === t.id}
+                      key={task.id}
+                      task={task}
+                      depth={depth}
+                      sectionName={task.section_id ? sectionMap.get(task.section_id) : undefined}
+                      selected={selectedTask?.id === task.id}
                       onSelect={(task) => void selectTask(task)}
                       onToggle={toggleTask}
                     />
                   ))}
-                  {!loading && pending.length === 0 && (
+                  {!loading && pendingDisplay.length === 0 && (
                     <li className={styles.empty}>Nenhuma tarefa pendente.</li>
                   )}
                 </ul>
@@ -593,12 +611,13 @@ export function FilaPage() {
                   {completedOpen && (
                     <div className={styles.accordionBody}>
                       <ul className={`${styles.taskList} ${styles.taskListScroll}`}>
-                        {done.map((t) => (
+                        {doneDisplay.map(({ task, depth }) => (
                           <TaskRow
-                            key={t.id}
-                            task={t}
-                            sectionName={t.section_id ? sectionMap.get(t.section_id) : undefined}
-                            selected={selectedTask?.id === t.id}
+                            key={task.id}
+                            task={task}
+                            depth={depth}
+                            sectionName={task.section_id ? sectionMap.get(task.section_id) : undefined}
+                            selected={selectedTask?.id === task.id}
                             onSelect={(task) => void selectTask(task)}
                             onToggle={toggleTask}
                           />
@@ -632,7 +651,9 @@ export function FilaPage() {
                       </div>
                     ) : (
                       <>
-                        <h2 className={styles.detailTitle}>{selectedTask.content}</h2>
+                        <h2 className={styles.detailTitle}>
+                          <TodoistTaskContent content={selectedTask.content} />
+                        </h2>
                         <button
                           type="button"
                           className={`btn-ghost ${styles.detailRename}`}

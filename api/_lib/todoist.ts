@@ -60,6 +60,8 @@ export interface TodoistTaskV1 {
   priority: number;
   project_id: string;
   section_id?: string | null;
+  parent_id?: string | null;
+  order?: number;
   labels?: string[];
   note_count?: number;
   completed_at?: string | null;
@@ -76,6 +78,8 @@ export interface TodoistTaskRaw {
   url: string;
   project_id: string;
   section_id?: string | null;
+  parent_id?: string | null;
+  order?: number;
   labels?: string[];
   note_count?: number;
   responsible_uid?: string | null;
@@ -88,6 +92,7 @@ export interface CreateTaskInput {
   description?: string;
   project_id?: string;
   section_id?: string;
+  parent_id?: string;
   labels?: string[];
   priority?: number;
   due_string?: string;
@@ -199,6 +204,8 @@ export function mapTodoistTask(
     url: `https://todoist.com/showTask?id=${task.id}`,
     project_id: task.project_id,
     section_id: task.section_id ?? null,
+    parent_id: task.parent_id ?? null,
+    order: task.order ?? 0,
     labels: task.labels ?? [],
     note_count: task.note_count ?? 0,
     responsible_uid: task.responsible_uid ?? null,

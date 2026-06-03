@@ -330,6 +330,45 @@
   transition: background 0.15s, border-color 0.15s;
 }
 
+.taskSubtask {
+  border-left: 2px solid rgba(255, 255, 255, 0.08);
+  margin-left: 0.15rem;
+}
+
+.taskHeading {
+  margin-top: 0.35rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.taskHeading:first-child {
+  margin-top: 0;
+  padding-top: 0.6rem;
+  border-top: none;
+}
+
+.headingMarker {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 2px;
+  flex-shrink: 0;
+  margin-top: 0.35rem;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.taskTitleHeading {
+  font-weight: 700;
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
+  color: var(--primary);
+}
+
+.taskTitleHeading strong,
+.taskTitleHeading em {
+  font-weight: inherit;
+  font-style: normal;
+}
+
 .taskItem:hover {
   background: var(--glass);
   border-color: var(--border);

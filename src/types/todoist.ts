@@ -49,6 +49,8 @@ export interface TodoistTask {
   url: string;
   project_id: string;
   section_id?: string | null;
+  parent_id?: string | null;
+  order?: number;
   labels?: string[];
   note_count?: number;
   responsible_uid?: string | null;
@@ -65,6 +67,7 @@ export interface CreateTaskInput {
   priority?: number;
   due_string?: string;
   due_date?: string;
+  parent_id?: string | null;
   assignee_id?: number | null;
 }
 
