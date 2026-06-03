@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { deleteFinanceRow, FinanceCrudBar } from '../components/FinanceCrudBar';
+import { deleteFinanceRow, FinanceCrudBar, FinanceRecordForm } from '../components/FinanceCrudBar';
 import { PageHeader } from '../components/PageHeader';
 import {
   totalMensalAssinaturas,
@@ -162,6 +162,8 @@ function FinanceTable<T extends { id: string }>({
   columns: string[];
   onRefresh: () => void;
 }) {
+  const [editing, setEditing] = useState<T | null>(null);
+
   const handleDelete = async (id: string) => {
     if (!confirm('Excluir este registro?')) return;
     const err = await deleteFinanceRow(table, id);
@@ -173,6 +175,18 @@ function FinanceTable<T extends { id: string }>({
     <div className="card table-wrap">
       <h2 style={{ fontSize: '0.95rem', marginBottom: '0.75rem' }}>{title}</h2>
       <FinanceCrudBar table={table} onSaved={onRefresh} />
+      {editing && (
+        <FinanceRecordForm
+          table={table}
+          recordId={editing.id}
+          initialValues={editing as Record<string, unknown>}
+          onSaved={() => {
+            setEditing(null);
+            onRefresh();
+          }}
+          onCancel={() => setEditing(null)}
+        />
+      )}
       <table className="data-table">
         <thead>
           <tr>
@@ -194,7 +208,14 @@ function FinanceTable<T extends { id: string }>({
                 else display = String(val ?? '—');
                 return <td key={col}>{display}</td>;
               })}
-              <td>
+              <td style={{ whiteSpace: 'nowrap' }}>
+                <button
+                  type="button"
+                  className="btn-ghost"
+                  onClick={() => setEditing(row)}
+                >
+                  Editar
+                </button>
                 <button type="button" className="btn-ghost" onClick={() => void handleDelete(row.id)}>
                   Excluir
                 </button>
