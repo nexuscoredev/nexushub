@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { HubLogo } from '../components/HubLogo';
+import { NavIcon, type NavIconName } from '../components/NavIcon';
 import { TechShell } from '../components/TechShell';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './DashboardLayout.module.css';
@@ -8,7 +9,7 @@ import styles from './DashboardLayout.module.css';
 interface NavItem {
   to: string;
   label: string;
-  icon: string;
+  icon: NavIconName;
   show: boolean;
 }
 
@@ -23,13 +24,13 @@ export function DashboardLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navItems: NavItem[] = [
-    { to: '/dashboard', label: 'Painel', icon: '◈', show: true },
-    { to: '/agenda', label: 'Agenda', icon: '◷', show: podeFinanceiroAgenda },
-    { to: '/financeiro', label: 'Financeiro', icon: '◎', show: podeFinanceiroAgenda },
-    { to: '/fila', label: 'Fila', icon: '≡', show: true },
-    { to: '/sistemas', label: 'Sistemas', icon: '⬡', show: true },
-    { to: '/usuarios', label: 'Usuários', icon: '◉', show: podeGestao },
-    { to: '/configuracoes', label: 'Config', icon: '⚙', show: true },
+    { to: '/dashboard', label: 'Painel', icon: 'dashboard', show: true },
+    { to: '/agenda', label: 'Agenda', icon: 'calendar', show: podeFinanceiroAgenda },
+    { to: '/financeiro', label: 'Financeiro', icon: 'finance', show: podeFinanceiroAgenda },
+    { to: '/fila', label: 'Fila', icon: 'queue', show: true },
+    { to: '/sistemas', label: 'Sistemas', icon: 'systems', show: true },
+    { to: '/usuarios', label: 'Usuários', icon: 'users', show: podeGestao },
+    { to: '/configuracoes', label: 'Config', icon: 'settings', show: true },
   ];
 
   const visibleNav = navItems.filter((item) => item.show);
@@ -53,7 +54,7 @@ export function DashboardLayout() {
               aria-expanded={menuOpen}
               aria-label="Menu de navegação"
             >
-              {menuOpen ? '✕' : '☰'}
+              {menuOpen ? <NavIcon name="close" className={styles.menuIcon} /> : <NavIcon name="menu" className={styles.menuIcon} />}
             </button>
 
             <div className={styles.brandCenter}>
@@ -84,9 +85,7 @@ export function DashboardLayout() {
                   }
                   onClick={() => setMenuOpen(false)}
                 >
-                  <span className={styles.dockIcon} aria-hidden>
-                    {item.icon}
-                  </span>
+                  <NavIcon name={item.icon} className={styles.dockIcon} />
                   <span className={styles.dockLabel}>{item.label}</span>
                 </NavLink>
               ))}
