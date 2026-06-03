@@ -27,7 +27,6 @@ import {
   totalSaidas,
 } from '../lib/financeiro';
 import { formatBRL, formatDate } from '../lib/format';
-import { moveReceivableToSecao, receivableWithEntradaSecao } from '../lib/receivableDrag';
 import { valorPagoReceivable } from '../lib/receivableParcelas';
 import { supabase, supabaseErrorMessage } from '../lib/supabase';
 import type {
@@ -54,7 +53,6 @@ export function FinanceiroPage() {
   const [subscriptions, setSubscriptions] = useState<HubFinanceSubscription[]>([]);
   const [investments, setInvestments] = useState<HubFinanceInvestment[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
@@ -110,47 +108,12 @@ export function FinanceiroPage() {
   const kpiRecebido = totalRecebido(receivables);
   const kpiSaidas = totalSaidas(investments);
 
-  const handleMoveReceivable = useCallback(
-    async (receivableId: string, targetSecao: EntradaSecao) => {
-      setSuccessMsg(null);
-      const row = receivables.find((r) => r.id === receivableId);
-      if (!row) {
-        alert('Registro não encontrado. Atualize a página.');
-        return;
-      }
-      if (secaoEntradaReceivable(row) === targetSecao) {
-        setSuccessMsg(
-          targetSecao === 'implantacoes'
-            ? 'Este registro já está em Implantações.'
-            : 'Este registro já está em Mensalidades.',
-        );
-        return;
-      }
-      const err = await moveReceivableToSecao(row, targetSecao);
-      if (err) {
-        setError(err);
-        alert(`Não foi possível mover: ${err}`);
-        return;
-      }
-      setReceivables((prev) =>
-        prev.map((r) => (r.id === receivableId ? receivableWithEntradaSecao(r, targetSecao) : r)),
-      );
-      setSuccessMsg(
-        targetSecao === 'implantacoes'
-          ? 'Registro movido para Implantações (em cima).'
-          : 'Registro movido para Mensalidades (embaixo).',
-      );
-      void load();
-    },
-    [receivables, load],
-  );
-
   return (
     <div>
       <PageHeader
         badge="Finance"
         title="Financeiro"
-        subtitle="Implantações em cima · Mensalidades embaixo. Use a coluna «mover fila»."
+        subtitle="Implantações em cima · Mensalidades embaixo."
       />
 
       <p className={styles.versionTag}>
@@ -159,8 +122,6 @@ export function FinanceiroPage() {
       </p>
 
       {error && <div className="error-banner" style={{ marginBottom: '1rem' }}>{error}</div>}
-      {successMsg && <div className={styles.successBanner}>{successMsg}</div>}
-
       <FinanceKpiStrip
         values={{
           aReceber: kpiAReceber,
@@ -212,7 +173,6 @@ export function FinanceiroPage() {
                   receivables={receivablesBySecao.mensalidades}
                   fluxoSecao={{ fluxo: 'entrada', secao: 'mensalidades' }}
                   onRefresh={load}
-                  onMoveToSecao={(row, target) => handleMoveReceivable(row.id, target)}
                 />
               ) : (
                 <ReceivablesTable
@@ -220,7 +180,6 @@ export function FinanceiroPage() {
                   fluxoSecao={{ fluxo: 'entrada', secao: secao.id }}
                   onRefresh={load}
                   compactParcelas
-                  onMoveToSecao={(row, target) => handleMoveReceivable(row.id, target)}
                 />
               )}
             </FinanceQueueSection>

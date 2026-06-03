@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import type { EntradaSecao, FinanceFluxoSecao } from '../lib/financeCategories';
+import type { FinanceFluxoSecao } from '../lib/financeCategories';
 import { ClienteComLogo } from './ClienteComLogo';
-import { ReceivableMoveButtons } from './ReceivableMoveButtons';
 import { formatBRL, formatDate } from '../lib/format';
 import {
   parseParcelasFromReceivable,
@@ -30,7 +29,6 @@ interface ReceivablesTableProps {
   compactParcelas?: boolean;
   /** Só botão de adicionar (sem tabela vazia) */
   addOnly?: boolean;
-  onMoveToSecao?: (row: HubFinanceReceivable, secao: EntradaSecao) => Promise<void>;
 }
 
 export function ReceivablesTable({
@@ -42,7 +40,6 @@ export function ReceivablesTable({
   embedded,
   compactParcelas,
   addOnly,
-  onMoveToSecao,
 }: ReceivablesTableProps) {
   const [openAdd, setOpenAdd] = useState(false);
   const [editing, setEditing] = useState<HubFinanceReceivable | null>(null);
@@ -165,7 +162,6 @@ export function ReceivablesTable({
             <th>pagamento</th>
             <th>data</th>
             <th>notas</th>
-            <th>mover fila</th>
             <th />
           </tr>
         </thead>
@@ -234,13 +230,6 @@ export function ReceivablesTable({
                 </td>
                 <td>{formatDate(row.data_prevista)}</td>
                 <td>{stripUserNotas(row.notas) || '—'}</td>
-                <td className={styles.cellMover}>
-                  {onMoveToSecao ? (
-                    <ReceivableMoveButtons row={row} onMove={onMoveToSecao} />
-                  ) : (
-                    '—'
-                  )}
-                </td>
                 <td style={{ whiteSpace: 'nowrap' }}>
                   <button type="button" className="btn-ghost" onClick={() => setEditing(row)}>
                     Editar

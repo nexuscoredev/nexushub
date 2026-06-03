@@ -1,6 +1,6 @@
 import { formatBRL } from '../lib/format';
 import { groupReceivablesBySubscription } from '../lib/matchSubscriptionReceivable';
-import type { EntradaSecao, FinanceFluxoSecao } from '../lib/financeCategories';
+import type { FinanceFluxoSecao } from '../lib/financeCategories';
 import type { HubFinanceReceivable, HubFinanceSubscription } from '../types/database';
 import styles from '../pages/FinanceiroPage.module.css';
 import { ClienteComLogo } from './ClienteComLogo';
@@ -11,7 +11,6 @@ interface MensalidadesEntradaViewProps {
   receivables: HubFinanceReceivable[];
   fluxoSecao: FinanceFluxoSecao;
   onRefresh: () => void;
-  onMoveToSecao?: (row: HubFinanceReceivable, secao: EntradaSecao) => Promise<void>;
 }
 
 export function MensalidadesEntradaView({
@@ -19,7 +18,6 @@ export function MensalidadesEntradaView({
   receivables,
   fluxoSecao,
   onRefresh,
-  onMoveToSecao,
 }: MensalidadesEntradaViewProps) {
   const { groups, outros } = groupReceivablesBySubscription(subscriptions, receivables);
 
@@ -49,7 +47,6 @@ export function MensalidadesEntradaView({
                   onRefresh={onRefresh}
                   embedded
                   compactParcelas
-                  onMoveToSecao={onMoveToSecao}
                 />
               </div>
             ) : null}
@@ -66,7 +63,6 @@ export function MensalidadesEntradaView({
             onRefresh={onRefresh}
             embedded
             compactParcelas
-            onMoveToSecao={onMoveToSecao}
           />
         </div>
       )}
