@@ -1,3 +1,10 @@
+.versionTag {
+  margin: -0.5rem 0 1rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
 .sections {
   display: flex;
   flex-direction: column;

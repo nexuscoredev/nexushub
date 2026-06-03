@@ -51,11 +51,15 @@ export interface HubFinanceInvestment {
   created_at?: string;
 }
 
+export type EntradaSecaoDb = 'implantacoes' | 'mensalidades';
+
 export interface HubFinanceReceivable {
   id: string;
   cliente_descricao: string;
   valor: number;
   categoria?: string | null;
+  /** Fila na aba Entrada: implantacoes (cima) | mensalidades (baixo) */
+  entrada_secao?: EntradaSecaoDb | null;
   data_prevista: string;
   status: 'pendente' | 'recebido' | 'atrasado';
   notas: string | null;

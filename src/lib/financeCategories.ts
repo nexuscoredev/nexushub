@@ -71,6 +71,10 @@ function readSaidaSecaoFromNotas(notas: string | null | undefined): SaidaSecao |
 }
 
 export function secaoEntradaReceivable(r: HubFinanceReceivable): EntradaSecao {
+  if (r.entrada_secao === 'implantacoes' || r.entrada_secao === 'mensalidades') {
+    return r.entrada_secao;
+  }
+
   const fromTag = entradaSecaoFromNotas(r.notas);
   if (fromTag) return fromTag;
 
@@ -106,6 +110,7 @@ export const FINANCE_PAYLOAD_KEYS: Record<FinanceTable, readonly string[]> = {
     'data_prevista',
     'status',
     'notas',
+    'entrada_secao',
   ],
   hub_finance_subscriptions: [
     'nome',

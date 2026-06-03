@@ -16,15 +16,7 @@ export function ReceivableMoveButtons({ row, onMove }: ReceivableMoveButtonsProp
   const current = secaoEntradaReceivable(row);
 
   const handleMove = async (target: EntradaSecao) => {
-    if (busy) return;
-    if (current === target) {
-      alert(
-        target === 'implantacoes'
-          ? 'Este registro já está em Implantações.'
-          : 'Este registro já está em Mensalidades.',
-      );
-      return;
-    }
+    if (busy || current === target) return;
     setBusy(true);
     try {
       await onMove(row, target);
@@ -37,26 +29,24 @@ export function ReceivableMoveButtons({ row, onMove }: ReceivableMoveButtonsProp
 
   return (
     <div className={styles.moveActions} onClick={(e) => e.stopPropagation()}>
-      {current !== 'implantacoes' && (
-        <button
-          type="button"
-          className={styles.moveBtnPrimary}
-          disabled={busy}
-          onClick={() => void handleMove('implantacoes')}
-        >
-          ↑ Implantações
-        </button>
-      )}
-      {current !== 'mensalidades' && (
-        <button
-          type="button"
-          className={styles.moveBtnPrimary}
-          disabled={busy}
-          onClick={() => void handleMove('mensalidades')}
-        >
-          ↓ Mensalidades
-        </button>
-      )}
+      <button
+        type="button"
+        className={styles.moveBtnPrimary}
+        disabled={busy || current === 'implantacoes'}
+        title="Mover para Implantações (seção de cima)"
+        onClick={() => void handleMove('implantacoes')}
+      >
+        ↑ Implantações
+      </button>
+      <button
+        type="button"
+        className={styles.moveBtnPrimary}
+        disabled={busy || current === 'mensalidades'}
+        title="Mover para Mensalidades (seção de baixo)"
+        onClick={() => void handleMove('mensalidades')}
+      >
+        ↓ Mensalidades
+      </button>
     </div>
   );
 }

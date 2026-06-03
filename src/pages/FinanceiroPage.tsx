@@ -35,6 +35,9 @@ import type {
 } from '../types/database';
 import styles from './FinanceiroPage.module.css';
 
+/** Atualize ao publicar — confirme na tela Financeiro que esta versão aparece. */
+export const FINANCE_UI_VERSION = 'entrada-secao-v2';
+
 const CATEGORIA_LABELS: Record<string, string> = {
   implantacao: 'Implantação',
   mensalidade: 'Mensalidade',
@@ -142,8 +145,13 @@ export function FinanceiroPage() {
       <PageHeader
         badge="Finance"
         title="Financeiro"
-        subtitle="Entradas e saídas organizadas por tipo de movimento."
+        subtitle="Implantações em cima · Mensalidades embaixo. Use a coluna «mover fila»."
       />
+
+      <p className={styles.versionTag}>
+        Interface {FINANCE_UI_VERSION}
+        {supabase ? '' : ' — Supabase não configurado'}
+      </p>
 
       {error && <div className="error-banner" style={{ marginBottom: '1rem' }}>{error}</div>}
       {successMsg && <div className={styles.successBanner}>{successMsg}</div>}

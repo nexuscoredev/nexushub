@@ -121,7 +121,7 @@ export function buildReceivableSavePayload(
 ): Record<string, unknown> {
   const status = deriveReceivableStatus(fields.valor, parcelas);
   const notas = withParcelasInNotas(fields.notas, parcelas, fluxoSecao);
-  return {
+  const payload: Record<string, unknown> = {
     cliente_descricao: fields.cliente_descricao,
     valor: fields.valor,
     data_prevista: fields.data_prevista,
@@ -131,6 +131,10 @@ export function buildReceivableSavePayload(
     qtd_parcelas: parcelas.parcelado ? parcelas.qtd_parcelas : null,
     parcelas_pagas: parcelas.parcelas_pagas,
   };
+  if (fluxoSecao?.fluxo === 'entrada') {
+    payload.entrada_secao = fluxoSecao.secao;
+  }
+  return payload;
 }
 
 /** Payload mínimo se colunas de parcela não existirem no Supabase. */
@@ -145,13 +149,15 @@ export function buildReceivableSavePayloadSafe(
   fluxoSecao?: FinanceFluxoSecao,
 ): Record<string, unknown> {
   const full = buildReceivableSavePayload(fields, parcelas, fluxoSecao);
-  return {
+  const minimal: Record<string, unknown> = {
     cliente_descricao: full.cliente_descricao,
     valor: full.valor,
     data_prevista: full.data_prevista,
     status: full.status,
     notas: full.notas,
   };
+  if (full.entrada_secao) minimal.entrada_secao = full.entrada_secao;
+  return minimal;
 }
 
 function isMissingColumnError(message: string): boolean {
@@ -159,6 +165,7 @@ function isMissingColumnError(message: string): boolean {
     message.includes('parcelado') ||
     message.includes('qtd_parcelas') ||
     message.includes('parcelas_pagas') ||
+    message.includes('entrada_secao') ||
     message.includes('schema cache')
   );
 }
