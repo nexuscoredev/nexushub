@@ -9,7 +9,7 @@ interface UserAvatarProps {
   name?: string;
   email?: string;
   avatarUrl?: string | null;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   className?: string;
 }
 

@@ -11,11 +11,13 @@ import {
 import { CreateTaskModal } from '../components/CreateTaskModal';
 import { PromptNameModal } from '../components/PromptNameModal';
 import { NavIcon } from '../components/NavIcon';
+import { UserAvatar } from '../components/UserAvatar';
 import { PageHeader } from '../components/PageHeader';
 import { ProjectSelector } from '../components/ProjectSelector';
 import { TodoistIcon } from '../components/TodoistIcon';
 import * as todoistApi from '../lib/todoistApi';
-import type { AssigneeOption } from '../lib/todoistAssignees';
+import { useTeamAvatarMap, type TeamAvatarMap } from '../hooks/useTeamAvatarMap';
+import type { AssigneeHub, AssigneeOption } from '../lib/todoistAssignees';
 import { TEAM_ASSIGNEES } from '../lib/todoistAssignees';
 import { matchProjectToSystem, sortProjectsByClient } from '../lib/systemLogos';
 import {
@@ -167,8 +169,25 @@ function Chip({ active, disabled, onClick, children, title, priorityTone }: Chip
   );
 }
 
+function resolveTaskAssignee(
+  task: TodoistTask,
+  teamAvatars: TeamAvatarMap,
+): { name: string; email?: string; avatarUrl?: string | null } | null {
+  if (!task.assignee_name && !task.assignee_hub) return null;
+  const hub = task.assignee_hub as AssigneeHub | undefined;
+  const profile = hub ? teamAvatars[hub] : undefined;
+  const name = task.assignee_name ?? profile?.name;
+  if (!name) return null;
+  return {
+    name,
+    email: profile?.email,
+    avatarUrl: profile?.avatarUrl ?? null,
+  };
+}
+
 interface TaskRowProps {
   task: TodoistTask;
+  teamAvatars: TeamAvatarMap;
   depth?: number;
   sectionName?: string;
   selected: boolean;
@@ -181,6 +200,7 @@ interface TaskRowProps {
 
 const TaskRow = memo(function TaskRow({
   task,
+  teamAvatars,
   depth = 0,
   sectionName,
   selected,
@@ -191,6 +211,7 @@ const TaskRow = memo(function TaskRow({
   onSelect,
 }: TaskRowProps) {
   const due = formatTodoistDueDisplay(task.due);
+  const assignee = resolveTaskAssignee(task, teamAvatars);
   const heading = isTodoistHeadingContent(task.content);
   const plainTitle = todoistPlainText(task.content);
   const priority = getPriorityInfo(task.priority);
@@ -252,8 +273,17 @@ const TaskRow = memo(function TaskRow({
           )}
         </div>
         <div className={styles.taskMeta}>
-          {task.assignee_name && (
-            <span className={styles.assigneeChip}>{task.assignee_name}</span>
+          {assignee && (
+            <span className={styles.assigneeChip} title={assignee.name}>
+              <UserAvatar
+                size="xs"
+                name={assignee.name}
+                email={assignee.email}
+                avatarUrl={assignee.avatarUrl}
+                className={styles.assigneeAvatar}
+              />
+              <span className={styles.assigneeName}>{assignee.name}</span>
+            </span>
           )}
           {due && <small className={styles.taskDue}>{due}</small>}
           {sectionName && <span className={styles.sectionChip}>{sectionName}</span>}
@@ -269,6 +299,7 @@ const TaskRow = memo(function TaskRow({
 });
 
 export function FilaPage() {
+  const teamAvatars = useTeamAvatarMap();
   const [viewTab, setViewTab] = useState<ViewTab>('tasks');
   const [tasks, setTasks] = useState<TodoistTask[]>([]);
   const [projects, setProjects] = useState<TodoistProject[]>([]);
@@ -792,6 +823,7 @@ export function FilaPage() {
                     <TaskRow
                       key={task.id}
                       task={task}
+                      teamAvatars={teamAvatars}
                       depth={depth}
                       sectionName={task.section_id ? sectionMap.get(task.section_id) : undefined}
                       selected={selectedTask?.id === task.id}
@@ -834,6 +866,7 @@ export function FilaPage() {
                           <TaskRow
                             key={task.id}
                             task={task}
+                            teamAvatars={teamAvatars}
                             depth={depth}
                             sectionName={task.section_id ? sectionMap.get(task.section_id) : undefined}
                             selected={selectedTask?.id === task.id}
