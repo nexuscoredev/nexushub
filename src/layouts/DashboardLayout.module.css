@@ -413,6 +413,8 @@
     background: rgba(255, 255, 255, 0.12);
     border-color: rgba(255, 255, 255, 0.28);
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
+    position: relative;
+    z-index: 110;
   }
 
   .userCompact {
@@ -438,13 +440,7 @@
     position: fixed;
     inset: 0;
     z-index: 100;
-    pointer-events: none;
-    visibility: hidden;
-  }
-
-  .mobileNavOpen {
     pointer-events: auto;
-    visibility: visible;
   }
 
   .mobileBackdrop {
@@ -458,12 +454,7 @@
     cursor: pointer;
     background: rgba(0, 0, 0, 0.55);
     backdrop-filter: blur(4px);
-    opacity: 0;
-    transition: opacity 0.28s ease;
-  }
-
-  .mobileNavOpen .mobileBackdrop {
-    opacity: 1;
+    animation: mobileBackdropIn 0.24s ease;
   }
 
   .mobileDrawer {
@@ -480,20 +471,31 @@
     background: rgba(12, 12, 12, 0.98);
     border-right: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 8px 0 48px rgba(0, 0, 0, 0.65);
-    transform: translateX(-105%);
-    transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
     overflow: hidden;
+    animation: mobileDrawerIn 0.28s cubic-bezier(0.32, 0.72, 0, 1);
   }
 
-  .mobileNavOpen .mobileDrawer {
-    transform: translateX(0);
+  @keyframes mobileBackdropIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes mobileDrawerIn {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
   }
 
   .mobileDrawerHead {
     display: flex;
     align-items: flex-start;
-    justify-content: space-between;
-    gap: 0.75rem;
     padding: 0.5rem 1rem 1rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     flex-shrink: 0;
@@ -520,27 +522,6 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--muted);
-  }
-
-  .mobileClose {
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: var(--radius-sm);
-    background: rgba(255, 255, 255, 0.06);
-    color: var(--polished-silver);
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .mobileCloseIcon {
-    width: 20px;
-    height: 20px;
   }
 
   .mobileNavList {

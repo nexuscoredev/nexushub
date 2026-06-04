@@ -142,16 +142,14 @@ export function DashboardLayout() {
               </button>
             </div>
           </div>
+        </header>
 
-          <div
-            className={`${styles.mobileNav} ${menuOpen ? styles.mobileNavOpen : ''}`}
-            aria-hidden={!menuOpen}
-          >
+        {menuOpen && (
+          <div className={`${styles.mobileNav} ${styles.mobileNavOpen}`} role="presentation">
             <button
               type="button"
               className={styles.mobileBackdrop}
               onClick={closeMenu}
-              tabIndex={menuOpen ? 0 : -1}
               aria-label="Fechar menu"
             />
             <nav
@@ -164,14 +162,6 @@ export function DashboardLayout() {
                   <span className={styles.mobileUserName}>{profile?.nome ?? user?.email}</span>
                   <span className={styles.mobileUserRole}>{profile?.cargo ?? '—'}</span>
                 </div>
-                <button
-                  type="button"
-                  className={styles.mobileClose}
-                  onClick={closeMenu}
-                  aria-label="Fechar menu"
-                >
-                  <NavIcon name="close" className={styles.mobileCloseIcon} />
-                </button>
               </div>
 
               <ul className={styles.mobileNavList}>
@@ -228,7 +218,7 @@ export function DashboardLayout() {
               </div>
             </nav>
           </div>
-        </header>
+        )}
 
         <main className={styles.main}>
           <Outlet />
