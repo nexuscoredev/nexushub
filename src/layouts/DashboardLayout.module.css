@@ -384,13 +384,13 @@
 
   .menuBtn {
     display: inline-flex;
-    order: 2;
+    order: 3;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     width: 44px;
     height: 44px;
-    margin-left: auto;
+    margin-left: 0;
     padding: 0;
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: var(--radius-sm);
@@ -416,18 +416,17 @@
   }
 
   .userCompact {
-    order: 3;
-    margin-left: 0;
+    order: 2;
+    margin-left: auto;
     gap: 0.35rem;
+  }
+
+  .novidadesBtn {
+    display: none;
   }
 
   .signOutBtn {
     display: none;
-  }
-
-  .novidadesBtn {
-    width: 40px;
-    height: 40px;
   }
 
   .commandDock {
@@ -629,10 +628,10 @@
   }
 
   .mobileNovidadesBtn {
-    justify-content: center;
-    width: fit-content;
+    justify-content: flex-start;
+    width: 100%;
     min-width: 48px;
-    gap: 0;
+    gap: 0.75rem;
     position: relative;
   }
 

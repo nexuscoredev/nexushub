@@ -203,6 +203,7 @@ export function DashboardLayout() {
                   title="Novidades"
                 >
                   <NovidadesSparkIcon className={styles.novidadesIcon} />
+                  <span>Novidades</span>
                   {novidadesBadge && <span className={styles.mobileNovidadesDot} aria-hidden />}
                 </button>
                 <NavLink

@@ -1,0 +1,10 @@
+.cargoValue {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 768px) {
+  .cargoValue {
+    font-size: 0.95rem;
+  }
+}

@@ -89,9 +89,11 @@
 
 @media (max-width: 480px) {
   .page {
-    padding: 1rem;
-    align-items: flex-start;
-    padding-top: 1.5rem;
+    min-height: 100dvh;
+    align-items: center;
+    justify-content: center;
+    padding: max(1rem, env(safe-area-inset-top, 0px)) max(1rem, env(safe-area-inset-right, 0px))
+      max(1rem, env(safe-area-inset-bottom, 0px)) max(1rem, env(safe-area-inset-left, 0px));
   }
 
   .card {

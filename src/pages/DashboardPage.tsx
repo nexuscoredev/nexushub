@@ -15,6 +15,7 @@ import type {
   HubFinanceSubscription,
   HubSystem,
 } from '../types/database';
+import styles from './DashboardPage.module.css';
 
 export function DashboardPage() {
   const { profile, podeFinanceiroAgenda } = useAuth();
@@ -73,7 +74,11 @@ export function DashboardPage() {
       <PageHeader
         badge="Overview"
         title="Painel"
-        subtitle={`${profile?.nome ?? 'Usuário'} · ${profile?.cargo ?? '—'} — visão geral do NEXUS Hub.`}
+        subtitle={
+          profile?.nome
+            ? `${profile.nome} — visão geral do NEXUS Hub`
+            : 'Visão geral do NEXUS Hub'
+        }
       />
 
       {error && <div className="error-banner">{error}</div>}
@@ -85,7 +90,7 @@ export function DashboardPage() {
         </div>
         <div className="kpi">
           <div className="kpi-label">Seu cargo</div>
-          <div className="kpi-value" style={{ fontSize: '1rem' }}>
+          <div className={`kpi-value ${styles.cargoValue}`}>
             {profile?.cargo ?? '—'}
           </div>
         </div>
