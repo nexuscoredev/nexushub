@@ -39,11 +39,8 @@ export function LoginPage() {
       <div className={styles.page}>
         <div className={`card ${styles.card}`}>
           <div className={styles.cardGlow} aria-hidden />
-          <HubLogo size="md" variant="full" showSubtitle={false} />
-          <div className={styles.header}>
-            <span className={styles.badge}>Secure access</span>
-            <h1 className={styles.title}>Entrar</h1>
-            <p className={styles.subtitle}>Acesso restrito à equipe NEXUS</p>
+          <div className={styles.logoWrap}>
+            <HubLogo size="md" variant="full" showSubtitle={false} />
           </div>
 
           {!configured && (

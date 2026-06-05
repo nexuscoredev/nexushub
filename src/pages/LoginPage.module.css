@@ -33,43 +33,17 @@
   pointer-events: none;
 }
 
-.header {
-  margin-top: 1.5rem;
-  text-align: center;
-}
-
-.badge {
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--polished-silver);
-}
-
-.title {
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-top: 0.5rem;
-  background: var(--liquid-silver);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.subtitle {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin-top: 0.35rem;
+.logoWrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.25rem;
 }
 
 .form {
   display: flex;
   flex-direction: column;
   gap: 1.1rem;
-  margin-top: 1.75rem;
+  margin-top: 1.5rem;
 }
 
 .back {
@@ -98,9 +72,5 @@
 
   .card {
     padding: 1.5rem 1.15rem;
-  }
-
-  .title {
-    font-size: 1.45rem;
   }
 }
