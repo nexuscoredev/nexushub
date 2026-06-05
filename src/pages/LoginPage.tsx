@@ -40,7 +40,7 @@ export function LoginPage() {
         <div className={`card ${styles.card}`}>
           <div className={styles.cardGlow} aria-hidden />
           <div className={styles.logoWrap}>
-            <HubLogo size="md" variant="full" showSubtitle={false} />
+            <HubLogo size="lg" variant="full" centered />
           </div>
 
           {!configured && (

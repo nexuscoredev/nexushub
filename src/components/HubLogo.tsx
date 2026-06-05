@@ -1,21 +1,26 @@
 import styles from './HubLogo.module.css';
 
 interface HubLogoProps {
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   showSubtitle?: boolean;
   /** mark = ícone + wordmark; full = ícone maior + wordmark (landing) */
   variant?: 'full' | 'mark';
+  centered?: boolean;
 }
 
 export function HubLogo({
   size = 'md',
   showSubtitle = true,
   variant = 'mark',
+  centered = false,
 }: HubLogoProps) {
-  const sizeClass = variant === 'full' ? styles.lg : styles[size];
+  const resolvedSize = variant === 'full' && size === 'md' ? 'lg' : size;
+  const sizeClass = styles[resolvedSize];
 
   return (
-    <div className={`${styles.logo} ${sizeClass} ${styles.mark}`}>
+    <div
+      className={`${styles.logo} ${sizeClass} ${styles.mark} ${centered ? styles.centered : ''}`}
+    >
       <img
         src="/img/favicon.png"
         alt=""

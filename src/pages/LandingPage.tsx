@@ -10,16 +10,11 @@ export function LandingPage() {
         <div className={styles.heroGlow} aria-hidden />
         <div className={styles.content}>
           <span className={styles.eyebrow}>NEXUS Technology Systems</span>
-          <HubLogo size="lg" showSubtitle={false} />
-          <p className={styles.tagline}>
-            Command center para sistemas, fila operacional, finanças e agenda — tudo
-            sincronizado em tempo real.
-          </p>
+          <HubLogo size="xl" variant="full" centered />
           <div className={styles.actions}>
             <Link to="/login" className="btn-primary">
               Acessar painel
             </Link>
-            <span className={styles.hint}>Acesso restrito à equipe</span>
           </div>
           <div className={styles.stats}>
             <div className={styles.stat}>
