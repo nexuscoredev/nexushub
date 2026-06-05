@@ -12,12 +12,8 @@
   justify-content: center;
 }
 
-.centered .text {
-  align-items: center;
-}
-
-.centered .subtitle {
-  padding-left: 0;
+.centered .brand {
+  justify-content: center;
 }
 
 .markImg {
@@ -27,10 +23,11 @@
   border-radius: 50%;
 }
 
-.text {
+.brand {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: baseline;
+  flex-wrap: nowrap;
+  gap: 0.42em;
 }
 
 .wordmark {
@@ -44,14 +41,14 @@
   background-clip: text;
 }
 
-.subtitle {
-  font-family: var(--font-body);
-  font-size: 0.65em;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-top: 0.2rem;
-  padding-left: 0.2em;
+.hubMark {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  color: #fff;
+  text-shadow: 0 0 24px rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
 }
 
 .sm .markImg {
@@ -61,6 +58,10 @@
 
 .sm .wordmark {
   font-size: 1rem;
+}
+
+.sm .hubMark {
+  font-size: 0.95rem;
 }
 
 @media (max-width: 480px) {
@@ -73,6 +74,10 @@
     font-size: 0.88rem;
     letter-spacing: 0.14em;
   }
+
+  .sm .hubMark {
+    font-size: 0.86rem;
+  }
 }
 
 .md .markImg {
@@ -84,18 +89,22 @@
   font-size: 1.35rem;
 }
 
+.md .hubMark {
+  font-size: 1.28rem;
+}
+
 .lg .markImg {
   width: 64px;
   height: 64px;
 }
 
 .lg .wordmark {
-  font-size: 2.35rem;
+  font-size: 2.15rem;
+  letter-spacing: 0.22em;
 }
 
-.lg .subtitle {
-  font-size: 0.72em;
-  letter-spacing: 0.22em;
+.lg .hubMark {
+  font-size: 2rem;
 }
 
 .xl .markImg {
@@ -104,12 +113,13 @@
 }
 
 .xl .wordmark {
-  font-size: 3rem;
+  font-size: 2.75rem;
+  letter-spacing: 0.24em;
 }
 
-.xl .subtitle {
-  font-size: 0.75em;
-  letter-spacing: 0.24em;
+.xl .hubMark {
+  font-size: 2.65rem;
+  letter-spacing: 0.04em;
 }
 
 @media (max-width: 480px) {
@@ -119,6 +129,18 @@
   }
 
   .xl .wordmark {
-    font-size: 2.45rem;
+    font-size: 2.2rem;
+  }
+
+  .xl .hubMark {
+    font-size: 2.05rem;
+  }
+
+  .lg .wordmark {
+    font-size: 1.85rem;
+  }
+
+  .lg .hubMark {
+    font-size: 1.72rem;
   }
 }

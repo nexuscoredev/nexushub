@@ -27,9 +27,9 @@ export function HubLogo({
         className={styles.markImg}
         aria-hidden
       />
-      <div className={styles.text}>
+      <div className={styles.brand}>
         <span className={styles.wordmark}>NEXUS</span>
-        {showSubtitle && <span className={styles.subtitle}>Hub</span>}
+        {showSubtitle && <span className={styles.hubMark}>Hub</span>}
       </div>
     </div>
   );
