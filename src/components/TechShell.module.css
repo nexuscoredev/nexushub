@@ -9,64 +9,13 @@
   position: fixed;
   inset: 0;
   z-index: 0;
-  background:
-    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(122, 142, 161, 0.12), transparent 55%),
-    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(6, 51, 75, 0.45), transparent 50%),
-    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(17, 39, 49, 0.8), transparent 45%),
-    #112731;
+  background: #0a0a0a;
 }
 
-.grid {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  opacity: 0.25;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 75%);
-}
-
+.grid,
+.scanline,
 .orb {
-  position: fixed;
-  border-radius: 50%;
-  filter: blur(80px);
-  z-index: 0;
-  pointer-events: none;
-  animation: float 18s ease-in-out infinite;
-}
-
-.orbA {
-  width: 420px;
-  height: 420px;
-  top: -120px;
-  left: -80px;
-  background: rgba(122, 142, 161, 0.14);
-}
-
-.orbB {
-  width: 360px;
-  height: 360px;
-  bottom: -100px;
-  right: -60px;
-  background: rgba(6, 51, 75, 0.35);
-  animation-delay: -6s;
-}
-
-.scanline {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0.03;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(255, 255, 255, 0.12) 2px,
-    rgba(255, 255, 255, 0.12) 3px
-  );
+  display: none;
 }
 
 .content {

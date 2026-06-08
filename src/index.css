@@ -1,33 +1,39 @@
-:root {
-  --nx-p1: #112731;
-  --nx-p2: #06334b;
-  --nx-p3: #7a8ea1;
-  --nx-p4: #74839b;
-  --nx-p5: #a9b6c3;
+﻿:root {
+  --nx-ink: #0a0a0a;
+  --nx-graphite: #141414;
+  --nx-graphite-2: #1c1c1c;
+  --nx-steel: #8a8f98;
+  --nx-silver: #c8ccd4;
+  --nx-red: #ed1c24;
+  --nx-red-bright: #ff0029;
+  --nx-red-deep: #c40010;
 
-  --bg: var(--nx-p1);
-  --surface: rgba(6, 51, 75, 0.9);
-  --surface-solid: var(--nx-p2);
-  --surface-elevated: #0c2a3d;
-  --surface-container-low: var(--nx-p2);
-  --glass: rgba(122, 142, 161, 0.08);
-  --text: var(--nx-p5);
-  --muted: var(--nx-p4);
-  --border: rgba(169, 182, 195, 0.14);
-  --border-glow: rgba(169, 182, 195, 0.38);
-  --primary: var(--nx-p5);
-  --polished-silver: var(--nx-p3);
-  --outline-variant: var(--nx-p4);
-  --accent: var(--nx-p5);
-  --accent-glow: rgba(122, 142, 161, 0.22);
+  --bg: var(--nx-ink);
+  --surface: rgba(20, 20, 20, 0.94);
+  --surface-solid: var(--nx-graphite);
+  --surface-elevated: var(--nx-graphite-2);
+  --surface-container-low: var(--nx-graphite);
+  --glass: rgba(255, 255, 255, 0.04);
+  --text: #f5f5f5;
+  --muted: #a3a3a3;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(237, 28, 36, 0.35);
+  --primary: #f5f5f5;
+  --polished-silver: var(--nx-silver);
+  --outline-variant: var(--nx-steel);
+  --accent: var(--nx-red-bright);
+  --accent-glow: rgba(255, 0, 41, 0.22);
   --silver-gradient: linear-gradient(
-    135deg,
-    var(--nx-p5) 0%,
-    var(--nx-p4) 35%,
-    var(--nx-p3) 65%,
-    var(--nx-p2) 100%
+    180deg,
+    #e8eaee 0%,
+    #c8ccd4 14%,
+    #8a8f98 34%,
+    #5c6068 50%,
+    #9a9ea6 66%,
+    #d0d4da 84%,
+    #f0f2f5 100%
   );
-  --liquid-silver: linear-gradient(180deg, var(--nx-p5) 0%, var(--nx-p4) 55%, var(--nx-p3) 100%);
+  --liquid-silver: linear-gradient(180deg, #ffffff 0%, #c8ccd4 55%, #8a8f98 100%);
   --danger: #ffb4ab;
   --success: #c6e8d0;
   --radius: 14px;
@@ -37,7 +43,7 @@
   --font-display: 'Inter', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-  --shadow-glow: 0 0 40px rgba(122, 142, 161, 0.08);
+  --shadow-glow: none;
 }
 
 *,
@@ -89,27 +95,23 @@ textarea {
   justify-content: center;
   gap: 0.5rem;
   padding: 0.7rem 1.5rem;
-  border: 1px solid rgba(169, 182, 195, 0.35);
+  border: none;
   border-radius: 999px;
-  background: var(--silver-gradient);
-  color: var(--nx-p1);
+  background: linear-gradient(180deg, var(--nx-red-bright) 0%, var(--nx-red) 52%, var(--nx-red-deep) 100%);
+  color: #ffffff;
   font-weight: 700;
   font-size: 0.8rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
   transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
-  box-shadow:
-    0 4px 24px rgba(122, 142, 161, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
-  filter: brightness(1.08);
-  box-shadow:
-    0 8px 32px rgba(122, 142, 161, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  filter: brightness(1.06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 .btn-primary:disabled {
@@ -355,7 +357,7 @@ table.data-table tbody tr:hover td {
   background: rgba(255, 255, 255, 0.03);
 }
 
-/* Logos de clientes — monocromático prata NEXUS */
+/* Logos de clientes ÔÇö monocrom├ítico prata NEXUS */
 .brand-logo {
   filter: grayscale(100%) brightness(1.22) contrast(0.82);
   opacity: 0.82;
