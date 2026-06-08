@@ -15,13 +15,20 @@
 <body data-page="contato">
   <div id="nexus-navbar"></div>
 
-  <main class="nx-page">
+  <main class="nx-page nx-page--wide">
     <div class="nx-container">
-      <header class="nx-page-hero">
-        <span class="nx-eyebrow">Entre em contato</span>
-        <h1>Seu próximo sistema <span style="background:var(--nx-silver-text);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">começa aqui</span></h1>
-        <p>Estamos prontos para entender seu cenário e desenvolver uma solução sob medida para o seu negócio.</p>
-      </header>
+      <section class="nx-split-section" style="margin-bottom:2.5rem;">
+        <div>
+          <span class="nx-eyebrow">Entre em contato</span>
+          <h1 class="nx-hero-cinema__title" style="font-size:clamp(2rem,5vw,3.5rem);">Seu próximo sistema<br /><span>começa aqui</span></h1>
+          <p class="nx-hero__lead">
+            Estamos prontos para entender seu cenário e desenvolver uma solução sob medida para o seu negócio.
+          </p>
+        </div>
+        <div class="nx-media-frame" style="aspect-ratio:4/5;">
+          <img class="nx-img-silver" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDb_vHKnTOH_6kE6b7cjZKFTBphoXTuV8Ftd-iYBB2NA6Vtl2TBsk6ohnlhfO8LU7uDu8Dkfg0_7JSukT2eDkNBZ04jev0s2ud1A3Dqr9AbjRudu9hU-gFO6CMkyicOTUm_NywbfS_aGFgLXX5Fhzx8JpJYxNJ39EC0J_XqwnDxsdjP26uVchs52bhXKHee-K9A2nuE1EVbVP7qHkMi_5lLSzpjIQooLKAnT5u_FpLs7ol8tSdJCS6MX-MLh6GYB3Jv3LPE-2CKFlJL" alt="NEXUS" />
+        </div>
+      </section>
 
       <div class="nx-contact-row">
         <div class="nx-content-block">
@@ -33,7 +40,7 @@
               </div>
               <div class="nx-field">
                 <label for="email">E-mail</label>
-                <input id="email" type="email" placeholder="exemplo@empresa.com" />
+                <input id="email" type="email" placeholder="exemplo@nexus.tech" />
               </div>
             </div>
             <div class="nx-field">
@@ -57,24 +64,43 @@
 
         <div style="display:flex;flex-direction:column;gap:1rem;">
           <div class="nx-content-block">
-            <h2>Localização</h2>
-            <p style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+            <h2>Sede Global</h2>
+            <p style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;">
               <span class="material-symbols-outlined" style="font-size:1.1rem;color:var(--nx-text-soft);">location_on</span>
               São Roque, SP
             </p>
-            <p style="font-size:0.86rem;">Atendimento remoto e presencial conforme necessidade do projeto.</p>
+            <div class="nx-media-frame" style="aspect-ratio:16/9;margin-top:0.5rem;">
+              <img class="nx-img-silver" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJV7lrPQfjlHwz_hhI8-o0PkuUHqXS4_N28Gx1hWWtxgGYriK6lt4sFrnLuZtWhPkdYcL3QDVcgK7PTGmJ0jQwJb_A4Q0lFbr-ya9v6ffGf364JvmCComxZGsowvHWvCqoAcxc1zDPyGIMGuWlOXdQJB6tPiujFEHHqy4YTQ-wL0WdMAKe8P58Hoccpe2Jo-4Cs6OBpei0veW2gCdBygbA4Yvg1WBgYZoAZ4Tol5Z3VrDIdsKtDHnEiByR03pvkfqVhYbs_ViE1WYl" alt="Mapa" />
+            </div>
           </div>
           <div class="nx-content-block">
             <h2>Canais diretos</h2>
-            <p style="margin-bottom:0.65rem;">
-              <a href="mailto:nexussystemscore.dev@gmail.com" style="color:var(--nx-text-muted);">nexussystemscore.dev@gmail.com</a>
-            </p>
-            <p style="margin:0;">
-              <a href="tel:+5511997989395" style="color:var(--nx-text-muted);">+55 (11) 99798-9395</a>
-            </p>
+            <p style="margin-bottom:0.5rem;"><a href="mailto:nexussystemscore.dev@gmail.com">nexussystemscore.dev@gmail.com</a></p>
+            <p style="margin:0;"><a href="tel:+5511997989395">+55 (11) 99798-9395</a></p>
           </div>
         </div>
       </div>
+
+      <section class="nx-section" style="margin-top:2.5rem;">
+        <h2 class="nx-section__title" style="text-align:center;">Nosso Ecossistema</h2>
+        <div class="nx-grid-2" style="margin-top:1rem;">
+          <div class="nx-card">
+            <span class="nx-card__icon material-symbols-outlined">hub</span>
+            <h3 class="nx-card__title">Desenvolvimento</h3>
+            <p class="nx-card__desc">Criamos sistemas personalizados, pensados para atender exatamente às necessidades do seu negócio.</p>
+          </div>
+          <div class="nx-card">
+            <span class="nx-card__icon material-symbols-outlined">verified_user</span>
+            <h3 class="nx-card__title">Integração</h3>
+            <p class="nx-card__desc">Conectamos diferentes sistemas e ferramentas para tornar sua operação mais simples e eficiente.</p>
+          </div>
+          <div class="nx-card">
+            <span class="nx-card__icon material-symbols-outlined">auto_awesome_motion</span>
+            <h3 class="nx-card__title">Infraestrutura</h3>
+            <p class="nx-card__desc">Garantimos que suas soluções sejam estáveis, seguras e prontas para crescer com sua empresa.</p>
+          </div>
+        </div>
+      </section>
     </div>
   </main>
 

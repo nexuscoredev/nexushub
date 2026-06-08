@@ -6,28 +6,41 @@
   <title>NEXUS | Tecnologia Sob Medida</title>
   <link rel="icon" type="image/png" href="img/favicon.png" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/nexus-site.css" />
   <script src="js/theme.js"></script>
 </head>
 <body>
-  <main class="nx-splash">
-    <div class="nx-splash__card">
-      <div style="display:flex;align-items:center;gap:0.75rem;">
-        <img src="img/favicon.png" alt="" width="56" height="56" style="border-radius:50%;box-shadow:0 0 24px var(--nx-hero-glow);" />
-        <div style="text-align:left;">
-          <div class="nx-splash__logo" style="font-size:clamp(2.2rem,8vw,3.5rem);margin:0;">NEXUS</div>
-          <div style="font-size:clamp(1.4rem,5vw,2rem);font-weight:700;letter-spacing:0.04em;margin-top:-0.15rem;">Hub</div>
-        </div>
-      </div>
+  <main class="nx-splash--legacy">
+    <div class="nx-splash--legacy__bg" aria-hidden="true">
+      <div class="nx-splash--legacy__bg-image"></div>
+      <div class="nx-splash--legacy__bg-fade"></div>
+      <div class="nx-splash--legacy__glow" style="top:-10%;left:-10%;width:40%;height:40%;background:var(--nx-hero-glow);"></div>
+      <div class="nx-splash--legacy__glow" style="bottom:-10%;right:-10%;width:30%;height:30%;background:var(--nx-hero-glow);opacity:0.6;"></div>
+    </div>
+
+    <div class="nx-splash--legacy__content">
+      <h2 class="nx-splash--legacy__brand">NEXUS</h2>
+
       <div class="nx-chips">
         <span class="nx-chip">Visão</span>
         <span class="nx-chip">Inteligência</span>
         <span class="nx-chip">IA e Automação</span>
       </div>
-      <p style="margin:0;color:var(--nx-text-muted);max-width:32ch;font-size:0.95rem;">
-        Tecnologia personalizada que se adapta ao seu negócio.
-      </p>
-      <a href="home.html" class="nx-btn nx-btn--primary">Começar agora</a>
+
+      <div>
+        <h1 class="nx-splash--legacy__headline">
+          Tecnologia <em>Sob Medida</em>
+        </h1>
+        <p style="margin:0.75rem 0 0;color:var(--nx-text-muted);font-size:0.9rem;max-width:32ch;">
+          Tecnologia personalizada que se adapta ao seu negócio — e não o contrário.
+        </p>
+      </div>
+
+      <a href="home.html" class="nx-btn nx-btn--primary">
+        Começar agora
+        <span class="material-symbols-outlined" style="font-size:1rem;">arrow_forward</span>
+      </a>
     </div>
   </main>
 </body>

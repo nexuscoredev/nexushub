@@ -15,8 +15,12 @@
 <body data-page="projeto">
   <div id="nexus-navbar"></div>
 
-  <main class="nx-page">
-    <div class="nx-container" style="max-width:52rem;">
+  <main class="nx-page" style="position:relative;overflow:hidden;">
+    <div style="position:absolute;inset:0;opacity:0.08;pointer-events:none;z-index:0;">
+      <img class="nx-img-silver" style="width:100%;height:100%;object-fit:cover;" src="https://lh3.googleusercontent.com/aida/ADBb0ujFfWRtuY05DP2OAO-GFmJr-22n8USpxXka91M4cy3H7hlnpz1dMd6fkabshCQrcAFRX0rt5ybqCFuf438-fRXkQ5dPoeeMqiuXYit1jPPjJfvYk3817seigBGyhW2T8FwEaoc9WgoJEl8RIY7suq5uGeiP3tCq_bRR2PkxpzQv6u-YCl6zCXBksP7wwz9rJ_AsBNmu7zfQBZTiBkpDa7kx_4edHas7bRhI8JtCYAgTEy-d3gYGhg2FtEDfd3UEXKbJRoyr5eoFffw" alt="" />
+    </div>
+
+    <div class="nx-container" style="position:relative;z-index:1;max-width:52rem;">
       <header class="nx-page-hero" style="text-align:center;">
         <span class="nx-eyebrow">Solicite um projeto</span>
         <h1>Conte sobre o seu projeto</h1>
@@ -56,10 +60,16 @@
             </div>
           </div>
 
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0.5rem;">
+            <img class="nx-img-silver" style="height:8rem;width:100%;object-fit:cover;border-radius:0.5rem;border:1px solid var(--nx-border);" src="https://lh3.googleusercontent.com/aida/ADBb0uiJXYJRRcSxGHlZeDol9arE3CWbypKKaiAPqdUFJZrG7QS7tiSBatm2nGM8aiYoDM4NFhUHVeDDQ9N2u0kwwphtVG1i0McRQF7TxnkSt7e7zT_3WXmJrM2C35Nn-P72hNLXjSNS09dQPGAISHN26xC0emft7H4SodkqLcN2uQYxZXmW3AXlOtSIJXzGcxwlLOp1T6ya1nexxG6sxNpUAImzSAtnp-Q7-T8gJv6gvqYjZVGYujbFKN5QIou2" alt="" />
+            <img class="nx-img-silver" style="height:8rem;width:100%;object-fit:cover;border-radius:0.5rem;border:1px solid var(--nx-border);" src="https://lh3.googleusercontent.com/aida/ADBb0uhFhuD2Ce2c7iGP2mqRlopQiVRFEVLsSdgbmUIPKEKb8fpYKjs3WcnPoRfUgTM58ww41EX-e86P-oYOwKg8tedTPgaJRL6eGRYz1zxg6lp_AO-5HvGDlULDzqqMzZtf9R0v0onLe6uSrl4A1S2k1cko8yNjlQhylRsYpn5DDfKGGDzG1K1WdmxAh7G0Axo65wdw2F7dxVgxSzqT7jsa_VKWoKqRMZ1oh7KaOAdv1pYYIbFsXC3amyQJBmg" alt="" />
+            <img class="nx-img-silver" style="height:8rem;width:100%;object-fit:cover;border-radius:0.5rem;border:1px solid var(--nx-border);" src="https://lh3.googleusercontent.com/aida/ADBb0uhml6Oe-b3hOUbN3wsMhq14R2jOYVYUBbxAJPgSoWzZrBol09R8FtPq7mGqFZf3RuaOchdxQlUVeICCo7xUsLcs891h2QwGKj0WwCfLAM0sLMkWr6ALPE0CvNCIvJnKUUebyHdzDans20hRW2rrWCC14OA41EvuFeZ21X2i64glmIN8f-E_NDosCOao7VrRBbYMBlz398GNCcSKWv3AGkF-SohJ9doLmM8STGGugI7-iXd6axbSk4VRG9fs" alt="" />
+          </div>
+
           <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;padding-top:0.5rem;border-top:1px solid var(--nx-border);">
             <span style="font-size:0.62rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--nx-text-soft);display:flex;align-items:center;gap:0.4rem;">
               <span style="width:0.5rem;height:0.5rem;border-radius:50%;background:var(--nx-silver);box-shadow:0 0 12px var(--nx-hero-glow);"></span>
-              Pronto para transmissão
+              Sistema operante — pronto para transmissão
             </span>
             <button type="submit" class="nx-btn nx-btn--primary">Enviar solicitação</button>
           </div>
@@ -68,10 +78,17 @@
 
       <div class="nx-grid-2" style="margin-top:1rem;">
         <div class="nx-content-block">
+          <span class="material-symbols-outlined" style="color:var(--nx-text-soft);">security_update_good</span>
           <h2>Segurança</h2>
           <p>Seus dados protegidos com boas práticas modernas e confiáveis.</p>
         </div>
         <div class="nx-content-block">
+          <span class="material-symbols-outlined" style="color:var(--nx-text-soft);">monitoring</span>
+          <h2>Eficiência</h2>
+          <p>Sistemas desenvolvidos para otimizar processos e reduzir retrabalho.</p>
+        </div>
+        <div class="nx-content-block" style="grid-column:1/-1;">
+          <span class="material-symbols-outlined" style="color:var(--nx-text-soft);">deployed_code</span>
           <h2>Escalabilidade</h2>
           <p>Soluções preparadas para crescer junto com o seu negócio.</p>
         </div>

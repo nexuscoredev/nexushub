@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Início | NEXUS</title>
   <link rel="icon" type="image/png" href="img/favicon.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/nexus-site.css" />
@@ -17,96 +15,109 @@
 <body data-page="home">
   <div id="nexus-navbar"></div>
 
-  <main class="nx-page">
+  <main class="nx-page nx-page--wide">
     <div class="nx-container">
-      <section class="nx-hero">
-        <div class="nx-hero__grid">
-          <div>
-            <span class="nx-eyebrow">NEXUS Technology Systems</span>
-            <h1 class="nx-hero__title">Tecnologia <span>Sob Medida</span></h1>
-            <p class="nx-hero__lead">
-              Sistemas personalizados, integração e automação para empresas que precisam de tecnologia
-              feita para a sua operação — não o contrário.
-            </p>
-            <div style="display:flex;flex-wrap:wrap;gap:0.65rem;margin-top:1.35rem;">
-              <a href="contato.html" class="nx-btn nx-btn--primary">Falar com especialista</a>
-              <a href="servicos.html" class="nx-btn nx-btn--ghost">Ver soluções</a>
+      <section class="nx-hero-cinema">
+        <div class="nx-hero-cinema__bg">
+          <img class="nx-img-silver" src="img/robohome.png" alt="Tecnologia NEXUS" />
+          <div class="nx-hero-cinema__overlay"></div>
+        </div>
+        <div class="nx-hero-cinema__content">
+          <div class="nx-chips" style="margin-bottom:1rem;">
+            <span class="nx-chip">Inteligência artificial</span>
+            <span class="nx-chip">Automação</span>
+            <span class="nx-chip">Sistemas</span>
+            <span class="nx-chip">Integração</span>
+          </div>
+          <h1 class="nx-hero-cinema__title">Tecnologia<br /><span>Sem Limites</span></h1>
+          <p class="nx-hero__lead">
+            Desenvolvemos soluções personalizadas que se adaptam aos seus processos, aumentam a eficiência
+            e ajudam sua empresa a crescer com tecnologia.
+          </p>
+          <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin:1.5rem 0 2rem;">
+            <a href="contato.html" class="nx-btn nx-btn--primary">Falar com um especialista</a>
+            <a href="servicos.html" class="nx-btn nx-btn--ghost">Ver soluções</a>
+          </div>
+          <div class="nx-hero-stats">
+            <div>
+              <strong>100%</strong>
+              <span>Soluções personalizadas</span>
+            </div>
+            <div>
+              <strong>Alta</strong>
+              <span>Eficiência operacional</span>
             </div>
           </div>
-          <div class="nx-hero__visual">
-            <img src="img/robohome.png" alt="Tecnologia NEXUS" width="640" height="480" />
-          </div>
         </div>
       </section>
 
       <section class="nx-section">
-        <p class="nx-section__label">Navegação</p>
-        <h2 class="nx-section__title">Acesso rápido</h2>
-        <div class="nx-quick-grid">
-          <a href="servicos.html" class="nx-card">
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:1.5rem;">
+          <div>
+            <p class="nx-section__label">Soluções personalizadas</p>
+            <h2 class="nx-section__title" style="margin:0;">Sistemas feitos para o seu negócio</h2>
+          </div>
+          <p style="margin:0;max-width:28ch;color:var(--nx-text-muted);font-size:0.9rem;">
+            Desenvolvemos sistemas sob medida que se adaptam aos seus processos e apoiam o crescimento da sua empresa.
+          </p>
+        </div>
+
+        <div class="nx-bento">
+          <div class="nx-feature-tile nx-bento__8">
             <span class="nx-card__icon material-symbols-outlined">neurology</span>
-            <h3 class="nx-card__title">Serviços</h3>
-            <p class="nx-card__desc">Desenvolvimento, integração e automação sob medida.</p>
-            <span class="nx-card__arrow">Abrir →</span>
-          </a>
-          <a href="empresa.html" class="nx-card">
-            <span class="nx-card__icon material-symbols-outlined">apartment</span>
-            <h3 class="nx-card__title">Empresa</h3>
-            <p class="nx-card__desc">Quem somos e como trabalhamos com clientes.</p>
-            <span class="nx-card__arrow">Abrir →</span>
-          </a>
-          <a href="contato.html" class="nx-card">
-            <span class="nx-card__icon material-symbols-outlined">mail</span>
-            <h3 class="nx-card__title">Contato</h3>
-            <p class="nx-card__desc">Fale com a equipe e inicie seu projeto.</p>
-            <span class="nx-card__arrow">Abrir →</span>
-          </a>
-          <a href="/cliente/entrar" class="nx-card">
-            <span class="nx-card__icon material-symbols-outlined">lock</span>
-            <h3 class="nx-card__title">Área do Cliente</h3>
-            <p class="nx-card__desc">Acompanhe processos e contratos do seu projeto.</p>
-            <span class="nx-card__arrow">Entrar →</span>
-          </a>
-          <a href="/login" class="nx-card">
-            <span class="nx-card__icon material-symbols-outlined">hub</span>
-            <h3 class="nx-card__title">Nexus Hub</h3>
-            <p class="nx-card__desc">Painel interno da equipe NEXUS.</p>
-            <span class="nx-card__arrow">Acessar →</span>
-          </a>
-          <a href="projeto.html" class="nx-card">
-            <span class="nx-card__icon material-symbols-outlined">rocket_launch</span>
-            <h3 class="nx-card__title">Projeto</h3>
-            <p class="nx-card__desc">Como estruturamos entregas e evolução contínua.</p>
-            <span class="nx-card__arrow">Abrir →</span>
-          </a>
+            <h3 class="nx-card__title" style="font-size:1.35rem;">Desenvolvimento Sob Medida</h3>
+            <p class="nx-card__desc">Criamos sistemas personalizados, pensados para atender exatamente às necessidades do seu negócio.</p>
+          </div>
+          <div class="nx-feature-tile nx-bento__4">
+            <span class="nx-card__icon material-symbols-outlined">shield_lock</span>
+            <h3 class="nx-card__title">Integração de Sistemas</h3>
+            <p class="nx-card__desc">Conectamos suas ferramentas para centralizar e simplificar sua operação.</p>
+          </div>
+          <div class="nx-feature-tile nx-bento__4">
+            <span class="nx-card__icon material-symbols-outlined">speed</span>
+            <h3 class="nx-card__title">Escalabilidade</h3>
+            <p class="nx-card__desc">Soluções preparadas para crescer junto com sua empresa.</p>
+          </div>
+          <div class="nx-feature-tile nx-feature-tile--image nx-bento__8">
+            <img class="nx-img-silver" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8_hBUHzgtENCxKnqlr8mtOSui3TE_PEzme6cMRYFC9PYfytsdVk80TNYoYFGWWWIdd98huD-_vlJbUBXVT4ZkJ0RaIFlUuMudDQkFYuuMtfF6lwAHPNMal2xEg2wXVzVztKJLL-mXkV5U2U-xpH26iwbGs7CUt6bt4GjWtTn7ArISzws97Q144qQiQzQl4Ge7LPgzis8b0hHPLp4VhYTa-KL4GHYoggiIHCXdJx-rtx4Rs8du8edFrejYnlHEVAJFiJmOnxj8mNtb" alt="Arquitetura NEXUS" />
+            <div class="nx-feature-tile__caption">
+              <h3 style="margin:0 0 0.35rem;font-size:1.25rem;">Eficiência Operacional</h3>
+              <p style="margin:0;font-size:0.85rem;opacity:0.9;">Mais controle, menos retrabalho e processos muito mais eficientes.</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section class="nx-section">
-        <p class="nx-section__label">Resumo</p>
-        <h2 class="nx-section__title">Por que NEXUS</h2>
-        <div class="nx-summary-grid">
-          <div class="nx-panel nx-panel--accent">
-            <h3>Proposta</h3>
-            <div class="nx-stat">100%</div>
-            <p style="margin:0;color:var(--nx-text-muted);font-size:0.9rem;">Soluções personalizadas para cada operação.</p>
+      <section class="nx-section nx-split-section nx-split-section--reverse">
+        <div class="nx-split-section__media">
+          <div class="nx-media-frame">
+            <img class="nx-img-silver" src="img/logoexplodido.png" alt="Engenharia de precisão NEXUS" />
+            <div class="nx-quote-float">
+              <span class="material-symbols-outlined" style="font-size:1.75rem;color:var(--nx-text-soft);">analytics</span>
+              <p style="margin:0.65rem 0 0;font-size:0.82rem;color:var(--nx-text-muted);line-height:1.5;">
+                "Seu sistema não deve se adaptar ao negócio. O sistema deve ser feito para ele."
+              </p>
+              <p style="margin:0.5rem 0 0;font-size:0.62rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--nx-text-soft);">CEO, NEXUS</p>
+            </div>
           </div>
-          <div class="nx-panel">
-            <h3>Destaques</h3>
-            <ul class="nx-list">
-              <li>Integração entre sistemas e filas operacionais</li>
-              <li>Automação com IA aplicada ao negócio</li>
-              <li>Portal do cliente com processos e contratos</li>
-            </ul>
-          </div>
-          <div class="nx-panel">
-            <h3>Novidades</h3>
-            <ul class="nx-list">
-              <li>Site público redesenhado em light/dark/auto</li>
-              <li>Navbar e footer unificados</li>
-              <li>Experiência mobile otimizada</li>
-            </ul>
-          </div>
+        </div>
+        <div>
+          <p class="nx-section__label">Construído para o seu negócio</p>
+          <h2 class="nx-section__title">Feito para a sua realidade</h2>
+          <p style="color:var(--nx-text-muted);margin-bottom:1.25rem;line-height:1.6;">
+            Desenvolvemos sistemas sob medida, projetados para se encaixar perfeitamente nos seus processos.
+            Nada genérico, nada adaptado — tudo construído para o que sua empresa realmente precisa.
+          </p>
+          <ul class="nx-check-list">
+            <li>
+              <span class="material-symbols-outlined">check_circle</span>
+              <span><strong style="display:block;color:var(--nx-text);margin-bottom:0.15rem;">Totalmente personalizado</strong>Cada sistema é desenvolvido do zero, de acordo com suas necessidades.</span>
+            </li>
+            <li>
+              <span class="material-symbols-outlined">check_circle</span>
+              <span><strong style="display:block;color:var(--nx-text);margin-bottom:0.15rem;">Flexível e escalável</strong>A solução evolui junto com o seu negócio, sem limitações.</span>
+            </li>
+          </ul>
         </div>
       </section>
     </div>
