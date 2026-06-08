@@ -3,6 +3,16 @@
 -- ou "hub_pode_gerenciar() does not exist"
 -- =============================================================================
 
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
 -- Pré-requisitos (funções usadas pelo trigger e pelas policies RLS)
 create or replace function public.hub_current_email()
 returns text

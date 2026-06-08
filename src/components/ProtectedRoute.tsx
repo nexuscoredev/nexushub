@@ -10,7 +10,7 @@ export function ProtectedRoute({
   requireFinanceiro = false,
   requireGestao = false,
 }: ProtectedRouteProps) {
-  const { session, loading, configured, podeFinanceiroAgenda, podeGestao } =
+  const { session, loading, configured, podeFinanceiroAgenda, podeGestao, isCliente, isEquipe } =
     useAuth();
   const location = useLocation();
 
@@ -33,6 +33,14 @@ export function ProtectedRoute({
 
   if (!session) {
     return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if (isCliente && !isEquipe) {
+    return <Navigate to="/cliente" replace />;
+  }
+
+  if (!isEquipe) {
+    return <Navigate to="/login" replace />;
   }
 
   if (requireFinanceiro && !podeFinanceiroAgenda) {

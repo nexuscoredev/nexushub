@@ -1,0 +1,38 @@
+<!-- ============================================================
+     NEXUS — Navbar Universal
+     Injetado automaticamente por components.js em todas as páginas.
+     Para alterar a navbar, edite SOMENTE este arquivo.
+     ============================================================ -->
+<nav class="fixed top-0 w-full z-50 glass-nav border-b border-white/5">
+  <div class="flex justify-between items-center px-12 py-5 max-w-[1920px] mx-auto">
+
+    <!-- Logo -->
+    <a href="home.html" class="text-2xl font-normal tracking-[0.25em] text-white font-serif no-underline">NEXUS</a>
+
+    <!-- Links de navegação -->
+    <div class="hidden md:flex items-center gap-10">
+      <a class="nav-link font-medium text-xs tracking-[0.15em] uppercase" href="home.html"    data-page="home">Início</a>
+      <a class="nav-link font-medium text-xs tracking-[0.15em] uppercase" href="servicos.html" data-page="servicos">Serviços</a>
+      <a class="nav-link font-medium text-xs tracking-[0.15em] uppercase" href="empresa.html"  data-page="empresa">Empresa</a>
+      <a class="nav-link font-medium text-xs tracking-[0.15em] uppercase" href="contato.html"  data-page="contato">Contato</a>
+    </div>
+
+    <!-- Ações -->
+    <div class="flex items-center gap-3">
+      <a
+        href="/cliente/entrar"
+        class="hidden sm:inline-flex px-5 py-2.5 rounded-full text-[10px] font-bold tracking-[0.15em] uppercase border border-white/20 text-white/90 hover:border-white/40 hover:text-white transition-all no-underline"
+      >Área do Cliente</a>
+      <a
+        href="/login"
+        class="hidden md:inline-flex px-5 py-2.5 rounded-full text-[10px] font-bold tracking-[0.15em] uppercase border border-white/10 text-white/70 hover:border-white/25 hover:text-white transition-all no-underline"
+        title="Acesso restrito à equipe NEXUS"
+      >Nexus Hub</a>
+      <button
+        onclick="location.href='contato.html'"
+        class="bg-premium-gradient text-black px-8 py-2.5 rounded-full text-[10px] font-bold tracking-[0.2em] uppercase hover:shadow-[0_0_20px_rgba(229,229,229,0.4)] transition-all"
+      >Começar Agora</button>
+    </div>
+
+  </div>
+</nav>

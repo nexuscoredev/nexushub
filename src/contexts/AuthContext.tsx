@@ -8,23 +8,30 @@ import {
   type ReactNode,
 } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
+import { fetchClienteConta } from '../lib/clientePortal';
 import { normalizeUsuario } from '../lib/usuarios';
 import { podeGerenciar } from '../lib/cargos';
 import { podeAcessarFinanceiroAgenda, normalizeEmail } from '../lib/acesso';
 import { supabase, supabaseConfigured, supabaseErrorMessage } from '../lib/supabase';
+import type { HubClienteConta } from '../types/clientePortal';
 import type { HubProfile } from '../types/database';
 
 interface AuthState {
   session: Session | null;
   user: User | null;
   profile: HubProfile | null;
+  clienteConta: HubClienteConta | null;
+  isEquipe: boolean;
+  isCliente: boolean;
   loading: boolean;
   configured: boolean;
   podeFinanceiroAgenda: boolean;
   podeGestao: boolean;
   signIn: (usuario: string, password: string) => Promise<void>;
+  signInCliente: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  refreshClienteConta: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthState | null>(null);
@@ -40,10 +47,20 @@ async function fetchProfile(userId: string): Promise<HubProfile | null> {
   return data as HubProfile | null;
 }
 
+function contaClienteAtiva(conta: HubClienteConta | null): boolean {
+  if (!conta?.ativo) return false;
+  const cliente = conta.cliente;
+  if (cliente && typeof cliente === 'object' && 'ativo' in cliente) {
+    return Boolean((cliente as { ativo?: boolean }).ativo);
+  }
+  return true;
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<HubProfile | null>(null);
+  const [clienteConta, setClienteConta] = useState<HubClienteConta | null>(null);
   const [loading, setLoading] = useState(true);
 
   const refreshProfile = useCallback(async () => {
@@ -53,9 +70,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     try {
       const p = await fetchProfile(user.id);
-      setProfile(p);
+      setProfile(p?.ativo ? p : null);
     } catch {
       setProfile(null);
+    }
+  }, [user?.id]);
+
+  const refreshClienteConta = useCallback(async () => {
+    if (!user?.id) {
+      setClienteConta(null);
+      return;
+    }
+    try {
+      const conta = await fetchClienteConta(user.id);
+      setClienteConta(contaClienteAtiva(conta) ? conta : null);
+    } catch {
+      setClienteConta(null);
     }
   }, [user?.id]);
 
@@ -84,10 +114,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!user?.id) {
       setProfile(null);
+      setClienteConta(null);
       return;
     }
     void refreshProfile();
-  }, [user?.id, refreshProfile]);
+    void refreshClienteConta();
+  }, [user?.id, refreshProfile, refreshClienteConta]);
 
   const signIn = useCallback(async (usuario: string, password: string) => {
     if (!supabase) throw new Error('Supabase não configurado. Defina VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.');
@@ -104,41 +136,83 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw new Error(supabaseErrorMessage(error));
+
+    const { data: authData } = await supabase.auth.getUser();
+    const uid = authData.user?.id;
+    if (!uid) throw new Error('Sessão inválida.');
+
+    const p = await fetchProfile(uid);
+    if (!p?.ativo) {
+      await supabase.auth.signOut();
+      throw new Error('Esta conta não tem acesso ao Nexus Hub. Use a Área do Cliente.');
+    }
+  }, []);
+
+  const signInCliente = useCallback(async (email: string, password: string) => {
+    if (!supabase) throw new Error('Supabase não configurado.');
+    const mail = email.trim().toLowerCase();
+    if (!mail || !mail.includes('@')) throw new Error('Informe um e-mail válido.');
+
+    const { error } = await supabase.auth.signInWithPassword({ email: mail, password });
+    if (error) throw new Error(supabaseErrorMessage(error));
+
+    const { data: authData } = await supabase.auth.getUser();
+    const uid = authData.user?.id;
+    if (!uid) throw new Error('Sessão inválida.');
+
+    const conta = await fetchClienteConta(uid);
+    if (!contaClienteAtiva(conta)) {
+      await supabase.auth.signOut();
+      throw new Error('Esta conta não está habilitada no portal do cliente. Contacte a NEXUS.');
+    }
   }, []);
 
   const signOut = useCallback(async () => {
     if (!supabase) return;
     await supabase.auth.signOut();
     setProfile(null);
+    setClienteConta(null);
   }, []);
 
-  const email = normalizeEmail(user?.email ?? profile?.email);
+  const email = normalizeEmail(user?.email ?? profile?.email ?? clienteConta?.email);
   const podeFinanceiroAgenda = podeAcessarFinanceiroAgenda(email);
   const podeGestao = podeGerenciar(profile?.cargo);
+  const isEquipe = Boolean(profile?.ativo);
+  const isCliente = contaClienteAtiva(clienteConta);
 
   const value = useMemo<AuthState>(
     () => ({
       session,
       user,
       profile,
+      clienteConta,
+      isEquipe,
+      isCliente,
       loading,
       configured: supabaseConfigured,
       podeFinanceiroAgenda,
       podeGestao,
       signIn,
+      signInCliente,
       signOut,
       refreshProfile,
+      refreshClienteConta,
     }),
     [
       session,
       user,
       profile,
+      clienteConta,
+      isEquipe,
+      isCliente,
       loading,
       podeFinanceiroAgenda,
       podeGestao,
       signIn,
+      signInCliente,
       signOut,
       refreshProfile,
+      refreshClienteConta,
     ],
   );
 

@@ -8,8 +8,12 @@ import { AgendaPage } from './pages/AgendaPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { FilaPage } from './pages/FilaPage';
 import { FinanceiroPage } from './pages/FinanceiroPage';
-import { LandingPage } from './pages/LandingPage';
+import { ClientProtectedRoute } from './components/ClientProtectedRoute';
+import { ClientPortalLayout } from './layouts/ClientPortalLayout';
+import { ClienteLoginPage } from './pages/cliente/ClienteLoginPage';
+import { ClientePortalPage } from './pages/cliente/ClientePortalPage';
 import { LoginPage } from './pages/LoginPage';
+import { SiteRedirectPage } from './pages/SiteRedirectPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { SettingsPage } from './pages/SettingsPage';
 import { SystemsPage } from './pages/SystemsPage';
@@ -23,8 +27,14 @@ export default function App() {
       <ChatFloatProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<SiteRedirectPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/cliente/entrar" element={<ClienteLoginPage />} />
+          <Route element={<ClientProtectedRoute />}>
+            <Route element={<ClientPortalLayout />}>
+              <Route path="/cliente" element={<ClientePortalPage />} />
+            </Route>
+          </Route>
           <Route element={<ProtectedRoute />}>
             <Route element={<DashboardLayout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
