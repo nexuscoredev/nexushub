@@ -1,154 +1,90 @@
-<!DOCTYPE html><html class="dark" lang="pt-BR"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Empresa | NEXUS</title>
-<link rel="icon" type="image/png" href="img/favicon.png">
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "onyx-black": "#000000",
-                        "graphite": "#111111",
-                        "graphite-light": "#181818",
-                        "polished-silver": "#C0C0C0",
-                        "silver-shimmer": "#E5E4E2",
-                        "outline-variant": "#333333",
-                        "surface": "#000000",
-                        "surface-container": "#111111",
-                        "surface-container-low": "#0D0D0D",
-                        "surface-container-lowest": "#000000",
-                        "on-surface": "#C0C0C0",
-                        "on-surface-variant": "#999999",
-                        "primary": "#C0C0C0",
-                        "secondary": "#181818"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.125rem",
-                        "lg": "0.25rem",
-                        "xl": "0.5rem",
-                        "full": "0.75rem"
-                    },
-                    "fontFamily": {
-                        "headline": ["Noto Serif"],
-                        "body": ["Manrope"],
-                        "label": ["Manrope"]
-                    }
-                },
-            },
-        }
-    </script>
-<style type="text/tailwindcss">
-        body { font-family: 'Manrope', sans-serif; background-color: #000000; color: #C0C0C0; }
-        .font-serif { font-family: 'Noto Serif', serif; }
-        .glass-nav { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(20px); }
-        .silver-gradient { background: linear-gradient(135deg, #E5E4E2 0%, #8A8D8F 100%); }
-        .graphite-gradient { background: linear-gradient(135deg, #181818 0%, #111111 100%); }
-    </style>
-<script src="components.js" defer></script>
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light" data-theme-mode="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Empresa | NEXUS</title>
+  <link rel="icon" type="image/png" href="img/favicon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/nexus-site.css" />
+  <script src="js/theme.js"></script>
+  <script src="components.js" defer></script>
+  <script src="js/site.js" defer></script>
 </head>
-<body class="bg-onyx-black text-on-surface" data-page="empresa">
-<div id="nexus-navbar"></div>
-<header class="relative min-h-screen flex flex-col md:flex-row overflow-hidden pt-24">
-<div class="w-full md:w-1/2 flex items-center bg-onyx-black px-12 md:px-24 py-16">
-<div class="relative z-20 max-w-xl">
-<span class="font-label text-polished-silver font-bold tracking-[0.4em] uppercase text-xs mb-6 block" style="">Sobre a Nexus</span>
-<h1 class="font-headline text-silver-shimmer leading-tight mb-8 text-[51px] md:text-[76.5px]" style=""><div><span class="" style="font-size: 76.5px;">Seu negócio é único.</span></div><div><span class="" style="font-size: 76.5px;">Seu sistema também deve ser.</span></div></h1>
-<p class="font-body text-on-surface-variant text-lg leading-relaxed" style=""></p><div class="" style="">Na Nexus, desenvolvemos sistemas sob medida que resolvem problemas reais.&nbsp;</div><div class="" style="">Nada genérico, nada limitado — apenas soluções pensadas para a sua operação.<br><br><div class="" style="">O futuro da tecnologia&nbsp;<span style="font-size: 1.125rem;" class="">é personalizado.</span></div></div><p class="" style=""></p>
-</div>
-</div>
-<div class="w-full md:w-1/2 relative min-h-[400px] md:min-h-screen">
-<div class="absolute inset-0 bg-gradient-to-r from-onyx-black to-transparent z-10 pointer-events-none md:block hidden"></div>
-<img class="w-full h-full object-cover grayscale opacity-40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGDMFNeKV_vw_uwEKJWxi3sq-uv-exOhUI7dy6FymM11-JkblcEj4oByAgxnEl-av07FDtTdtDgn01w2W5mai7vYHmQXH_0GdccXWPdmAAQIrlgzlm2ZTpoOpsIXYvMMTW5rXd3EiKM0wwVzXOhgwmPOzFgDZoe12dP4YKV6sXm0ia85u-q5N1pWQSGBOo_ub4vNBdvRvX1S8NB3W7VeVVRAwur-nJ1jE_x3Ml-qUb1m7ge7A_dC5gFH7RKYRBEx_ODz5ng6t8TYph" style="">
-</div>
-</header>
-<section class="py-32 px-6 md:px-24 bg-graphite border-y border-white/5">
-<div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-16">
-<div class="w-full md:w-1/3 flex flex-col">
-<div class="md:sticky md:top-32">
-<h2 class="font-headline text-4xl md:text-5xl text-polished-silver mb-6" style="">Nossa Essência</h2>
-<p class="font-body text-on-surface-variant leading-relaxed text-lg" style=""></p><div class="" style="">Acreditamos que tecnologia só faz sentido quando resolve problemas reais.&nbsp;</div><div class="" style="">Por isso, desenvolvemos sistemas sob medida com foco em desempenho, simplicidade e crescimento sustentável.</div><p class="" style=""></p>
-</div>
-</div>
-<div class="w-full md:w-2/3 flex flex-col gap-8">
-<div class="bg-onyx-black p-10 rounded-xl border border-white/10 hover:border-polished-silver/30 transition-all">
-<span class="material-symbols-outlined text-polished-silver text-3xl mb-4" style="">rocket_launch</span>
-<h3 class="font-serif text-2xl text-white mb-4" style="">Missão</h3>
-<p class="font-body text-on-surface-variant" style="">Desenvolver sistemas personalizados que simplificam processos e impulsionam empresas.</p>
-</div>
-<div class="bg-onyx-black p-10 rounded-xl border border-white/10 hover:border-polished-silver/30 transition-all">
-<span class="material-symbols-outlined text-polished-silver text-3xl mb-4" style="">visibility</span>
-<h3 class="font-serif text-2xl text-white mb-4" style="">Visão</h3>
-<p class="font-body text-on-surface-variant" style="">Ser referência em soluções sob medida, entregando tecnologia que realmente funciona na prática.</p>
-</div>
-<div class="bg-onyx-black p-10 rounded-xl border border-white/10 hover:border-polished-silver/30 transition-all">
-<span class="material-symbols-outlined text-polished-silver text-3xl mb-4" style="">diamond</span>
-<h3 class="font-serif text-2xl text-white mb-4" style="">Valores</h3>
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-<div class="font-body text-sm text-on-surface-variant border-t border-white/5 pt-2 flex items-center gap-2" style="">
-<span class="w-1.5 h-1.5 bg-polished-silver rounded-full"></span>Clareza</div>
-<div class="font-body text-sm text-on-surface-variant border-t border-white/5 pt-2 flex items-center gap-2" style="">
-<span class="w-1.5 h-1.5 bg-polished-silver rounded-full"></span>Compromisso</div>
-<div class="font-body text-sm text-on-surface-variant border-t border-white/5 pt-2 flex items-center gap-2" style="">
-<span class="w-1.5 h-1.5 bg-polished-silver rounded-full"></span>Eficiência</div>
-<div class="font-body text-sm text-on-surface-variant border-t border-white/5 pt-2 flex items-center gap-2" style="">
-<span class="w-1.5 h-1.5 bg-polished-silver rounded-full"></span>Evolução contínua</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section class="py-32 px-6 md:px-24 bg-graphite">
-<div class="max-w-7xl mx-auto">
-<div class="mb-16">
-<h2 class="font-headline text-4xl md:text-5xl text-polished-silver" style="">Cultura Nexus</h2>
-<p class="font-body text-on-surface-variant mt-4 max-w-xl" style="">Tecnologia feita com foco, colaboração e qualidade.</p>
-</div>
-<div class="flex flex-col md:flex-row gap-12">
-<div class="w-full md:w-1/2 group">
-<div class="relative h-[600px] md:h-[800px] rounded-2xl overflow-hidden shadow-2xl border border-white/10">
-<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8Toic3JRkMN-3k8KMYmGrHZQ86_pVJ3UNcCWmT5d_VP0t8qetIzvbsDURJH9Z0PvPDG4Ks_FwANZv_s7a3y_8coLjw9I0UCoqwkiWnUoI1tCerQFMHs0THSyTwO771fDgtlrWQIz293PY0WTO2lr3RrUizgkuMRlAovW6tEoSLSxdY0sGNnvPKGAEKrGZ0TY9MS6Ta17ky4svmrsQamIVbmTJl9Wgqds53WQPNyvo4PEfg8aJ9tfDPVNyle_j_u9xmww4n_TBOiFn" style="">
-<div class="absolute inset-0 bg-gradient-to-t from-onyx-black via-transparent to-transparent p-12 flex flex-col justify-end">
-<h4 class="font-serif text-3xl text-polished-silver mb-4" style="">Ambiente de Foco</h4>
-<p class="font-body text-on-surface-variant leading-relaxed" style="">Valorizamos um ambiente organizado e produtivo, onde cada projeto recebe atenção total aos detalhes.</p>
-</div>
-</div>
-</div>
-<div class="w-full md:w-1/2 flex flex-col gap-6">
-<div class="bg-onyx-black p-8 rounded-xl flex items-center gap-8 border border-white/5 flex-1 min-h-[180px]">
-<div class="w-16 h-16 shrink-0 flex items-center justify-center bg-graphite-light rounded-full border border-white/10">
-<span class="material-symbols-outlined text-polished-silver text-3xl" style="">diversity_2</span>
-</div>
-<div>
-<h4 class="font-serif text-xl text-white mb-2" style="">Colaboração</h4>
-<p class="font-body text-sm text-on-surface-variant" style="">Trabalhamos de forma próxima e transparente para construir as melhores soluções.</p>
-</div>
-</div>
-<div class="bg-onyx-black p-8 rounded-xl flex items-center gap-8 border border-white/10 flex-1 min-h-[180px]">
-<div class="w-16 h-16 shrink-0 flex items-center justify-center bg-graphite-light rounded-full border border-white/10">
-<span class="material-symbols-outlined text-polished-silver text-3xl" style="">psychology</span>
-</div>
-<div>
-<h4 class="font-serif text-xl text-white mb-2" style="">Evolução Contínua</h4>
-<p class="font-body text-sm text-on-surface-variant" style="">Estamos sempre aprendendo e melhorando para entregar soluções cada vez mais eficientes.</p>
-</div>
-</div>
-<div class="bg-onyx-black p-8 rounded-xl flex items-center gap-8 border border-white/5 flex-1 min-h-[180px]">
-<div class="w-16 h-16 shrink-0 flex items-center justify-center bg-graphite-light rounded-full border border-white/10">
-<span class="material-symbols-outlined text-polished-silver text-3xl" style="">workspace_premium</span>
-</div>
-<div>
-<h4 class="font-serif text-xl text-white mb-2" style="">Qualidade</h4>
-<p class="font-body text-sm text-on-surface-variant" style="">Cada sistema é desenvolvido com cuidado, garantindo performance, estabilidade e confiança.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<div id="nexus-footer"></div>
-</body></html>
+<body data-page="empresa">
+  <div id="nexus-navbar"></div>
+
+  <main class="nx-page">
+    <div class="nx-container">
+      <section class="nx-hero">
+        <div class="nx-hero__grid">
+          <div>
+            <span class="nx-eyebrow">Sobre a NEXUS</span>
+            <h1 class="nx-hero__title">Seu negócio é único. <span>Seu sistema também.</span></h1>
+            <p class="nx-hero__lead">
+              Desenvolvemos sistemas sob medida que resolvem problemas reais — nada genérico, nada limitado.
+              O futuro da tecnologia é personalizado.
+            </p>
+          </div>
+          <div class="nx-hero__visual">
+            <img src="img/robohome.png" alt="NEXUS Technology" width="640" height="480" />
+          </div>
+        </div>
+      </section>
+
+      <section class="nx-section">
+        <p class="nx-section__label">Essência</p>
+        <h2 class="nx-section__title">Nossa essência</h2>
+        <div class="nx-summary-grid">
+          <div class="nx-panel">
+            <span class="material-symbols-outlined" style="color:var(--nx-text-soft);margin-bottom:0.5rem;">rocket_launch</span>
+            <h3>Missão</h3>
+            <p style="margin:0;color:var(--nx-text-muted);font-size:0.9rem;">Desenvolver sistemas personalizados que simplificam processos e impulsionam empresas.</p>
+          </div>
+          <div class="nx-panel">
+            <span class="material-symbols-outlined" style="color:var(--nx-text-soft);margin-bottom:0.5rem;">visibility</span>
+            <h3>Visão</h3>
+            <p style="margin:0;color:var(--nx-text-muted);font-size:0.9rem;">Ser referência em soluções sob medida, entregando tecnologia que funciona na prática.</p>
+          </div>
+          <div class="nx-panel">
+            <span class="material-symbols-outlined" style="color:var(--nx-text-soft);margin-bottom:0.5rem;">diamond</span>
+            <h3>Valores</h3>
+            <ul class="nx-list">
+              <li>Clareza</li>
+              <li>Compromisso</li>
+              <li>Eficiência</li>
+              <li>Evolução contínua</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="nx-section">
+        <p class="nx-section__label">Cultura</p>
+        <h2 class="nx-section__title">Cultura NEXUS</h2>
+        <div class="nx-grid-2">
+          <div class="nx-content-block">
+            <h2>Colaboração</h2>
+            <p>Trabalhamos de forma próxima e transparente para construir as melhores soluções.</p>
+          </div>
+          <div class="nx-content-block">
+            <h2>Evolução contínua</h2>
+            <p>Estamos sempre aprendendo e melhorando para entregar soluções cada vez mais eficientes.</p>
+          </div>
+          <div class="nx-content-block">
+            <h2>Qualidade</h2>
+            <p>Cada sistema é desenvolvido com cuidado, garantindo performance, estabilidade e confiança.</p>
+          </div>
+          <div class="nx-content-block">
+            <h2>Foco</h2>
+            <p>Valorizamos um ambiente organizado e produtivo, com atenção total aos detalhes de cada projeto.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="nexus-footer"></div>
+</body>
+</html>

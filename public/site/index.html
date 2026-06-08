@@ -1,113 +1,34 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light" data-theme-mode="light">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>NEXUS | Tecnologia Sob Medida</title>
-<link rel="icon" type="image/png" href="img/favicon.png">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;900&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXUS | Tecnologia Sob Medida</title>
+  <link rel="icon" type="image/png" href="img/favicon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/nexus-site.css" />
+  <script src="js/theme.js"></script>
 </head>
-<body style="font-family: Inter, sans-serif; background: #131313; color: #e4e2e1;">
-
-<main style="position:relative; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden; background:#131313;">
-
-  <!-- Background image -->
-  <div style="position:absolute;inset:0;z-index:0;pointer-events:none;">
-    <div style="position:absolute;inset:0;background-image:url('img/iconelogo.png');background-size:cover;background-position:center;opacity:0.45;"></div>
-    <div style="position:absolute;inset:0;background:linear-gradient(to top,#131313 0%,rgba(19,19,19,0.4) 50%,rgba(19,19,19,0.2) 100%);"></div>
-  </div>
-
-  <!-- Glows -->
-  <div style="position:absolute;top:-10%;left:-10%;width:40%;height:40%;background:rgba(145,145,145,0.12);filter:blur(120px);border-radius:9999px;z-index:1;pointer-events:none;"></div>
-  <div style="position:absolute;bottom:-10%;right:-10%;width:30%;height:30%;background:rgba(146,144,144,0.07);filter:blur(100px);border-radius:9999px;z-index:1;pointer-events:none;"></div>
-  <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:500px;height:500px;background:rgba(198,198,198,0.06);filter:blur(150px);border-radius:9999px;z-index:1;pointer-events:none;"></div>
-
-  <!-- Content -->
-  <div style="position:relative;z-index:10;width:100%;max-width:860px;margin:0 auto;padding:0 2rem;display:flex;flex-direction:column;align-items:center;text-align:center;gap:1.75rem;">
-
-    <!-- NEXUS -->
-    <h2 style="
-      font-family:Inter,sans-serif;
-      font-size:clamp(4.5rem,16vw,9.9rem);
-      font-weight:300;
-      letter-spacing:0.18em;
-      padding-right:0.18em;
-      text-transform:uppercase;
-      background:linear-gradient(180deg,#ffffff 0%,#d0d0d0 40%,#6a6a6a 100%);
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-      background-clip:text;
-      line-height:1;
-      user-select:none;
-      display:inline-block;
-    ">NEXUS</h2>
-
-    <!-- Eyebrows -->
-    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:0.6rem;">
-      <span style="padding:0.3rem 0.875rem;border-radius:9999px;border:1px solid rgba(65,71,83,0.4);background:rgba(27,28,28,0.6);color:#c6c6c6;font-size:0.6rem;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;">VISÃO</span>
-      <span style="padding:0.3rem 0.875rem;border-radius:9999px;border:1px solid rgba(65,71,83,0.4);background:rgba(27,28,28,0.6);color:#c6c6c6;font-size:0.6rem;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;">INTELIGÊNCIA</span>
-      <span style="padding:0.3rem 0.875rem;border-radius:9999px;border:1px solid rgba(65,71,83,0.4);background:rgba(27,28,28,0.6);color:#c8c6c5;font-size:0.6rem;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;">IA E AUTOMAÇÃO</span>
-    </div>
-
-    <!-- Headline -->
-    <div style="display:flex;flex-direction:column;align-items:center;gap:0.75rem;">
-      <h1 style="
-        font-family:Inter,sans-serif;
-        font-size:clamp(1.25rem,3vw,2.1rem);
-        font-weight:600;
-        color:#ffffff;
-        line-height:1.15;
-        filter:drop-shadow(0 0 18px rgba(220,230,255,0.55)) drop-shadow(0 0 40px rgba(180,200,255,0.3));
-      ">
-        Tecnologia
-        <span style="
-          font-style:italic;
-          font-weight:200;
-          font-size:0.75em;
-          color:#dce6ff;
-          margin-left:0.2em;
-          text-shadow:0 2px 8px rgba(0,0,0,0.9),0 4px 20px rgba(0,0,0,0.7),0 0 30px rgba(150,170,255,0.5);
-        ">Sob Medida</span>
-      </h1>
-
-      <p style="font-size:clamp(0.65rem,1.2vw,0.78rem);color:#c1c6d5;font-weight:300;line-height:1.7;max-width:460px;margin:0 auto;">
-        Tecnologia personalizada que se adapta ao seu negócio <em>— e não o contrário</em>.
+<body>
+  <main class="nx-splash">
+    <div class="nx-splash__card">
+      <div style="display:flex;align-items:center;gap:0.75rem;">
+        <img src="img/favicon.png" alt="" width="56" height="56" style="border-radius:50%;box-shadow:0 0 24px var(--nx-hero-glow);" />
+        <div style="text-align:left;">
+          <div class="nx-splash__logo" style="font-size:clamp(2.2rem,8vw,3.5rem);margin:0;">NEXUS</div>
+          <div style="font-size:clamp(1.4rem,5vw,2rem);font-weight:700;letter-spacing:0.04em;margin-top:-0.15rem;">Hub</div>
+        </div>
+      </div>
+      <div class="nx-chips">
+        <span class="nx-chip">Visão</span>
+        <span class="nx-chip">Inteligência</span>
+        <span class="nx-chip">IA e Automação</span>
+      </div>
+      <p style="margin:0;color:var(--nx-text-muted);max-width:32ch;font-size:0.95rem;">
+        Tecnologia personalizada que se adapta ao seu negócio.
       </p>
+      <a href="home.html" class="nx-btn nx-btn--primary">Começar agora</a>
     </div>
-
-    <!-- CTA -->
-    <button style="
-      padding:0.8rem 2rem;
-      border-radius:9999px;
-      font-family:Inter,sans-serif;
-      font-weight:600;
-      font-size:0.65rem;
-      letter-spacing:0.15em;
-      text-transform:uppercase;
-      background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 50%,#7f8c8d 100%);
-      color:#1a1a1a;
-      border:none;
-      cursor:pointer;
-      box-shadow:0 10px 30px -5px rgba(0,0,0,0.5);
-      display:inline-flex;
-      align-items:center;
-      gap:0.5rem;
-      transition:transform 0.2s,opacity 0.2s;
-    "
-    onmouseover="this.style.opacity='0.9';this.style.transform='scale(1.02)'"
-    onmouseout="this.style.opacity='1';this.style.transform='scale(1)'"
-    onmousedown="this.style.transform='scale(0.97)'"
-    onmouseup="this.style.transform='scale(1.02)'" onclick="location.href='home.html'"
-    >
-      COMEÇAR AGORA
-      <span style="font-family:'Material Symbols Outlined';font-size:1rem;">arrow_forward</span>
-    </button>
-
-  </div>
-</main>
+  </main>
 </body>
 </html>

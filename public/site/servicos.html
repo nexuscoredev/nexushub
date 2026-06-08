@@ -1,215 +1,76 @@
 <!DOCTYPE html>
-
-<html class="dark" lang="pt-BR"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Serviços | NEXUS</title>
-<link rel="icon" type="image/png" href="img/favicon.png">
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "outline-variant": "#444650",
-                    "on-tertiary-container": "#d37758",
-                    "surface-container-high": "#121212",
-                    "surface-dim": "#050505",
-                    "surface-container-highest": "#1a1a1a",
-                    "secondary": "#E5E5E5",
-                    "on-surface-variant": "#A0A0A0",
-                    "secondary-fixed": "#E5E5E5",
-                    "inverse-surface": "#e5e2e3",
-                    "outline": "#E5E5E5",
-                    "secondary-container": "#1a1a1a",
-                    "primary-container": "#E5E5E5",
-                    "surface-variant": "#1c1c1e",
-                    "on-primary-container": "#000000",
-                    "surface": "#050505",
-                    "surface-container-low": "#0a0a0a",
-                    "on-primary-fixed": "#000000",
-                    "on-primary": "#000000",
-                    "error": "#ffb4ab",
-                    "surface-container": "#0a0a0a",
-                    "inverse-on-surface": "#313031",
-                    "on-secondary-container": "#E5E5E5",
-                    "surface-container-lowest": "#000000",
-                    "surface-tint": "#E5E5E5",
-                    "primary-fixed-dim": "#E5E5E5",
-                    "background": "#050505",
-                    "error-container": "#93000a",
-                    "on-secondary-fixed": "#000000",
-                    "surface-bright": "#222222",
-                    "on-error-container": "#ffdad6",
-                    "on-background": "#e5e2e3",
-                    "primary": "#E5E5E5",
-                    "on-surface": "#E5E5E5",
-                    "secondary-fixed-dim": "#A0A0A0",
-                    "primary-fixed": "#E5E5E5",
-                    "on-secondary": "#000000",
-                    "inverse-primary": "#444444",
-                    "on-error": "#690005",
-                    "on-primary-fixed-variant": "#222222"
-            },
-            "borderRadius": {
-                    "DEFAULT": "0.125rem",
-                    "lg": "0.25rem",
-                    "xl": "0.5rem",
-                    "full": "0.75rem"
-            },
-            "fontFamily": {
-                    "headline": ["Noto Serif"],
-                    "body": ["Manrope"],
-                    "label": ["Manrope"]
-            }
-          },
-        },
-      }
-    </script>
-<style type="text/tailwindcss">
-        body { font-family: 'Manrope', sans-serif; }
-        .font-serif { font-family: 'Noto Serif', serif; }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
-        }
-        .bg-premium-gradient {
-            background: linear-gradient(135deg, #E5E5E5 0%, #A0A0A0 100%);
-        }
-        .bg-dark-liquid {
-            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
-        }
-        .glass-nav {
-            background: rgba(5, 5, 5, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(229, 229, 229, 0.1);
-        }
-        .glass-card {
-            background: rgba(26, 26, 26, 0.6);
-            backdrop-filter: blur(12px);
-            border: 0.5px solid rgba(229, 229, 229, 0.15);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .glass-card:hover {
-            border-color: rgba(229, 229, 229, 0.5);
-            background: rgba(35, 35, 35, 0.8);
-            box-shadow: 0 0 30px rgba(229, 229, 229, 0.05);
-        }
-        .text-glow-primary {
-            text-shadow: 0 0 15px rgba(229, 229, 229, 0.3);
-        }
-    </style>
-<script src="components.js" defer></script>
+<html lang="pt-BR" data-theme="light" data-theme-mode="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Serviços | NEXUS</title>
+  <link rel="icon" type="image/png" href="img/favicon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/nexus-site.css" />
+  <script src="js/theme.js"></script>
+  <script src="components.js" defer></script>
+  <script src="js/site.js" defer></script>
 </head>
-<body class="bg-surface text-on-surface selection:bg-white/20 selection:text-white" data-page="servicos">
-<div id="nexus-navbar"></div>
-<main class="pt-0">
-<section class="relative min-h-[870px] flex items-center px-12 py-24 overflow-hidden">
-<div class="absolute inset-0 z-0">
-<div class="absolute inset-0 bg-gradient-to-r from-surface via-surface/90 to-transparent z-10"></div>
-<img class="w-full h-full object-cover opacity-40 scale-105 grayscale contrast-125" data-alt="abstract digital waves in deep charcoal and black with ethereal silver light particles flowing horizontally" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-n4uzPglCytNvRLq5eDP_MQtqC2G_nYLdWtzDdWP5BKmOX3mMZAEvw_qBv5peHwa_ZYms1_EAl9p7mmj59FnmRo0lZEm5WIthal1bEUfbyW-3xYH1ISMTea3jUotK607nKu65Aer-v0TNlR1i0rdFosokPJzK8YW1BqQrVOVNmE9DcEW4ldo8qc8gubWALMRK5VePgYDjrtS5DrszTqqRtILBd4yo6NBIc-Wli0CcZBK1QWbaD6PMADryLqnF-eSrw1Mf-1NwvXPU" style=""/>
-</div>
-<div class="relative z-20 max-w-5xl">
-<span class="inline-block text-white/40 font-bold tracking-[0.4em] uppercase text-[10px] mb-8 border-l-2 border-primary/50 pl-4" style="">NOSSAS SOLUÇÕES</span>
-<h1 class="font-serif leading-[1.1] text-on-surface mb-10 tracking-tight text-5xl md:text-7xl lg:text-8xl" style="">
-                    O sistema certo<br/><span class="italic text-primary-fixed-dim font-light text-glow-primary" style="">muda tudo</span></h1>
-<p class="text-on-surface-variant text-lg md:text-xl max-w-2xl font-light leading-relaxed mb-14 opacity-80" style="">
-                    Desenvolvemos sistemas personalizados, integrações e automações que se adaptam à realidade da sua empresa e melhoram sua operação.
-                </p>
-<div class="flex gap-8">
-<button class="bg-premium-gradient text-black px-12 py-5 rounded-full text-xs font-bold tracking-[0.2em] uppercase flex items-center gap-3 group hover:scale-[1.02] transition-transform shadow-xl shadow-white/5" style="">
-                        Ver soluções<span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform" style="">arrow_forward</span>
-</button>
-</div>
-</div>
-</section>
-<section class="px-12 py-40 bg-surface-container-lowest">
-<div class="max-w-[1440px] mx-auto">
-<div class="flex flex-col md:flex-row md:items-end justify-between mb-32 gap-8">
-<div class="max-w-2xl">
-<h2 class="font-serif text-5xl md:text-6xl mb-8 tracking-tight text-white" style="">Nossas Soluções</h2>
-<p class="text-on-surface-variant text-xl font-light" style="">Sistemas e soluções desenvolvidos sob medida para atender às necessidades reais do seu negócio.</p>
-</div>
-<div class="h-px flex-grow bg-white/10 mx-16 hidden lg:block mb-8"></div>
-<div class="text-right">
-<span class="font-serif italic text-3xl text-primary-fixed-dim" style="">Nexus</span>
-</div>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-<div class="group glass-card p-10 h-full flex flex-col justify-between cursor-pointer">
-<div>
-<div class="w-14 h-14 mb-14 flex items-center justify-center bg-white/10 text-white rounded-xl shadow-lg border border-white/5 group-hover:bg-white group-hover:text-black transition-all">
-<span class="material-symbols-outlined text-3xl" data-icon="neurology" style="">neurology</span>
-</div>
-<h3 class="font-serif mb-6 text-white text-xl" style="">Desenvolvimento Sob Medida</h3>
-<p class="text-on-surface-variant font-light text-sm leading-relaxed mb-10 opacity-70" style="">Criamos sistemas personalizados, pensados para resolver exatamente o que sua empresa precisa.</p>
-</div>
-<span class="material-symbols-outlined text-primary-fixed-dim self-end opacity-20 group-hover:opacity-100 transition-opacity" style="">arrow_outward</span>
-</div>
-<div class="group glass-card p-10 h-full flex flex-col justify-between cursor-pointer lg:mt-12">
-<div>
-<div class="w-14 h-14 mb-14 flex items-center justify-center bg-white/10 text-white rounded-xl shadow-lg border border-white/5 group-hover:bg-white group-hover:text-black transition-all">
-<span class="material-symbols-outlined text-3xl" data-icon="shield_lock" style="">shield_lock</span>
-</div>
-<h3 class="font-serif text-2xl mb-6 text-white" style="">Integração de Sistemas</h3>
-<p class="text-on-surface-variant font-light text-sm leading-relaxed mb-10 opacity-70" style="">Conectamos diferentes ferramentas e plataformas para centralizar e simplificar sua operação.</p>
-</div>
-<span class="material-symbols-outlined text-primary-fixed-dim self-end opacity-20 group-hover:opacity-100 transition-opacity" style="">arrow_outward</span>
-</div>
-<div class="group glass-card p-10 h-full flex flex-col justify-between cursor-pointer">
-<div>
-<div class="w-14 h-14 mb-14 flex items-center justify-center bg-white/10 text-white rounded-xl shadow-lg border border-white/5 group-hover:bg-white group-hover:text-black transition-all">
-<span class="material-symbols-outlined text-3xl" data-icon="robot_2" style="">robot_2</span>
-</div>
-<h3 class="font-serif text-2xl mb-6 text-white" style="">Automação de Processos</h3>
-<p class="text-on-surface-variant font-light text-sm leading-relaxed mb-10 opacity-70" style="">Automatizamos tarefas repetitivas para aumentar a produtividade e reduzir erros.</p>
-</div>
-<span class="material-symbols-outlined text-primary-fixed-dim self-end opacity-20 group-hover:opacity-100 transition-opacity" style="">arrow_outward</span>
-</div>
-<div class="group glass-card p-10 h-full flex flex-col justify-between cursor-pointer lg:mt-12">
-<div>
-<div class="w-14 h-14 mb-14 flex items-center justify-center bg-white/10 text-white rounded-xl shadow-lg border border-white/5 group-hover:bg-white group-hover:text-black transition-all">
-<span class="material-symbols-outlined text-3xl" data-icon="strategy" style="">strategy</span>
-</div>
-<h3 class="font-serif text-2xl mb-6 text-white" style="">Otimização Operacional</h3>
-<p class="text-on-surface-variant font-light text-sm leading-relaxed mb-10 opacity-70" style="">Analisamos e melhoramos seus processos para tornar sua operação mais eficiente.</p>
-</div>
-<span class="material-symbols-outlined text-primary-fixed-dim self-end opacity-20 group-hover:opacity-100 transition-opacity" style="">arrow_outward</span>
-</div>
-</div>
-</div>
-</section>
-<section class="px-12 py-32 bg-surface">
-<div class="max-w-[1440px] mx-auto text-center">
-<span class="text-white/20 font-bold tracking-[0.4em] uppercase text-[9px] block mb-12" style="">Powered By World-Class Technology</span>
-<div class="flex flex-wrap justify-center items-center gap-16 md:gap-32 opacity-20 grayscale invert hover:opacity-60 transition-all duration-1000">
-<img class="h-7 md:h-9 object-contain" data-alt="minimalist corporate logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4X8RNdjwxa-u3mTK1lGI0YVhnqe1msJ71M3a0EUAgjNG2nrAIp0PH7JyBAiNUSsREITwOGrsNMNY13v9eQf-ZMiIcjAmU3a-eMcxH7XRu7_NiX8V5EKZspKPBgA7Bba_ykHq7DV-7iynQtWxOsD5tP-u5nopIM3Os6NbNAAV1EL_VRcdRIIT2rlOy596wknRgAN44gnvMGcECvPPiS6WecAVFE8u54XBpfYjOU0PiEo0OxKTCBQ_-HwJRAD2Whmrvb6u33vxIr4Ik" style=""/>
-<img class="h-7 md:h-9 object-contain" data-alt="sleek modern logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDMAZp6xDqXBG9xEvBjnfYvyriASE-uD7fXwj788n2JChVEv_AkSKoob-yRDAib26tBnl4Mxcqt2WhCorcxj8fMIatc27Wv_mLmyORVc0gSDGz_GJ2NZRLN9Um21E1k42gACuqWRS-cYDY6ZIQHitoqV9uR4qQNDJ5yrGGXr2JP4swFACzZY44dDOUwL1rB5PlixO7uWYqMsUwnrTMgQRUwI7uZVNPirhV8aVpopX6Ve5FZXUDaAufNlfrNA-z6ebfMEqdITfe8QIl" style=""/>
-<img class="h-7 md:h-9 object-contain" data-alt="minimalist typography logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDA8C7lh1FL0A8kJOlN3ELOTZ6KOwDhsEaAUvcwLLlPOdtTJ25XoXI-hDRfzxPOtpa9daod5xsNvanRh8Dz9vEdzB0tCqgN-xDNxSnr9CUQiabZDrtyW_X0c_njUTUUDj4zUmnqOpDu10GGryJ9kw3LB76yvHCdt9ia9oQAdMcEINftQDMUujt8fluxDZiaQLhRGI5WmKuQRogTFGpUyI6l7aGsOqtiDikjScCKB2oDUKNVi_V-K5J4WAN70Zq1FuEwECbD-14aWo8L" style=""/>
-<img class="h-7 md:h-9 object-contain" data-alt="abstract technological logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTMeuNuyOqnbY4uC01CbqYq2DwX0urGkXmGZF0QNZHsVE4-FyVGf7I6-prfzVMiVTFOaL3bmSvdOCzsqPCrjrbt2pbrPyp_g26bDwwZUksOjYoYIf4otj14rnGrTu6y27hDYfQsH8d53TrhxkZwS9zphRv7VKGls2-9sYAfceTsQkgT0aT9_dnI5TrRatZtOfIozs3l6GlTZHh-XJQ6cErfImjiyn6ReZmJofSr-Cl9jxKCu3LbPO5-5llwyNhULIBlNyaMoM5tT94" style=""/>
-<img class="h-7 md:h-9 object-contain" data-alt="clean geometric logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8ApTvyjo3dy2T69V4RpLmPvtOlz0OizcZOMAFKMasXS8oV1ETUeXsBme2YSgTgpOGEnIq3SRxZMno8P2G1QO8ELYl7zMDcBkPp56FkEGwe0qMB0P-QqODXDBM4pD7YJfsMGxV49pgPLU15KheHcbm-CKuisaEukx4QPaM3bG0vHZUEj-uucNRBr50-w_ek3BRqKKK-xw_UewY4gX2Qjc_pN-lkqaQm7zJDZ_Oo0OZzZZgiD9yGsK4Q8inCojL1eV5veZhWSlv4mri" style=""/>
-</div>
-</div>
-</section>
-<section class="px-12 py-40">
-<div class="max-w-[1440px] mx-auto bg-surface-container-high relative overflow-hidden rounded-2xl border border-white/5">
-<div class="absolute inset-0 z-0">
-<div class="absolute inset-0 bg-gradient-to-r from-surface-container-high via-surface-container-high/70 to-transparent z-10"></div>
-<img class="w-full h-full object-cover opacity-20 grayscale" data-alt="close-up of high-tech fiber optic cables with metallic sheen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBumDjEq2DfPxy3oqzumCEdl7b4cffnDGH_s6prxTYCowl7nUBMbSved25UMemCRIVOWTP5AXi4MY-K0PZ9XSU65bao-P9A1gs7Pe1MrGbFnpp477Qoc2ZpGcF5pgzLsPB7zIt4uNikfy_3pHPmq7ttZKY27qwOlq2c4tr74cb-OsXq-46RFG89TyoD761quT6Y111iah0mk5AuWfDryvTHXasv7VIg66UKwtIwsf4XV3LWxQ5P7f33kSb_Uim8GaEeRG_l7Fz62DZe" style=""/>
-</div>
-<div class="relative z-20 max-w-2xl p-16 md:p-24">
-<h2 class="font-serif text-5xl md:text-7xl mb-10 leading-tight tracking-tight text-white" style="">Pronto para ter um sistema feito para o seu negócio?</h2>
-<p class="text-on-surface-variant text-xl mb-16 font-light opacity-80" style="">Nada de adaptações limitadas. Criamos soluções pensadas exatamente para a sua operação.</p>
-<div class="flex flex-col sm:flex-row gap-8">
-<button class="bg-premium-gradient text-black px-14 py-5 rounded-full text-xs font-bold tracking-[0.2em] uppercase shadow-2xl shadow-white/5 hover:scale-[1.05] transition-all" style="">Falar com um Especialista</button>
-<button onclick="location.href='contato.html'" class="border border-white/20 text-white px-14 py-5 rounded-full text-xs font-bold tracking-[0.2em] uppercase hover:bg-white/5 transition-colors" style="">Ver Soluções</button>
-</div>
-</div>
-</div>
-</section>
-</main>
-<div id="nexus-footer"></div>
-</body></html>
+<body data-page="servicos">
+  <div id="nexus-navbar"></div>
+
+  <main class="nx-page">
+    <div class="nx-container">
+      <section class="nx-hero">
+        <div class="nx-hero__grid">
+          <div>
+            <span class="nx-eyebrow">Nossas soluções</span>
+            <h1 class="nx-hero__title">O sistema certo <span>muda tudo</span></h1>
+            <p class="nx-hero__lead">
+              Desenvolvemos sistemas personalizados, integrações e automações que se adaptam à realidade da sua empresa.
+            </p>
+            <a href="contato.html" class="nx-btn nx-btn--primary" style="margin-top:1.25rem;">Falar com especialista</a>
+          </div>
+          <div class="nx-hero__visual">
+            <img src="img/robohome.png" alt="Soluções NEXUS" width="640" height="480" />
+          </div>
+        </div>
+      </section>
+
+      <section class="nx-section">
+        <p class="nx-section__label">Portfólio</p>
+        <h2 class="nx-section__title">Soluções sob medida</h2>
+        <div class="nx-grid-4">
+          <div class="nx-card">
+            <span class="nx-card__icon material-symbols-outlined">neurology</span>
+            <h3 class="nx-card__title">Desenvolvimento</h3>
+            <p class="nx-card__desc">Sistemas personalizados pensados para resolver exatamente o que sua empresa precisa.</p>
+          </div>
+          <div class="nx-card">
+            <span class="nx-card__icon material-symbols-outlined">shield_lock</span>
+            <h3 class="nx-card__title">Integração</h3>
+            <p class="nx-card__desc">Conectamos ferramentas e plataformas para centralizar e simplificar sua operação.</p>
+          </div>
+          <div class="nx-card">
+            <span class="nx-card__icon material-symbols-outlined">robot_2</span>
+            <h3 class="nx-card__title">Automação</h3>
+            <p class="nx-card__desc">Automatizamos tarefas repetitivas para aumentar produtividade e reduzir erros.</p>
+          </div>
+          <div class="nx-card">
+            <span class="nx-card__icon material-symbols-outlined">strategy</span>
+            <h3 class="nx-card__title">Otimização</h3>
+            <p class="nx-card__desc">Analisamos e melhoramos processos para tornar sua operação mais eficiente.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="nx-cta">
+        <h2>Pronto para ter um sistema feito para o seu negócio?</h2>
+        <p>Nada de adaptações limitadas. Criamos soluções pensadas exatamente para a sua operação.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:0.65rem;">
+          <a href="contato.html" class="nx-btn nx-btn--primary">Falar com especialista</a>
+          <a href="projeto.html" class="nx-btn nx-btn--ghost">Solicitar projeto</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="nexus-footer"></div>
+</body>
+</html>

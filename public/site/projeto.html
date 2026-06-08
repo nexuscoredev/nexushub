@@ -1,246 +1,84 @@
 <!DOCTYPE html>
-<html class="dark" lang="pt-BR">
+<html lang="pt-BR" data-theme="light" data-theme-mode="light">
 <head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Projeto | NEXUS</title>
-<link rel="icon" type="image/png" href="img/favicon.png">
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-<script id="tailwind-config">
-    tailwind.config = {
-        darkMode: "class",
-        theme: {
-            extend: {
-                "colors": {
-                    "onyx-black": "#000000",
-                    "graphite": "#111111",
-                    "graphite-light": "#181818",
-                    "polished-silver": "#C0C0C0",
-                    "silver-shimmer": "#E5E4E2",
-                    "outline-variant": "#333333",
-                    "surface": "#000000",
-                    "surface-container": "#111111",
-                    "surface-container-low": "#0D0D0D",
-                    "surface-container-lowest": "#000000",
-                    "surface-container-high": "#1a1a1a",
-                    "on-surface": "#C0C0C0",
-                    "on-surface-variant": "#999999",
-                    "primary": "#C0C0C0",
-                    "on-primary": "#000000",
-                    "secondary": "#181818"
-                },
-                "borderRadius": {
-                    "DEFAULT": "0.125rem",
-                    "lg": "0.25rem",
-                    "xl": "0.5rem",
-                    "2xl": "1rem",
-                    "full": "0.75rem"
-                },
-                "fontFamily": {
-                    "headline": ["Noto Serif"],
-                    "body": ["Manrope"],
-                    "label": ["Manrope"]
-                }
-            },
-        },
-    }
-</script>
-<style type="text/tailwindcss">
-    body { font-family: 'Manrope', sans-serif; background-color: #000000; color: #C0C0C0; }
-    .font-serif { font-family: 'Noto Serif', serif; }
-    .glass-nav { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(20px); }
-    .silver-gradient { background: linear-gradient(135deg, #E5E4E2 0%, #8A8D8F 100%); }
-    .silver-gradient-text {
-        background: linear-gradient(135deg, #FFFFFF 0%, #C0C0C0 50%, #8F9194 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-    .glass-panel {
-        background: rgba(17, 17, 17, 0.8);
-        backdrop-filter: blur(32px);
-        border: 0.5px solid rgba(192, 192, 192, 0.2);
-    }
-    .metallic-button {
-        background: linear-gradient(135deg, #E5E4E2 0%, #C0C0C0 100%);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .metallic-button:hover {
-        filter: brightness(1.1);
-        box-shadow: 0 0 20px rgba(192, 192, 192, 0.4);
-    }
-    .material-symbols-outlined {
-        font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
-        display: inline-block;
-        line-height: 1;
-    }
-</style>
-<script src="components.js" defer></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projeto | NEXUS</title>
+  <link rel="icon" type="image/png" href="img/favicon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/nexus-site.css" />
+  <script src="js/theme.js"></script>
+  <script src="components.js" defer></script>
+  <script src="js/site.js" defer></script>
 </head>
-<body class="bg-onyx-black text-on-surface" data-page="projeto">
+<body data-page="projeto">
+  <div id="nexus-navbar"></div>
 
-<!-- Universal Navbar -->
-<div id="nexus-navbar"></div>
+  <main class="nx-page">
+    <div class="nx-container" style="max-width:52rem;">
+      <header class="nx-page-hero" style="text-align:center;">
+        <span class="nx-eyebrow">Solicite um projeto</span>
+        <h1>Conte sobre o seu projeto</h1>
+        <p style="margin-inline:auto;">Vamos entender sua necessidade e desenvolver uma solução sob medida para o seu negócio.</p>
+      </header>
 
-<main class="pt-32 pb-20 min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+      <div class="nx-content-block">
+        <form class="nx-form">
+          <div class="nx-field">
+            <label>Tipo de projeto</label>
+            <div class="nx-chip-select">
+              <label><input type="checkbox" name="tipo" /><span><span class="material-symbols-outlined">psychology</span>Sistema sob medida</span></label>
+              <label><input type="checkbox" name="tipo" /><span><span class="material-symbols-outlined">precision_manufacturing</span>Automação</span></label>
+              <label><input type="checkbox" name="tipo" /><span><span class="material-symbols-outlined">hub</span>Integração</span></label>
+              <label><input type="checkbox" name="tipo" /><span><span class="material-symbols-outlined">add</span>Outro</span></label>
+            </div>
+          </div>
 
-    <!-- Background Monolith Visual -->
-    <div class="absolute inset-0 z-0 opacity-10 pointer-events-none">
-        <img
-            alt=""
-            class="w-full h-full object-cover grayscale"
-            src="https://lh3.googleusercontent.com/aida/ADBb0ujFfWRtuY05DP2OAO-GFmJr-22n8USpxXka91M4cy3H7hlnpz1dMd6fkabshCQrcAFRX0rt5ybqCFuf438-fRXkQ5dPoeeMqiuXYit1jPPjJfvYk3817seigBGyhW2T8FwEaoc9WgoJEl8RIY7suq5uGeiP3tCq_bRR2PkxpzQv6u-YCl6zCXBksP7wwz9rJ_AsBNmu7zfQBZTiBkpDa7kx_4edHas7bRhI8JtCYAgTEy-d3gYGhg2FtEDfd3UEXKbJRoyr5eoFffw"
-        >
-    </div>
+          <div class="nx-field">
+            <label for="descricao">Descreva sua necessidade</label>
+            <textarea id="descricao" placeholder="Explique o que você precisa, seus desafios atuais e o que gostaria de melhorar..."></textarea>
+          </div>
 
-    <div class="container max-w-5xl px-6 md:px-24 z-10">
+          <div class="nx-grid-2">
+            <div class="nx-field">
+              <label for="orcamento">Orçamento estimado (R$)</label>
+              <input id="orcamento" type="text" placeholder="0.000.000" />
+            </div>
+            <div class="nx-field">
+              <label for="prazo">Prazo desejado</label>
+              <select id="prazo">
+                <option>Até 1 mês</option>
+                <option>1 a 3 meses</option>
+                <option>3 a 6 meses</option>
+                <option>Mais de 6 meses</option>
+              </select>
+            </div>
+          </div>
 
-        <!-- Header Section -->
-        <div class="text-center mb-16">
-            <span class="font-label text-polished-silver font-bold tracking-[0.4em] uppercase text-xs mb-6 block">
-                Solicite um Projeto
+          <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;padding-top:0.5rem;border-top:1px solid var(--nx-border);">
+            <span style="font-size:0.62rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--nx-text-soft);display:flex;align-items:center;gap:0.4rem;">
+              <span style="width:0.5rem;height:0.5rem;border-radius:50%;background:var(--nx-silver);box-shadow:0 0 12px var(--nx-hero-glow);"></span>
+              Pronto para transmissão
             </span>
-            <h1 class="font-headline text-silver-shimmer text-5xl md:text-[64px] leading-tight mb-4">
-                Conte sobre o seu projeto
-            </h1>
-            <p class="font-body text-on-surface-variant max-w-2xl mx-auto text-sm tracking-widest uppercase">
-                Vamos entender sua necessidade e desenvolver uma solução sob medida para o seu negócio
-            </p>
+            <button type="submit" class="nx-btn nx-btn--primary">Enviar solicitação</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="nx-grid-2" style="margin-top:1rem;">
+        <div class="nx-content-block">
+          <h2>Segurança</h2>
+          <p>Seus dados protegidos com boas práticas modernas e confiáveis.</p>
         </div>
-
-        <!-- Monolithic Form Card -->
-        <div class="glass-panel p-6 md:p-12 rounded-xl relative overflow-hidden shadow-2xl">
-
-            <!-- Decorative scan line -->
-            <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-polished-silver to-transparent opacity-30"></div>
-
-            <form class="space-y-12">
-
-                <!-- Verticals Selection -->
-                <div class="space-y-3">
-                    <label class="font-label text-on-surface-variant text-xs tracking-[0.2em] uppercase block">
-                        Tipo de Projeto
-                    </label>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        <label class="relative group cursor-pointer">
-                            <input class="peer sr-only" type="checkbox">
-                            <div class="bg-surface-container border border-outline-variant p-4 flex flex-col items-center justify-center gap-2 peer-checked:border-polished-silver peer-checked:bg-surface-container-high transition-all hover:border-polished-silver/30">
-                                <span class="material-symbols-outlined text-polished-silver">psychology</span>
-                                <span class="font-label text-[10px] tracking-widest text-on-surface-variant group-hover:text-on-surface text-center">Sistema sob medida</span>
-                            </div>
-                        </label>
-                        <label class="relative group cursor-pointer">
-                            <input class="peer sr-only" type="checkbox">
-                            <div class="bg-surface-container border border-outline-variant p-4 flex flex-col items-center justify-center gap-2 peer-checked:border-polished-silver peer-checked:bg-surface-container-high transition-all hover:border-polished-silver/30">
-                                <span class="material-symbols-outlined text-polished-silver">precision_manufacturing</span>
-                                <span class="font-label text-[10px] tracking-widest text-on-surface-variant group-hover:text-on-surface text-center">Automação</span>
-                            </div>
-                        </label>
-                        <label class="relative group cursor-pointer">
-                            <input class="peer sr-only" type="checkbox">
-                            <div class="bg-surface-container border border-outline-variant p-4 flex flex-col items-center justify-center gap-2 peer-checked:border-polished-silver peer-checked:bg-surface-container-high transition-all hover:border-polished-silver/30">
-                                <span class="material-symbols-outlined text-polished-silver">hub</span>
-                                <span class="font-label text-[10px] tracking-widest text-on-surface-variant group-hover:text-on-surface text-center">Integração de sistemas</span>
-                            </div>
-                        </label>
-                        <label class="relative group cursor-pointer">
-                            <input class="peer sr-only" type="checkbox">
-                            <div class="bg-surface-container border border-outline-variant p-4 flex flex-col items-center justify-center gap-2 peer-checked:border-polished-silver peer-checked:bg-surface-container-high transition-all hover:border-polished-silver/30">
-                                <span class="material-symbols-outlined text-polished-silver">add</span>
-                                <span class="font-label text-[10px] tracking-widest text-on-surface-variant group-hover:text-on-surface text-center">Outro</span>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Description Field -->
-                <div class="space-y-3">
-                    <label class="font-label text-on-surface-variant text-xs tracking-[0.2em] uppercase block">
-                        Descreva sua necessidade
-                    </label>
-                    <textarea
-                        class="w-full bg-surface-container-low border-0 border-b border-outline-variant focus:ring-0 focus:border-polished-silver text-on-surface font-body text-base min-h-[120px] placeholder:text-on-surface-variant/40 transition-all resize-none"
-                        placeholder="Explique o que você precisa, seus desafios atuais e o que gostaria de melhorar..."
-                    ></textarea>
-                </div>
-
-                <!-- Budget and Timeline Grid -->
-                <div class="grid md:grid-cols-2 gap-12">
-                    <div class="space-y-3">
-                        <label class="font-label text-on-surface-variant text-xs tracking-[0.2em] uppercase block">
-                            Orçamento estimado
-                        </label>
-                        <div class="relative">
-                            <span class="absolute left-0 bottom-2 text-on-surface-variant font-label text-sm">R$</span>
-                            <input
-                                class="w-full bg-transparent border-0 border-b border-outline-variant focus:ring-0 focus:border-polished-silver text-on-surface font-body text-base pl-8 pb-2 placeholder:text-on-surface-variant/40 transition-all"
-                                placeholder="0.000.000"
-                                type="text"
-                            >
-                        </div>
-                    </div>
-                    <div class="space-y-3">
-                        <label class="font-label text-on-surface-variant text-xs tracking-[0.2em] uppercase block">
-                            Prazo desejado
-                        </label>
-                        <select class="w-full bg-transparent border-0 border-b border-outline-variant focus:ring-0 focus:border-polished-silver text-on-surface font-body text-base pb-2 appearance-none cursor-pointer">
-                            <option class="bg-surface-container">Até 1 mês</option>
-                            <option class="bg-surface-container">1 a 3 meses</option>
-                            <option class="bg-surface-container">3 a 6 meses</option>
-                            <option class="bg-surface-container">Mais de 6 meses</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Imagery Inset -->
-                <div class="grid grid-cols-3 gap-2">
-                    <img alt="" class="h-32 w-full object-cover grayscale opacity-30 hover:opacity-70 transition-opacity duration-500 rounded" src="https://lh3.googleusercontent.com/aida/ADBb0uiJXYJRRcSxGHlZeDol9arE3CWbypKKaiAPqdUFJZrG7QS7tiSBatm2nGM8aiYoDM4NFhUHVeDDQ9N2u0kwwphtVG1i0McRQF7TxnkSt7e7zT_3WXmJrM2C35Nn-P72hNLXjSNS09dQPGAISHN26xC0emft7H4SodkqLcN2uQYxZXmW3AXlOtSIJXzGcxwlLOp1T6ya1nexxG6sxNpUAImzSAtnp-Q7-T8gJv6gvqYjZVGYujbFKN5QIou2">
-                    <img alt="" class="h-32 w-full object-cover grayscale opacity-30 hover:opacity-70 transition-opacity duration-500 rounded" src="https://lh3.googleusercontent.com/aida/ADBb0uhFhuD2Ce2c7iGP2mqRlopQiVRFEVLsSdgbmUIPKEKb8fpYKjs3WcnPoRfUgTM58ww41EX-e86P-oYOwKg8tedTPgaJRL6eGRYz1zxg6lp_AO-5HvGDlULDzqqMzZtf9R0v0onLe6uSrl4A1S2k1cko8yNjlQhylRsYpn5DDfKGGDzG1K1WdmxAh7G0Axo65wdw2F7dxVgxSzqT7jsa_VKWoKqRMZ1oh7KaOAdv1pYYIbFsXC3amyQJBmg">
-                    <img alt="" class="h-32 w-full object-cover grayscale opacity-30 hover:opacity-70 transition-opacity duration-500 rounded" src="https://lh3.googleusercontent.com/aida/ADBb0uhml6Oe-b3hOUbN3wsMhq14R2jOYVYUBbxAJPgSoWzZrBol09R8FtPq7mGqFZf3RuaOchdxQlUVeICCo7xUsLcs891h2QwGKj0WwCfLAM0sLMkWr6ALPE0CvNCIvJnKUUebyHdzDans20hRW2rrWCC14OA41EvuFeZ21X2i64glmIN8f-E_NDosCOao7VrRBbYMBlz398GNCcSKWv3AGkF-SohJ9doLmM8STGGugI7-iXd6axbSk4VRG9fs">
-                </div>
-
-                <!-- Submit Action -->
-                <div class="pt-6 border-t border-outline-variant/30 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div class="flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-polished-silver animate-pulse"></span>
-                        <span class="font-label text-[10px] tracking-[0.2em] text-on-surface-variant uppercase">
-                            Sistema operante — pronto para transmissão
-                        </span>
-                    </div>
-                    <button class="metallic-button px-10 py-3 font-label text-on-primary text-xs tracking-[0.2em] uppercase w-full md:w-auto" type="submit">
-                        Enviar Solicitação
-                    </button>
-                </div>
-
-            </form>
+        <div class="nx-content-block">
+          <h2>Escalabilidade</h2>
+          <p>Soluções preparadas para crescer junto com o seu negócio.</p>
         </div>
-
-        <!-- Supporting Technical Detail Cards -->
-        <div class="grid md:grid-cols-3 gap-4 mt-8">
-            <div class="bg-onyx-black border border-white/10 hover:border-polished-silver/30 transition-all p-6 space-y-3">
-                <span class="material-symbols-outlined text-polished-silver text-2xl">security_update_good</span>
-                <h4 class="font-label text-on-surface text-[10px] tracking-widest uppercase">Segurança</h4>
-                <p class="font-body text-xs text-on-surface-variant">Seus dados protegidos com boas práticas modernas e confiáveis.</p>
-            </div>
-            <div class="bg-onyx-black border border-white/10 hover:border-polished-silver/30 transition-all p-6 space-y-3">
-                <span class="material-symbols-outlined text-polished-silver text-2xl">monitoring</span>
-                <h4 class="font-label text-on-surface text-[10px] tracking-widest uppercase">Eficiência</h4>
-                <p class="font-body text-xs text-on-surface-variant">Sistemas desenvolvidos para otimizar processos e reduzir retrabalho.</p>
-            </div>
-            <div class="bg-onyx-black border border-white/10 hover:border-polished-silver/30 transition-all p-6 space-y-3">
-                <span class="material-symbols-outlined text-polished-silver text-2xl">deployed_code</span>
-                <h4 class="font-label text-on-surface text-[10px] tracking-widest uppercase">Escalabilidade</h4>
-                <p class="font-body text-xs text-on-surface-variant">Soluções preparadas para crescer junto com o seu negócio.</p>
-            </div>
-        </div>
-
+      </div>
     </div>
-</main>
+  </main>
 
-<!-- Universal Footer -->
-<div id="nexus-footer"></div>
-
+  <div id="nexus-footer"></div>
 </body>
 </html>
