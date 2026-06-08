@@ -4,9 +4,9 @@
   --nx-graphite-2: #1c1c1c;
   --nx-steel: #8a8f98;
   --nx-silver: #c8ccd4;
-  --nx-red: #ed1c24;
-  --nx-red-bright: #ff0029;
-  --nx-red-deep: #c40010;
+  --nx-royal: #2563eb;
+  --nx-royal-bright: #6eb5ff;
+  --nx-royal-deep: #1e3a8a;
 
   --bg: var(--nx-ink);
   --surface: rgba(20, 20, 20, 0.94);
@@ -17,12 +17,12 @@
   --text: #f5f5f5;
   --muted: #a3a3a3;
   --border: rgba(255, 255, 255, 0.08);
-  --border-glow: rgba(237, 28, 36, 0.35);
+  --border-glow: rgba(37, 99, 235, 0.35);
   --primary: #f5f5f5;
   --polished-silver: var(--nx-silver);
   --outline-variant: var(--nx-steel);
-  --accent: var(--nx-red-bright);
-  --accent-glow: rgba(255, 0, 41, 0.22);
+  --accent: var(--nx-royal-bright);
+  --accent-glow: rgba(110, 181, 255, 0.22);
   --silver-gradient: linear-gradient(
     180deg,
     #e8eaee 0%,
@@ -97,7 +97,7 @@ textarea {
   padding: 0.7rem 1.5rem;
   border: none;
   border-radius: 999px;
-  background: linear-gradient(180deg, var(--nx-red-bright) 0%, var(--nx-red) 52%, var(--nx-red-deep) 100%);
+  background: linear-gradient(180deg, var(--nx-royal-bright) 0%, var(--nx-royal) 52%, var(--nx-royal-deep) 100%);
   color: #ffffff;
   font-weight: 700;
   font-size: 0.8rem;
