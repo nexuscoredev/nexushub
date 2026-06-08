@@ -262,9 +262,20 @@ body::before {
   );
 }
 
-body > * {
+body > main,
+body > .nx-splash--legacy {
   position: relative;
   z-index: 1;
+}
+
+#nexus-navbar {
+  position: relative;
+  z-index: 200;
+}
+
+#nexus-footer {
+  position: relative;
+  z-index: 10;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2108,7 +2119,7 @@ img {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 9999;
+  z-index: 0;
   background: repeating-linear-gradient(
     0deg,
     transparent,
