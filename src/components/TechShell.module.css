@@ -9,13 +9,55 @@
   position: fixed;
   inset: 0;
   z-index: 0;
-  background: #0a0a0a;
+  background:
+    radial-gradient(ellipse 100% 80% at 50% -20%, rgba(37, 99, 235, 0.14), transparent 55%),
+    radial-gradient(ellipse 60% 50% at 100% 50%, rgba(124, 58, 237, 0.1), transparent 50%),
+    radial-gradient(ellipse 50% 40% at 0% 80%, rgba(6, 182, 212, 0.08), transparent 45%),
+    #0a0a0a;
 }
 
-.grid,
-.scanline,
-.orb {
+.grid {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.045;
+  background-image:
+    linear-gradient(rgba(110, 181, 255, 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(110, 181, 255, 0.35) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+.scanline {
   display: none;
+}
+
+.orb {
+  position: fixed;
+  z-index: 1;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(88px);
+}
+
+.orbA {
+  display: block;
+  width: 420px;
+  height: 420px;
+  top: -8%;
+  right: -5%;
+  background: rgba(37, 99, 235, 0.2);
+  animation: float 18s ease-in-out infinite;
+}
+
+.orbB {
+  display: block;
+  width: 360px;
+  height: 360px;
+  bottom: 10%;
+  left: -8%;
+  background: rgba(124, 58, 237, 0.14);
+  animation: float 22s ease-in-out infinite reverse;
 }
 
 .content {

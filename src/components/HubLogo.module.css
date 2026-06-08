@@ -46,8 +46,8 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: none;
-  color: #fff;
-  text-shadow: 0 0 24px rgba(255, 255, 255, 0.18);
+  color: var(--accent);
+  text-shadow: 0 0 24px var(--accent-glow);
   flex-shrink: 0;
 }
 

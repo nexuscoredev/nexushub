@@ -5,6 +5,7 @@
   --cl-royal: #2563eb;
   --cl-royal-bright: #6eb5ff;
   --cl-royal-deep: #1e3a8a;
+  --cl-violet: #7c3aed;
   --cl-radius: 0.5rem;
 
   --cl-bg: var(--cl-fog);
@@ -27,7 +28,10 @@
 
   min-height: 100vh;
   min-height: 100dvh;
-  background: var(--cl-bg);
+  background:
+    radial-gradient(ellipse 80% 60% at 100% 0%, rgba(37, 99, 235, 0.1), transparent 50%),
+    radial-gradient(ellipse 60% 50% at 0% 100%, rgba(124, 58, 237, 0.07), transparent 45%),
+    var(--cl-bg);
   color: var(--cl-text);
 }
 
@@ -82,7 +86,7 @@
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--cl-soft);
+  color: var(--cl-violet);
   margin-bottom: 0.45rem;
 }
 
@@ -211,6 +215,7 @@
 }
 
 .footerLink:hover {
-  color: var(--cl-text);
-  border-color: rgba(10, 10, 10, 0.2);
+  color: var(--cl-royal);
+  border-color: rgba(37, 99, 235, 0.35);
+  background: rgba(37, 99, 235, 0.06);
 }
