@@ -1,7 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { HubLogo } from '../../components/HubLogo';
-import { TechShell } from '../../components/TechShell';
 import { useAuth } from '../../contexts/AuthContext';
 import styles from './ClienteLoginPage.module.css';
 
@@ -39,69 +38,73 @@ export function ClienteLoginPage() {
   };
 
   return (
-    <TechShell>
+    <div className={styles.shell}>
       <div className={styles.page}>
-        <div className={`card ${styles.card}`}>
-          <div className={styles.cardGlow} aria-hidden />
-          <HubLogo size="md" showSubtitle={false} />
-          <div className={styles.header}>
-            <span className={styles.badge}>Portal do cliente</span>
-            <h1 className={styles.title}>Entrar</h1>
-            <p className={styles.subtitle}>Acompanhe processos, contratos e solicitações</p>
+        <div className={styles.card}>
+          <div className={styles.logoWrap}>
+            <HubLogo size="lg" showSubtitle={false} centered />
           </div>
 
+          <header className={styles.header}>
+            <span className={styles.eyebrow}>Portal do cliente</span>
+            <h1 className={styles.title}>Entrar</h1>
+            <p className={styles.lead}>Acompanhe processos, contratos e solicitações do seu projeto.</p>
+          </header>
+
           {!configured && (
-            <div className="error-banner" style={{ marginTop: '1rem' }}>
+            <div className={styles.error} style={{ marginTop: '1rem' }}>
               Supabase não configurado neste ambiente.
             </div>
           )}
 
-          {error && (
-            <div className="error-banner" style={{ marginTop: '1rem' }}>
-              {error}
-            </div>
-          )}
+          {error && <div className={styles.error}>{error}</div>}
 
           <form className={styles.form} onSubmit={(e) => void handleSubmit(e)}>
-            <div>
-              <label className="label" htmlFor="cliente-email">
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="cliente-email">
                 E-mail
               </label>
               <input
                 id="cliente-email"
-                className="input"
+                className={styles.input}
                 type="email"
                 autoComplete="email"
+                placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
-            <div>
-              <label className="label" htmlFor="cliente-password">
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="cliente-password">
                 Senha
               </label>
               <input
                 id="cliente-password"
-                className="input"
+                className={styles.input}
                 type="password"
                 autoComplete="current-password"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
-            <button type="submit" className="btn-primary" disabled={loading || !configured}>
+            <button type="submit" className={styles.submit} disabled={loading || !configured}>
               {loading ? 'Entrando…' : 'Acessar portal'}
             </button>
           </form>
 
           <div className={styles.footer}>
-            <Link to="/site/home.html">Voltar ao site</Link>
-            <Link to="/login">Acesso equipe (Nexus Hub)</Link>
+            <a href="/site/home.html" className={styles.footerLink}>
+              Voltar ao site
+            </a>
+            <Link to="/login" className={styles.footerLink}>
+              NEXUS Hub
+            </Link>
           </div>
         </div>
       </div>
-    </TechShell>
+    </div>
   );
 }
