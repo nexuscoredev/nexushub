@@ -39,6 +39,7 @@
 
     setActiveLink();
     window.NexusTheme?.initButtons?.();
+    window.NexusMetal?.init?.();
   } catch (err) {
     console.error('[NEXUS components.js]', err);
   }

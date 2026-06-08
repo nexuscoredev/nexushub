@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/nexus-site.css" />
   <script src="js/theme.js"></script>
+  <script src="js/metal.js"></script>
   <script src="components.js" defer></script>
   <script src="js/site.js" defer></script>
 </head>
@@ -20,9 +21,19 @@
       <section class="nx-hero-cinema">
         <div class="nx-hero-cinema__bg">
           <img class="nx-img-silver" src="img/robohome.png" alt="Tecnologia NEXUS" />
+          <div class="nx-hero-cinema__grid" aria-hidden="true"></div>
+          <div class="nx-hero-cinema__scan" aria-hidden="true"></div>
           <div class="nx-hero-cinema__overlay"></div>
         </div>
         <div class="nx-hero-cinema__content">
+          <div class="nx-hud-bar" aria-hidden="true">
+            <span class="nx-hud-bar__dot"></span>
+            <span>SYS.ONLINE</span>
+            <span class="nx-hud-bar__sep">|</span>
+            <span>NEXUS CORE v2</span>
+            <span class="nx-hud-bar__sep">|</span>
+            <span>LATENCY 12ms</span>
+          </div>
           <div class="nx-chips" style="margin-bottom:1rem;">
             <span class="nx-chip">Inteligência artificial</span>
             <span class="nx-chip">Automação</span>

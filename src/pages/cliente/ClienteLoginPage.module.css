@@ -7,6 +7,8 @@
   --cl-royal-deep: #1e3a8a;
   --cl-violet: #7c3aed;
   --cl-radius: 0.5rem;
+  --metal-px: 50%;
+  --metal-py: 35%;
 
   --cl-bg: var(--cl-fog);
   --cl-surface: #ffffff;
@@ -35,7 +37,23 @@
   color: var(--cl-text);
 }
 
+.shell::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    640px circle at var(--metal-px) var(--metal-py),
+    rgba(255, 255, 255, 0.12),
+    transparent 44%
+  );
+  mix-blend-mode: soft-light;
+}
+
 .page {
+  position: relative;
+  z-index: 1;
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
@@ -51,6 +69,48 @@
   border-radius: var(--cl-radius);
   background: var(--cl-surface);
   border: 1px solid var(--cl-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  inset: -60% -90%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 60%
+  );
+  animation: clMetalGlint 6s ease-in-out infinite;
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+@keyframes clMetalGlint {
+  0% {
+    transform: translateX(-130%) skewX(-16deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  45% {
+    transform: translateX(130%) skewX(-16deg);
+    opacity: 1;
+  }
+  55%,
+  100% {
+    transform: translateX(130%) skewX(-16deg);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card::after {
+    animation: none;
+  }
 }
 
 .card::before {

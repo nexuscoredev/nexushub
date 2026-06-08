@@ -9,6 +9,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/nexus-site.css" />
   <script src="js/theme.js"></script>
+  <script src="js/metal.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      window.NexusTheme?.initButtons?.();
+      window.NexusMetal?.init?.();
+    });
+  </script>
 </head>
 <body>
   <main class="nx-splash--legacy">
@@ -20,6 +27,12 @@
     </div>
 
     <div class="nx-splash--legacy__content">
+      <div class="nx-hud-bar" aria-hidden="true">
+        <span class="nx-hud-bar__dot"></span>
+        <span>SYS.INIT</span>
+        <span class="nx-hud-bar__sep">|</span>
+        <span>NEXUS CORE</span>
+      </div>
       <h2 class="nx-splash--legacy__brand">NEXUS</h2>
 
       <div class="nx-chips">

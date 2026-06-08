@@ -50,6 +50,44 @@
   --shadow-glow: none;
 }
 
+@keyframes hubMetalFlow {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes hubMetalGlint {
+  0% {
+    transform: translateX(-130%) skewX(-16deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  45% {
+    transform: translateX(130%) skewX(-16deg);
+    opacity: 1;
+  }
+  55%,
+  100% {
+    transform: translateX(130%) skewX(-16deg);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card::after,
+  .kpi::after,
+  .wordmark,
+  .page-title {
+    animation: none !important;
+  }
+}
+
 *,
 *::before,
 *::after {
@@ -113,7 +151,11 @@ textarea {
   text-transform: uppercase;
   cursor: pointer;
   transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 0 24px rgba(37, 99, 235, 0.35),
+    0 0 48px rgba(37, 99, 235, 0.12);
+  text-shadow: 0 0 16px rgba(255, 255, 255, 0.2);
 }
 
 .btn-primary:hover {
@@ -151,15 +193,38 @@ textarea {
 .card {
   background: var(--surface);
   backdrop-filter: blur(20px);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(110, 181, 255, 0.1);
   border-radius: var(--radius);
   padding: 1.35rem;
-  box-shadow: var(--shadow-glow);
-  transition: border-color 0.25s ease;
+  box-shadow:
+    inset 0 0 0 1px rgba(110, 181, 255, 0.05),
+    0 8px 32px rgba(37, 99, 235, 0.06);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  inset: -60% -90%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.22) 50%,
+    transparent 60%
+  );
+  animation: hubMetalGlint 6.5s ease-in-out infinite;
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .card:hover {
-  border-color: rgba(110, 181, 255, 0.22);
+  border-color: rgba(110, 181, 255, 0.28);
+  box-shadow:
+    inset 0 0 0 1px rgba(110, 181, 255, 0.12),
+    0 0 28px rgba(37, 99, 235, 0.12),
+    0 12px 40px rgba(37, 99, 235, 0.08);
 }
 
 .card-glass {
@@ -230,6 +295,19 @@ textarea {
   overflow: hidden;
 }
 
+.kpi::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    240px circle at var(--metal-px, 50%) var(--metal-py, 35%),
+    rgba(255, 255, 255, 0.08),
+    transparent 55%
+  );
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+}
+
 .kpi::before {
   content: '';
   position: absolute;
@@ -258,18 +336,21 @@ textarea {
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+  font-family: var(--font-mono);
   color: var(--muted);
   margin-bottom: 0.4rem;
 }
 
 .kpi-value {
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   font-size: 1.5rem;
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
   word-break: break-word;
   overflow-wrap: anywhere;
   color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 24px rgba(37, 99, 235, 0.2);
 }
 
 .kpi:nth-child(4n + 2) .kpi-value {
@@ -290,6 +371,19 @@ textarea {
   text-transform: uppercase;
   font-size: 1.25rem;
   font-weight: 600;
+  background: linear-gradient(
+    118deg,
+    #ffffff 0%,
+    var(--accent) 35%,
+    #c8ccd4 55%,
+    #ffffff 75%,
+    var(--accent) 100%
+  );
+  background-size: 260% 260%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: hubMetalFlow 5.5s ease-in-out infinite;
 }
 
 .page-subtitle {
@@ -302,8 +396,16 @@ textarea {
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+  font-family: var(--font-mono);
   color: var(--accent);
   margin-bottom: 0.75rem;
+  text-shadow: 0 0 20px rgba(37, 99, 235, 0.25);
+}
+
+.section-heading::before {
+  content: '// ';
+  color: var(--nx-cyan-bright);
+  opacity: 0.85;
 }
 
 .link-grid {

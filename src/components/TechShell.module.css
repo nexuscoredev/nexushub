@@ -3,6 +3,8 @@
   min-height: 100vh;
   isolation: isolate;
   overflow-x: hidden;
+  --metal-px: 50%;
+  --metal-py: 35%;
 }
 
 .mesh {
@@ -20,16 +22,63 @@
   position: fixed;
   inset: 0;
   z-index: 1;
-  opacity: 0.045;
+  opacity: 0.08;
   background-image:
-    linear-gradient(rgba(110, 181, 255, 0.35) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(110, 181, 255, 0.35) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(rgba(110, 181, 255, 0.45) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(110, 181, 255, 0.45) 1px, transparent 1px);
+  background-size: 40px 40px;
   pointer-events: none;
+  animation: hubGridDrift 20s linear infinite;
+}
+
+@keyframes hubGridDrift {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 40px 40px, 40px 40px;
+  }
+}
+
+.metalSheen {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    680px circle at var(--metal-px) var(--metal-py),
+    rgba(255, 255, 255, 0.08),
+    rgba(110, 181, 255, 0.06) 28%,
+    transparent 46%
+  );
+  mix-blend-mode: soft-light;
+  animation: metalPulse 6s ease-in-out infinite;
+}
+
+@keyframes metalPulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.9;
+  }
 }
 
 .scanline {
-  display: none;
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 255, 255, 0.016) 2px,
+    rgba(255, 255, 255, 0.016) 4px
+  );
+  opacity: 0.35;
 }
 
 .orb {
@@ -73,6 +122,21 @@
   }
   50% {
     transform: translate(24px, 16px) scale(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .metalSheen {
+    animation: none;
+  }
+
+  .orbA,
+  .orbB {
+    animation: none;
+  }
+
+  .grid {
+    animation: none;
   }
 }
 

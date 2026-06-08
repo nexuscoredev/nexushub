@@ -19,6 +19,7 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     window.NexusTheme?.initButtons?.();
+    window.NexusMetal?.init?.();
     initMobileNav();
   });
 })();

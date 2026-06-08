@@ -35,10 +35,21 @@
   letter-spacing: 0.25em;
   text-transform: uppercase;
   font-weight: 400;
-  background: var(--liquid-silver);
+  background: linear-gradient(
+    118deg,
+    #ffffff 0%,
+    #c8ccd4 16%,
+    #ffffff 32%,
+    #8a8f98 48%,
+    #eef0f4 62%,
+    #5c6068 78%,
+    #ffffff 92%
+  );
+  background-size: 260% 260%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: hubMetalFlow 5.5s ease-in-out infinite;
 }
 
 .hubMark {

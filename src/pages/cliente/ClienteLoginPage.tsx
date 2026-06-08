@@ -1,10 +1,13 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { HubLogo } from '../../components/HubLogo';
 import { useAuth } from '../../contexts/AuthContext';
+import { useMetalPointer } from '../../hooks/useMetalPointer';
 import styles from './ClienteLoginPage.module.css';
 
 export function ClienteLoginPage() {
+  const shellRef = useRef<HTMLDivElement>(null);
+  useMetalPointer(shellRef);
   const { session, signInCliente, configured, isCliente, isEquipe } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -38,7 +41,7 @@ export function ClienteLoginPage() {
   };
 
   return (
-    <div className={styles.shell}>
+    <div className={styles.shell} ref={shellRef}>
       <div className={styles.page}>
         <div className={styles.card}>
           <div className={styles.logoWrap}>
