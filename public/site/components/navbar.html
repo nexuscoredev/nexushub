@@ -1,10 +1,9 @@
 <header class="nx-nav">
   <div class="nx-container">
     <div class="nx-nav__inner">
-      <a href="home.html" class="nx-brand">
+      <a href="home.html" class="nx-brand" aria-label="NEXUS — início">
         <img src="img/favicon.png" alt="" class="nx-brand__mark" width="32" height="32" />
         <span class="nx-brand__name">NEXUS</span>
-        <span class="nx-brand__hub">Hub</span>
       </a>
 
       <nav class="nx-nav__links" aria-label="Menu principal">
@@ -16,11 +15,18 @@
 
       <div class="nx-nav__actions">
         <div class="nx-theme" role="group" aria-label="Tema do site">
-          <button type="button" class="nx-theme__btn" data-theme-btn="light" aria-pressed="false" title="Tema claro">Light</button>
-          <button type="button" class="nx-theme__btn" data-theme-btn="dark" aria-pressed="false" title="Tema escuro">Dark</button>
-          <button type="button" class="nx-theme__btn" data-theme-btn="auto" aria-pressed="false" title="Tema automático">Auto</button>
+          <button type="button" class="nx-theme__btn" data-theme-btn="light" aria-pressed="false" aria-label="Tema claro" title="Tema claro">
+            <span class="material-symbols-outlined" aria-hidden="true">light_mode</span>
+          </button>
+          <button type="button" class="nx-theme__btn" data-theme-btn="dark" aria-pressed="false" aria-label="Tema escuro" title="Tema escuro">
+            <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
+          </button>
+          <button type="button" class="nx-theme__btn" data-theme-btn="auto" aria-pressed="false" aria-label="Tema automático" title="Tema automático">
+            <span class="material-symbols-outlined" aria-hidden="true">brightness_auto</span>
+          </button>
         </div>
         <a href="/cliente/entrar" class="nx-btn nx-btn--ghost nx-hide-sm">Área do Cliente</a>
+        <a href="/login" class="nx-btn nx-btn--ghost nx-hide-sm">NEXUS Hub</a>
         <a href="contato.html" class="nx-btn nx-btn--primary nx-hide-md">Começar</a>
         <button type="button" class="nx-nav-toggle" id="nx-nav-toggle" aria-expanded="false" aria-controls="nx-nav-panel" aria-label="Abrir menu">
           <span class="material-symbols-outlined" style="font-size:1.25rem">menu</span>
@@ -34,7 +40,7 @@
       <a class="nx-nav__link nav-link" href="empresa.html" data-page="empresa">Empresa</a>
       <a class="nx-nav__link nav-link" href="contato.html" data-page="contato">Contato</a>
       <a href="/cliente/entrar" class="nx-nav__link">Área do Cliente</a>
-      <a href="/login" class="nx-nav__link">Nexus Hub (equipe)</a>
+      <a href="/login" class="nx-nav__link">NEXUS Hub</a>
     </nav>
   </div>
 </header>

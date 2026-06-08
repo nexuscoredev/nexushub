@@ -129,15 +129,6 @@ img {
   -webkit-text-fill-color: transparent;
 }
 
-.nx-brand__hub {
-  font-family: Inter, sans-serif;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: var(--nx-text);
-  text-transform: none;
-  margin-left: 0.15em;
-}
-
 .nx-nav__links {
   display: none;
   align-items: center;
@@ -202,19 +193,24 @@ img {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 2.15rem;
+  width: 2rem;
   height: 2rem;
-  padding: 0 0.45rem;
+  padding: 0;
   border: none;
   border-radius: 999px;
   background: transparent;
   color: var(--nx-text-soft);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   cursor: pointer;
   transition: color 0.2s, background 0.25s, box-shadow 0.25s;
+}
+
+.nx-theme__btn .material-symbols-outlined {
+  font-size: 1.05rem;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.nx-theme__btn.is-active .material-symbols-outlined {
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
 }
 
 .nx-theme__btn:hover {
@@ -628,6 +624,37 @@ img {
 
 .nx-footer__col a:hover {
   color: var(--nx-text);
+}
+
+.nx-footer__contact {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.55rem;
+  line-height: 1.35;
+}
+
+.nx-footer__icon {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex-shrink: 0;
+}
+
+.nx-footer__icon.material-symbols-outlined {
+  width: auto;
+  height: auto;
+  font-size: 1.05rem;
+}
+
+.nx-footer__icon--whatsapp {
+  color: #25d366;
+}
+
+.nx-footer__contact:hover .nx-footer__icon--whatsapp {
+  color: #2ee66f;
+}
+
+[data-theme='dark'] .nx-footer__contact:hover .nx-footer__icon--whatsapp {
+  color: #3adb75;
 }
 
 /* Splash index */
@@ -1086,7 +1113,6 @@ img {
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
-  overflow: hidden;
   border: 1px solid var(--nx-border);
   box-shadow: var(--nx-shadow);
   aspect-ratio: 4 / 5;
@@ -1100,15 +1126,58 @@ img {
 
 .nx-quote-float {
   position: absolute;
-  right: -1rem;
-  bottom: -1.5rem;
-  max-width: 16rem;
-  padding: 1.25rem;
-  border-radius: 1rem;
-  background: var(--nx-nav-bg);
-  backdrop-filter: blur(18px);
-  border: 1px solid var(--nx-border-strong);
+  z-index: 2;
+  left: 1rem;
+  bottom: 1rem;
+  max-width: min(17rem, calc(100% - 2rem));
+  padding: 1.1rem 1.15rem;
+  border-radius: 0.85rem;
+  background: rgba(8, 9, 12, 0.78);
+  backdrop-filter: blur(16px) saturate(1.15);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  color: #f2f4f8;
+}
+
+[data-theme='light'] .nx-quote-float {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(15, 20, 25, 0.1);
   box-shadow: var(--nx-shadow);
+  color: var(--nx-text);
+}
+
+.nx-quote-float .material-symbols-outlined {
+  font-size: 1.5rem;
+  color: rgba(200, 210, 230, 0.85);
+}
+
+[data-theme='light'] .nx-quote-float .material-symbols-outlined {
+  color: var(--nx-text-soft);
+}
+
+.nx-quote-float__text {
+  margin: 0.55rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: rgba(242, 244, 248, 0.92);
+}
+
+[data-theme='light'] .nx-quote-float__text {
+  color: var(--nx-text-muted);
+}
+
+.nx-quote-float__author {
+  margin: 0.5rem 0 0;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(200, 210, 230, 0.75);
+}
+
+[data-theme='light'] .nx-quote-float__author {
+  color: var(--nx-text-soft);
 }
 
 .nx-banner {
