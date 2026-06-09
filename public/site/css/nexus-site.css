@@ -748,12 +748,12 @@ img {
 
 .nx-eyebrow {
   display: inline-block;
-  margin-bottom: 0.75rem;
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
+  margin-bottom: 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--nx-violet);
+  color: var(--nx-text-soft);
 }
 
 .nx-hero__title {
@@ -1530,9 +1530,9 @@ img {
 .nx-hero-cinema {
   position: relative;
   min-height: clamp(18rem, 48vh, 28rem);
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr;
   align-items: center;
-  justify-content: flex-start;
   overflow: hidden;
   margin: 0 0 1.25rem;
   border-radius: var(--nx-radius);
@@ -1549,6 +1549,7 @@ img {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  z-index: 0;
 }
 
 .nx-hero-cinema__bg img {
@@ -1572,9 +1573,37 @@ img {
 .nx-hero-cinema__content {
   position: relative;
   z-index: 2;
-  padding: 1.5rem 1.25rem;
-  max-width: 40rem;
+  padding: 1.75rem 1.5rem;
+  max-width: 36rem;
   width: 100%;
+  align-self: center;
+  justify-self: start;
+}
+
+@media (min-width: 900px) {
+  .nx-hero-cinema__bg img {
+    object-position: 72% center;
+  }
+
+  .nx-hero-cinema__overlay {
+    background: linear-gradient(
+      100deg,
+      var(--nx-bg) 0%,
+      var(--nx-bg) 48%,
+      rgba(245, 245, 247, 0.55) 58%,
+      transparent 78%
+    );
+  }
+
+  [data-theme='dark'] .nx-hero-cinema__overlay {
+    background: linear-gradient(
+      100deg,
+      rgba(10, 10, 10, 0.98) 0%,
+      rgba(10, 10, 10, 0.92) 48%,
+      rgba(10, 10, 10, 0.45) 62%,
+      transparent 82%
+    );
+  }
 }
 
 .nx-hero-cinema__title {
@@ -2188,11 +2217,263 @@ img {
 }
 
 .nx-hero-cinema__content {
-  padding: 1.5rem 1.25rem;
+  padding: 1.75rem 1.5rem;
 }
 
 .nx-section {
   margin-bottom: 1.75rem;
+}
+
+/* ── Layout system ── */
+.nx-page-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.nx-section-head {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.nx-section-head--split {
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .nx-section-head--split {
+    grid-template-columns: 1.15fr 1fr;
+    align-items: end;
+    gap: 1.5rem;
+  }
+}
+
+.nx-section-head__desc {
+  margin: 0;
+  color: var(--nx-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+@media (min-width: 768px) {
+  .nx-section-head--split .nx-section-head__desc {
+    justify-self: end;
+    text-align: right;
+    max-width: 34ch;
+  }
+}
+
+.nx-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.25rem;
+}
+
+.nx-prose {
+  color: var(--nx-text-muted);
+  line-height: 1.6;
+}
+
+.nx-prose p {
+  margin: 0 0 1rem;
+}
+
+.nx-prose p:last-child {
+  margin-bottom: 0;
+}
+
+.nx-bento--3 {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .nx-bento--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .nx-bento--3 > .nx-bento__8,
+  .nx-bento--3 > .nx-bento__4 {
+    grid-column: span 1;
+  }
+}
+
+.nx-page-intro {
+  margin-bottom: 0;
+}
+
+.nx-page-intro .nx-hero-cinema__title {
+  margin-bottom: 0.75rem;
+}
+
+.nx-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.nx-icon-muted {
+  color: var(--nx-text-soft);
+}
+
+.nx-media--16-11 {
+  aspect-ratio: 16 / 11;
+  min-height: 14rem;
+}
+
+.nx-media--4-5 {
+  aspect-ratio: 4 / 5;
+}
+
+.nx-media--3-4 {
+  aspect-ratio: 3 / 4;
+  min-height: 18rem;
+}
+
+.nx-media-caption {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.78), transparent);
+  color: #fff;
+}
+
+.nx-media-caption h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+}
+
+.nx-media-caption p {
+  margin: 0;
+  font-size: 0.85rem;
+  opacity: 0.92;
+}
+
+.nx-check-list strong {
+  display: block;
+  margin-bottom: 0.15rem;
+  color: var(--nx-text);
+}
+
+.nx-page--narrow .nx-container {
+  width: min(52rem, calc(100% - 1.5rem));
+}
+
+.nx-page--center .nx-page-hero {
+  text-align: center;
+}
+
+.nx-page--center .nx-page-hero p {
+  margin-inline: auto;
+}
+
+.nx-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--nx-border);
+}
+
+.nx-form-actions--end {
+  justify-content: flex-end;
+}
+
+.nx-thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.nx-thumb-grid img {
+  height: 8rem;
+  width: 100%;
+  object-fit: cover;
+  border-radius: var(--nx-radius);
+  border: 1px solid var(--nx-border);
+}
+
+.nx-cta-banner {
+  border-radius: var(--nx-radius);
+  border: 1px solid var(--nx-border);
+  background: var(--nx-surface);
+}
+
+.nx-cta-banner__title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.nx-cta-banner__desc {
+  margin: 0 0 1.25rem;
+  color: var(--nx-text-muted);
+  max-width: 42ch;
+  line-height: 1.6;
+}
+
+.nx-ecosystem-grid {
+  margin-top: 1rem;
+}
+
+.nx-section--center .nx-section__title {
+  text-align: center;
+  margin-inline: auto;
+}
+
+.nx-contact-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.nx-stack .nx-content-block {
+  margin-bottom: 0;
+}
+
+.nx-splash--legacy__brand {
+  animation: none;
+  background: none;
+  -webkit-text-fill-color: unset;
+  color: var(--nx-text);
+  font-weight: 700;
+  font-size: clamp(2.5rem, 10vw, 5rem);
+  letter-spacing: 0.14em;
+  margin: 0;
+}
+
+[data-theme='dark'] .nx-splash--legacy__brand {
+  animation: none;
+  background: none;
+  -webkit-text-fill-color: unset;
+  color: var(--nx-text);
+}
+
+.nx-splash--legacy__intro {
+  max-width: 36ch;
+}
+
+.nx-splash--legacy__lead {
+  margin: 0.75rem 0 0;
+  color: var(--nx-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.nx-location-line {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.nx-content-block .material-symbols-outlined.nx-icon-muted {
+  font-size: 1.35rem;
+  margin-bottom: 0.35rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
