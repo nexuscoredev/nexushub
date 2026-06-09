@@ -60,8 +60,30 @@
   flex-shrink: 0;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 899px) {
   .entry {
-    padding: 0.9rem 1rem;
+    flex-wrap: wrap;
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+
+  .arrow {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 479px) {
+  .entry {
+    padding: 0.9rem max(0.9rem, env(safe-area-inset-right)) 0.9rem
+      max(0.9rem, env(safe-area-inset-left));
+    gap: 0.65rem;
+  }
+
+  .copy {
+    flex: 1 1 calc(100% - 3.5rem);
+  }
+
+  .arrow {
+    align-self: center;
   }
 }

@@ -299,7 +299,43 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 599px) {
+  .summaryGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem 0.65rem;
+  }
+
+  .grupoHead {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .grupoStats {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.35rem;
+    margin-left: 3.4rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .wrap {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  .itemCheck {
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    margin: -0.35rem 0 -0.35rem -0.35rem;
+    padding: 0.35rem;
+  }
+
   .itemCard {
     grid-template-columns: auto 1fr auto;
     grid-template-areas:
@@ -313,7 +349,23 @@
   }
 
   .itemActions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.45rem;
     padding-left: 0;
-    justify-content: flex-end;
+    width: 100%;
+  }
+
+  .itemActions :global(.btn-ghost) {
+    min-height: 44px;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .addBtn {
+    min-height: 44px;
+    padding: 0.55rem 1rem;
+    margin-left: max(0.65rem, env(safe-area-inset-left));
+    margin-right: max(0.65rem, env(safe-area-inset-right));
   }
 }

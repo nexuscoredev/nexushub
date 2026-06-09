@@ -21,3 +21,23 @@
   color: var(--text);
   background: rgba(255, 255, 255, 0.08);
 }
+
+@media (max-width: 899px) {
+  .page {
+    max-width: 100%;
+    padding-left: max(0.75rem, env(safe-area-inset-left));
+    padding-right: max(0.75rem, env(safe-area-inset-right));
+  }
+}
+
+@media (max-width: 479px) {
+  .page {
+    padding-left: max(0.65rem, env(safe-area-inset-left));
+    padding-right: max(0.65rem, env(safe-area-inset-right));
+  }
+
+  .backBtn {
+    min-height: 44px;
+    padding: 0.45rem 0.85rem;
+  }
+}

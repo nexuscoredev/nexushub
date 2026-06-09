@@ -103,21 +103,39 @@
   padding: 0.85rem 1rem 1rem;
 }
 
-@media (max-width: 560px) {
+@media (max-width: 899px) {
   .nav {
-    flex-direction: column;
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-left: max(0.35rem, env(safe-area-inset-left));
+    padding-right: max(0.35rem, env(safe-area-inset-right));
+  }
+
+  .nav::-webkit-scrollbar {
+    display: none;
   }
 
   .tab {
-    justify-content: flex-start;
+    flex-shrink: 0;
+    min-height: 44px;
   }
 
   .sectionHead {
     flex-wrap: wrap;
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
   }
 
   .sectionTotal {
     width: 100%;
     padding-left: 3.6rem;
+  }
+
+  .sectionBody {
+    padding-left: max(0.85rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
   }
 }

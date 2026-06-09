@@ -159,15 +159,37 @@
   padding: 0.25rem 0 0.5rem;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 899px) {
+  .home {
+    max-width: 100%;
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+@media (max-width: 479px) {
   .greeting {
     font-size: 1.25rem;
   }
 
+  .card {
+    padding: 0.95rem max(0.9rem, env(safe-area-inset-right)) 0.95rem
+      max(0.9rem, env(safe-area-inset-left));
+  }
+
+  .scoreRow {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.35rem;
+    width: 100%;
+  }
+
   .scoreBtn {
-    min-width: 1.95rem;
-    height: 1.95rem;
-    font-size: 0.72rem;
+    min-width: 0;
+    width: 100%;
+    min-height: 44px;
+    height: auto;
+    font-size: 0.78rem;
   }
 
   .musicRow {
@@ -176,5 +198,6 @@
 
   .musicLink {
     justify-content: center;
+    min-height: 44px;
   }
 }

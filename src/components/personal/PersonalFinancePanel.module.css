@@ -27,3 +27,22 @@
     transform: translateY(0);
   }
 }
+
+@media (max-width: 899px) {
+  .panel {
+    max-width: 100%;
+  }
+
+  .contentCard {
+    padding: 0.9rem max(0.9rem, env(safe-area-inset-right)) 0.9rem
+      max(0.9rem, env(safe-area-inset-left));
+  }
+}
+
+@media (max-width: 479px) {
+  .contentCard {
+    padding: 0.8rem max(0.75rem, env(safe-area-inset-right)) 0.8rem
+      max(0.75rem, env(safe-area-inset-left));
+    border-radius: 14px;
+  }
+}

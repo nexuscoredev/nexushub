@@ -131,3 +131,18 @@
     transform: scale(1.8) translateY(-18px);
   }
 }
+
+@media (max-width: 479px) {
+  .piggyBtn {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 1rem 1.25rem 0.75rem;
+    width: 100%;
+    max-width: 16rem;
+  }
+
+  .piggy {
+    width: 4.75rem;
+    height: 4.75rem;
+  }
+}
