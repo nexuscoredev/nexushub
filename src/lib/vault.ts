@@ -5,6 +5,7 @@ import { supabase, supabaseErrorMessage } from './supabase';
 export interface HubVaultCliente {
   id: string;
   nome: string;
+  slug: string | null;
 }
 
 export type VaultCategoria = 'infra' | 'saas' | 'cliente' | 'banco' | 'email' | 'outro';
@@ -28,8 +29,8 @@ export interface HubVaultEntry {
   cliente_id: string | null;
   provedor: VaultProvedorId | null;
   cliente_nome?: string | null;
-  password_iv: string;
-  password_ciphertext: string;
+  password_iv: string | null;
+  password_ciphertext: string | null;
   notas_iv: string | null;
   notas_ciphertext: string | null;
   created_by: string;
@@ -46,7 +47,7 @@ export interface VaultEntryInput {
   system_id?: string | null;
   cliente_id?: string | null;
   provedor?: VaultProvedorId | null;
-  passwordEncrypted: EncryptedPayload;
+  passwordEncrypted?: EncryptedPayload | null;
   notasEncrypted?: EncryptedPayload | null;
 }
 
@@ -82,7 +83,7 @@ export async function fetchVaultClientes(): Promise<HubVaultCliente[]> {
   if (!supabase) return [];
   const { data, error } = await supabase
     .from('hub_clientes')
-    .select('id, nome')
+    .select('id, nome, slug')
     .eq('ativo', true)
     .order('nome');
   if (error) throw new Error(supabaseErrorMessage(error));
@@ -106,7 +107,7 @@ export async function fetchVaultEntries(): Promise<HubVaultEntry[]> {
   if (clienteIds.length > 0) {
     const { data: clientes, error: clientesError } = await supabase
       .from('hub_clientes')
-      .select('id, nome')
+      .select('id, nome, slug')
       .in('id', clienteIds);
     if (clientesError) throw new Error(supabaseErrorMessage(clientesError));
     for (const c of clientes ?? []) {
@@ -133,8 +134,8 @@ export async function createVaultEntry(
     system_id: input.system_id ?? null,
     cliente_id: input.cliente_id ?? null,
     provedor: input.provedor ?? null,
-    password_iv: input.passwordEncrypted.iv,
-    password_ciphertext: input.passwordEncrypted.ciphertext,
+    password_iv: input.passwordEncrypted?.iv ?? null,
+    password_ciphertext: input.passwordEncrypted?.ciphertext ?? null,
     notas_iv: input.notasEncrypted?.iv ?? null,
     notas_ciphertext: input.notasEncrypted?.ciphertext ?? null,
     created_by: userId,
@@ -161,8 +162,8 @@ export async function updateVaultEntry(
       system_id: input.system_id ?? null,
       cliente_id: input.cliente_id ?? null,
       provedor: input.provedor ?? null,
-      password_iv: input.passwordEncrypted.iv,
-      password_ciphertext: input.passwordEncrypted.ciphertext,
+      password_iv: input.passwordEncrypted?.iv ?? null,
+      password_ciphertext: input.passwordEncrypted?.ciphertext ?? null,
       notas_iv: input.notasEncrypted?.iv ?? null,
       notas_ciphertext: input.notasEncrypted?.ciphertext ?? null,
       updated_by: userId,

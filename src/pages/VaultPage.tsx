@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PageHeader } from '../components/PageHeader';
 import { useAuth } from '../contexts/AuthContext';
 import { useVault } from '../contexts/VaultContext';
+import { VaultClienteIcon } from '../components/vault/VaultClienteIcon';
 import { VaultProviderIcon } from '../components/vault/VaultProviderIcon';
 import {
   createVaultEntry,
@@ -133,6 +134,8 @@ export function VaultPage() {
     });
   }, [entries, search, filterCategoria, filterCliente, filterProvedor]);
 
+  const clienteById = useMemo(() => new Map(clientes.map((c) => [c.id, c])), [clientes]);
+
   const selectProvedor = (id: VaultProvedorId) => {
     const prov = getVaultProvedor(id);
     setForm((f) => ({
@@ -208,10 +211,13 @@ export function VaultPage() {
     setEditingId(entry.id);
     setFormError(null);
     try {
-      const password = await decryptText(
-        { iv: entry.password_iv, ciphertext: entry.password_ciphertext },
-        cryptoKey
-      );
+      let password = '';
+      if (entry.password_iv && entry.password_ciphertext) {
+        password = await decryptText(
+          { iv: entry.password_iv, ciphertext: entry.password_ciphertext },
+          cryptoKey
+        );
+      }
       const notas = entry.notas_iv && entry.notas_ciphertext
         ? await decryptText({ iv: entry.notas_iv, ciphertext: entry.notas_ciphertext }, cryptoKey)
         : '';
@@ -234,10 +240,13 @@ export function VaultPage() {
   const revealEntry = async (entry: HubVaultEntry) => {
     if (!cryptoKey) return;
     try {
-      const password = await decryptText(
-        { iv: entry.password_iv, ciphertext: entry.password_ciphertext },
-        cryptoKey
-      );
+      let password = '';
+      if (entry.password_iv && entry.password_ciphertext) {
+        password = await decryptText(
+          { iv: entry.password_iv, ciphertext: entry.password_ciphertext },
+          cryptoKey
+        );
+      }
       const notas =
         entry.notas_iv && entry.notas_ciphertext
           ? await decryptText({ iv: entry.notas_iv, ciphertext: entry.notas_ciphertext }, cryptoKey)
@@ -258,21 +267,28 @@ export function VaultPage() {
 
   const buildEncryptedInput = async (): Promise<VaultEntryInput | null> => {
     if (!cryptoKey || !user) return null;
-    if (!form.titulo.trim()) {
-      setFormError('Informe um título.');
-      return null;
-    }
-    if (!form.password) {
-      setFormError('Informe a senha.');
-      return null;
-    }
-    const passwordEncrypted = await encryptText(form.password, cryptoKey);
+
+    const titulo = form.titulo.trim();
     const notasTrim = form.notas.trim();
     const notasEncrypted = notasTrim ? await encryptText(notasTrim, cryptoKey) : null;
+
+    let passwordEncrypted: VaultEntryInput['passwordEncrypted'] = null;
+    if (form.password) {
+      passwordEncrypted = await encryptText(form.password, cryptoKey);
+    } else if (editingId) {
+      const existing = entries.find((e) => e.id === editingId);
+      if (existing?.password_iv && existing?.password_ciphertext) {
+        passwordEncrypted = {
+          iv: existing.password_iv,
+          ciphertext: existing.password_ciphertext,
+        };
+      }
+    }
+
     return {
-      titulo: form.titulo,
-      usuario_login: form.usuario_login,
-      url: form.url,
+      titulo,
+      usuario_login: form.usuario_login.trim() || undefined,
+      url: form.url.trim() || undefined,
       categoria: form.categoria,
       cliente_id: form.cliente_id || null,
       provedor: form.provedor || null,
@@ -405,51 +421,105 @@ export function VaultPage() {
       />
 
       <div className={styles.toolbar}>
-        <div className={styles.toolbarLeft}>
-          <input
-            className={styles.search}
-            type="search"
-            placeholder="Buscar…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <select
-            value={filterCategoria}
-            onChange={(e) => setFilterCategoria(e.target.value as VaultCategoria | '')}
-          >
-            <option value="">Todas categorias</option>
-            {VAULT_CATEGORIAS.map((c) => (
-              <option key={c.value} value={c.value}>
-                {c.label}
-              </option>
-            ))}
-          </select>
-          <select value={filterCliente} onChange={(e) => setFilterCliente(e.target.value)}>
-            <option value="">Todos clientes</option>
-            {clientes.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.nome}
-              </option>
-            ))}
-          </select>
-          <select
-            value={filterProvedor}
-            onChange={(e) => setFilterProvedor(e.target.value as VaultProvedorId | '')}
-          >
-            <option value="">Todos sistemas</option>
-            {VAULT_PROVEDORES.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.label}
-              </option>
-            ))}
-          </select>
+        <div className={styles.filterBar}>
+          <div className={styles.filterField}>
+            <label className={styles.filterLabel} htmlFor="vault-search">
+              Buscar
+            </label>
+            <div className={styles.filterControl}>
+              <span className={styles.filterIcon} aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"
+                    stroke="currentColor"
+                    strokeWidth="1.75"
+                  />
+                  <path d="M16 16l5 5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                </svg>
+              </span>
+              <input
+                id="vault-search"
+                className={`${styles.filterInput} ${styles.filterInputSearch}`}
+                type="search"
+                placeholder="Título, login ou notas…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className={styles.filterField}>
+            <label className={styles.filterLabel} htmlFor="vault-filter-categoria">
+              Categoria
+            </label>
+            <select
+              id="vault-filter-categoria"
+              className={styles.filterSelect}
+              value={filterCategoria}
+              onChange={(e) => setFilterCategoria(e.target.value as VaultCategoria | '')}
+            >
+              <option value="">Todas categorias</option>
+              {VAULT_CATEGORIAS.map((c) => (
+                <option key={c.value} value={c.value}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className={styles.filterField}>
+            <label className={styles.filterLabel} htmlFor="vault-filter-sistema">
+              Sistema
+            </label>
+            <select
+              id="vault-filter-sistema"
+              className={styles.filterSelect}
+              value={filterProvedor}
+              onChange={(e) => setFilterProvedor(e.target.value as VaultProvedorId | '')}
+            >
+              <option value="">Todos sistemas</option>
+              {VAULT_PROVEDORES.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className={styles.clienteFilterRow}>
+            <span className={styles.filterLabel}>Cliente</span>
+            <div className={styles.clienteFilterStrip} role="group" aria-label="Filtrar por cliente">
+              <button
+                type="button"
+                className={`${styles.clienteOption} ${!filterCliente ? styles.clienteOptionOn : ''}`}
+                onClick={() => setFilterCliente('')}
+                title="Todos clientes"
+              >
+                <span className={styles.clienteOptionAll} aria-hidden>
+                  <VaultProviderIcon provider="outro" size={22} />
+                </span>
+                <span className={styles.clienteOptionLabel}>Todos</span>
+              </button>
+              {clientes.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  className={`${styles.clienteOption} ${filterCliente === c.id ? styles.clienteOptionOn : ''}`}
+                  onClick={() => setFilterCliente(c.id)}
+                  title={c.nome}
+                >
+                  <VaultClienteIcon cliente={c} size={28} />
+                  <span className={styles.clienteOptionLabel}>{c.nome}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className={styles.toolbarActions}>
           <button type="button" className="btn-primary" onClick={openCreate}>
             Nova credencial
           </button>
+          <button type="button" className="btn-ghost" onClick={handleLock}>
+            Bloquear cofre
+          </button>
         </div>
-        <button type="button" className={`btn-ghost ${styles.lockBtn}`} onClick={handleLock}>
-          Bloquear cofre
-        </button>
       </div>
 
       {listError && <div className="error-banner">{listError}</div>}
@@ -474,7 +544,7 @@ export function VaultPage() {
                   <div className={styles.entryHead}>
                     <div>
                       <h3 className={styles.entryTitle}>
-                        {entry.titulo}
+                        {entry.titulo.trim() || 'Sem título'}
                         {prov && (
                           <span style={{ fontWeight: 400, color: 'var(--muted)', fontSize: '0.85em' }}>
                             {' '}
@@ -492,7 +562,17 @@ export function VaultPage() {
                         )}
                       </p>
                       {entry.cliente_nome && (
-                        <span className={styles.clienteTag}>Cliente: {entry.cliente_nome}</span>
+                        <span className={styles.clienteTag}>
+                          <VaultClienteIcon
+                            cliente={
+                              entry.cliente_id
+                                ? (clienteById.get(entry.cliente_id) ?? { nome: entry.cliente_nome })
+                                : { nome: entry.cliente_nome }
+                            }
+                            size={18}
+                          />
+                          {entry.cliente_nome}
+                        </span>
                       )}
                     </div>
                     <span className={styles.badge}>{cat?.label ?? entry.categoria}</span>
@@ -559,15 +639,16 @@ export function VaultPage() {
             <h2 id="vault-form-title">{editingId ? 'Editar credencial' : 'Nova credencial'}</h2>
             {formError && <div className="error-banner">{formError}</div>}
             <div className={styles.field}>
-              <label htmlFor="vault-titulo">Título</label>
+              <label htmlFor="vault-titulo">Título (opcional)</label>
               <input
                 id="vault-titulo"
                 value={form.titulo}
+                placeholder="Ex.: Painel AWS"
                 onChange={(e) => setForm((f) => ({ ...f, titulo: e.target.value }))}
               />
             </div>
             <div className={styles.field}>
-              <label htmlFor="vault-user">Usuário / login</label>
+              <label htmlFor="vault-user">Usuário / login (opcional)</label>
               <input
                 id="vault-user"
                 value={form.usuario_login}
@@ -575,7 +656,7 @@ export function VaultPage() {
               />
             </div>
             <div className={styles.field}>
-              <label htmlFor="vault-url">URL</label>
+              <label htmlFor="vault-url">URL (opcional)</label>
               <input
                 id="vault-url"
                 type="url"
@@ -584,7 +665,7 @@ export function VaultPage() {
               />
             </div>
             <div className={styles.field}>
-              <label>Sistema / provedor</label>
+              <label>Sistema / provedor (opcional)</label>
               <div className={styles.providerGrid} role="listbox" aria-label="Provedor">
                 {VAULT_PROVEDORES.map((p) => (
                   <button
@@ -602,22 +683,35 @@ export function VaultPage() {
               </div>
             </div>
             <div className={styles.field}>
-              <label htmlFor="vault-cliente">Cliente</label>
-              <select
-                id="vault-cliente"
-                value={form.cliente_id}
-                onChange={(e) => setForm((f) => ({ ...f, cliente_id: e.target.value }))}
-              >
-                <option value="">Nenhum / interno NEXUS</option>
+              <span className={styles.fieldLegend}>Cliente (opcional)</span>
+              <div className={styles.providerGrid} role="listbox" aria-label="Cliente">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={!form.cliente_id}
+                  className={`${styles.providerOption} ${!form.cliente_id ? styles.providerOptionOn : ''}`}
+                  onClick={() => setForm((f) => ({ ...f, cliente_id: '' }))}
+                >
+                  <img src="/img/favicon.png" alt="" width={26} height={26} className={styles.clienteNexusLogo} />
+                  <span className={styles.providerLabel}>NEXUS interno</span>
+                </button>
                 {clientes.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.nome}
-                  </option>
+                  <button
+                    key={c.id}
+                    type="button"
+                    role="option"
+                    aria-selected={form.cliente_id === c.id}
+                    className={`${styles.providerOption} ${form.cliente_id === c.id ? styles.providerOptionOn : ''}`}
+                    onClick={() => setForm((f) => ({ ...f, cliente_id: c.id }))}
+                  >
+                    <VaultClienteIcon cliente={c} size={28} />
+                    <span className={styles.providerLabel}>{c.nome}</span>
+                  </button>
                 ))}
-              </select>
+              </div>
             </div>
             <div className={styles.field}>
-              <label htmlFor="vault-cat">Categoria</label>
+              <label htmlFor="vault-cat">Categoria (opcional)</label>
               <select
                 id="vault-cat"
                 value={form.categoria}
@@ -631,17 +725,18 @@ export function VaultPage() {
               </select>
             </div>
             <div className={styles.field}>
-              <label htmlFor="vault-pass">Senha</label>
+              <label htmlFor="vault-pass">Senha (opcional)</label>
               <input
                 id="vault-pass"
                 type="password"
                 autoComplete="new-password"
                 value={form.password}
+                placeholder={editingId ? 'Deixe em branco para manter a senha atual' : undefined}
                 onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
               />
             </div>
             <div className={styles.field}>
-              <label htmlFor="vault-notas">Notas (opcional, criptografadas)</label>
+              <label htmlFor="vault-notas">Notas (opcional)</label>
               <textarea
                 id="vault-notas"
                 value={form.notas}
