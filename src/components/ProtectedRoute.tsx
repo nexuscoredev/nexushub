@@ -10,9 +10,19 @@ export function ProtectedRoute({
   requireFinanceiro = false,
   requireGestao = false,
 }: ProtectedRouteProps) {
-  const { session, loading, configured, podeFinanceiroAgenda, podeGestao, isCliente, isEquipe } =
-    useAuth();
+  const {
+    session,
+    user,
+    profile,
+    loading,
+    configured,
+    podeFinanceiroAgenda,
+    podeGestao,
+    isCliente,
+    isEquipe,
+  } = useAuth();
   const location = useLocation();
+  const profilePending = Boolean(session && user && profile === null);
 
   if (!configured) {
     return (
@@ -23,7 +33,7 @@ export function ProtectedRoute({
     );
   }
 
-  if (loading) {
+  if (loading || profilePending) {
     return (
       <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--muted)' }}>
         Carregando sessão…
