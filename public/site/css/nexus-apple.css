@@ -302,58 +302,43 @@ body::after,
 }
 
 .nx-hero-apple__brand {
-  position: relative;
-  margin: 0 0 1.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 0 1.5rem;
   padding: 0;
-  line-height: 0;
+  line-height: 1;
 }
 
-.nx-hero-apple__brand::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 55%;
-  transform: translate(-50%, -50%);
-  width: min(420px, 92vw);
-  height: min(420px, 92vw);
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 0, 0, 0.07) 0%, transparent 68%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.nx-hero-apple__logo-frame {
-  position: relative;
-  z-index: 1;
-  display: block;
-  border-radius: 28px;
-  overflow: hidden;
-  box-shadow:
-    0 1px 1px rgba(0, 0, 0, 0.04),
-    0 8px 24px rgba(0, 0, 0, 0.06),
-    0 32px 64px rgba(0, 0, 0, 0.08);
-}
-
-.nx-hero-apple__logo {
-  width: min(340px, 82vw);
+.nx-hero-apple__mark {
+  width: min(148px, 36vw);
   height: auto;
   margin-inline: auto;
   display: block;
-  border-radius: 28px;
+  filter: brightness(0) saturate(100%);
+  opacity: 0.88;
+}
+
+.nx-hero-apple__wordmark {
+  display: block;
+  margin-top: 0.85rem;
+  font-size: clamp(1.75rem, 4.5vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--nx-text);
 }
 
 [data-theme='dark'] .nx-hero-apple {
   background: var(--nx-bg);
 }
 
-[data-theme='dark'] .nx-hero-apple__brand::before {
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, transparent 68%);
+[data-theme='dark'] .nx-hero-apple__mark {
+  filter: brightness(0) saturate(100%) invert(1);
+  opacity: 0.92;
 }
 
-[data-theme='dark'] .nx-hero-apple__logo-frame {
-  box-shadow:
-    0 1px 1px rgba(255, 255, 255, 0.04),
-    0 16px 48px rgba(0, 0, 0, 0.45);
+[data-theme='dark'] .nx-hero-apple__wordmark {
+  color: #f5f5f7;
 }
 
 .nx-hero-apple__tagline {
