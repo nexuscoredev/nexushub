@@ -1527,9 +1527,10 @@ img {
 
 .nx-hero-cinema {
   position: relative;
-  min-height: calc(100vh - 6.5rem);
+  min-height: clamp(28rem, 72vh, 40rem);
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   overflow: hidden;
   margin: 0 0 2.5rem;
   border-radius: var(--nx-radius);
@@ -1538,39 +1539,56 @@ img {
 
 @media (min-width: 768px) {
   .nx-hero-cinema {
-    min-height: calc(100vh - 7rem);
+    min-height: clamp(30rem, 78vh, 44rem);
   }
 }
 
 .nx-hero-cinema__bg {
   position: absolute;
   inset: 0;
+  overflow: hidden;
 }
 
 .nx-hero-cinema__bg img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 82% center;
-  transform: scale(1.14);
-  transform-origin: 88% center;
+  object-position: 100% center;
+  transform: scale(1.22);
+  transform-origin: 100% center;
+  filter: blur(10px) brightness(0.88);
 }
 
 .nx-hero-cinema__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, var(--nx-bg) 0%, transparent 62%);
+  background: linear-gradient(
+    90deg,
+    var(--nx-bg) 0%,
+    var(--nx-bg) 38%,
+    rgba(245, 245, 247, 0.92) 48%,
+    rgba(245, 245, 247, 0.45) 62%,
+    transparent 82%
+  );
 }
 
 [data-theme='dark'] .nx-hero-cinema__overlay {
-  background: linear-gradient(90deg, rgba(10, 10, 10, 0.94) 0%, rgba(10, 10, 10, 0.4) 55%, transparent 100%);
+  background: linear-gradient(
+    90deg,
+    rgba(10, 10, 10, 0.98) 0%,
+    rgba(10, 10, 10, 0.96) 38%,
+    rgba(10, 10, 10, 0.82) 50%,
+    rgba(10, 10, 10, 0.35) 68%,
+    transparent 88%
+  );
 }
 
 .nx-hero-cinema__content {
   position: relative;
   z-index: 2;
-  padding: 6rem 1.5rem 3rem;
-  max-width: 48rem;
+  padding: 2.5rem 1.5rem;
+  max-width: 42rem;
+  width: 100%;
 }
 
 .nx-hero-cinema__title {
@@ -2076,7 +2094,7 @@ img {
 }
 
 .nx-hero-cinema__bg img {
-  filter: saturate(1.12) contrast(1.1) brightness(0.92);
+  filter: blur(10px) brightness(0.88);
 }
 
 .nx-card,
@@ -2127,11 +2145,16 @@ img {
   display: none !important;
 }
 
-.nx-hero-cinema__bg img {
-  filter: none;
-  object-position: 82% center;
-  transform: scale(1.14);
-  transform-origin: 88% center;
+.nx-chip {
+  padding-left: 0.85rem;
+}
+
+.nx-chip::before {
+  display: none;
+}
+
+.nx-section {
+  margin-bottom: 3.5rem;
 }
 
 .nx-card,
@@ -2179,27 +2202,36 @@ img {
 }
 
 .nx-hero-cinema__overlay {
-  background: linear-gradient(90deg, var(--nx-bg) 0%, transparent 62%);
+  background: linear-gradient(
+    90deg,
+    var(--nx-bg) 0%,
+    var(--nx-bg) 38%,
+    rgba(245, 245, 247, 0.92) 48%,
+    rgba(245, 245, 247, 0.45) 62%,
+    transparent 82%
+  );
 }
 
 [data-theme='dark'] .nx-hero-cinema__overlay {
-  background: linear-gradient(90deg, rgba(10, 10, 10, 0.94) 0%, rgba(10, 10, 10, 0.4) 55%, transparent 100%);
+  background: linear-gradient(
+    90deg,
+    rgba(10, 10, 10, 0.98) 0%,
+    rgba(10, 10, 10, 0.96) 38%,
+    rgba(10, 10, 10, 0.82) 50%,
+    rgba(10, 10, 10, 0.35) 68%,
+    transparent 88%
+  );
 }
 
-.nx-chip {
-  padding-left: 0.85rem;
-}
-
-.nx-chip::before {
-  display: none;
-}
-
-.nx-section {
-  margin-bottom: 3.5rem;
+.nx-hero-cinema__bg img {
+  filter: blur(10px) brightness(0.88);
+  object-position: 100% center;
+  transform: scale(1.22);
+  transform-origin: 100% center;
 }
 
 .nx-hero-cinema__content {
-  padding: 5rem 1.5rem 3rem;
+  padding: clamp(2.5rem, 8vh, 4rem) 1.5rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
