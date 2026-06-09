@@ -1,4 +1,6 @@
 (function () {
+  let navInitialized = false;
+
   function setNavOpen(open) {
     const drawer = document.getElementById('nx-nav-drawer');
     const panel = document.getElementById('nx-nav-panel');
@@ -13,14 +15,17 @@
   }
 
   function initMobileNav() {
+    if (navInitialized) return true;
+
     const toggle = document.getElementById('nx-nav-toggle');
     const drawer = document.getElementById('nx-nav-drawer');
     const panel = document.getElementById('nx-nav-panel');
     const backdrop = document.getElementById('nx-nav-backdrop');
     const closeBtn = document.getElementById('nx-nav-close');
-    if (!toggle || !drawer || !panel) return;
+    if (!toggle || !drawer || !panel) return false;
 
-    const openNav = () => setNavOpen(true);
+    navInitialized = true;
+
     const closeNav = () => setNavOpen(false);
 
     toggle.addEventListener('click', () => {
@@ -40,10 +45,13 @@
         toggle.focus();
       }
     });
+
+    return true;
   }
 
+  window.NexusSite = { initMobileNav };
+
   document.addEventListener('DOMContentLoaded', () => {
-    window.NexusTheme?.initButtons?.();
     initMobileNav();
   });
 })();

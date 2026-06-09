@@ -38,6 +38,7 @@
     inject('nexus-footer', footerHtml);
 
     setActiveLink();
+    window.NexusSite?.initMobileNav?.();
     window.NexusTheme?.initButtons?.();
     window.NexusMetal?.init?.();
   } catch (err) {
