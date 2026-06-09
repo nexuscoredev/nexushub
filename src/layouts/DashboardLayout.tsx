@@ -34,6 +34,7 @@ export function DashboardLayout() {
     { to: '/fila', label: 'Fila', icon: 'queue', show: true },
     { to: '/sistemas', label: 'Sistemas', icon: 'systems', show: true },
     { to: '/usuarios', label: 'Usuários', icon: 'users', show: podeGestao },
+    { to: '/cofre', label: 'Cofre', icon: 'vault', show: podeGestao },
     { to: '/configuracoes', label: 'Config', icon: 'settings', show: true },
   ];
 

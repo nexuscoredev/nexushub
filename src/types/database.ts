@@ -27,6 +27,34 @@ export interface HubSystem {
   ativo: boolean;
 }
 
+export type HubVaultCategoria = 'infra' | 'saas' | 'cliente' | 'banco' | 'email' | 'outro';
+
+export interface HubVaultConfig {
+  id: number;
+  kdf_salt: string;
+  verifier_iv: string;
+  verifier_ciphertext: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface HubVaultEntry {
+  id: string;
+  titulo: string;
+  usuario_login: string | null;
+  url: string | null;
+  categoria: HubVaultCategoria;
+  system_id: string | null;
+  password_iv: string;
+  password_ciphertext: string;
+  notas_iv: string | null;
+  notas_ciphertext: string | null;
+  created_by: string;
+  updated_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface HubFinanceSubscription {
   id: string;
   nome: string;

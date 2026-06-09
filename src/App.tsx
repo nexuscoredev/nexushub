@@ -19,12 +19,15 @@ import { SettingsPage } from './pages/SettingsPage';
 import { SystemsPage } from './pages/SystemsPage';
 import { UsersPage } from './pages/UsersPage';
 import { ChatPage } from './pages/ChatPage';
+import { VaultPage } from './pages/VaultPage';
+import { VaultProvider } from './contexts/VaultContext';
 
 export default function App() {
   return (
     <AuthProvider>
       <AppUpdateProvider>
       <ChatFloatProvider>
+      <VaultProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<SiteRedirectPage />} />
@@ -45,6 +48,7 @@ export default function App() {
               <Route path="/configuracoes" element={<SettingsPage />} />
               <Route element={<ProtectedRoute requireGestao />}>
                 <Route path="/usuarios" element={<UsersPage />} />
+                <Route path="/cofre" element={<VaultPage />} />
               </Route>
               <Route element={<ProtectedRoute requireFinanceiro />}>
                 <Route path="/financeiro" element={<FinanceiroPage />} />
@@ -55,6 +59,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
+      </VaultProvider>
       </ChatFloatProvider>
       </AppUpdateProvider>
     </AuthProvider>
