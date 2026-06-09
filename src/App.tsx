@@ -19,6 +19,7 @@ import { SettingsPage } from './pages/SettingsPage';
 import { SystemsPage } from './pages/SystemsPage';
 import { UsersPage } from './pages/UsersPage';
 import { ChatPage } from './pages/ChatPage';
+import { PessoalPage } from './pages/PessoalPage';
 import { VaultPage } from './pages/VaultPage';
 import { VaultProvider } from './contexts/VaultContext';
 
@@ -49,6 +50,9 @@ export default function App() {
               <Route element={<ProtectedRoute requireGestao />}>
                 <Route path="/usuarios" element={<UsersPage />} />
                 <Route path="/cofre" element={<VaultPage />} />
+              </Route>
+              <Route element={<ProtectedRoute requirePessoal />}>
+                <Route path="/pessoal" element={<PessoalPage />} />
               </Route>
               <Route element={<ProtectedRoute requireFinanceiro />}>
                 <Route path="/financeiro" element={<FinanceiroPage />} />

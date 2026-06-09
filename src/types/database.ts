@@ -118,3 +118,18 @@ export interface CalendarEvent {
   htmlLink?: string;
   calendar: 'rafael' | 'vinicius' | 'combinado';
 }
+
+export type HubPersonalTipo = 'entrada' | 'saida';
+
+export interface HubPersonalTransaction {
+  id: string;
+  user_id: string;
+  tipo: HubPersonalTipo;
+  descricao: string;
+  valor: number;
+  data_referencia: string;
+  categoria: string | null;
+  notas: string | null;
+  created_at?: string;
+  updated_at?: string;
+}

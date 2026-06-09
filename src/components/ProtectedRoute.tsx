@@ -4,11 +4,13 @@ import { useAuth } from '../contexts/AuthContext';
 interface ProtectedRouteProps {
   requireFinanceiro?: boolean;
   requireGestao?: boolean;
+  requirePessoal?: boolean;
 }
 
 export function ProtectedRoute({
   requireFinanceiro = false,
   requireGestao = false,
+  requirePessoal = false,
 }: ProtectedRouteProps) {
   const {
     session,
@@ -18,6 +20,7 @@ export function ProtectedRoute({
     configured,
     podeFinanceiroAgenda,
     podeGestao,
+    podePessoal,
     isCliente,
     isEquipe,
   } = useAuth();
@@ -58,6 +61,10 @@ export function ProtectedRoute({
   }
 
   if (requireGestao && !podeGestao) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  if (requirePessoal && !podePessoal) {
     return <Navigate to="/dashboard" replace />;
   }
 

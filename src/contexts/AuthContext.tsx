@@ -10,7 +10,7 @@ import {
 import type { Session, User } from '@supabase/supabase-js';
 import { fetchClienteConta } from '../lib/clientePortal';
 import { normalizeUsuario } from '../lib/usuarios';
-import { podeGerenciar } from '../lib/cargos';
+import { podeGerenciar, podeAcessarPessoal } from '../lib/cargos';
 import { podeAcessarFinanceiroAgenda, normalizeEmail } from '../lib/acesso';
 import { supabase, supabaseConfigured, supabaseErrorMessage } from '../lib/supabase';
 import type { HubClienteConta } from '../types/clientePortal';
@@ -27,6 +27,7 @@ interface AuthState {
   configured: boolean;
   podeFinanceiroAgenda: boolean;
   podeGestao: boolean;
+  podePessoal: boolean;
   signIn: (usuario: string, password: string) => Promise<void>;
   signInCliente: (usuario: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -185,6 +186,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const email = normalizeEmail(user?.email ?? profile?.email ?? clienteConta?.email);
   const podeFinanceiroAgenda = podeAcessarFinanceiroAgenda(email);
   const podeGestao = podeGerenciar(profile?.cargo);
+  const podePessoal = podeAcessarPessoal(profile?.cargo);
   const isEquipe = Boolean(profile?.ativo);
   const isCliente = contaClienteAtiva(clienteConta);
 
@@ -200,6 +202,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       configured: supabaseConfigured,
       podeFinanceiroAgenda,
       podeGestao,
+      podePessoal,
       signIn,
       signInCliente,
       signOut,
@@ -216,6 +219,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       podeFinanceiroAgenda,
       podeGestao,
+      podePessoal,
       signIn,
       signInCliente,
       signOut,

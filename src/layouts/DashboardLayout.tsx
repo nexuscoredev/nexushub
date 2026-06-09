@@ -18,7 +18,7 @@ interface NavItem {
 }
 
 export function DashboardLayout() {
-  const { profile, user, podeFinanceiroAgenda, podeGestao, signOut } = useAuth();
+  const { profile, user, podeFinanceiroAgenda, podeGestao, podePessoal, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -29,6 +29,7 @@ export function DashboardLayout() {
     { to: '/dashboard', label: 'Painel', icon: 'dashboard', show: true },
     { to: '/agenda', label: 'Agenda', icon: 'calendar', show: podeFinanceiroAgenda },
     { to: '/financeiro', label: 'Financeiro', icon: 'finance', show: podeFinanceiroAgenda },
+    { to: '/pessoal', label: 'Pessoal', icon: 'personal', show: podePessoal },
     { to: '/chat', label: 'Chat', icon: 'chat', show: true },
     { to: '/fila', label: 'Fila', icon: 'queue', show: true },
     { to: '/sistemas', label: 'Sistemas', icon: 'systems', show: true },
