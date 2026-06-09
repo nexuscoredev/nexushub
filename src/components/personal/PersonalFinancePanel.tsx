@@ -1,22 +1,18 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PersonalContasFixasView } from '../PersonalContasFixasView';
+import { PersonalFinanceHero } from './PersonalFinanceHero';
+import { PersonalFinanceKpiGrid } from './PersonalFinanceKpiGrid';
+import { PersonalFinanceNav } from './PersonalFinanceNav';
+import { PersonalTransactionCards } from './PersonalTransactionCards';
 import {
-  deletePersonalRow,
-  PersonalCrudBar,
-  PersonalRecordForm,
-} from '../PersonalFinanceCrud';
-import { PersonalKpiStrip } from '../PersonalKpiStrip';
-import { formatBRL, formatDate } from '../../lib/format';
-import {
-  categoriaPessoalLabel,
   saldoPessoal,
   totalEntradasPessoal,
   totalSaidasPessoal,
 } from '../../lib/pessoal';
+import { totalFixosPessoal } from '../../lib/personalFinanceVisuals';
 import { supabase, supabaseErrorMessage } from '../../lib/supabase';
 import { isViniciusPersonalFinance } from '../../lib/viniciusPersonalFinance';
-import type { HubPersonalTipo, HubPersonalTransaction } from '../../types/database';
-import financeStyles from '../../pages/FinanceiroPage.module.css';
+import type { HubPersonalTransaction } from '../../types/database';
 import styles from './PersonalFinancePanel.module.css';
 
 type ViniciusFinanceView = 'contas' | 'receitas' | 'outros';
@@ -25,10 +21,21 @@ interface PersonalFinancePanelProps {
   userEmail: string | undefined;
 }
 
+const VINICIUS_TABS = [
+  { id: 'contas', label: 'Contas fixas', icon: '/img/personal/grupo-fixos.svg' },
+  { id: 'receitas', label: 'Receitas', icon: '/img/finance/entradas.svg' },
+  { id: 'outros', label: 'Outros gastos', icon: '/img/finance/saidas.svg' },
+] as const;
+
+const GENERIC_TABS = [
+  { id: 'entrada', label: 'Receitas', icon: '/img/finance/entradas.svg' },
+  { id: 'saida', label: 'Gastos', icon: '/img/finance/saidas.svg' },
+] as const;
+
 export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
   const viniciusLayout = isViniciusPersonalFinance(userEmail);
   const [viniciusView, setViniciusView] = useState<ViniciusFinanceView>('contas');
-  const [fluxo, setFluxo] = useState<HubPersonalTipo>('entrada');
+  const [fluxo, setFluxo] = useState<'entrada' | 'saida'>('entrada');
   const [rows, setRows] = useState<HubPersonalTransaction[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -57,209 +64,69 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
     () => rows.filter((r) => r.tipo === 'saida' && !r.grupo),
     [rows],
   );
-  const fluxoRows = fluxo === 'entrada' ? entradas : saidasGenericas;
+
+  const kpiValues = useMemo(
+    () => ({
+      entradas: totalEntradasPessoal(rows),
+      saidas: totalSaidasPessoal(rows),
+      saldo: saldoPessoal(rows),
+    }),
+    [rows],
+  );
+
+  const activeVinicius = viniciusView;
+  const activeGeneric = fluxo;
 
   return (
     <div className={styles.panel}>
       {error && <div className="error-banner">{error}</div>}
 
-      <PersonalKpiStrip
-        values={{
-          entradas: totalEntradasPessoal(rows),
-          saidas: totalSaidasPessoal(rows),
-          saldo: saldoPessoal(rows),
-        }}
-      />
+      <PersonalFinanceHero totalFixos={totalFixosPessoal(rows)} loading={loading} />
+
+      <PersonalFinanceKpiGrid values={kpiValues} rows={rows} loading={loading} />
 
       {viniciusLayout ? (
         <>
-          <div className="tabs">
-            {(
-              [
-                ['contas', 'Contas Fixas'],
-                ['receitas', 'Receitas'],
-                ['outros', 'Outros gastos'],
-              ] as const
-            ).map(([id, label]) => (
-              <button
-                key={id}
-                type="button"
-                className={`tab ${viniciusView === id ? 'active' : ''}`}
-                onClick={() => setViniciusView(id)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          <PersonalFinanceNav
+            tabs={[...VINICIUS_TABS]}
+            active={activeVinicius}
+            onChange={(id) => setViniciusView(id as ViniciusFinanceView)}
+          />
 
           {loading ? (
-            <p style={{ color: 'var(--muted)' }}>Carregando…</p>
+            <p className={styles.loading}>Carregando seu painel…</p>
           ) : viniciusView === 'contas' ? (
             <PersonalContasFixasView rows={rows} onRefresh={load} />
           ) : (
-            <div className={financeStyles.sections}>
-              <PessoalQueueSection
-                title={viniciusView === 'receitas' ? 'Receitas' : 'Outros gastos'}
-                subtitle={
-                  viniciusView === 'receitas'
-                    ? 'Salário, extras e rendimentos'
-                    : 'Gastos fora das contas fixas'
-                }
-                totalLabel={formatBRL(
-                  (viniciusView === 'receitas' ? entradas : saidasGenericas).reduce(
-                    (sum, r) => sum + Number(r.valor),
-                    0,
-                  ),
-                )}
-              >
-                <PersonalTransactionsTable
-                  rows={viniciusView === 'receitas' ? entradas : saidasGenericas}
-                  presetTipo={viniciusView === 'receitas' ? 'entrada' : 'saida'}
-                  onRefresh={load}
-                />
-              </PessoalQueueSection>
+            <div className={styles.contentCard}>
+              <PersonalTransactionCards
+                rows={viniciusView === 'receitas' ? entradas : saidasGenericas}
+                presetTipo={viniciusView === 'receitas' ? 'entrada' : 'saida'}
+                onRefresh={load}
+              />
             </div>
           )}
         </>
       ) : (
         <>
-          <div className="tabs">
-            {(
-              [
-                ['entrada', 'Receitas'],
-                ['saida', 'Gastos'],
-              ] as const
-            ).map(([id, label]) => (
-              <button
-                key={id}
-                type="button"
-                className={`tab ${fluxo === id ? 'active' : ''}`}
-                onClick={() => setFluxo(id)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          <PersonalFinanceNav
+            tabs={[...GENERIC_TABS]}
+            active={activeGeneric}
+            onChange={(id) => setFluxo(id as 'entrada' | 'saida')}
+          />
 
           {loading ? (
-            <p style={{ color: 'var(--muted)' }}>Carregando…</p>
+            <p className={styles.loading}>Carregando seu painel…</p>
           ) : (
-            <div className={financeStyles.sections}>
-              <PessoalQueueSection
-                title={fluxo === 'entrada' ? 'Receitas' : 'Gastos'}
-                subtitle={
-                  fluxo === 'entrada'
-                    ? 'Salário, extras, rendimentos e outras entradas'
-                    : 'Despesas, compras e saídas do dia a dia'
-                }
-                totalLabel={formatBRL(fluxoRows.reduce((sum, r) => sum + Number(r.valor), 0))}
-              >
-                <PersonalTransactionsTable
-                  rows={fluxoRows}
-                  presetTipo={fluxo}
-                  onRefresh={load}
-                />
-              </PessoalQueueSection>
+            <div className={styles.contentCard}>
+              <PersonalTransactionCards
+                rows={fluxo === 'entrada' ? entradas : saidasGenericas}
+                presetTipo={fluxo}
+                onRefresh={load}
+              />
             </div>
           )}
         </>
-      )}
-    </div>
-  );
-}
-
-function PessoalQueueSection({
-  title,
-  subtitle,
-  totalLabel,
-  children,
-}: {
-  title: string;
-  subtitle?: string;
-  totalLabel: string;
-  children: ReactNode;
-}) {
-  return (
-    <section className={financeStyles.section}>
-      <div className={financeStyles.sectionHeader}>
-        <div>
-          <h2 className={financeStyles.sectionTitle}>{title}</h2>
-          {subtitle && <p className={financeStyles.sectionSubtitle}>{subtitle}</p>}
-        </div>
-        <span className={financeStyles.sectionMeta}>{totalLabel}</span>
-      </div>
-      <div className={financeStyles.sectionBody}>{children}</div>
-    </section>
-  );
-}
-
-function PersonalTransactionsTable({
-  rows,
-  presetTipo,
-  onRefresh,
-}: {
-  rows: HubPersonalTransaction[];
-  presetTipo: HubPersonalTipo;
-  onRefresh: () => void;
-}) {
-  const [editing, setEditing] = useState<HubPersonalTransaction | null>(null);
-
-  const handleDelete = async (id: string) => {
-    if (!confirm('Excluir este lançamento?')) return;
-    const err = await deletePersonalRow(id);
-    if (err) alert(err);
-    else onRefresh();
-  };
-
-  return (
-    <div className={`table-wrap ${financeStyles.financeMobileCards}`}>
-      <PersonalCrudBar presetTipo={presetTipo} onSaved={onRefresh} />
-      {editing && (
-        <PersonalRecordForm
-          recordId={editing.id}
-          initialValues={editing as unknown as Record<string, unknown>}
-          onSaved={() => {
-            setEditing(null);
-            onRefresh();
-          }}
-          onCancel={() => setEditing(null)}
-        />
-      )}
-      <table className="data-table">
-        <thead>
-          <tr>
-            <th>descrição</th>
-            <th>valor</th>
-            <th>categoria</th>
-            <th>data</th>
-            <th>notas</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr key={row.id}>
-              <td data-label="descrição">{row.descricao}</td>
-              <td data-label="valor">{formatBRL(Number(row.valor))}</td>
-              <td data-label="categoria">{categoriaPessoalLabel(row.categoria)}</td>
-              <td data-label="data">{formatDate(row.data_referencia)}</td>
-              <td data-label="notas">{row.notas ?? '—'}</td>
-              <td className={financeStyles.cellActions} data-label="Ações">
-                <button type="button" className="btn-ghost" onClick={() => setEditing(row)}>
-                  Editar
-                </button>
-                <button type="button" className="btn-ghost" onClick={() => void handleDelete(row.id)}>
-                  Excluir
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {rows.length === 0 && (
-        <p style={{ color: 'var(--muted)', padding: '0.75rem 0' }}>
-          Nenhum lançamento nesta fila. Use &quot;Adicionar lançamento&quot; para começar.
-        </p>
       )}
     </div>
   );
