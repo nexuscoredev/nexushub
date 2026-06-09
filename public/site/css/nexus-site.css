@@ -288,11 +288,7 @@ body > .nx-splash--legacy {
 
 @media (prefers-reduced-motion: reduce) {
   .nx-metal-live,
-  .nx-metal-text,
-  .nx-nav__link .material-symbols-outlined,
-  .nx-nav__account,
-  .nx-nav__links .nx-nav__link.is-active::after,
-  .nx-nav-panel .nx-nav__link.is-active::before {
+  .nx-metal-text {
     animation: none;
   }
 
@@ -434,39 +430,7 @@ img {
 .nx-nav__link .material-symbols-outlined {
   font-size: 1.15rem;
   flex-shrink: 0;
-  background: linear-gradient(
-    118deg,
-    #5c6068 0%,
-    #8a8f98 18%,
-    #d0d4da 34%,
-    #ffffff 48%,
-    #8a8f98 62%,
-    #c8ccd4 78%,
-    #6b6f78 100%
-  );
-  background-size: 260% 260%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  animation: nxMetalFlow 5.5s ease-in-out infinite;
-}
-
-[data-theme='dark'] .nx-nav__link .material-symbols-outlined {
-  background: linear-gradient(
-    118deg,
-    #9ca3af 0%,
-    #e8eaee 16%,
-    #ffffff 32%,
-    #c8ccd4 48%,
-    #ffffff 64%,
-    #8a8f98 80%,
-    #d0d4da 100%
-  );
-  background-size: 260% 260%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--nx-text-soft);
 }
 
 .nx-nav__link:hover {
@@ -477,29 +441,9 @@ img {
 .nx-nav__link.is-active {
   position: relative;
   font-weight: 600;
-  border-bottom-color: transparent;
+  border-bottom-color: var(--nx-steel);
   background: var(--nx-nav-accent-hover);
   color: var(--nx-steel);
-}
-
-.nx-nav__links .nx-nav__link.is-active::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    #6b6f78 0%,
-    #c8ccd4 22%,
-    #ffffff 44%,
-    #b8bcc4 56%,
-    #ffffff 78%,
-    #8a8f98 100%
-  );
-  background-size: 220% 100%;
-  animation: nxMetalFlow 5.5s ease-in-out infinite;
 }
 
 .nx-nav__utilities {
@@ -567,17 +511,13 @@ img {
   gap: 0.45rem;
   padding: 0.5rem 1rem;
   border-radius: 999px;
-  border: 1.5px solid transparent;
-  background:
-    linear-gradient(var(--nx-nav-bg), var(--nx-nav-bg)) padding-box,
-    var(--nx-metal) border-box;
-  background-size: 100% 100%, 220% 220%;
+  border: 1.5px solid var(--nx-steel);
+  background: var(--nx-nav-bg);
   color: var(--nx-steel);
   font-size: 0.78rem;
   font-weight: 600;
   line-height: 1.2;
-  animation: nxMetalFlow 7s ease-in-out infinite;
-  transition: box-shadow 0.2s, color 0.2s;
+  transition: box-shadow 0.2s, color 0.2s, border-color 0.2s;
 }
 
 .nx-nav__account .material-symbols-outlined {
@@ -641,28 +581,8 @@ img {
 
 .nx-nav-panel .nx-nav__link.is-active {
   position: relative;
-  border-left-color: transparent;
+  border-left-color: var(--nx-steel);
   background: var(--nx-nav-accent-hover);
-}
-
-.nx-nav-panel .nx-nav__link.is-active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: linear-gradient(
-    180deg,
-    #6b6f78 0%,
-    #c8ccd4 22%,
-    #ffffff 44%,
-    #b8bcc4 56%,
-    #ffffff 78%,
-    #8a8f98 100%
-  );
-  background-size: 100% 220%;
-  animation: nxMetalFlow 5.5s ease-in-out infinite;
 }
 
 .nx-nav-panel__cta {
