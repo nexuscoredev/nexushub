@@ -64,8 +64,13 @@ const SYSTEM_URL_OVERRIDES: Record<string, string> = {
   'rh-ambiental': 'https://rgambiental.com.br/',
 };
 
-export function resolveSystemUrl(systemId: string, url: string): string {
-  return SYSTEM_URL_OVERRIDES[systemId] ?? url;
+export function resolveSystemUrl(systemId: string, url: string, nome?: string): string {
+  if (SYSTEM_URL_OVERRIDES[systemId]) return SYSTEM_URL_OVERRIDES[systemId];
+  const n = normalize(nome ?? '');
+  if (n.includes('rg ambiental') || n.includes('rh ambiental')) {
+    return SYSTEM_URL_OVERRIDES['rh-ambiental'];
+  }
+  return url;
 }
 
 export function matchProjectToSystem(projectName: string): ClientSystem | null {

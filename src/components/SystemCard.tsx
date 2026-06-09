@@ -10,7 +10,7 @@ interface SystemCardProps {
 
 export function SystemCard({ system, variant = 'button' }: SystemCardProps) {
   const logo = systemLogoUrl(system.id);
-  const href = resolveSystemUrl(system.id, system.url);
+  const href = resolveSystemUrl(system.id, system.url, system.nome);
 
   const body = (
     <>
