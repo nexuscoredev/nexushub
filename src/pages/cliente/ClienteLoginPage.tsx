@@ -13,7 +13,7 @@ export function ClienteLoginPage() {
   const location = useLocation();
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname ?? '/cliente';
 
-  const [email, setEmail] = useState('');
+  const [usuario, setUsuario] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -31,7 +31,7 @@ export function ClienteLoginPage() {
     setError(null);
     setLoading(true);
     try {
-      await signInCliente(email, password);
+      await signInCliente(usuario, password);
       navigate(from, { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Falha na autenticação');
@@ -64,17 +64,17 @@ export function ClienteLoginPage() {
 
           <form className={styles.form} onSubmit={(e) => void handleSubmit(e)}>
             <div className={styles.field}>
-              <label className={styles.label} htmlFor="cliente-email">
-                E-mail
+              <label className={styles.label} htmlFor="cliente-usuario">
+                Usuário
               </label>
               <input
-                id="cliente-email"
+                id="cliente-usuario"
                 className={styles.input}
-                type="email"
-                autoComplete="email"
-                placeholder="seu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                autoComplete="username"
+                placeholder="rgambiental"
+                value={usuario}
+                onChange={(e) => setUsuario(e.target.value)}
                 required
               />
             </div>

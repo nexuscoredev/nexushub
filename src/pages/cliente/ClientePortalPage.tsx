@@ -1,29 +1,44 @@
-import { FormEvent, useCallback, useEffect, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { clienteLogoUrl } from '../../lib/vaultClientes';
 import {
-  PROCESSO_STATUS_LABEL,
+  ATUALIZACAO_TIPO_LABEL,
+  MARCO_STATUS_LABEL,
+  calcularProgressoGeral,
+  formatRelativeTime,
+  marcoAtual,
+  mensagemBoasVindas,
+  processoPrincipal,
+  PROCESSO_STATUS_AMIGAVEL,
+} from '../../lib/clienteDashboard';
+import {
   SOLICITACAO_STATUS_LABEL,
   criarSolicitacaoCliente,
+  listarAtualizacoesCliente,
   listarContratosCliente,
+  listarMarcosCliente,
   listarProcessosCliente,
   listarSolicitacoesCliente,
 } from '../../lib/clientePortal';
 import { formatDate } from '../../lib/format';
 import type {
+  HubClienteAtualizacao,
   HubClienteContrato,
+  HubClienteMarco,
   HubClienteProcesso,
   HubClienteSolicitacao,
 } from '../../types/clientePortal';
 import styles from './ClientePortalPage.module.css';
 
-type Aba = 'processos' | 'solicitacoes' | 'contratos';
-
 export function ClientePortalPage() {
   const { user, clienteConta } = useAuth();
   const clienteId = clienteConta?.cliente_id;
+  const clienteNome = clienteConta?.cliente?.nome ?? 'Cliente';
+  const logoUrl = clienteConta?.cliente ? clienteLogoUrl(clienteConta.cliente) : null;
 
-  const [aba, setAba] = useState<Aba>('processos');
   const [processos, setProcessos] = useState<HubClienteProcesso[]>([]);
+  const [marcos, setMarcos] = useState<HubClienteMarco[]>([]);
+  const [atualizacoes, setAtualizacoes] = useState<HubClienteAtualizacao[]>([]);
   const [solicitacoes, setSolicitacoes] = useState<HubClienteSolicitacao[]>([]);
   const [contratos, setContratos] = useState<HubClienteContrato[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,12 +54,16 @@ export function ClientePortalPage() {
     setLoading(true);
     setError(null);
     try {
-      const [p, s, c] = await Promise.all([
+      const [p, m, a, s, c] = await Promise.all([
         listarProcessosCliente(clienteId),
+        listarMarcosCliente(clienteId),
+        listarAtualizacoesCliente(clienteId),
         listarSolicitacoesCliente(clienteId),
         listarContratosCliente(clienteId),
       ]);
       setProcessos(p);
+      setMarcos(m);
+      setAtualizacoes(a);
       setSolicitacoes(s);
       setContratos(c);
     } catch (e) {
@@ -58,13 +77,21 @@ export function ClientePortalPage() {
     void recarregar();
   }, [recarregar]);
 
+  const progresso = useMemo(() => calcularProgressoGeral(marcos, processos), [marcos, processos]);
+  const etapaAtual = useMemo(() => marcoAtual(marcos), [marcos]);
+  const projetoAtivo = useMemo(() => processoPrincipal(processos), [processos]);
+  const boasVindas = useMemo(() => mensagemBoasVindas(clienteNome, progresso), [clienteNome, progresso]);
+
+  const marcosConcluidos = marcos.filter((m) => m.status === 'concluido').length;
+  const solicitacoesAbertas = solicitacoes.filter((s) => s.status === 'aberta' || s.status === 'em_analise').length;
+
   const enviarSolicitacao = async (e: FormEvent) => {
     e.preventDefault();
     if (!clienteId || !user?.id) return;
     const titulo = tituloSol.trim();
     const mensagem = msgSol.trim();
     if (!titulo || !mensagem) {
-      setError('Preencha título e mensagem.');
+      setError('Preencha assunto e mensagem.');
       return;
     }
     setEnviandoSol(true);
@@ -74,94 +101,169 @@ export function ClientePortalPage() {
       await criarSolicitacaoCliente(clienteId, user.id, titulo, mensagem);
       setTituloSol('');
       setMsgSol('');
-      setSuccess('Solicitação enviada.');
+      setSuccess('Recebemos sua mensagem. A equipe NEXUS responde em breve.');
       await recarregar();
-      setAba('solicitacoes');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao enviar solicitação.');
+      setError(err instanceof Error ? err.message : 'Erro ao enviar mensagem.');
     } finally {
       setEnviandoSol(false);
     }
   };
 
-  return (
-    <div>
-      <header className={styles.pageHeader}>
-        <span className={styles.eyebrow}>NexusClient</span>
-        <h1 className={styles.title}>Seu painel</h1>
-        <p className={styles.lead}>
-          Olá, {clienteConta?.nome ?? 'cliente'}. Acompanhe entregas, peça suporte e consulte contratos.
-        </p>
-      </header>
+  if (loading) {
+    return <p className={styles.loading}>Preparando seu painel…</p>;
+  }
 
+  return (
+    <div className={styles.page}>
       {error && <div className={styles.bannerError}>{error}</div>}
       {success && <div className={styles.bannerInfo}>{success}</div>}
 
-      <div className={styles.tabs} role="tablist">
-        {(
-          [
-            ['processos', 'Processos'],
-            ['solicitacoes', 'Solicitações'],
-            ['contratos', 'Contratos'],
-          ] as const
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            role="tab"
-            aria-selected={aba === id}
-            className={`${styles.tab} ${aba === id ? styles.tabOn : ''}`}
-            onClick={() => setAba(id)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
+      <section id="inicio" className={styles.hero}>
+        <div className={styles.heroContent}>
+          <p className={styles.eyebrow}>NexusClient</p>
+          <h1 className={styles.heroTitle}>Olá, {clienteConta?.nome?.split(' ')[0] ?? 'bem-vindo(a)'}</h1>
+          <p className={styles.heroLead}>{boasVindas}</p>
 
-      {loading ? <p className={styles.empty}>Carregando…</p> : null}
-
-      {!loading && aba === 'processos' ? (
-        <div className={styles.grid}>
-          {processos.length === 0 ? (
-            <p className={styles.empty}>Nenhum processo visível no momento.</p>
-          ) : (
-            processos.map((p) => (
-              <article key={p.id} className={styles.cardItem}>
-                <div className={styles.cardHead}>
-                  <h2 className={styles.cardTitle}>{p.titulo}</h2>
-                  <span className={styles.badge}>{PROCESSO_STATUS_LABEL[p.status] ?? p.status}</span>
-                </div>
-                {p.etapa_atual ? <p className={styles.meta}>Etapa: {p.etapa_atual}</p> : null}
-                {p.descricao ? <p className={styles.meta}>{p.descricao}</p> : null}
-                <div className={styles.progress} aria-hidden>
-                  <div className={styles.progressBar} style={{ width: `${p.progresso_pct}%` }} />
-                </div>
-                <p className={styles.meta} style={{ marginTop: '0.5rem' }}>
-                  {p.progresso_pct}% · atualizado em {formatDate(p.updated_at)}
-                </p>
-              </article>
-            ))
-          )}
+          <div className={styles.stats}>
+            <div className={styles.stat}>
+              <span className={styles.statValue}>{progresso}%</span>
+              <span className={styles.statLabel}>Andamento geral</span>
+            </div>
+            <div className={styles.stat}>
+              <span className={styles.statValue}>{marcosConcluidos}/{marcos.length || '—'}</span>
+              <span className={styles.statLabel}>Etapas concluídas</span>
+            </div>
+            <div className={styles.stat}>
+              <span className={styles.statValue}>{solicitacoesAbertas}</span>
+              <span className={styles.statLabel}>Pedidos em aberto</span>
+            </div>
+          </div>
         </div>
+
+        <div className={styles.heroVisual} aria-hidden={!logoUrl}>
+          <div className={styles.progressRing} style={{ '--progress': `${progresso}%` } as CSSProperties}>
+            <div className={styles.progressRingInner}>
+              {logoUrl ? (
+                <img src={logoUrl} alt="" className={styles.clientLogo} />
+              ) : (
+                <span className={styles.progressPct}>{progresso}%</span>
+              )}
+            </div>
+          </div>
+          {etapaAtual ? (
+            <p className={styles.heroStage}>
+              Agora: <strong>{etapaAtual.titulo}</strong>
+            </p>
+          ) : null}
+        </div>
+      </section>
+
+      {projetoAtivo ? (
+        <section className={styles.highlight} aria-labelledby="projeto-ativo-title">
+          <div className={styles.sectionHead}>
+            <p className={styles.sectionLabel}>O que estamos entregando</p>
+            <h2 id="projeto-ativo-title" className={styles.sectionTitle}>{projetoAtivo.titulo}</h2>
+          </div>
+          <div className={styles.highlightCard}>
+            <div className={styles.highlightTop}>
+              <span className={styles.highlightBadge}>
+                {PROCESSO_STATUS_AMIGAVEL[projetoAtivo.status] ?? projetoAtivo.status}
+              </span>
+              {projetoAtivo.etapa_atual ? (
+                <span className={styles.highlightMeta}>Etapa: {projetoAtivo.etapa_atual}</span>
+              ) : null}
+            </div>
+            {projetoAtivo.descricao ? <p className={styles.highlightText}>{projetoAtivo.descricao}</p> : null}
+            <div className={styles.progressTrack}>
+              <div className={styles.progressFill} style={{ width: `${projetoAtivo.progresso_pct}%` }} />
+            </div>
+            <p className={styles.progressCaption}>{projetoAtivo.progresso_pct}% do caminho percorrido</p>
+          </div>
+        </section>
       ) : null}
 
-      {!loading && aba === 'solicitacoes' ? (
-        <>
+      <section id="jornada" className={styles.section}>
+        <div className={styles.sectionHead}>
+          <p className={styles.sectionLabel}>Sua jornada</p>
+          <h2 className={styles.sectionTitle}>Do primeiro contato ao go-live</h2>
+          <p className={styles.sectionDesc}>
+            Cada etapa traduz o nosso trabalho em linguagem clara — sem termos técnicos.
+          </p>
+        </div>
+
+        {marcos.length === 0 ? (
+          <p className={styles.empty}>Em breve publicaremos as etapas do seu projeto aqui.</p>
+        ) : (
+          <ol className={styles.timeline}>
+            {marcos.map((marco, index) => (
+              <li
+                key={marco.id}
+                className={`${styles.timelineItem} ${styles[`timeline_${marco.status}`]}`}
+              >
+                <div className={styles.timelineMarker}>
+                  <span>{index + 1}</span>
+                </div>
+                <article className={styles.timelineCard}>
+                  <div className={styles.timelineHead}>
+                    <h3 className={styles.timelineTitle}>{marco.titulo}</h3>
+                    <span className={styles.timelineBadge}>{MARCO_STATUS_LABEL[marco.status] ?? marco.status}</span>
+                  </div>
+                  {marco.descricao ? <p className={styles.timelineDesc}>{marco.descricao}</p> : null}
+                </article>
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
+
+      <section id="novidades" className={styles.section}>
+        <div className={styles.sectionHead}>
+          <p className={styles.sectionLabel}>Novidades</p>
+          <h2 className={styles.sectionTitle}>O que mudou recentemente</h2>
+          <p className={styles.sectionDesc}>Atualizações constantes para você acompanhar sem precisar perguntar.</p>
+        </div>
+
+        {atualizacoes.length === 0 ? (
+          <p className={styles.empty}>Nenhuma novidade publicada ainda.</p>
+        ) : (
+          <ul className={styles.feed}>
+            {atualizacoes.map((item) => (
+              <li key={item.id} className={styles.feedItem}>
+                <div className={styles.feedMeta}>
+                  <span className={`${styles.feedTag} ${styles[`feedTag_${item.tipo}`]}`}>
+                    {ATUALIZACAO_TIPO_LABEL[item.tipo] ?? item.tipo}
+                  </span>
+                  <time dateTime={item.publicado_em}>{formatRelativeTime(item.publicado_em)}</time>
+                </div>
+                <h3 className={styles.feedTitle}>{item.titulo}</h3>
+                <p className={styles.feedText}>{item.mensagem}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section id="contato" className={styles.section}>
+        <div className={styles.sectionHead}>
+          <p className={styles.sectionLabel}>Contato</p>
+          <h2 className={styles.sectionTitle}>Fale com a NEXUS</h2>
+          <p className={styles.sectionDesc}>Dúvidas, pedidos ou feedback — envie aqui e acompanhe a resposta.</p>
+        </div>
+
+        <div className={styles.contactGrid}>
           <form className={styles.form} onSubmit={(e) => void enviarSolicitacao(e)}>
-            <h2 className={styles.cardTitle}>Nova solicitação</h2>
-            <div className={styles.formRow}>
-              <div className={styles.field}>
-                <label className={styles.label} htmlFor="sol-titulo">
-                  Assunto
-                </label>
-                <input
-                  id="sol-titulo"
-                  className={styles.input}
-                  value={tituloSol}
-                  onChange={(e) => setTituloSol(e.target.value)}
-                  placeholder="Ex.: Dúvida sobre entrega"
-                />
-              </div>
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="sol-titulo">
+                Assunto
+              </label>
+              <input
+                id="sol-titulo"
+                className={styles.input}
+                value={tituloSol}
+                onChange={(e) => setTituloSol(e.target.value)}
+                placeholder="Ex.: Dúvida sobre a próxima entrega"
+              />
             </div>
             <div className={styles.field}>
               <label className={styles.label} htmlFor="sol-msg">
@@ -173,70 +275,74 @@ export function ClientePortalPage() {
                 rows={4}
                 value={msgSol}
                 onChange={(e) => setMsgSol(e.target.value)}
-                placeholder="Descreva o que precisa…"
+                placeholder="Conte o que precisa, com calma…"
               />
             </div>
             <button type="submit" className={styles.submitBtn} disabled={enviandoSol}>
-              {enviandoSol ? 'Enviando…' : 'Enviar solicitação'}
+              {enviandoSol ? 'Enviando…' : 'Enviar mensagem'}
             </button>
           </form>
 
-          <div className={styles.grid}>
+          <div className={styles.messages}>
+            <h3 className={styles.messagesTitle}>Suas mensagens</h3>
             {solicitacoes.length === 0 ? (
-              <p className={styles.empty}>Nenhuma solicitação ainda.</p>
+              <p className={styles.emptyInline}>Nenhuma mensagem enviada ainda.</p>
             ) : (
-              solicitacoes.map((s) => (
-                <article key={s.id} className={styles.cardItem}>
-                  <div className={styles.cardHead}>
-                    <h2 className={styles.cardTitle}>{s.titulo}</h2>
-                    <span className={styles.badge}>
-                      {SOLICITACAO_STATUS_LABEL[s.status] ?? s.status}
-                    </span>
-                  </div>
-                  <p className={styles.meta}>{s.mensagem}</p>
-                  <p className={styles.meta}>{formatDate(s.created_at)}</p>
-                  {s.resposta ? (
-                    <div className={styles.resposta}>
-                      <strong>Resposta NEXUS:</strong>
-                      <p style={{ marginTop: '0.35rem' }}>{s.resposta}</p>
+              <ul className={styles.messageList}>
+                {solicitacoes.slice(0, 5).map((s) => (
+                  <li key={s.id} className={styles.messageItem}>
+                    <div className={styles.messageHead}>
+                      <strong>{s.titulo}</strong>
+                      <span className={styles.messageBadge}>
+                        {SOLICITACAO_STATUS_LABEL[s.status] ?? s.status}
+                      </span>
                     </div>
-                  ) : null}
-                </article>
-              ))
+                    <p className={styles.messageText}>{s.mensagem}</p>
+                    <time className={styles.messageTime}>{formatDate(s.created_at)}</time>
+                    {s.resposta ? (
+                      <div className={styles.resposta}>
+                        <strong>Resposta NEXUS</strong>
+                        <p>{s.resposta}</p>
+                      </div>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
-        </>
-      ) : null}
+        </div>
+      </section>
 
-      {!loading && aba === 'contratos' ? (
-        <div className={styles.grid}>
-          {contratos.length === 0 ? (
-            <p className={styles.empty}>Nenhum contrato disponível.</p>
-          ) : (
-            contratos.map((c) => (
-              <article key={c.id} className={styles.cardItem}>
-                <div className={styles.cardHead}>
-                  <h2 className={styles.cardTitle}>{c.titulo}</h2>
-                </div>
-                {c.descricao ? <p className={styles.meta}>{c.descricao}</p> : null}
+      <section id="documentos" className={styles.section}>
+        <div className={styles.sectionHead}>
+          <p className={styles.sectionLabel}>Documentos</p>
+          <h2 className={styles.sectionTitle}>Contratos e arquivos</h2>
+        </div>
+
+        {contratos.length === 0 ? (
+          <p className={styles.empty}>Documentos disponíveis aparecerão aqui quando forem publicados.</p>
+        ) : (
+          <div className={styles.docGrid}>
+            {contratos.map((c) => (
+              <article key={c.id} className={styles.docCard}>
+                <h3 className={styles.docTitle}>{c.titulo}</h3>
+                {c.descricao ? <p className={styles.docDesc}>{c.descricao}</p> : null}
                 {(c.vigencia_inicio || c.vigencia_fim) && (
-                  <p className={styles.meta}>
+                  <p className={styles.docMeta}>
                     Vigência:{' '}
                     {[c.vigencia_inicio, c.vigencia_fim].filter(Boolean).map((d) => formatDate(d!)).join(' — ')}
                   </p>
                 )}
                 {c.arquivo_url ? (
-                  <p style={{ marginTop: '0.65rem' }}>
-                    <a className={styles.link} href={c.arquivo_url} target="_blank" rel="noopener noreferrer">
-                      Abrir documento
-                    </a>
-                  </p>
+                  <a className={styles.docLink} href={c.arquivo_url} target="_blank" rel="noopener noreferrer">
+                    Abrir documento
+                  </a>
                 ) : null}
               </article>
-            ))
-          )}
-        </div>
-      ) : null}
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import type {
+  HubClienteAtualizacao,
   HubClienteContrato,
   HubClienteConta,
+  HubClienteMarco,
   HubClienteProcesso,
   HubClienteSolicitacao,
 } from '../types/clientePortal';
@@ -43,6 +45,37 @@ export async function listarProcessosCliente(clienteId: string): Promise<HubClie
     throw new Error(supabaseErrorMessage(error));
   }
   return (data ?? []) as HubClienteProcesso[];
+}
+
+export async function listarMarcosCliente(clienteId: string): Promise<HubClienteMarco[]> {
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from('hub_cliente_marcos')
+    .select('*')
+    .eq('cliente_id', clienteId)
+    .eq('visivel_cliente', true)
+    .order('fase_ordem', { ascending: true });
+  if (error) {
+    if (portalIndisponivel(error)) return [];
+    throw new Error(supabaseErrorMessage(error));
+  }
+  return (data ?? []) as HubClienteMarco[];
+}
+
+export async function listarAtualizacoesCliente(clienteId: string): Promise<HubClienteAtualizacao[]> {
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from('hub_cliente_atualizacoes')
+    .select('*')
+    .eq('cliente_id', clienteId)
+    .eq('visivel_cliente', true)
+    .order('publicado_em', { ascending: false })
+    .limit(12);
+  if (error) {
+    if (portalIndisponivel(error)) return [];
+    throw new Error(supabaseErrorMessage(error));
+  }
+  return (data ?? []) as HubClienteAtualizacao[];
 }
 
 export async function listarContratosCliente(clienteId: string): Promise<HubClienteContrato[]> {

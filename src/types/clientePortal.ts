@@ -7,6 +7,10 @@ export type HubClienteProcessoStatus =
 
 export type HubClienteSolicitacaoStatus = 'aberta' | 'em_analise' | 'respondida' | 'fechada';
 
+export type HubClienteMarcoStatus = 'pendente' | 'em_curso' | 'concluido';
+
+export type HubClienteAtualizacaoTipo = 'novidade' | 'marco' | 'lembrete' | 'entrega';
+
 export interface HubCliente {
   id: string;
   nome: string;
@@ -21,6 +25,7 @@ export interface HubClienteConta {
   cliente_id: string;
   nome: string;
   email: string;
+  usuario: string | null;
   ativo: boolean;
   cliente?: HubCliente | null;
 }
@@ -60,4 +65,25 @@ export interface HubClienteSolicitacao {
   resposta: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface HubClienteMarco {
+  id: string;
+  cliente_id: string;
+  titulo: string;
+  descricao: string | null;
+  fase_ordem: number;
+  status: HubClienteMarcoStatus;
+  visivel_cliente: boolean;
+  updated_at: string;
+}
+
+export interface HubClienteAtualizacao {
+  id: string;
+  cliente_id: string;
+  titulo: string;
+  mensagem: string;
+  tipo: HubClienteAtualizacaoTipo;
+  publicado_em: string;
+  visivel_cliente: boolean;
 }

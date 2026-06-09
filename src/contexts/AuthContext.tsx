@@ -28,7 +28,7 @@ interface AuthState {
   podeFinanceiroAgenda: boolean;
   podeGestao: boolean;
   signIn: (usuario: string, password: string) => Promise<void>;
-  signInCliente: (email: string, password: string) => Promise<void>;
+  signInCliente: (usuario: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   refreshClienteConta: () => Promise<void>;
@@ -148,12 +148,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const signInCliente = useCallback(async (email: string, password: string) => {
+  const signInCliente = useCallback(async (usuario: string, password: string) => {
     if (!supabase) throw new Error('Supabase não configurado.');
-    const mail = email.trim().toLowerCase();
-    if (!mail || !mail.includes('@')) throw new Error('Informe um e-mail válido.');
+    const login = normalizeUsuario(usuario);
+    if (!login) throw new Error('Usuário ou senha inválidos.');
 
-    const { error } = await supabase.auth.signInWithPassword({ email: mail, password });
+    const { data: email, error: lookupError } = await supabase.rpc('hub_email_for_cliente_usuario', {
+      p_usuario: login,
+    });
+
+    if (lookupError || !email) {
+      throw new Error('Usuário ou senha inválidos.');
+    }
+
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw new Error(supabaseErrorMessage(error));
 
     const { data: authData } = await supabase.auth.getUser();
@@ -163,7 +171,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const conta = await fetchClienteConta(uid);
     if (!contaClienteAtiva(conta)) {
       await supabase.auth.signOut();
-      throw new Error('Esta conta não está habilitada no portal do cliente. Contacte a NEXUS.');
+      throw new Error('Esta conta não está habilitada no NexusClient. Contacte a NEXUS.');
     }
   }, []);
 

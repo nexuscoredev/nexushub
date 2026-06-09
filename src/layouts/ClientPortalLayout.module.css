@@ -6,6 +6,7 @@
   --cl-royal-bright: #6eb5ff;
   --cl-royal-deep: #1e3a8a;
   --cl-violet: #7c3aed;
+  --cl-emerald: #059669;
   --cl-radius: 0.5rem;
   --cl-bg: var(--cl-fog);
   --cl-surface: #ffffff;
@@ -29,14 +30,17 @@
   position: sticky;
   top: 0;
   z-index: 30;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--cl-border);
+}
+
+.topbarMain {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.85rem max(1.25rem, env(safe-area-inset-right, 0px)) 0.85rem max(1.25rem, env(safe-area-inset-left, 0px));
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--cl-border);
+  padding: 0.85rem max(1.25rem, env(safe-area-inset-right, 0px)) 0.65rem max(1.25rem, env(safe-area-inset-left, 0px));
 }
 
 .brand {
@@ -55,6 +59,37 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 14rem;
+}
+
+.sectionNav {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  padding: 0 1.25rem 0.75rem;
+  scrollbar-width: none;
+}
+
+.sectionNav::-webkit-scrollbar {
+  display: none;
+}
+
+.sectionLink {
+  flex-shrink: 0;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cl-soft);
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.sectionLink:hover {
+  color: var(--cl-royal);
+  border-color: rgba(37, 99, 235, 0.2);
+  background: rgba(37, 99, 235, 0.06);
 }
 
 .actions {
@@ -95,21 +130,40 @@
 
 .actionBtnPrimary:hover {
   color: #ffffff;
-  border-color: transparent;
   filter: brightness(1.06);
-  background: linear-gradient(180deg, var(--cl-royal-bright) 0%, var(--cl-royal) 52%, var(--cl-royal-deep) 100%);
 }
 
 .main {
   flex: 1;
   width: 100%;
-  max-width: 1100px;
+  max-width: 920px;
   margin: 0 auto;
-  padding: 1.75rem max(1.25rem, env(safe-area-inset-right, 0px)) 2.5rem max(1.25rem, env(safe-area-inset-left, 0px));
+  padding: 1.5rem max(1.25rem, env(safe-area-inset-right, 0px)) 2rem max(1.25rem, env(safe-area-inset-left, 0px));
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 0.75rem;
+  padding: 1.25rem;
+  border-top: 1px solid var(--cl-border);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cl-soft);
+}
+
+.footerDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--cl-steel);
 }
 
 @media (max-width: 640px) {
-  .topbar {
+  .topbarMain {
     flex-direction: column;
     align-items: stretch;
   }

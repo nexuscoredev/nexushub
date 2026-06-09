@@ -77,3 +77,25 @@ APIs `/api/*` em dev: `npx vercel dev`
 | felipe@nexustech.com | 123456 |
 
 Trocar senhas em produção.
+
+## 5. NexusClient — usuários dos clientes
+
+Login por **usuário + senha** (não e-mail na tela).
+
+1. Rodar a migration `supabase/migrations/20260609183000_hub_cliente_usuario_login.sql` no SQL Editor.
+2. Seed (service role, nunca commitar a chave):
+
+   ```powershell
+   $env:SUPABASE_URL="https://ndcenckgtezerlmggola.supabase.co"
+   $env:SUPABASE_SERVICE_ROLE_KEY="sua_service_role"
+   npm run seed:cliente-users
+   ```
+
+| Usuário | Senha (seed) | Cliente |
+|---------|--------------|---------|
+| `rgambiental` | `Nexus123!` | RG Ambiental |
+| `ligeirinho` | `Nexus123!` | Ligeirinho |
+
+Entrada: `/cliente/entrar` → NexusClient.
+
+3. Rodar a migration `supabase/migrations/20260609200000_hub_cliente_dashboard_content.sql` para jornada, novidades e conteúdo demo por cliente.
