@@ -57,6 +57,7 @@
   --nx-hero-bg: var(--nx-surface);
   --nx-nav-bg: #ffffff;
   --nx-nav-brand-bg: #ffffff;
+  --nx-nav-brand-text: var(--nx-ink);
   --nx-nav-search-bg: #efeff1;
   --nx-nav-accent-soft: rgba(138, 143, 152, 0.1);
   --nx-nav-accent-hover: rgba(138, 143, 152, 0.14);
@@ -99,7 +100,8 @@
   --nx-silver-text: linear-gradient(180deg, #ffffff 0%, #c8ccd4 45%, #8a8f98 100%);
   --nx-hero-bg: var(--nx-surface);
   --nx-nav-bg: var(--nx-graphite);
-  --nx-nav-brand-bg: #ffffff;
+  --nx-nav-brand-bg: var(--nx-ink);
+  --nx-nav-brand-text: #ffffff;
   --nx-nav-search-bg: var(--nx-graphite-2);
   --nx-nav-accent-soft: rgba(200, 204, 212, 0.1);
   --nx-nav-accent-hover: rgba(200, 204, 212, 0.16);
@@ -370,7 +372,7 @@ img {
   gap: 0.65rem;
   padding: 0 1.35rem;
   background: var(--nx-nav-brand-bg);
-  color: var(--nx-ink);
+  color: var(--nx-nav-brand-text);
   font-weight: 700;
   font-size: 0.95rem;
   letter-spacing: 0.16em;
@@ -384,6 +386,10 @@ img {
   background: #f8f8fa;
 }
 
+[data-theme='dark'] .nx-nav__brand-block:hover {
+  background: var(--nx-graphite-2);
+}
+
 .nx-nav__brand-mark {
   width: 1.75rem;
   height: 1.75rem;
@@ -394,7 +400,7 @@ img {
 }
 
 .nx-nav__brand-name {
-  color: var(--nx-ink);
+  color: var(--nx-nav-brand-text);
 }
 
 .nx-nav__links {
