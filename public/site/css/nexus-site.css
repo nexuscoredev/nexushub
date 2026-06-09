@@ -1545,18 +1545,53 @@ img {
   }
 }
 
+@media (max-width: 767px) {
+  .nx-hero-cinema {
+    min-height: clamp(22rem, 70vw, 26rem);
+  }
+
+  .nx-hero-cinema__bg img {
+    padding: 0.75rem;
+    padding-top: 42%;
+    object-position: center bottom;
+  }
+
+  .nx-hero-cinema__overlay {
+    background: linear-gradient(
+      180deg,
+      var(--nx-bg) 0%,
+      var(--nx-bg) 38%,
+      rgba(245, 245, 247, 0.55) 52%,
+      transparent 72%
+    );
+  }
+
+  [data-theme='dark'] .nx-hero-cinema__overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(10, 10, 10, 0.98) 0%,
+      rgba(10, 10, 10, 0.9) 38%,
+      rgba(10, 10, 10, 0.4) 55%,
+      transparent 75%
+    );
+  }
+}
+
 .nx-hero-cinema__bg {
   position: absolute;
   inset: 0;
   overflow: hidden;
   z-index: 0;
+  background: var(--nx-hero-bg);
 }
 
 .nx-hero-cinema__bg img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center;
+  object-fit: contain;
+  object-position: right center;
+  padding: clamp(1rem, 3vw, 2rem);
+  padding-left: 38%;
   filter: none;
 }
 
@@ -1582,16 +1617,17 @@ img {
 
 @media (min-width: 900px) {
   .nx-hero-cinema__bg img {
-    object-position: 72% center;
+    padding-left: 42%;
+    padding-right: clamp(1.5rem, 4vw, 3rem);
   }
 
   .nx-hero-cinema__overlay {
     background: linear-gradient(
       100deg,
       var(--nx-bg) 0%,
-      var(--nx-bg) 48%,
-      rgba(245, 245, 247, 0.55) 58%,
-      transparent 78%
+      var(--nx-bg) 42%,
+      rgba(245, 245, 247, 0.35) 52%,
+      transparent 68%
     );
   }
 
@@ -1599,9 +1635,9 @@ img {
     background: linear-gradient(
       100deg,
       rgba(10, 10, 10, 0.98) 0%,
-      rgba(10, 10, 10, 0.92) 48%,
-      rgba(10, 10, 10, 0.45) 62%,
-      transparent 82%
+      rgba(10, 10, 10, 0.88) 42%,
+      rgba(10, 10, 10, 0.25) 56%,
+      transparent 72%
     );
   }
 }
@@ -1927,7 +1963,9 @@ img {
 }
 
 .nx-page--wide .nx-container {
-  width: min(1280px, calc(100% - 2rem));
+  width: min(1440px, 100%);
+  padding-inline: max(0.85rem, env(safe-area-inset-left, 0px))
+    max(0.85rem, env(safe-area-inset-right, 0px));
 }
 
 /* ── High-tech layer ── */
@@ -2087,25 +2125,6 @@ img {
     transparent
   );
   animation: nxScanMove 6s linear infinite;
-}
-
-.nx-hero-cinema__overlay {
-  background: linear-gradient(
-    90deg,
-    var(--nx-bg) 0%,
-    rgba(37, 99, 235, 0.04) 35%,
-    transparent 62%
-  );
-}
-
-[data-theme='dark'] .nx-hero-cinema__overlay {
-  background: linear-gradient(
-    90deg,
-    rgba(10, 10, 10, 0.96) 0%,
-    rgba(37, 99, 235, 0.08) 40%,
-    rgba(10, 10, 10, 0.35) 58%,
-    transparent 100%
-  );
 }
 
 .nx-hero-cinema__bg img {

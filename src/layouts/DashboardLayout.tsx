@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { HubLogo } from '../components/HubLogo';
 import { NovidadesSparkIcon } from '../components/NovidadesSparkIcon';
 import { NavIcon, type NavIconName } from '../components/NavIcon';
 import { UserAvatar } from '../components/UserAvatar';
@@ -72,16 +71,17 @@ export function DashboardLayout() {
     setNovidadesBadge(false);
   };
 
+  const profileShortName = profile?.nome?.trim().split(/\s+/)[0] ?? 'Perfil';
+
   return (
     <TechShell>
       <div className={styles.shell}>
-        <header className={styles.commandBar}>
-          <div className={styles.commandGlow} aria-hidden />
-
-          <div className={styles.commandMain}>
-            <div className={styles.brandDock}>
-              <HubLogo size="sm" showSubtitle={false} />
-            </div>
+        <header className={styles.hubNav}>
+          <div className={styles.hubNavBar}>
+            <NavLink to="/dashboard" className={styles.brandBlock} aria-label="NEXUS Hub — painel">
+              <img src="/img/favicon.png" alt="" className={styles.brandMark} width={28} height={28} />
+              <span className={styles.brandName}>NEXUS</span>
+            </NavLink>
 
             <button
               type="button"
@@ -98,27 +98,25 @@ export function DashboardLayout() {
               </span>
             </button>
 
-            <nav className={styles.commandDock} aria-label="Navegação principal">
-              <div className={styles.dockTrack}>
-                {visibleNav.map((item) => (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    className={({ isActive }) =>
-                      `${styles.dockLink} ${isActive ? styles.dockLinkActive : ''}`
-                    }
-                  >
-                    <NavIcon name={item.icon} className={styles.dockIcon} />
-                    <span className={styles.dockLabel}>{item.label}</span>
-                  </NavLink>
-                ))}
-              </div>
+            <nav className={styles.hubNavLinks} aria-label="Navegação principal">
+              {visibleNav.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={({ isActive }) =>
+                    `${styles.hubNavLink} ${isActive ? styles.hubNavLinkActive : ''}`
+                  }
+                >
+                  <NavIcon name={item.icon} className={styles.hubNavIcon} />
+                  <span className={styles.hubNavLabel}>{item.label}</span>
+                </NavLink>
+              ))}
             </nav>
 
-            <div className={styles.userCompact}>
+            <div className={styles.hubNavUtilities}>
               <button
                 type="button"
-                className={`btn-ghost ${styles.novidadesBtn}`}
+                className={styles.novidadesBtn}
                 onClick={openNovidades}
                 aria-label="Novidades"
                 title="Novidades"
@@ -128,7 +126,7 @@ export function DashboardLayout() {
               </button>
               <NavLink
                 to="/perfil"
-                className={styles.avatarLink}
+                className={styles.accountPill}
                 title="Meu perfil"
                 aria-label="Meu perfil"
               >
@@ -136,9 +134,13 @@ export function DashboardLayout() {
                   name={profile?.nome}
                   email={user?.email}
                   avatarUrl={profile?.avatar_url}
+                  size="xs"
                 />
+                <span className={styles.accountText}>
+                  {profileShortName} · Hub
+                </span>
               </NavLink>
-              <button type="button" className={`btn-ghost ${styles.signOutBtn}`} onClick={handleSignOut}>
+              <button type="button" className={styles.signOutBtn} onClick={handleSignOut}>
                 Sair
               </button>
             </div>

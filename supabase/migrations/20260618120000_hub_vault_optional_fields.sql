@@ -9,7 +9,8 @@ begin
     from pg_constraint c
     where c.conrelid = 'public.hub_vault_entries'::regclass
       and c.contype = 'c'
-      and pg_get_constraintdef(c.oid) like '%trim(titulo)%'
+      and pg_get_constraintdef(c.oid) ilike '%titulo%'
+      and pg_get_constraintdef(c.oid) ilike '%length%'
   loop
     execute format('alter table public.hub_vault_entries drop constraint %I', r.conname);
   end loop;
