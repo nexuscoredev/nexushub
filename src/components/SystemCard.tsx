@@ -1,4 +1,4 @@
-import { systemLogoUrl } from '../lib/systemLogos';
+import { resolveSystemUrl, systemLogoUrl } from '../lib/systemLogos';
 import type { HubSystem } from '../types/database';
 import styles from './SystemCard.module.css';
 
@@ -10,6 +10,7 @@ interface SystemCardProps {
 
 export function SystemCard({ system, variant = 'button' }: SystemCardProps) {
   const logo = systemLogoUrl(system.id);
+  const href = resolveSystemUrl(system.id, system.url);
 
   const body = (
     <>
@@ -20,7 +21,7 @@ export function SystemCard({ system, variant = 'button' }: SystemCardProps) {
       <p className={styles.desc}>{system.descricao}</p>
       {variant === 'button' && (
         <a
-          href={system.url}
+          href={href}
           target="_blank"
           rel="noopener noreferrer"
           className={`btn-primary ${styles.action}`}
@@ -34,7 +35,7 @@ export function SystemCard({ system, variant = 'button' }: SystemCardProps) {
   if (variant === 'link') {
     return (
       <a
-        href={system.url}
+        href={href}
         target="_blank"
         rel="noopener noreferrer"
         className={`card ${styles.card} ${styles.linkCard}`}

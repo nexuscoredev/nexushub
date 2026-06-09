@@ -59,6 +59,15 @@ export function systemLogoUrl(systemId: string): string {
   return SYSTEM_LOGOS[systemId] ?? '/img/favicon.png';
 }
 
+/** URLs canônicas quando hub_systems ainda não foi atualizado no Supabase */
+const SYSTEM_URL_OVERRIDES: Record<string, string> = {
+  'rh-ambiental': 'https://rgambiental.com.br/',
+};
+
+export function resolveSystemUrl(systemId: string, url: string): string {
+  return SYSTEM_URL_OVERRIDES[systemId] ?? url;
+}
+
 export function matchProjectToSystem(projectName: string): ClientSystem | null {
   const n = normalize(projectName);
   if (!n || isInboxProject(projectName) || isGeneralProject(projectName)) return null;
