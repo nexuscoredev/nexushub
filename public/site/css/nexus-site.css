@@ -56,8 +56,10 @@
   --nx-silver-text: linear-gradient(180deg, #1a1a1a 0%, #6b6f78 55%, #a8acb4 100%);
   --nx-hero-bg: var(--nx-surface);
   --nx-nav-bg: #ffffff;
-  --nx-nav-brand-bg: var(--nx-royal);
+  --nx-nav-brand-bg: #ffffff;
   --nx-nav-search-bg: #efeff1;
+  --nx-nav-accent-soft: rgba(138, 143, 152, 0.1);
+  --nx-nav-accent-hover: rgba(138, 143, 152, 0.14);
   --nx-shadow: none;
   --nx-shadow-sm: 0 1px 0 rgba(10, 10, 10, 0.05);
   --nx-accent: var(--nx-royal);
@@ -97,8 +99,10 @@
   --nx-silver-text: linear-gradient(180deg, #ffffff 0%, #c8ccd4 45%, #8a8f98 100%);
   --nx-hero-bg: var(--nx-surface);
   --nx-nav-bg: var(--nx-graphite);
-  --nx-nav-brand-bg: var(--nx-royal-deep);
+  --nx-nav-brand-bg: #ffffff;
   --nx-nav-search-bg: var(--nx-graphite-2);
+  --nx-nav-accent-soft: rgba(200, 204, 212, 0.1);
+  --nx-nav-accent-hover: rgba(200, 204, 212, 0.16);
   --nx-shadow: none;
   --nx-shadow-sm: 0 1px 0 rgba(255, 255, 255, 0.04);
   --nx-accent: var(--nx-royal-bright);
@@ -284,7 +288,11 @@ body > .nx-splash--legacy {
 
 @media (prefers-reduced-motion: reduce) {
   .nx-metal-live,
-  .nx-metal-text {
+  .nx-metal-text,
+  .nx-nav__link .material-symbols-outlined,
+  .nx-nav__account,
+  .nx-nav__links .nx-nav__link.is-active::after,
+  .nx-nav-panel .nx-nav__link.is-active::before {
     animation: none;
   }
 
@@ -342,7 +350,7 @@ img {
   padding-top: 4.5rem;
 }
 
-/* ── Nav (estilo Nintendo · NEXUS) ── */
+/* ── Nav (estilo Nintendo · NEXUS · prata metálica) ── */
 .nx-nav {
   position: fixed;
   inset: 0 0 auto 0;
@@ -365,18 +373,19 @@ img {
   align-items: center;
   gap: 0.65rem;
   padding: 0 1.35rem;
-  background: linear-gradient(180deg, var(--nx-royal-bright) 0%, var(--nx-royal) 55%, var(--nx-royal-deep) 100%);
-  color: #ffffff;
+  background: var(--nx-nav-brand-bg);
+  color: var(--nx-ink);
   font-weight: 700;
   font-size: 0.95rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   flex-shrink: 0;
-  transition: filter 0.2s ease;
+  border-right: 1px solid var(--nx-border);
+  transition: background 0.2s ease;
 }
 
 .nx-nav__brand-block:hover {
-  filter: brightness(1.06);
+  background: #f8f8fa;
 }
 
 .nx-nav__brand-mark {
@@ -384,13 +393,12 @@ img {
   height: 1.75rem;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
+  border: 2px solid var(--nx-border-strong);
+  box-shadow: 0 1px 3px rgba(10, 10, 10, 0.08);
 }
 
 .nx-nav__brand-name {
-  color: #ffffff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  color: var(--nx-ink);
 }
 
 .nx-nav__links {
@@ -425,24 +433,73 @@ img {
 
 .nx-nav__link .material-symbols-outlined {
   font-size: 1.15rem;
-  color: var(--nx-royal);
   flex-shrink: 0;
+  background: linear-gradient(
+    118deg,
+    #5c6068 0%,
+    #8a8f98 18%,
+    #d0d4da 34%,
+    #ffffff 48%,
+    #8a8f98 62%,
+    #c8ccd4 78%,
+    #6b6f78 100%
+  );
+  background-size: 260% 260%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: nxMetalFlow 5.5s ease-in-out infinite;
 }
 
 [data-theme='dark'] .nx-nav__link .material-symbols-outlined {
-  color: var(--nx-royal-bright);
+  background: linear-gradient(
+    118deg,
+    #9ca3af 0%,
+    #e8eaee 16%,
+    #ffffff 32%,
+    #c8ccd4 48%,
+    #ffffff 64%,
+    #8a8f98 80%,
+    #d0d4da 100%
+  );
+  background-size: 260% 260%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .nx-nav__link:hover {
-  background: rgba(37, 99, 235, 0.06);
-  color: var(--nx-royal);
+  background: var(--nx-nav-accent-soft);
+  color: var(--nx-steel);
 }
 
 .nx-nav__link.is-active {
-  color: var(--nx-royal);
+  position: relative;
   font-weight: 600;
-  border-bottom-color: var(--nx-royal);
-  background: rgba(37, 99, 235, 0.08);
+  border-bottom-color: transparent;
+  background: var(--nx-nav-accent-hover);
+  color: var(--nx-steel);
+}
+
+.nx-nav__links .nx-nav__link.is-active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    #6b6f78 0%,
+    #c8ccd4 22%,
+    #ffffff 44%,
+    #b8bcc4 56%,
+    #ffffff 78%,
+    #8a8f98 100%
+  );
+  background-size: 220% 100%;
+  animation: nxMetalFlow 5.5s ease-in-out infinite;
 }
 
 .nx-nav__utilities {
@@ -510,13 +567,17 @@ img {
   gap: 0.45rem;
   padding: 0.5rem 1rem;
   border-radius: 999px;
-  border: 1.5px solid var(--nx-royal);
-  background: var(--nx-nav-bg);
-  color: var(--nx-royal);
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(var(--nx-nav-bg), var(--nx-nav-bg)) padding-box,
+    var(--nx-metal) border-box;
+  background-size: 100% 100%, 220% 220%;
+  color: var(--nx-steel);
   font-size: 0.78rem;
   font-weight: 600;
   line-height: 1.2;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  animation: nxMetalFlow 7s ease-in-out infinite;
+  transition: box-shadow 0.2s, color 0.2s;
 }
 
 .nx-nav__account .material-symbols-outlined {
@@ -525,13 +586,12 @@ img {
 }
 
 .nx-nav__account:hover {
-  background: rgba(37, 99, 235, 0.08);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 0 0 3px var(--nx-nav-accent-soft);
+  color: var(--nx-silver);
 }
 
 [data-theme='dark'] .nx-nav__account {
-  color: var(--nx-royal-bright);
-  border-color: var(--nx-royal-bright);
+  color: var(--nx-silver);
 }
 
 .nx-nav-toggle {
@@ -549,8 +609,9 @@ img {
 }
 
 .nx-nav-toggle:hover {
-  border-color: var(--nx-royal);
-  color: var(--nx-royal);
+  border-color: var(--nx-silver);
+  color: var(--nx-steel);
+  background: var(--nx-nav-accent-soft);
 }
 
 @media (min-width: 900px) {
@@ -579,7 +640,29 @@ img {
 }
 
 .nx-nav-panel .nx-nav__link.is-active {
-  border-left-color: var(--nx-royal);
+  position: relative;
+  border-left-color: transparent;
+  background: var(--nx-nav-accent-hover);
+}
+
+.nx-nav-panel .nx-nav__link.is-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(
+    180deg,
+    #6b6f78 0%,
+    #c8ccd4 22%,
+    #ffffff 44%,
+    #b8bcc4 56%,
+    #ffffff 78%,
+    #8a8f98 100%
+  );
+  background-size: 100% 220%;
+  animation: nxMetalFlow 5.5s ease-in-out infinite;
 }
 
 .nx-nav-panel__cta {
