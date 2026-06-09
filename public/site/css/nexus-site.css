@@ -70,6 +70,8 @@
   --nx-on-accent: #ffffff;
   --nx-body-mesh: none;
   --nx-body-grid-size: 0;
+  --nx-block-grid-size: 32px;
+  --nx-block-grid-line: rgba(10, 10, 10, 0.06);
 }
 
 [data-theme='dark'] {
@@ -109,9 +111,9 @@
   --nx-on-accent: #ffffff;
   --nx-body-mesh: none;
   --nx-body-grid-size: 0;
+  --nx-block-grid-size: 32px;
+  --nx-block-grid-line: rgba(255, 255, 255, 0.06);
 }
-
-/* ── Metálico reativo & animado ── */
 @property --nx-metal-angle {
   syntax: '<angle>';
   inherits: false;
@@ -861,7 +863,7 @@ img {
 }
 
 .nx-card:hover {
-  background: var(--nx-card-hover);
+  background-color: var(--nx-card-hover);
   border-color: var(--nx-border-strong);
 }
 
@@ -1723,6 +1725,13 @@ img {
   border: 1px solid var(--nx-border);
 }
 
+.nx-hero-cinema--brand {
+  align-items: end;
+  margin-top: clamp(1rem, 2.5vh, 1.75rem);
+  padding-top: clamp(2.25rem, 6vh, 3.75rem);
+  padding-bottom: clamp(1.5rem, 3.5vh, 2.25rem);
+}
+
 @media (min-width: 768px) {
   .nx-hero-cinema {
     min-height: clamp(20rem, 52vh, 30rem);
@@ -1777,7 +1786,7 @@ img {
   inset: 0;
   overflow: hidden;
   z-index: 0;
-  background: var(--nx-hero-bg);
+  background-color: var(--nx-hero-bg);
 }
 
 .nx-hero-cinema__bg img {
@@ -1793,17 +1802,24 @@ img {
 .nx-hero-cinema--brand .nx-hero-cinema__bg img {
   position: absolute;
   z-index: 1;
-  top: 50%;
+  top: auto;
+  bottom: clamp(1.5rem, 3.5vh, 2.25rem);
   right: clamp(1rem, 3vw, 2.5rem);
   left: auto;
-  transform: translateY(-50%);
+  transform: none;
   width: clamp(11rem, 26vw, 22rem);
   height: auto;
-  max-height: 88%;
+  max-height: 72%;
   object-fit: contain;
   object-position: center;
   padding: 0;
   margin: 0;
+}
+
+.nx-hero-cinema--brand .nx-hero-cinema__content {
+  align-self: end;
+  padding-top: 0;
+  padding-bottom: clamp(0.25rem, 1vh, 0.5rem);
 }
 
 .nx-hero-cinema__overlay {
@@ -1834,8 +1850,10 @@ img {
   }
 
   .nx-hero-cinema--brand .nx-hero-cinema__bg img {
+    bottom: clamp(1.25rem, 3vh, 2rem);
     right: clamp(1.25rem, 4vw, 3rem);
     width: clamp(12rem, 22vw, 24rem);
+    max-height: 68%;
   }
 
   .nx-hero-cinema__overlay {
@@ -2456,6 +2474,12 @@ img {
   padding: 1.75rem 1.5rem;
 }
 
+.nx-hero-cinema--brand .nx-hero-cinema__content {
+  align-self: end;
+  padding-top: 0;
+  padding-bottom: clamp(0.25rem, 1vh, 0.5rem);
+}
+
 .nx-section {
   margin-bottom: 1.75rem;
 }
@@ -2710,6 +2734,36 @@ img {
 .nx-content-block .material-symbols-outlined.nx-icon-muted {
   font-size: 1.35rem;
   margin-bottom: 0.35rem;
+}
+
+/* ── Grade interna dos blocos (aplicada em todo o site) ── */
+.nx-block-grid,
+:is(
+    .nx-card,
+    .nx-feature-tile:not(.nx-feature-tile--image),
+    .nx-panel,
+    .nx-content-block,
+    .nx-cta,
+    .nx-footer__card,
+    .nx-cta-banner
+  ) {
+  background-color: var(--nx-surface);
+  background-image:
+    linear-gradient(var(--nx-block-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--nx-block-grid-line) 1px, transparent 1px);
+  background-size: var(--nx-block-grid-size) var(--nx-block-grid-size);
+}
+
+.nx-hero-cinema__bg {
+  background-color: var(--nx-hero-bg);
+  background-image:
+    linear-gradient(var(--nx-block-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--nx-block-grid-line) 1px, transparent 1px);
+  background-size: var(--nx-block-grid-size) var(--nx-block-grid-size);
+}
+
+:is(.nx-card, .nx-feature-tile:not(.nx-feature-tile--image)):hover {
+  background-color: var(--nx-card-hover);
 }
 
 @media (prefers-reduced-motion: reduce) {
