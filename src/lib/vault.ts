@@ -93,19 +93,31 @@ export async function fetchVaultEntries(): Promise<HubVaultEntry[]> {
   if (!supabase) return [];
   const { data, error } = await supabase
     .from('hub_vault_entries')
-    .select('*, hub_clientes(nome)')
+    .select('*')
     .order('titulo');
   if (error) throw new Error(supabaseErrorMessage(error));
-  return (data ?? []).map((row) => {
-    const cliente = row.hub_clientes as { nome: string } | null;
-    const { hub_clientes: _drop, ...entry } = row as HubVaultEntry & {
-      hub_clientes?: { nome: string } | null;
-    };
-    return {
-      ...entry,
-      cliente_nome: cliente?.nome ?? null,
-    } as HubVaultEntry;
-  });
+
+  const entries = (data ?? []) as HubVaultEntry[];
+  const clienteIds = [
+    ...new Set(entries.map((e) => e.cliente_id).filter((id): id is string => Boolean(id))),
+  ];
+
+  const clienteNomes = new Map<string, string>();
+  if (clienteIds.length > 0) {
+    const { data: clientes, error: clientesError } = await supabase
+      .from('hub_clientes')
+      .select('id, nome')
+      .in('id', clienteIds);
+    if (clientesError) throw new Error(supabaseErrorMessage(clientesError));
+    for (const c of clientes ?? []) {
+      clienteNomes.set(c.id, c.nome);
+    }
+  }
+
+  return entries.map((entry) => ({
+    ...entry,
+    cliente_nome: entry.cliente_id ? (clienteNomes.get(entry.cliente_id) ?? null) : null,
+  }));
 }
 
 export async function createVaultEntry(
