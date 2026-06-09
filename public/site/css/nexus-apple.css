@@ -273,11 +273,18 @@ body::after {
   line-height: 0;
 }
 
-.nx-hero-apple__visual img {
-  width: 100%;
-  max-height: min(62vh, 580px);
+.nx-hero-apple__visual img,
+.nx-hero-apple__logo {
+  width: auto;
+  max-width: min(240px, 52vw);
+  height: auto;
+  max-height: min(240px, 36vh);
   object-fit: contain;
-  object-position: center bottom;
+  object-position: center;
+}
+
+.nx-hero-apple__visual {
+  padding-bottom: 3rem;
 }
 
 /* Esconder hero antigo “cinema” se ainda existir */
