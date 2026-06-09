@@ -1,0 +1,519 @@
+/* NEXUS — referência visual apple.com (nav fina, hero centrado, #0071e3) */
+
+:root {
+  --nx-apple-blue: #0071e3;
+  --nx-apple-blue-hover: #0077ed;
+  --nx-apple-link: #0066cc;
+  --nx-apple-gray: #86868b;
+  --nx-apple-gray-2: #6e6e73;
+  --nx-apple-fog: #f5f5f7;
+  --nx-apple-ink: #1d1d1f;
+  --nx-nav-h: 44px;
+  --nx-radius: 18px;
+  --nx-accent: var(--nx-apple-blue);
+  --nx-royal: var(--nx-apple-blue);
+  --nx-glow: none;
+  --nx-glow-soft: none;
+  --nx-body-mesh: none;
+  --nx-body-grid-size: 0;
+}
+
+[data-theme='light'] {
+  --nx-bg: #ffffff;
+  --nx-bg-elevated: #ffffff;
+  --nx-surface: #fbfbfd;
+  --nx-surface-muted: #f5f5f7;
+  --nx-text: #1d1d1f;
+  --nx-text-muted: var(--nx-apple-gray-2);
+  --nx-nav-bg: rgba(255, 255, 255, 0.8);
+  --nx-border: rgba(0, 0, 0, 0.06);
+  --nx-border-strong: rgba(0, 0, 0, 0.1);
+  --nx-on-accent: #ffffff;
+}
+
+[data-theme='dark'] {
+  --nx-bg: #000000;
+  --nx-bg-elevated: #000000;
+  --nx-surface: #1d1d1f;
+  --nx-surface-muted: #2d2d2f;
+  --nx-text: #f5f5f7;
+  --nx-text-muted: #a1a1a6;
+  --nx-nav-bg: rgba(0, 0, 0, 0.8);
+  --nx-border: rgba(255, 255, 255, 0.08);
+  --nx-border-strong: rgba(255, 255, 255, 0.12);
+  --nx-accent: #2997ff;
+  --nx-on-accent: #ffffff;
+}
+
+html,
+body {
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    'SF Pro Display',
+    'SF Pro Text',
+    'Helvetica Neue',
+    Helvetica,
+    Arial,
+    sans-serif;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  background: var(--nx-bg) !important;
+}
+
+body::before,
+body::after {
+  display: none !important;
+}
+
+/* ── Nav (estilo apple.com/br) ── */
+.nx-nav {
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 0.5px solid var(--nx-border) !important;
+  box-shadow: none !important;
+}
+
+.nx-nav::after {
+  display: none !important;
+}
+
+.nx-nav__inner {
+  min-height: var(--nx-nav-h);
+  padding: 0 !important;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.nx-container:has(.nx-nav__inner) {
+  width: min(100%, 100%);
+  padding-inline: max(22px, env(safe-area-inset-left));
+}
+
+.nx-brand {
+  gap: 0.45rem !important;
+  font-size: 1.05rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.02em !important;
+  text-transform: none !important;
+}
+
+.nx-brand__mark {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.nx-brand__name {
+  background: none !important;
+  -webkit-text-fill-color: var(--nx-text) !important;
+  color: var(--nx-text) !important;
+  animation: none !important;
+}
+
+.nx-nav__links {
+  gap: 1.75rem !important;
+}
+
+@media (min-width: 768px) {
+  .nx-nav__links {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.nx-nav__link {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.01em !important;
+  text-transform: none !important;
+  color: var(--nx-text) !important;
+  opacity: 0.88;
+  padding: 0 !important;
+  border: none !important;
+  background: none !important;
+  border-radius: 0 !important;
+}
+
+.nx-nav__link:hover,
+.nx-nav__link.is-active {
+  opacity: 1;
+  color: var(--nx-text) !important;
+  text-decoration: none;
+}
+
+.nx-nav__actions {
+  gap: 0.65rem !important;
+}
+
+.nx-theme {
+  display: none !important;
+}
+
+.nx-nav__actions .nx-btn--ghost {
+  font-size: 12px !important;
+  padding: 0 0.35rem !important;
+  min-height: auto !important;
+  color: var(--nx-text) !important;
+  opacity: 0.88;
+}
+
+.nx-nav__actions .nx-btn--ghost:hover {
+  opacity: 1;
+  text-decoration: none;
+}
+
+.nx-nav-toggle {
+  border: none !important;
+  background: transparent !important;
+  color: var(--nx-text) !important;
+}
+
+.nx-page {
+  padding-top: var(--nx-nav-h) !important;
+}
+
+/* ── Botões (Saiba mais / Comprar) ── */
+.nx-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 1.35rem !important;
+  border-radius: 980px !important;
+  font-size: 17px !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.022em !important;
+  text-transform: none !important;
+  line-height: 1.2;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.nx-btn--primary {
+  background: var(--nx-accent) !important;
+  color: var(--nx-on-accent) !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.nx-btn--primary:hover {
+  background: var(--nx-apple-blue-hover) !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+.nx-btn--outline {
+  background: transparent !important;
+  color: var(--nx-accent) !important;
+  border: 1px solid var(--nx-accent) !important;
+  box-shadow: none !important;
+}
+
+.nx-btn--outline:hover {
+  background: var(--nx-accent) !important;
+  color: var(--nx-on-accent) !important;
+}
+
+.nx-btn--ghost:not(.nx-nav__actions .nx-btn--ghost) {
+  background: transparent !important;
+  border: 1px solid var(--nx-accent) !important;
+  color: var(--nx-accent) !important;
+}
+
+/* ── Hero Apple (home) ── */
+.nx-hero-apple {
+  text-align: center;
+  padding: 2.5rem 1.5rem 0;
+  background: var(--nx-bg);
+}
+
+.nx-hero-apple__eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--nx-text-muted);
+  letter-spacing: 0.011em;
+}
+
+.nx-hero-apple__title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(2.5rem, 7vw, 4rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--nx-text);
+}
+
+.nx-hero-apple__subtitle {
+  margin: 0 auto 1.25rem;
+  max-width: 28ch;
+  font-size: clamp(1.15rem, 2.5vw, 1.5rem);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: 0.004em;
+  color: var(--nx-text-muted);
+}
+
+.nx-hero-apple__cta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-bottom: 2rem;
+}
+
+.nx-hero-apple__visual {
+  margin: 0 auto;
+  max-width: min(1200px, 100%);
+  line-height: 0;
+}
+
+.nx-hero-apple__visual img {
+  width: 100%;
+  max-height: min(62vh, 580px);
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+/* Esconder hero antigo “cinema” se ainda existir */
+.nx-hero-cinema,
+.nx-hud-bar,
+.nx-hero-cinema__grid,
+.nx-hero-cinema__scan {
+  display: none !important;
+}
+
+/* Banners internos (serviços, empresa, contato) — layout promo Apple */
+.nx-banner {
+  position: relative !important;
+  min-height: auto !important;
+  display: block !important;
+  text-align: center;
+  padding: 2.5rem 1.5rem 2rem;
+  background: var(--nx-bg) !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+}
+
+.nx-banner__bg {
+  position: relative !important;
+  inset: auto !important;
+  height: auto !important;
+  margin-top: 1.5rem;
+  border-radius: var(--nx-radius);
+  overflow: hidden;
+}
+
+.nx-banner__bg img {
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  filter: none !important;
+}
+
+.nx-banner__overlay {
+  display: none !important;
+}
+
+.nx-banner__content {
+  position: relative !important;
+  inset: auto !important;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 !important;
+  text-align: center;
+}
+
+.nx-banner .nx-eyebrow,
+.nx-eyebrow {
+  font-size: 21px !important;
+  font-weight: 400 !important;
+  text-transform: none !important;
+  letter-spacing: 0.011em !important;
+  color: var(--nx-text-muted) !important;
+}
+
+.nx-banner .nx-hero-cinema__title,
+.nx-banner h1 {
+  font-size: clamp(2.25rem, 6vw, 3.5rem) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.015em !important;
+  line-height: 1.08 !important;
+  text-transform: none !important;
+}
+
+.nx-banner .nx-hero-cinema__title span {
+  background: none !important;
+  -webkit-text-fill-color: var(--nx-text) !important;
+  color: var(--nx-text) !important;
+}
+
+.nx-banner .nx-hero__lead {
+  margin: 0.75rem auto 1.25rem !important;
+  max-width: 36ch;
+  font-size: clamp(1.05rem, 2vw, 1.35rem) !important;
+  line-height: 1.35 !important;
+  color: var(--nx-text-muted) !important;
+}
+
+/* ── Secções promo Apple ── */
+.nx-section--apple {
+  text-align: center;
+  padding: 4.5rem 1.5rem 3rem;
+}
+
+.nx-section--apple .nx-section__label {
+  font-size: 17px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.011em !important;
+  text-transform: none !important;
+  color: var(--nx-text-muted) !important;
+  margin-bottom: 0.35rem !important;
+}
+
+.nx-section--apple .nx-section__title {
+  font-size: clamp(2rem, 5vw, 3rem) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.015em !important;
+  line-height: 1.08 !important;
+  margin: 0 auto 0.75rem !important;
+  max-width: 16ch;
+}
+
+.nx-section--apple .nx-section__lead {
+  margin: 0 auto 2.5rem;
+  max-width: 42ch;
+  font-size: 17px;
+  line-height: 1.47;
+  color: var(--nx-text-muted);
+}
+
+.nx-bento {
+  gap: 1rem !important;
+}
+
+.nx-feature-tile {
+  border-radius: var(--nx-radius) !important;
+  border: none !important;
+  background: var(--nx-surface-muted) !important;
+  box-shadow: none !important;
+  padding: 1.75rem 1.5rem !important;
+  text-align: left;
+}
+
+.nx-feature-tile:hover {
+  transform: none !important;
+  background: var(--nx-surface-muted) !important;
+}
+
+.nx-card__icon {
+  font-size: 1.75rem !important;
+  color: var(--nx-accent) !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.nx-card__title {
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.02em !important;
+  margin-bottom: 0.35rem !important;
+}
+
+.nx-card__desc {
+  font-size: 15px !important;
+  line-height: 1.47 !important;
+  color: var(--nx-text-muted) !important;
+}
+
+.nx-feature-tile--image {
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.nx-feature-tile--image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: none !important;
+}
+
+.nx-split-section {
+  align-items: center;
+  gap: 2.5rem !important;
+  padding-block: 4rem !important;
+}
+
+.nx-split-section .nx-section__title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.02em !important;
+  text-transform: none !important;
+}
+
+.nx-split-section .nx-section__label {
+  text-transform: none !important;
+  font-size: 14px !important;
+  color: var(--nx-accent) !important;
+  letter-spacing: 0 !important;
+}
+
+.nx-quote-float {
+  border-radius: var(--nx-radius) !important;
+  background: var(--nx-surface-muted) !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.nx-check-list li {
+  font-size: 15px;
+  line-height: 1.47;
+}
+
+.nx-metal-live,
+.nx-metal-tilt::before,
+.nx-metal-tilt::after {
+  animation: none !important;
+}
+
+.nx-img-silver {
+  filter: none !important;
+}
+
+.nx-footer,
+footer {
+  border-top: 0.5px solid var(--nx-border);
+  font-size: 12px;
+  color: var(--nx-text-muted);
+}
+
+@media (max-width: 767px) {
+  .nx-nav__links {
+    display: none !important;
+  }
+
+  .nx-hero-apple {
+    padding-top: 1.5rem;
+  }
+
+  .nx-hero-apple__cta {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .nx-hero-apple__cta .nx-btn {
+    min-width: 11.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nx-btn,
+  .nx-feature-tile {
+    transition: none;
+  }
+}

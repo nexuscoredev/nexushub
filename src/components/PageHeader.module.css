@@ -1,7 +1,7 @@
 .header {
   position: relative;
   margin-bottom: 2rem;
-  padding-left: 1rem;
+  padding-left: 0;
 }
 
 .row {
@@ -21,66 +21,44 @@
 }
 
 .accent {
-  position: absolute;
-  left: 0;
-  top: 0.15rem;
-  bottom: 0.15rem;
-  width: 3px;
-  border-radius: 4px;
-  background: linear-gradient(180deg, var(--nx-royal-bright), var(--nx-royal-deep));
-  box-shadow: 0 0 16px var(--accent-glow);
+  display: none;
 }
 
 .badge {
   display: inline-block;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  font-family: var(--font-mono);
-  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: #0071e3;
   margin-bottom: 0.5rem;
-  padding: 0.25rem 0.6rem;
-  border: 1px solid rgba(110, 181, 255, 0.28);
-  border-radius: 999px;
-  background: rgba(37, 99, 235, 0.1);
-  box-shadow: 0 0 16px rgba(37, 99, 235, 0.12);
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
 }
 
 .badge::before {
-  content: '// ';
-  color: var(--nx-cyan-bright, #22d3ee);
-  opacity: 0.9;
+  content: none;
 }
 
 .title {
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  background: linear-gradient(
-    118deg,
-    #ffffff 0%,
-    var(--accent) 28%,
-    #ffffff 46%,
-    #c8ccd4 62%,
-    var(--accent) 82%,
-    #ffffff 100%
-  );
-  background-size: 260% 260%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1.15;
-  animation: hubMetalFlow 5.5s ease-in-out infinite;
+  letter-spacing: -0.03em;
+  text-transform: none;
+  color: #f5f5f7;
+  line-height: 1.08;
 }
 
 .subtitle {
   margin-top: 0.5rem;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   max-width: 52ch;
+  line-height: 1.47;
 }
 
 @media (max-width: 768px) {
@@ -97,8 +75,7 @@
   }
 
   .title {
-    font-size: clamp(1.35rem, 6vw, 1.75rem);
-    letter-spacing: 0.05em;
+    font-size: clamp(1.5rem, 6vw, 2rem);
     overflow-wrap: anywhere;
   }
 
@@ -125,7 +102,7 @@
   }
 
   .subtitle {
-    font-size: 0.88rem;
+    font-size: 0.94rem;
     max-width: none;
   }
 }
@@ -136,7 +113,7 @@
   }
 
   .badge {
-    font-size: 0.6rem;
+    font-size: 0.68rem;
     margin-bottom: 0.4rem;
   }
 
