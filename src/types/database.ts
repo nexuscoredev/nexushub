@@ -121,6 +121,8 @@ export interface CalendarEvent {
 
 export type HubPersonalTipo = 'entrada' | 'saida';
 
+export type HubPersonalContaGrupo = 'residencial' | 'carro' | 'gastos_fixos' | 'variaveis';
+
 export interface HubPersonalTransaction {
   id: string;
   user_id: string;
@@ -130,6 +132,10 @@ export interface HubPersonalTransaction {
   data_referencia: string;
   categoria: string | null;
   notas: string | null;
+  grupo?: HubPersonalContaGrupo | null;
+  pago?: boolean;
+  dia_vencimento?: number | null;
+  ordem?: number;
   created_at?: string;
   updated_at?: string;
 }

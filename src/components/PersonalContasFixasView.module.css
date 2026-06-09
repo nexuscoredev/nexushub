@@ -1,0 +1,103 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.hero {
+  padding: 0.15rem 0 0.35rem;
+}
+
+.heroTitle {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #6eb6ff;
+  line-height: 1.35;
+}
+
+.heroHint {
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.grupo {
+  border: 1px solid var(--border);
+  border-radius: var(--radius, 12px);
+  background: rgba(0, 0, 0, 0.22);
+  padding: 0.85rem 1rem 1rem;
+}
+
+.grupoVariavel .grupoTitle {
+  color: #f87171;
+}
+
+.grupoTitle {
+  margin: 0 0 0.65rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.grupoTotal {
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.item {
+  margin: 0;
+}
+
+.itemLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  cursor: pointer;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.checkbox {
+  margin-top: 0.2rem;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  accent-color: #6eb6ff;
+}
+
+.itemText {
+  color: var(--text);
+  word-break: break-word;
+}
+
+.itemTextPago {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: rgba(255, 255, 255, 0.25);
+}
+
+.empty {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+@media (max-width: 640px) {
+  .heroTitle {
+    font-size: 0.95rem;
+  }
+
+  .itemLabel {
+    font-size: 0.84rem;
+  }
+}

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { PersonalContasFixasView } from '../components/PersonalContasFixasView';
 import { PageHeader } from '../components/PageHeader';
 import {
   deletePersonalRow,
@@ -15,15 +16,19 @@ import {
   totalSaidasPessoal,
 } from '../lib/pessoal';
 import { supabase, supabaseErrorMessage } from '../lib/supabase';
+import { isViniciusPersonalFinance } from '../lib/viniciusPersonalFinance';
 import type { HubPersonalTipo, HubPersonalTransaction } from '../types/database';
 import financeStyles from './FinanceiroPage.module.css';
 import styles from './PessoalPage.module.css';
 
 type PessoalSecao = 'financeiro';
+type ViniciusFinanceView = 'contas' | 'receitas' | 'outros';
 
 export function PessoalPage() {
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
+  const viniciusLayout = isViniciusPersonalFinance(profile?.email ?? user?.email);
   const [secao, setSecao] = useState<PessoalSecao>('financeiro');
+  const [viniciusView, setViniciusView] = useState<ViniciusFinanceView>('contas');
   const [fluxo, setFluxo] = useState<HubPersonalTipo>('entrada');
   const [rows, setRows] = useState<HubPersonalTransaction[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -36,6 +41,8 @@ export function PessoalPage() {
     const { data, error: err } = await supabase
       .from('hub_personal_transactions')
       .select('*')
+      .order('grupo', { ascending: true, nullsFirst: false })
+      .order('ordem', { ascending: true })
       .order('data_referencia', { ascending: false });
     if (err) setError(supabaseErrorMessage(err));
     else setRows((data ?? []) as HubPersonalTransaction[]);
@@ -47,8 +54,11 @@ export function PessoalPage() {
   }, [load]);
 
   const entradas = useMemo(() => rows.filter((r) => r.tipo === 'entrada'), [rows]);
-  const saidas = useMemo(() => rows.filter((r) => r.tipo === 'saida'), [rows]);
-  const fluxoRows = fluxo === 'entrada' ? entradas : saidas;
+  const saidasGenericas = useMemo(
+    () => rows.filter((r) => r.tipo === 'saida' && !r.grupo),
+    [rows],
+  );
+  const fluxoRows = fluxo === 'entrada' ? entradas : saidasGenericas;
 
   const firstName = profile?.nome?.trim().split(/\s+/)[0] ?? 'você';
 
@@ -86,46 +96,100 @@ export function PessoalPage() {
             }}
           />
 
-          <div className="tabs">
-            {(
-              [
-                ['entrada', 'Receitas'],
-                ['saida', 'Gastos'],
-              ] as const
-            ).map(([id, label]) => (
-              <button
-                key={id}
-                type="button"
-                className={`tab ${fluxo === id ? 'active' : ''}`}
-                onClick={() => setFluxo(id)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          {viniciusLayout ? (
+            <>
+              <div className="tabs">
+                {(
+                  [
+                    ['contas', 'Contas Fixas'],
+                    ['receitas', 'Receitas'],
+                    ['outros', 'Outros gastos'],
+                  ] as const
+                ).map(([id, label]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    className={`tab ${viniciusView === id ? 'active' : ''}`}
+                    onClick={() => setViniciusView(id)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
 
-          {loading ? (
-            <p style={{ color: 'var(--muted)' }}>Carregando…</p>
+              {loading ? (
+                <p style={{ color: 'var(--muted)' }}>Carregando…</p>
+              ) : viniciusView === 'contas' ? (
+                <PersonalContasFixasView rows={rows} onRefresh={load} />
+              ) : (
+                <div className={financeStyles.sections}>
+                  <PessoalQueueSection
+                    title={viniciusView === 'receitas' ? 'Receitas' : 'Outros gastos'}
+                    subtitle={
+                      viniciusView === 'receitas'
+                        ? 'Salário, extras e rendimentos'
+                        : 'Gastos fora das contas fixas'
+                    }
+                    totalLabel={formatBRL(
+                      (viniciusView === 'receitas' ? entradas : saidasGenericas).reduce(
+                        (sum, r) => sum + Number(r.valor),
+                        0,
+                      ),
+                    )}
+                  >
+                    <PersonalTransactionsTable
+                      rows={viniciusView === 'receitas' ? entradas : saidasGenericas}
+                      presetTipo={viniciusView === 'receitas' ? 'entrada' : 'saida'}
+                      onRefresh={load}
+                    />
+                  </PessoalQueueSection>
+                </div>
+              )}
+            </>
           ) : (
-            <div className={financeStyles.sections}>
-              <PessoalQueueSection
-                title={fluxo === 'entrada' ? 'Receitas' : 'Gastos'}
-                subtitle={
-                  fluxo === 'entrada'
-                    ? 'Salário, extras, rendimentos e outras entradas'
-                    : 'Despesas, compras e saídas do dia a dia'
-                }
-                totalLabel={formatBRL(
-                  fluxoRows.reduce((sum, r) => sum + Number(r.valor), 0),
-                )}
-              >
-                <PersonalTransactionsTable
-                  rows={fluxoRows}
-                  presetTipo={fluxo}
-                  onRefresh={load}
-                />
-              </PessoalQueueSection>
-            </div>
+            <>
+              <div className="tabs">
+                {(
+                  [
+                    ['entrada', 'Receitas'],
+                    ['saida', 'Gastos'],
+                  ] as const
+                ).map(([id, label]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    className={`tab ${fluxo === id ? 'active' : ''}`}
+                    onClick={() => setFluxo(id)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+
+              {loading ? (
+                <p style={{ color: 'var(--muted)' }}>Carregando…</p>
+              ) : (
+                <div className={financeStyles.sections}>
+                  <PessoalQueueSection
+                    title={fluxo === 'entrada' ? 'Receitas' : 'Gastos'}
+                    subtitle={
+                      fluxo === 'entrada'
+                        ? 'Salário, extras, rendimentos e outras entradas'
+                        : 'Despesas, compras e saídas do dia a dia'
+                    }
+                    totalLabel={formatBRL(
+                      fluxoRows.reduce((sum, r) => sum + Number(r.valor), 0),
+                    )}
+                  >
+                    <PersonalTransactionsTable
+                      rows={fluxoRows}
+                      presetTipo={fluxo}
+                      onRefresh={load}
+                    />
+                  </PessoalQueueSection>
+                </div>
+              )}
+            </>
           )}
         </>
       )}
