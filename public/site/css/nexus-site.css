@@ -303,12 +303,13 @@ img {
 }
 
 .nx-container {
-  width: min(1200px, calc(100% - 2rem));
+  width: min(1200px, calc(100% - 1.5rem));
   margin-inline: auto;
 }
 
 .nx-page {
-  padding-top: 4.5rem;
+  padding-top: 3.5rem;
+  padding-bottom: 0.5rem;
 }
 
 /* ── Nav (estilo Nintendo · NEXUS · prata metálica) ── */
@@ -782,9 +783,10 @@ img {
 
 .nx-hero__lead {
   margin: 0;
-  max-width: 36ch;
+  max-width: 38ch;
   color: var(--nx-text-muted);
-  font-size: 1.02rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
 }
 
 .nx-hero__visual {
@@ -803,7 +805,7 @@ img {
 
 /* ── Sections ── */
 .nx-section {
-  margin-bottom: 2.75rem;
+  margin-bottom: 1.75rem;
 }
 
 .nx-section__label {
@@ -1031,7 +1033,7 @@ img {
 
 /* ── Inner pages ── */
 .nx-page-hero {
-  padding: 2.5rem 0 1.5rem;
+  padding: 1.75rem 0 1rem;
 }
 
 .nx-page-hero h1 {
@@ -1527,19 +1529,19 @@ img {
 
 .nx-hero-cinema {
   position: relative;
-  min-height: clamp(28rem, 72vh, 40rem);
+  min-height: clamp(18rem, 48vh, 28rem);
   display: flex;
   align-items: center;
   justify-content: flex-start;
   overflow: hidden;
-  margin: 0 0 2.5rem;
+  margin: 0 0 1.25rem;
   border-radius: var(--nx-radius);
   border: 1px solid var(--nx-border);
 }
 
 @media (min-width: 768px) {
   .nx-hero-cinema {
-    min-height: clamp(30rem, 78vh, 44rem);
+    min-height: clamp(20rem, 52vh, 30rem);
   }
 }
 
@@ -1586,15 +1588,15 @@ img {
 .nx-hero-cinema__content {
   position: relative;
   z-index: 2;
-  padding: 2.5rem 1.5rem;
-  max-width: 42rem;
+  padding: 1.5rem 1.25rem;
+  max-width: 40rem;
   width: 100%;
 }
 
 .nx-hero-cinema__title {
-  margin: 0 0 1rem;
-  font-size: clamp(2.5rem, 7vw, 4.5rem);
-  line-height: 1.05;
+  margin: 0 0 0.65rem;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  line-height: 1.08;
   font-weight: 700;
 }
 
@@ -1659,11 +1661,11 @@ img {
 .nx-feature-tile {
   position: relative;
   overflow: hidden;
-  padding: 1.5rem;
+  padding: 1.1rem 1.15rem;
   border-radius: var(--nx-radius);
   background: var(--nx-surface);
   border: 1px solid var(--nx-border);
-  min-height: 12rem;
+  min-height: auto;
 }
 
 .nx-feature-tile::before {
@@ -1734,15 +1736,15 @@ img {
 .nx-split-section {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
+  gap: 1.25rem;
   align-items: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.75rem;
 }
 
 @media (min-width: 1024px) {
   .nx-split-section {
     grid-template-columns: 1fr 1fr;
-    gap: 3rem;
+    gap: 2rem;
   }
 
   .nx-split-section--reverse .nx-split-section__media {
@@ -1816,8 +1818,8 @@ img {
   overflow: hidden;
   border-radius: var(--nx-radius);
   border: 1px solid var(--nx-border);
-  margin-bottom: 2.5rem;
-  min-height: 28rem;
+  margin-bottom: 1.5rem;
+  min-height: clamp(16rem, 38vh, 22rem);
 }
 
 .nx-banner__bg img {
@@ -1837,7 +1839,7 @@ img {
 .nx-banner__content {
   position: relative;
   z-index: 2;
-  padding: 3rem 1.5rem;
+  padding: 2rem 1.25rem;
   max-width: 40rem;
 }
 
@@ -2231,7 +2233,11 @@ img {
 }
 
 .nx-hero-cinema__content {
-  padding: clamp(2.5rem, 8vh, 4rem) 1.5rem;
+  padding: 1.5rem 1.25rem;
+}
+
+.nx-section {
+  margin-bottom: 1.75rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
