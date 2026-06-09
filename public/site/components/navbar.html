@@ -1,49 +1,83 @@
 <header class="nx-nav">
-  <div class="nx-container nx-nav__wrap">
-    <div class="nx-nav__pill nx-metal-tilt">
-      <div class="nx-nav__inner">
-        <a href="home.html" class="nx-brand" aria-label="NEXUS — início">
-          <img src="img/favicon.png" alt="" class="nx-brand__mark" width="32" height="32" />
-          <span class="nx-brand__name">NEXUS</span>
-        </a>
+  <div class="nx-nav__bar">
+    <a href="home.html" class="nx-nav__brand-block" aria-label="NEXUS — início">
+      <img src="img/favicon.png" alt="" class="nx-nav__brand-mark" width="28" height="28" />
+      <span class="nx-nav__brand-name">NEXUS</span>
+    </a>
 
-        <nav class="nx-nav__links" aria-label="Menu principal">
-          <a class="nx-nav__link nav-link" href="home.html" data-page="home">Início</a>
-          <a class="nx-nav__link nav-link" href="servicos.html" data-page="servicos">Serviços</a>
-          <a class="nx-nav__link nav-link" href="empresa.html" data-page="empresa">Empresa</a>
-          <a class="nx-nav__link nav-link" href="contato.html" data-page="contato">Contato</a>
-        </nav>
+    <nav class="nx-nav__links" aria-label="Menu principal">
+      <a class="nx-nav__link nav-link" href="home.html" data-page="home">
+        <span class="material-symbols-outlined" aria-hidden="true">home</span>
+        Início
+      </a>
+      <a class="nx-nav__link nav-link" href="servicos.html" data-page="servicos">
+        <span class="material-symbols-outlined" aria-hidden="true">widgets</span>
+        Serviços
+      </a>
+      <a class="nx-nav__link nav-link" href="empresa.html" data-page="empresa">
+        <span class="material-symbols-outlined" aria-hidden="true">apartment</span>
+        Empresa
+      </a>
+      <a class="nx-nav__link nav-link" href="contato.html" data-page="contato">
+        <span class="material-symbols-outlined" aria-hidden="true">support_agent</span>
+        Contato
+      </a>
+    </nav>
 
-        <div class="nx-nav__actions">
-          <div class="nx-theme" role="group" aria-label="Tema do site">
-            <button type="button" class="nx-theme__btn" data-theme-btn="light" aria-pressed="false" aria-label="Tema claro" title="Tema claro">
-              <span class="material-symbols-outlined" aria-hidden="true">light_mode</span>
-            </button>
-            <button type="button" class="nx-theme__btn" data-theme-btn="dark" aria-pressed="false" aria-label="Tema escuro" title="Tema escuro">
-              <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
-            </button>
-            <button type="button" class="nx-theme__btn" data-theme-btn="auto" aria-pressed="false" aria-label="Tema automático" title="Tema automático">
-              <span class="material-symbols-outlined" aria-hidden="true">brightness_auto</span>
-            </button>
-          </div>
-          <a href="/cliente/entrar" class="nx-btn nx-btn--text nx-hide-sm">Área do Cliente</a>
-          <a href="/login" class="nx-btn nx-btn--text nx-hide-sm">NEXUS Hub</a>
-          <a href="contato.html" class="nx-btn nx-btn--primary nx-nav__cta nx-hide-md">Começar</a>
-          <button type="button" class="nx-nav-toggle" id="nx-nav-toggle" aria-expanded="false" aria-controls="nx-nav-panel" aria-label="Abrir menu">
-            <span class="material-symbols-outlined" style="font-size:1.25rem">menu</span>
-          </button>
-        </div>
+    <div class="nx-nav__utilities">
+      <form class="nx-nav__search nx-hide-md" role="search" action="contato.html" method="get">
+        <span class="material-symbols-outlined" aria-hidden="true">search</span>
+        <input type="search" name="q" placeholder="Pesquisar" aria-label="Pesquisar no site" />
+      </form>
+
+      <div class="nx-theme nx-hide-sm" role="group" aria-label="Tema do site">
+        <button type="button" class="nx-theme__btn" data-theme-btn="light" aria-pressed="false" aria-label="Tema claro" title="Tema claro">
+          <span class="material-symbols-outlined" aria-hidden="true">light_mode</span>
+        </button>
+        <button type="button" class="nx-theme__btn" data-theme-btn="dark" aria-pressed="false" aria-label="Tema escuro" title="Tema escuro">
+          <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
+        </button>
+        <button type="button" class="nx-theme__btn" data-theme-btn="auto" aria-pressed="false" aria-label="Tema automático" title="Tema automático">
+          <span class="material-symbols-outlined" aria-hidden="true">brightness_auto</span>
+        </button>
       </div>
 
-      <nav id="nx-nav-panel" class="nx-nav-panel" aria-label="Menu mobile">
-        <a class="nx-nav__link nav-link" href="home.html" data-page="home">Início</a>
-        <a class="nx-nav__link nav-link" href="servicos.html" data-page="servicos">Serviços</a>
-        <a class="nx-nav__link nav-link" href="empresa.html" data-page="empresa">Empresa</a>
-        <a class="nx-nav__link nav-link" href="contato.html" data-page="contato">Contato</a>
-        <a href="/cliente/entrar" class="nx-nav__link">Área do Cliente</a>
-        <a href="/login" class="nx-nav__link">NEXUS Hub</a>
-        <a href="contato.html" class="nx-btn nx-btn--primary nx-nav-panel__cta">Começar</a>
-      </nav>
+      <a href="/login" class="nx-nav__account nx-hide-sm">
+        <span class="material-symbols-outlined" aria-hidden="true">person</span>
+        <span class="nx-nav__account-text">Entrar · Cliente / Hub</span>
+      </a>
+
+      <button type="button" class="nx-nav-toggle" id="nx-nav-toggle" aria-expanded="false" aria-controls="nx-nav-panel" aria-label="Abrir menu">
+        <span class="material-symbols-outlined" style="font-size:1.35rem">menu</span>
+      </button>
     </div>
   </div>
+
+  <nav id="nx-nav-panel" class="nx-nav-panel" aria-label="Menu mobile">
+    <a class="nx-nav__link nav-link" href="home.html" data-page="home">
+      <span class="material-symbols-outlined" aria-hidden="true">home</span>
+      Início
+    </a>
+    <a class="nx-nav__link nav-link" href="servicos.html" data-page="servicos">
+      <span class="material-symbols-outlined" aria-hidden="true">widgets</span>
+      Serviços
+    </a>
+    <a class="nx-nav__link nav-link" href="empresa.html" data-page="empresa">
+      <span class="material-symbols-outlined" aria-hidden="true">apartment</span>
+      Empresa
+    </a>
+    <a class="nx-nav__link nav-link" href="contato.html" data-page="contato">
+      <span class="material-symbols-outlined" aria-hidden="true">support_agent</span>
+      Contato
+    </a>
+    <a href="/cliente/entrar" class="nx-nav__link">
+      <span class="material-symbols-outlined" aria-hidden="true">badge</span>
+      Área do Cliente
+    </a>
+    <a href="/login" class="nx-nav__link">
+      <span class="material-symbols-outlined" aria-hidden="true">hub</span>
+      NEXUS Hub
+    </a>
+    <a href="contato.html" class="nx-btn nx-btn--primary nx-nav-panel__cta">Começar projeto</a>
+  </nav>
 </header>
