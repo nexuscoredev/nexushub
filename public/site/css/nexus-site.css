@@ -1741,13 +1741,14 @@ img {
   }
 
   .nx-hero-cinema--brand .nx-hero-cinema__bg img {
-    max-width: min(70vw, 14rem);
-    padding: 1rem;
-    padding-top: 38%;
-    object-position: center bottom;
-    margin-left: auto;
-    margin-right: auto;
-    width: auto;
+    right: auto;
+    left: 50%;
+    top: auto;
+    bottom: clamp(0.75rem, 4vw, 1.25rem);
+    transform: translateX(-50%);
+    width: clamp(9rem, 52vw, 13rem);
+    max-height: 42%;
+    padding: 0;
   }
 
   .nx-hero-cinema__overlay {
@@ -1790,18 +1791,25 @@ img {
 }
 
 .nx-hero-cinema--brand .nx-hero-cinema__bg img {
-  object-position: center right;
-  padding: clamp(1.25rem, 4vw, 2.5rem);
-  padding-left: 42%;
-  max-width: min(52vw, 22rem);
-  margin-left: auto;
-  width: auto;
-  height: 100%;
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: clamp(1rem, 3vw, 2.5rem);
+  left: auto;
+  transform: translateY(-50%);
+  width: clamp(11rem, 26vw, 22rem);
+  height: auto;
+  max-height: 88%;
+  object-fit: contain;
+  object-position: center;
+  padding: 0;
+  margin: 0;
 }
 
 .nx-hero-cinema__overlay {
   position: absolute;
   inset: 0;
+  z-index: 0;
   background: linear-gradient(90deg, var(--nx-bg) 0%, transparent 62%);
 }
 
@@ -1826,8 +1834,8 @@ img {
   }
 
   .nx-hero-cinema--brand .nx-hero-cinema__bg img {
-    padding-left: 46%;
-    max-width: min(40vw, 24rem);
+    right: clamp(1.25rem, 4vw, 3rem);
+    width: clamp(12rem, 22vw, 24rem);
   }
 
   .nx-hero-cinema__overlay {
