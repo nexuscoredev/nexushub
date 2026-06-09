@@ -1,5 +1,11 @@
 import type { EncryptedPayload } from './vaultCrypto';
+import type { VaultProvedorId } from './vaultProviders';
 import { supabase, supabaseErrorMessage } from './supabase';
+
+export interface HubVaultCliente {
+  id: string;
+  nome: string;
+}
 
 export type VaultCategoria = 'infra' | 'saas' | 'cliente' | 'banco' | 'email' | 'outro';
 
@@ -19,6 +25,9 @@ export interface HubVaultEntry {
   url: string | null;
   categoria: VaultCategoria;
   system_id: string | null;
+  cliente_id: string | null;
+  provedor: VaultProvedorId | null;
+  cliente_nome?: string | null;
   password_iv: string;
   password_ciphertext: string;
   notas_iv: string | null;
@@ -35,6 +44,8 @@ export interface VaultEntryInput {
   url?: string;
   categoria: VaultCategoria;
   system_id?: string | null;
+  cliente_id?: string | null;
+  provedor?: VaultProvedorId | null;
   passwordEncrypted: EncryptedPayload;
   notasEncrypted?: EncryptedPayload | null;
 }
@@ -67,14 +78,34 @@ export async function saveVaultConfig(input: {
   if (error) throw new Error(supabaseErrorMessage(error));
 }
 
+export async function fetchVaultClientes(): Promise<HubVaultCliente[]> {
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from('hub_clientes')
+    .select('id, nome')
+    .eq('ativo', true)
+    .order('nome');
+  if (error) throw new Error(supabaseErrorMessage(error));
+  return (data ?? []) as HubVaultCliente[];
+}
+
 export async function fetchVaultEntries(): Promise<HubVaultEntry[]> {
   if (!supabase) return [];
   const { data, error } = await supabase
     .from('hub_vault_entries')
-    .select('*')
+    .select('*, hub_clientes(nome)')
     .order('titulo');
   if (error) throw new Error(supabaseErrorMessage(error));
-  return (data ?? []) as HubVaultEntry[];
+  return (data ?? []).map((row) => {
+    const cliente = row.hub_clientes as { nome: string } | null;
+    const { hub_clientes: _drop, ...entry } = row as HubVaultEntry & {
+      hub_clientes?: { nome: string } | null;
+    };
+    return {
+      ...entry,
+      cliente_nome: cliente?.nome ?? null,
+    } as HubVaultEntry;
+  });
 }
 
 export async function createVaultEntry(
@@ -88,6 +119,8 @@ export async function createVaultEntry(
     url: input.url?.trim() || null,
     categoria: input.categoria,
     system_id: input.system_id ?? null,
+    cliente_id: input.cliente_id ?? null,
+    provedor: input.provedor ?? null,
     password_iv: input.passwordEncrypted.iv,
     password_ciphertext: input.passwordEncrypted.ciphertext,
     notas_iv: input.notasEncrypted?.iv ?? null,
@@ -114,6 +147,8 @@ export async function updateVaultEntry(
       url: input.url?.trim() || null,
       categoria: input.categoria,
       system_id: input.system_id ?? null,
+      cliente_id: input.cliente_id ?? null,
+      provedor: input.provedor ?? null,
       password_iv: input.passwordEncrypted.iv,
       password_ciphertext: input.passwordEncrypted.ciphertext,
       notas_iv: input.notasEncrypted?.iv ?? null,

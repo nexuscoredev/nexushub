@@ -25,12 +25,17 @@ interface VaultState {
 const VaultContext = createContext<VaultState | null>(null);
 
 export function VaultProvider({ children }: { children: ReactNode }) {
-  const { session } = useAuth();
+  const { session, loading: authLoading, podeGestao } = useAuth();
   const [config, setConfig] = useState<HubVaultConfig | null>(null);
   const [configLoading, setConfigLoading] = useState(true);
   const [cryptoKey, setCryptoKey] = useState<CryptoKey | null>(null);
 
   const refreshConfig = useCallback(async () => {
+    if (!session || !podeGestao) {
+      setConfig(null);
+      setConfigLoading(false);
+      return;
+    }
     setConfigLoading(true);
     try {
       const row = await fetchVaultConfig();
@@ -38,14 +43,18 @@ export function VaultProvider({ children }: { children: ReactNode }) {
     } finally {
       setConfigLoading(false);
     }
-  }, []);
+  }, [session, podeGestao]);
 
   useEffect(() => {
+    if (authLoading) return;
     void refreshConfig();
-  }, [refreshConfig]);
+  }, [authLoading, refreshConfig]);
 
   useEffect(() => {
-    if (!session) setCryptoKey(null);
+    if (!session) {
+      setCryptoKey(null);
+      setConfig(null);
+    }
   }, [session]);
 
   const lock = useCallback(() => setCryptoKey(null), []);

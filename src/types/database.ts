@@ -45,6 +45,8 @@ export interface HubVaultEntry {
   url: string | null;
   categoria: HubVaultCategoria;
   system_id: string | null;
+  cliente_id: string | null;
+  provedor: string | null;
   password_iv: string;
   password_ciphertext: string;
   notas_iv: string | null;

@@ -2,17 +2,26 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PageHeader } from '../components/PageHeader';
 import { useAuth } from '../contexts/AuthContext';
 import { useVault } from '../contexts/VaultContext';
+import { VaultProviderIcon } from '../components/vault/VaultProviderIcon';
 import {
   createVaultEntry,
   deleteVaultEntry,
+  fetchVaultClientes,
+  fetchVaultConfig,
   fetchVaultEntries,
   saveVaultConfig,
   updateVaultEntry,
   VAULT_CATEGORIAS,
+  type HubVaultCliente,
   type HubVaultEntry,
   type VaultCategoria,
   type VaultEntryInput,
 } from '../lib/vault';
+import {
+  getVaultProvedor,
+  VAULT_PROVEDORES,
+  type VaultProvedorId,
+} from '../lib/vaultProviders';
 import {
   createVaultVerifier,
   decryptText,
@@ -26,7 +35,8 @@ interface EntryFormState {
   usuario_login: string;
   url: string;
   categoria: VaultCategoria;
-  system_id: string;
+  cliente_id: string;
+  provedor: VaultProvedorId | '';
   password: string;
   notas: string;
 }
@@ -36,15 +46,24 @@ const emptyForm = (): EntryFormState => ({
   usuario_login: '',
   url: '',
   categoria: 'outro',
-  system_id: '',
+  cliente_id: '',
+  provedor: '',
   password: '',
   notas: '',
 });
 
 export function VaultPage() {
   const { user } = useAuth();
-  const { config, configLoading, unlocked, cryptoKey, unlock, lock, setCryptoKey, refreshConfig } =
-    useVault();
+  const {
+    config,
+    configLoading,
+    unlocked,
+    cryptoKey,
+    unlock,
+    lock,
+    setCryptoKey,
+    refreshConfig,
+  } = useVault();
 
   const [masterPassword, setMasterPassword] = useState('');
   const [masterConfirm, setMasterConfirm] = useState('');
@@ -54,8 +73,11 @@ export function VaultPage() {
   const [entries, setEntries] = useState<HubVaultEntry[]>([]);
   const [loadingEntries, setLoadingEntries] = useState(false);
   const [listError, setListError] = useState<string | null>(null);
+  const [clientes, setClientes] = useState<HubVaultCliente[]>([]);
   const [search, setSearch] = useState('');
   const [filterCategoria, setFilterCategoria] = useState<VaultCategoria | ''>('');
+  const [filterCliente, setFilterCliente] = useState('');
+  const [filterProvedor, setFilterProvedor] = useState<VaultProvedorId | ''>('');
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -80,24 +102,54 @@ export function VaultPage() {
   }, [unlocked]);
 
   useEffect(() => {
+    void refreshConfig();
+  }, [refreshConfig]);
+
+  useEffect(() => {
     void loadEntries();
   }, [loadEntries]);
+
+  useEffect(() => {
+    if (!unlocked) return;
+    void fetchVaultClientes()
+      .then(setClientes)
+      .catch(() => setClientes([]));
+  }, [unlocked]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return entries.filter((e) => {
       if (filterCategoria && e.categoria !== filterCategoria) return false;
+      if (filterCliente && e.cliente_id !== filterCliente) return false;
+      if (filterProvedor && e.provedor !== filterProvedor) return false;
       if (!q) return true;
       return (
         e.titulo.toLowerCase().includes(q) ||
         (e.usuario_login ?? '').toLowerCase().includes(q) ||
-        (e.url ?? '').toLowerCase().includes(q)
+        (e.url ?? '').toLowerCase().includes(q) ||
+        (e.cliente_nome ?? '').toLowerCase().includes(q) ||
+        (getVaultProvedor(e.provedor)?.label ?? '').toLowerCase().includes(q)
       );
     });
-  }, [entries, search, filterCategoria]);
+  }, [entries, search, filterCategoria, filterCliente, filterProvedor]);
+
+  const selectProvedor = (id: VaultProvedorId) => {
+    const prov = getVaultProvedor(id);
+    setForm((f) => ({
+      ...f,
+      provedor: id,
+      url: f.url.trim() || prov?.defaultUrl || f.url,
+    }));
+  };
 
   const handleSetup = async () => {
     setUnlockError(null);
+    const existing = await fetchVaultConfig();
+    if (existing) {
+      await refreshConfig();
+      setUnlockError('O cofre já foi configurado. Use a senha mestra para desbloquear.');
+      return;
+    }
     if (masterPassword.length < 8) {
       setUnlockError('A senha mestra deve ter pelo menos 8 caracteres.');
       return;
@@ -168,7 +220,8 @@ export function VaultPage() {
         usuario_login: entry.usuario_login ?? '',
         url: entry.url ?? '',
         categoria: entry.categoria,
-        system_id: entry.system_id ?? '',
+        cliente_id: entry.cliente_id ?? '',
+        provedor: entry.provedor ?? '',
         password,
         notas,
       });
@@ -221,7 +274,8 @@ export function VaultPage() {
       usuario_login: form.usuario_login,
       url: form.url,
       categoria: form.categoria,
-      system_id: form.system_id || null,
+      cliente_id: form.cliente_id || null,
+      provedor: form.provedor || null,
       passwordEncrypted,
       notasEncrypted,
     };
@@ -271,10 +325,10 @@ export function VaultPage() {
         <PageHeader
           badge="Segurança"
           title="Cofre de senhas"
-          subtitle="Configure a senha mestra da equipe. Ela nunca é enviada ao servidor."
+          subtitle="Configure a senha mestra da equipe (apenas uma vez). Ela nunca é enviada ao servidor."
         />
         <div className={styles.unlockCard}>
-          <h2>Primeira configuração</h2>
+          <h2>Primeira configuração do cofre</h2>
           <p>
             Crie uma senha mestra compartilhada com a gestão (CEO, CTO, Administrador). As
             credenciais ficam criptografadas no banco; só quem souber a senha mestra consegue ler.
@@ -370,6 +424,25 @@ export function VaultPage() {
               </option>
             ))}
           </select>
+          <select value={filterCliente} onChange={(e) => setFilterCliente(e.target.value)}>
+            <option value="">Todos clientes</option>
+            {clientes.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.nome}
+              </option>
+            ))}
+          </select>
+          <select
+            value={filterProvedor}
+            onChange={(e) => setFilterProvedor(e.target.value as VaultProvedorId | '')}
+          >
+            <option value="">Todos sistemas</option>
+            {VAULT_PROVEDORES.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.label}
+              </option>
+            ))}
+          </select>
           <button type="button" className="btn-primary" onClick={openCreate}>
             Nova credencial
           </button>
@@ -385,24 +458,45 @@ export function VaultPage() {
       <div className={styles.list}>
         {filtered.map((entry) => {
           const cat = VAULT_CATEGORIAS.find((c) => c.value === entry.categoria);
+          const prov = getVaultProvedor(entry.provedor);
           const show = revealed[entry.id];
           return (
             <article key={entry.id} className={styles.entry}>
-              <div className={styles.entryHead}>
-                <div>
-                  <h3 className={styles.entryTitle}>{entry.titulo}</h3>
-                  <p className={styles.entryMeta}>
-                    {entry.usuario_login && <span>{entry.usuario_login}</span>}
-                    {entry.usuario_login && entry.url && ' · '}
-                    {entry.url && (
-                      <a href={entry.url} target="_blank" rel="noopener noreferrer">
-                        {entry.url}
-                      </a>
-                    )}
-                  </p>
+              <div className={styles.entryRow}>
+                <div className={styles.entryIcon}>
+                  {entry.provedor ? (
+                    <VaultProviderIcon provider={entry.provedor} size={22} />
+                  ) : (
+                    <VaultProviderIcon provider="outro" size={22} />
+                  )}
                 </div>
-                <span className={styles.badge}>{cat?.label ?? entry.categoria}</span>
-              </div>
+                <div className={styles.entryContent}>
+                  <div className={styles.entryHead}>
+                    <div>
+                      <h3 className={styles.entryTitle}>
+                        {entry.titulo}
+                        {prov && (
+                          <span style={{ fontWeight: 400, color: 'var(--muted)', fontSize: '0.85em' }}>
+                            {' '}
+                            · {prov.label}
+                          </span>
+                        )}
+                      </h3>
+                      <p className={styles.entryMeta}>
+                        {entry.usuario_login && <span>{entry.usuario_login}</span>}
+                        {entry.usuario_login && entry.url && ' · '}
+                        {entry.url && (
+                          <a href={entry.url} target="_blank" rel="noopener noreferrer">
+                            {entry.url}
+                          </a>
+                        )}
+                      </p>
+                      {entry.cliente_nome && (
+                        <span className={styles.clienteTag}>Cliente: {entry.cliente_nome}</span>
+                      )}
+                    </div>
+                    <span className={styles.badge}>{cat?.label ?? entry.categoria}</span>
+                  </div>
 
               {show ? (
                 <div className={styles.entryBody}>
@@ -430,18 +524,20 @@ export function VaultPage() {
                 </div>
               )}
 
-              <div className={styles.entryActions}>
-                <button type="button" className="btn-ghost" onClick={() => void openEdit(entry)}>
-                  Editar
-                </button>
-                <button
-                  type="button"
-                  className="btn-ghost"
-                  disabled={busy}
-                  onClick={() => void handleDelete(entry.id)}
-                >
-                  Excluir
-                </button>
+                  <div className={styles.entryActions}>
+                    <button type="button" className="btn-ghost" onClick={() => void openEdit(entry)}>
+                      Editar
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-ghost"
+                      disabled={busy}
+                      onClick={() => void handleDelete(entry.id)}
+                    >
+                      Excluir
+                    </button>
+                  </div>
+                </div>
               </div>
             </article>
           );
@@ -486,6 +582,39 @@ export function VaultPage() {
                 value={form.url}
                 onChange={(e) => setForm((f) => ({ ...f, url: e.target.value }))}
               />
+            </div>
+            <div className={styles.field}>
+              <label>Sistema / provedor</label>
+              <div className={styles.providerGrid} role="listbox" aria-label="Provedor">
+                {VAULT_PROVEDORES.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    role="option"
+                    aria-selected={form.provedor === p.id}
+                    className={`${styles.providerOption} ${form.provedor === p.id ? styles.providerOptionOn : ''}`}
+                    onClick={() => selectProvedor(p.id)}
+                  >
+                    <VaultProviderIcon provider={p.id} size={26} />
+                    <span className={styles.providerLabel}>{p.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className={styles.field}>
+              <label htmlFor="vault-cliente">Cliente</label>
+              <select
+                id="vault-cliente"
+                value={form.cliente_id}
+                onChange={(e) => setForm((f) => ({ ...f, cliente_id: e.target.value }))}
+              >
+                <option value="">Nenhum / interno NEXUS</option>
+                {clientes.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.nome}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className={styles.field}>
               <label htmlFor="vault-cat">Categoria</label>
