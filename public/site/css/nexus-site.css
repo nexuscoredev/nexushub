@@ -2693,17 +2693,18 @@ img {
   margin-bottom: 0.35rem;
 }
 
-/* ── Faixa colorida no topo dos blocos (site inteiro) ── */
+/* ── Faixa colorida no topo (cards em grids · uso equilibrado) ── */
 .nx-block-accent::before,
 :is(
-    .nx-card,
-    .nx-feature-tile:not(.nx-feature-tile--image),
-    .nx-panel,
-    .nx-content-block,
-    .nx-cta,
-    .nx-footer__card,
-    .nx-cta-banner
-  )::before {
+    .nx-bento,
+    .nx-grid-2,
+    .nx-grid-4,
+    .nx-footer__grid,
+    .nx-ecosystem-grid,
+    .nx-quick-grid,
+    .nx-summary-grid
+  )
+  > :is(.nx-card, .nx-feature-tile:not(.nx-feature-tile--image), .nx-footer__card)::before {
   content: '';
   position: absolute;
   top: 0;
@@ -2716,38 +2717,41 @@ img {
 }
 
 :is(
-    .nx-card,
-    .nx-feature-tile:not(.nx-feature-tile--image),
-    .nx-panel,
-    .nx-content-block,
-    .nx-cta,
-    .nx-footer__card,
-    .nx-cta-banner
-  ):nth-child(4n + 2)::before {
+    .nx-bento,
+    .nx-grid-2,
+    .nx-grid-4,
+    .nx-footer__grid,
+    .nx-ecosystem-grid,
+    .nx-quick-grid,
+    .nx-summary-grid
+  )
+  > :is(.nx-card, .nx-feature-tile:not(.nx-feature-tile--image), .nx-footer__card):nth-child(4n + 2)::before {
   background: var(--nx-cyan);
 }
 
 :is(
-    .nx-card,
-    .nx-feature-tile:not(.nx-feature-tile--image),
-    .nx-panel,
-    .nx-content-block,
-    .nx-cta,
-    .nx-footer__card,
-    .nx-cta-banner
-  ):nth-child(4n + 3)::before {
+    .nx-bento,
+    .nx-grid-2,
+    .nx-grid-4,
+    .nx-footer__grid,
+    .nx-ecosystem-grid,
+    .nx-quick-grid,
+    .nx-summary-grid
+  )
+  > :is(.nx-card, .nx-feature-tile:not(.nx-feature-tile--image), .nx-footer__card):nth-child(4n + 3)::before {
   background: var(--nx-violet);
 }
 
 :is(
-    .nx-card,
-    .nx-feature-tile:not(.nx-feature-tile--image),
-    .nx-panel,
-    .nx-content-block,
-    .nx-cta,
-    .nx-footer__card,
-    .nx-cta-banner
-  ):nth-child(4n)::before {
+    .nx-bento,
+    .nx-grid-2,
+    .nx-grid-4,
+    .nx-footer__grid,
+    .nx-ecosystem-grid,
+    .nx-quick-grid,
+    .nx-summary-grid
+  )
+  > :is(.nx-card, .nx-feature-tile:not(.nx-feature-tile--image), .nx-footer__card):nth-child(4n)::before {
   background: var(--nx-emerald);
 }
 
