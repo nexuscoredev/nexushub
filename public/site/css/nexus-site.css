@@ -1555,34 +1555,18 @@ img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 100% center;
-  transform: scale(1.22);
-  transform-origin: 100% center;
-  filter: blur(10px) brightness(0.88);
+  object-position: center;
+  filter: none;
 }
 
 .nx-hero-cinema__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    90deg,
-    var(--nx-bg) 0%,
-    var(--nx-bg) 38%,
-    rgba(245, 245, 247, 0.92) 48%,
-    rgba(245, 245, 247, 0.45) 62%,
-    transparent 82%
-  );
+  background: linear-gradient(90deg, var(--nx-bg) 0%, transparent 62%);
 }
 
 [data-theme='dark'] .nx-hero-cinema__overlay {
-  background: linear-gradient(
-    90deg,
-    rgba(10, 10, 10, 0.98) 0%,
-    rgba(10, 10, 10, 0.96) 38%,
-    rgba(10, 10, 10, 0.82) 50%,
-    rgba(10, 10, 10, 0.35) 68%,
-    transparent 88%
-  );
+  background: linear-gradient(90deg, rgba(10, 10, 10, 0.94) 0%, rgba(10, 10, 10, 0.4) 55%, transparent 100%);
 }
 
 .nx-hero-cinema__content {
@@ -2096,7 +2080,7 @@ img {
 }
 
 .nx-hero-cinema__bg img {
-  filter: blur(10px) brightness(0.88);
+  filter: none;
 }
 
 .nx-card,
@@ -2201,35 +2185,6 @@ img {
 .nx-hero-cinema__scan,
 .nx-media-frame::before {
   display: none !important;
-}
-
-.nx-hero-cinema__overlay {
-  background: linear-gradient(
-    90deg,
-    var(--nx-bg) 0%,
-    var(--nx-bg) 38%,
-    rgba(245, 245, 247, 0.92) 48%,
-    rgba(245, 245, 247, 0.45) 62%,
-    transparent 82%
-  );
-}
-
-[data-theme='dark'] .nx-hero-cinema__overlay {
-  background: linear-gradient(
-    90deg,
-    rgba(10, 10, 10, 0.98) 0%,
-    rgba(10, 10, 10, 0.96) 38%,
-    rgba(10, 10, 10, 0.82) 50%,
-    rgba(10, 10, 10, 0.35) 68%,
-    transparent 88%
-  );
-}
-
-.nx-hero-cinema__bg img {
-  filter: blur(10px) brightness(0.88);
-  object-position: 100% center;
-  transform: scale(1.22);
-  transform-origin: 100% center;
 }
 
 .nx-hero-cinema__content {
