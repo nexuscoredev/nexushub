@@ -42,10 +42,14 @@
         </button>
       </div>
 
-      <a href="/login" class="nx-nav__account nx-hide-sm">
-        <span class="material-symbols-outlined" aria-hidden="true">person</span>
-        <span class="nx-nav__account-text">Entrar · Cliente / Hub</span>
-      </a>
+      <div class="nx-nav__access nx-hide-sm" aria-label="Acesso à plataforma">
+        <a href="/cliente/entrar" class="nx-nav__access-btn">
+          NexusClient
+        </a>
+        <a href="/login" class="nx-nav__access-btn nx-nav__access-btn--hub">
+          NexusHub
+        </a>
+      </div>
 
       <button type="button" class="nx-nav-toggle" id="nx-nav-toggle" aria-expanded="false" aria-controls="nx-nav-panel" aria-label="Abrir menu">
         <span class="material-symbols-outlined nx-nav-toggle__icon nx-nav-toggle__icon--open" aria-hidden="true">menu</span>
@@ -92,11 +96,11 @@
         <p class="nx-nav-drawer__label">Acesso</p>
         <a href="/cliente/entrar" class="nx-nav__link">
           <span class="material-symbols-outlined" aria-hidden="true">badge</span>
-          Área do Cliente
+          NexusClient
         </a>
         <a href="/login" class="nx-nav__link">
           <span class="material-symbols-outlined" aria-hidden="true">hub</span>
-          NEXUS Hub
+          NexusHub
         </a>
       </div>
 

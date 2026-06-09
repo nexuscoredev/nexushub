@@ -475,6 +475,48 @@ img {
   font-size: 0.95rem;
 }
 
+.nx-nav__access {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.nx-nav__access-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--nx-steel);
+  background: var(--nx-nav-bg);
+  color: var(--nx-steel);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  transition: box-shadow 0.2s, color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.nx-nav__access-btn:hover {
+  box-shadow: 0 0 0 3px var(--nx-nav-accent-soft);
+  color: var(--nx-silver);
+}
+
+.nx-nav__access-btn--hub {
+  border-color: rgba(37, 99, 235, 0.35);
+  background: linear-gradient(180deg, var(--nx-royal-bright) 0%, var(--nx-royal) 52%, var(--nx-royal-deep) 100%);
+  color: #ffffff;
+}
+
+.nx-nav__access-btn--hub:hover {
+  color: #ffffff;
+  filter: brightness(1.06);
+}
+
+[data-theme='dark'] .nx-nav__access-btn:not(.nx-nav__access-btn--hub) {
+  color: var(--nx-silver);
+}
+
 .nx-nav__account {
   display: inline-flex;
   align-items: center;

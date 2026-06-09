@@ -62,6 +62,19 @@
   flex-shrink: 0;
 }
 
+.siteSurface .wordmark {
+  background: linear-gradient(180deg, #1a1a1a 0%, #6b6f78 55%, #a8acb4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: none;
+}
+
+.siteSurface .hubMark {
+  color: #7c3aed;
+  text-shadow: none;
+}
+
 .sm .markImg {
   width: 28px;
   height: 28px;

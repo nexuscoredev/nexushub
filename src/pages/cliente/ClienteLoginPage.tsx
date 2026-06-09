@@ -45,11 +45,11 @@ export function ClienteLoginPage() {
       <div className={styles.page}>
         <div className={styles.card}>
           <div className={styles.logoWrap}>
-            <HubLogo size="lg" showSubtitle={false} centered />
+            <HubLogo size="lg" showSubtitle subtitleText="Client" surface="site" centered />
           </div>
 
           <header className={styles.header}>
-            <span className={styles.eyebrow}>Portal do cliente</span>
+            <span className={styles.eyebrow}>NexusClient</span>
             <h1 className={styles.title}>Entrar</h1>
             <p className={styles.lead}>Acompanhe processos, contratos e solicitações do seu projeto.</p>
           </header>
@@ -94,7 +94,7 @@ export function ClienteLoginPage() {
               />
             </div>
             <button type="submit" className={styles.submit} disabled={loading || !configured}>
-              {loading ? 'Entrando…' : 'Acessar portal'}
+              {loading ? 'Entrando…' : 'Entrar no NexusClient'}
             </button>
           </form>
 
@@ -103,7 +103,7 @@ export function ClienteLoginPage() {
               Voltar ao site
             </a>
             <Link to="/login" className={styles.footerLink}>
-              NEXUS Hub
+              NexusHub
             </Link>
           </div>
         </div>

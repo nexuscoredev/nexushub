@@ -1,5 +1,4 @@
 import { FormEvent, useCallback, useEffect, useState } from 'react';
-import { PageHeader } from '../../components/PageHeader';
 import { useAuth } from '../../contexts/AuthContext';
 import {
   PROCESSO_STATUS_LABEL,
@@ -87,14 +86,16 @@ export function ClientePortalPage() {
 
   return (
     <div>
-      <PageHeader
-        badge="Cliente"
-        title="Seu portal"
-        subtitle={`Olá, ${clienteConta?.nome ?? 'cliente'}. Acompanhe entregas, peça suporte e consulte contratos.`}
-      />
+      <header className={styles.pageHeader}>
+        <span className={styles.eyebrow}>NexusClient</span>
+        <h1 className={styles.title}>Seu painel</h1>
+        <p className={styles.lead}>
+          Olá, {clienteConta?.nome ?? 'cliente'}. Acompanhe entregas, peça suporte e consulte contratos.
+        </p>
+      </header>
 
-      {error && <div className="error-banner" style={{ marginBottom: '1rem' }}>{error}</div>}
-      {success && <div className="info-banner" style={{ marginBottom: '1rem' }}>{success}</div>}
+      {error && <div className={styles.bannerError}>{error}</div>}
+      {success && <div className={styles.bannerInfo}>{success}</div>}
 
       <div className={styles.tabs} role="tablist">
         {(
@@ -125,7 +126,7 @@ export function ClientePortalPage() {
             <p className={styles.empty}>Nenhum processo visível no momento.</p>
           ) : (
             processos.map((p) => (
-              <article key={p.id} className={`card ${styles.cardItem}`}>
+              <article key={p.id} className={styles.cardItem}>
                 <div className={styles.cardHead}>
                   <h2 className={styles.cardTitle}>{p.titulo}</h2>
                   <span className={styles.badge}>{PROCESSO_STATUS_LABEL[p.status] ?? p.status}</span>
@@ -146,36 +147,36 @@ export function ClientePortalPage() {
 
       {!loading && aba === 'solicitacoes' ? (
         <>
-          <form className={`card ${styles.form}`} onSubmit={(e) => void enviarSolicitacao(e)}>
+          <form className={styles.form} onSubmit={(e) => void enviarSolicitacao(e)}>
             <h2 className={styles.cardTitle}>Nova solicitação</h2>
             <div className={styles.formRow}>
-              <div>
-                <label className="label" htmlFor="sol-titulo">
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="sol-titulo">
                   Assunto
                 </label>
                 <input
                   id="sol-titulo"
-                  className="input"
+                  className={styles.input}
                   value={tituloSol}
                   onChange={(e) => setTituloSol(e.target.value)}
                   placeholder="Ex.: Dúvida sobre entrega"
                 />
               </div>
             </div>
-            <div>
-              <label className="label" htmlFor="sol-msg">
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="sol-msg">
                 Mensagem
               </label>
               <textarea
                 id="sol-msg"
-                className="input"
+                className={`${styles.input} ${styles.textarea}`}
                 rows={4}
                 value={msgSol}
                 onChange={(e) => setMsgSol(e.target.value)}
                 placeholder="Descreva o que precisa…"
               />
             </div>
-            <button type="submit" className="btn-primary" disabled={enviandoSol} style={{ alignSelf: 'flex-start' }}>
+            <button type="submit" className={styles.submitBtn} disabled={enviandoSol}>
               {enviandoSol ? 'Enviando…' : 'Enviar solicitação'}
             </button>
           </form>
@@ -185,7 +186,7 @@ export function ClientePortalPage() {
               <p className={styles.empty}>Nenhuma solicitação ainda.</p>
             ) : (
               solicitacoes.map((s) => (
-                <article key={s.id} className={`card ${styles.cardItem}`}>
+                <article key={s.id} className={styles.cardItem}>
                   <div className={styles.cardHead}>
                     <h2 className={styles.cardTitle}>{s.titulo}</h2>
                     <span className={styles.badge}>
@@ -213,7 +214,7 @@ export function ClientePortalPage() {
             <p className={styles.empty}>Nenhum contrato disponível.</p>
           ) : (
             contratos.map((c) => (
-              <article key={c.id} className={`card ${styles.cardItem}`}>
+              <article key={c.id} className={styles.cardItem}>
                 <div className={styles.cardHead}>
                   <h2 className={styles.cardTitle}>{c.titulo}</h2>
                 </div>

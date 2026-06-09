@@ -52,7 +52,7 @@ export function LoginPage() {
             <p className={styles.subtitle}>
               Acesso restrito à equipe NEXUS ·{' '}
               <Link to="/cliente/entrar" style={{ color: 'var(--polished-silver)' }}>
-                Área do cliente
+                NexusClient
               </Link>
             </p>
           </div>

@@ -144,7 +144,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const p = await fetchProfile(uid);
     if (!p?.ativo) {
       await supabase.auth.signOut();
-      throw new Error('Esta conta não tem acesso ao Nexus Hub. Use a Área do Cliente.');
+      throw new Error('Esta conta não tem acesso ao NexusHub. Use o NexusClient.');
     }
   }, []);
 
