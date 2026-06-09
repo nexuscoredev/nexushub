@@ -29,7 +29,6 @@ export function DashboardLayout() {
     { to: '/dashboard', label: 'Painel', icon: 'dashboard', show: true },
     { to: '/agenda', label: 'Agenda', icon: 'calendar', show: podeFinanceiroAgenda },
     { to: '/financeiro', label: 'Financeiro', icon: 'finance', show: podeFinanceiroAgenda },
-    { to: '/chat', label: 'Chat', icon: 'chat', show: true },
     { to: '/fila', label: 'Fila', icon: 'queue', show: true },
     { to: '/sistemas', label: 'Sistemas', icon: 'systems', show: true },
     { to: '/usuarios', label: 'Usuários', icon: 'users', show: podeGestao },
