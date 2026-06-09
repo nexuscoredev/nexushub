@@ -6,7 +6,7 @@ export type VaultProvedorId =
   | 'google'
   | 'aws'
   | 'cloudflare'
-  | 'stripe'
+  | 'outlook'
   | 'notion'
   | 'slack'
   | 'microsoft'
@@ -29,7 +29,7 @@ export const VAULT_PROVEDORES: VaultProvedor[] = [
   { id: 'google', label: 'Google', defaultUrl: 'https://accounts.google.com' },
   { id: 'aws', label: 'AWS', defaultUrl: 'https://console.aws.amazon.com' },
   { id: 'cloudflare', label: 'Cloudflare', defaultUrl: 'https://dash.cloudflare.com' },
-  { id: 'stripe', label: 'Stripe', defaultUrl: 'https://dashboard.stripe.com' },
+  { id: 'outlook', label: 'Outlook', defaultUrl: 'https://outlook.office.com/mail/' },
   { id: 'notion', label: 'Notion', defaultUrl: 'https://www.notion.so' },
   { id: 'slack', label: 'Slack', defaultUrl: 'https://slack.com' },
   { id: 'microsoft', label: 'Microsoft', defaultUrl: 'https://portal.office.com' },

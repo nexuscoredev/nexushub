@@ -578,39 +578,41 @@ export function VaultPage() {
                     <span className={styles.badge}>{cat?.label ?? entry.categoria}</span>
                   </div>
 
-              {show ? (
+              {show && (
                 <div className={styles.entryBody}>
-                  <div className={styles.secretRow}>
-                    <span className={styles.secretValue}>{show.password}</span>
-                    <button
-                      type="button"
-                      className="btn-ghost"
-                      onClick={() => void copyText(show.password)}
-                    >
-                      Copiar senha
-                    </button>
-                  </div>
+                  <span className={styles.secretValue}>{show.password || '—'}</span>
                   {show.notas && (
                     <p className={styles.entryMeta} style={{ whiteSpace: 'pre-wrap' }}>
                       {show.notas}
                     </p>
                   )}
                 </div>
-              ) : (
-                <div className={styles.entryActions}>
-                  <button type="button" className="btn-primary" onClick={() => void revealEntry(entry)}>
-                    Revelar
-                  </button>
-                </div>
               )}
 
-                  <div className={styles.entryActions}>
-                    <button type="button" className="btn-ghost" onClick={() => void openEdit(entry)}>
+                  <div className={styles.entryFooter}>
+                    {!show ? (
+                      <button
+                        type="button"
+                        className={styles.entryBtnPrimary}
+                        onClick={() => void revealEntry(entry)}
+                      >
+                        Revelar
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className={styles.entryBtn}
+                        onClick={() => void copyText(show.password)}
+                      >
+                        Copiar
+                      </button>
+                    )}
+                    <button type="button" className={styles.entryBtn} onClick={() => void openEdit(entry)}>
                       Editar
                     </button>
                     <button
                       type="button"
-                      className="btn-ghost"
+                      className={`${styles.entryBtn} ${styles.entryBtnDanger}`}
                       disabled={busy}
                       onClick={() => void handleDelete(entry.id)}
                     >
