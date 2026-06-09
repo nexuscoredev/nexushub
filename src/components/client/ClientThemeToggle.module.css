@@ -1,0 +1,64 @@
+.theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.15rem;
+  border-radius: 999px;
+  border: 1px solid var(--cl-border-strong, rgba(10, 10, 10, 0.14));
+  background: var(--cl-chip-bg, #efeff1);
+  flex-shrink: 0;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--cl-soft, #8a8f98);
+  cursor: pointer;
+  transition: color 0.2s, background 0.25s, box-shadow 0.25s;
+}
+
+.btn :global(.material-symbols-outlined) {
+  font-size: 1.05rem;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.btnActive :global(.material-symbols-outlined) {
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+
+.btn:hover {
+  color: var(--cl-text, #0a0a0a);
+}
+
+.btnActive {
+  color: var(--cl-on-metallic, #0a0a0a);
+  background: var(--cl-metal, linear-gradient(180deg, #fff 0%, #e2e4e8 18%, #8a8f98 52%, #fff 100%));
+  background-size: 220% 220%;
+  animation: clMetalFlow 6s ease-in-out infinite;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0 rgba(10, 10, 10, 0.12);
+}
+
+@keyframes clMetalFlow {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btnActive {
+    animation: none;
+  }
+}

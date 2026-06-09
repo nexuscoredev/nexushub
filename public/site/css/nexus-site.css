@@ -502,18 +502,7 @@ img {
   color: var(--nx-silver);
 }
 
-.nx-nav__access-btn--hub {
-  border-color: rgba(37, 99, 235, 0.35);
-  background: linear-gradient(180deg, var(--nx-royal-bright) 0%, var(--nx-royal) 52%, var(--nx-royal-deep) 100%);
-  color: #ffffff;
-}
-
-.nx-nav__access-btn--hub:hover {
-  color: #ffffff;
-  filter: brightness(1.06);
-}
-
-[data-theme='dark'] .nx-nav__access-btn:not(.nx-nav__access-btn--hub) {
+[data-theme='dark'] .nx-nav__access-btn {
   color: var(--nx-silver);
 }
 

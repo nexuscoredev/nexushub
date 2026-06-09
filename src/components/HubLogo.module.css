@@ -75,6 +75,18 @@
   text-shadow: none;
 }
 
+:global([data-theme='dark']) .siteSurface .wordmark {
+  background: linear-gradient(180deg, #ffffff 0%, #c8ccd4 45%, #8a8f98 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: none;
+}
+
+:global([data-theme='dark']) .siteSurface .hubMark {
+  color: #a78bfa;
+}
+
 .sm .markImg {
   width: 28px;
   height: 28px;

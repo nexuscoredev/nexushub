@@ -1,13 +1,11 @@
-import { FormEvent, useRef, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { ClientThemeToggle } from '../../components/client/ClientThemeToggle';
 import { HubLogo } from '../../components/HubLogo';
 import { useAuth } from '../../contexts/AuthContext';
-import { useMetalPointer } from '../../hooks/useMetalPointer';
 import styles from './ClienteLoginPage.module.css';
 
 export function ClienteLoginPage() {
-  const shellRef = useRef<HTMLDivElement>(null);
-  useMetalPointer(shellRef);
   const { session, signInCliente, configured, isCliente, isEquipe } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -41,13 +39,30 @@ export function ClienteLoginPage() {
   };
 
   return (
-    <div className={styles.shell} ref={shellRef}>
-      <div className={styles.page}>
-        <div className={styles.card}>
-          <div className={styles.logoWrap}>
-            <HubLogo size="lg" showSubtitle subtitleText="Client" surface="site" centered />
+    <div className={`nx-client-shell ${styles.shell}`}>
+      <header className={styles.topbar}>
+        <div className={styles.brand}>
+          <HubLogo size="sm" showSubtitle subtitleText="Client" surface="site" />
+          <small>Área do cliente</small>
+        </div>
+        <div className={styles.topbarRight}>
+          <ClientThemeToggle />
+          <div className={styles.access} aria-label="Acesso à plataforma">
+          <a href="/site/home.html" className={styles.accessBtn}>
+            Site
+          </a>
+          <span className={`${styles.accessBtn} ${styles.accessBtnActive}`} aria-current="page">
+            NexusClient
+          </span>
+          <Link to="/login" className={styles.accessBtn}>
+            NexusHub
+          </Link>
           </div>
+        </div>
+      </header>
 
+      <main className={styles.main}>
+        <div className={styles.card}>
           <header className={styles.header}>
             <span className={styles.eyebrow}>NexusClient</span>
             <h1 className={styles.title}>Entrar</h1>
@@ -55,9 +70,7 @@ export function ClienteLoginPage() {
           </header>
 
           {!configured && (
-            <div className={styles.error} style={{ marginTop: '1rem' }}>
-              Supabase não configurado neste ambiente.
-            </div>
+            <div className={styles.error}>Supabase não configurado neste ambiente.</div>
           )}
 
           {error && <div className={styles.error}>{error}</div>}
@@ -94,20 +107,15 @@ export function ClienteLoginPage() {
               />
             </div>
             <button type="submit" className={styles.submit} disabled={loading || !configured}>
-              {loading ? 'Entrando…' : 'Entrar no NexusClient'}
+              {loading ? 'Entrando…' : 'Entrar'}
             </button>
           </form>
-
-          <div className={styles.footer}>
-            <a href="/site/home.html" className={styles.footerLink}>
-              Voltar ao site
-            </a>
-            <Link to="/login" className={styles.footerLink}>
-              NexusHub
-            </Link>
-          </div>
         </div>
-      </div>
+      </main>
+
+      <footer className={styles.footer}>
+        <span>NEXUS Technology Systems</span>
+      </footer>
     </div>
   );
 }

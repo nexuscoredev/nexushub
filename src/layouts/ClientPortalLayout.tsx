@@ -1,4 +1,5 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { ClientThemeToggle } from '../components/client/ClientThemeToggle';
 import { HubLogo } from '../components/HubLogo';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './ClientPortalLayout.module.css';
@@ -21,7 +22,7 @@ export function ClientPortalLayout() {
   };
 
   return (
-    <div className={styles.shell}>
+    <div className={`nx-client-shell ${styles.shell}`}>
       <header className={styles.topbar}>
         <div className={styles.topbarMain}>
           <div className={styles.brand}>
@@ -29,6 +30,7 @@ export function ClientPortalLayout() {
             <small>{clienteConta?.cliente?.nome ?? 'NexusClient'}</small>
           </div>
           <div className={styles.actions}>
+            <ClientThemeToggle />
             <a href="/site/home.html" className={styles.actionBtn}>
               Site
             </a>

@@ -1,0 +1,75 @@
+/* Tokens NexusClient — sincronizados com nexus-site.css via data-theme no html */
+
+.nx-client-shell {
+  --cl-ink: #0a0a0a;
+  --cl-fog: #f5f5f7;
+  --cl-graphite: #141414;
+  --cl-graphite-2: #1c1c1c;
+  --cl-steel: #8a8f98;
+  --cl-silver: #c8ccd4;
+  --cl-royal: #2563eb;
+  --cl-royal-bright: #6eb5ff;
+  --cl-royal-deep: #1e3a8a;
+  --cl-violet: #7c3aed;
+  --cl-emerald: #059669;
+  --cl-radius: 0.5rem;
+  --cl-bg: var(--cl-fog);
+  --cl-surface: #ffffff;
+  --cl-text: var(--cl-ink);
+  --cl-muted: #4a4a4a;
+  --cl-soft: var(--cl-steel);
+  --cl-border: rgba(10, 10, 10, 0.1);
+  --cl-border-strong: rgba(10, 10, 10, 0.14);
+  --cl-chip-bg: #efeff1;
+  --cl-topbar-bg: rgba(255, 255, 255, 0.92);
+  --cl-on-metallic: var(--cl-ink);
+  --cl-metal: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #e2e4e8 18%,
+    #b8bcc4 38%,
+    #8a8f98 52%,
+    #b0b5bd 68%,
+    #e8eaee 86%,
+    #ffffff 100%
+  );
+  --cl-submit-bg: var(--cl-ink);
+  --cl-submit-text: #ffffff;
+  --cl-submit-hover: #2a2a2a;
+  --cl-error-bg: #fff5f5;
+  --cl-error-text: #8b2e2e;
+  --cl-info-bg: rgba(37, 99, 235, 0.06);
+  --cl-info-text: #1e3a8a;
+}
+
+[data-theme='dark'] .nx-client-shell {
+  --cl-ink: #f5f5f5;
+  --cl-fog: #0a0a0a;
+  --cl-bg: var(--cl-fog);
+  --cl-surface: var(--cl-graphite);
+  --cl-text: #f5f5f5;
+  --cl-muted: #a3a3a3;
+  --cl-soft: var(--cl-steel);
+  --cl-border: rgba(255, 255, 255, 0.08);
+  --cl-border-strong: rgba(255, 255, 255, 0.14);
+  --cl-chip-bg: var(--cl-graphite-2);
+  --cl-topbar-bg: rgba(20, 20, 20, 0.92);
+  --cl-on-metallic: var(--cl-ink);
+  --cl-metal: linear-gradient(
+    180deg,
+    #e8eaee 0%,
+    #c8ccd4 14%,
+    #8a8f98 34%,
+    #5c6068 50%,
+    #9a9ea6 66%,
+    #d0d4da 84%,
+    #f0f2f5 100%
+  );
+  --cl-submit-bg: #ffffff;
+  --cl-submit-text: var(--cl-fog);
+  --cl-submit-hover: #e8e8ea;
+  --cl-error-bg: rgba(180, 60, 60, 0.12);
+  --cl-error-text: #fca5a5;
+  --cl-info-bg: rgba(37, 99, 235, 0.14);
+  --cl-info-text: #93c5fd;
+}
