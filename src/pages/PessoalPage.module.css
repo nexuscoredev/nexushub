@@ -2,32 +2,22 @@
   max-width: 1200px;
 }
 
-.areaTabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1.25rem;
-}
-
-.areaTab {
-  padding: 0.45rem 0.95rem;
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0.35rem 0.65rem;
+  border: none;
   border-radius: 999px;
-  border: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  transition: color 0.15s ease, background 0.15s ease;
 }
 
-.areaTab:hover {
+.backBtn:hover {
   color: var(--text);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.areaTabActive {
-  color: var(--text);
-  border-color: rgba(140, 200, 255, 0.45);
-  background: rgba(40, 80, 130, 0.35);
+  background: rgba(255, 255, 255, 0.08);
 }

@@ -1,0 +1,180 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  max-width: 640px;
+}
+
+.hero {
+  padding: 0.15rem 0 0.35rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a5b4fc;
+}
+
+.greeting {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--text);
+}
+
+.lead {
+  margin: 0.55rem 0 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.card {
+  padding: 1.1rem 1.15rem;
+  border-radius: var(--radius, 12px);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.cardSub {
+  margin: 0.35rem 0 0.85rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.scoreRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.scoreBtn {
+  min-width: 2.15rem;
+  height: 2.15rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.scoreBtn:hover {
+  color: var(--text);
+  border-color: rgba(165, 180, 252, 0.45);
+  transform: translateY(-1px);
+}
+
+.scoreBtnActive {
+  color: #fff;
+  border-color: rgba(165, 180, 252, 0.65);
+  background: linear-gradient(135deg, rgba(129, 140, 248, 0.55), rgba(99, 102, 241, 0.35));
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.22);
+}
+
+.feedback {
+  margin-top: 0.95rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.feedbackBadge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #c7d2fe;
+  background: rgba(99, 102, 241, 0.18);
+  border: 1px solid rgba(165, 180, 252, 0.25);
+}
+
+.feedbackText {
+  margin: 0.55rem 0 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.musicRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.musicLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.musicLink:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.musicLogo {
+  width: 1.75rem;
+  height: 1.75rem;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.piggySection {
+  display: flex;
+  justify-content: center;
+  padding: 0.25rem 0 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .greeting {
+    font-size: 1.25rem;
+  }
+
+  .scoreBtn {
+    min-width: 1.95rem;
+    height: 1.95rem;
+    font-size: 0.72rem;
+  }
+
+  .musicRow {
+    flex-direction: column;
+  }
+
+  .musicLink {
+    justify-content: center;
+  }
+}

@@ -1,0 +1,133 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 1rem 0 0.25rem;
+}
+
+.piggyBtn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 1.1rem 1.35rem 0.85rem;
+  border: 2px solid rgba(249, 168, 201, 0.35);
+  border-radius: 1.25rem;
+  background: linear-gradient(165deg, rgba(249, 168, 201, 0.14), rgba(0, 0, 0, 0.2));
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.piggyBtn:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.02);
+  border-color: rgba(249, 168, 201, 0.55);
+  box-shadow: 0 12px 32px rgba(249, 168, 201, 0.18);
+}
+
+.piggyBtn:disabled {
+  cursor: default;
+}
+
+.piggy {
+  width: 5.5rem;
+  height: 5.5rem;
+  filter: drop-shadow(0 4px 12px rgba(249, 168, 201, 0.25));
+}
+
+.label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #fbcfe8;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-align: center;
+  max-width: 16rem;
+}
+
+.launch {
+  animation: piggyPop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.fly {
+  animation: piggyFly 0.42s ease-in forwards;
+}
+
+.sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.spark {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fde68a;
+  opacity: 0;
+}
+
+.launch .spark:nth-child(1) {
+  top: 18%;
+  left: 12%;
+  animation: sparkOut 0.45s ease-out forwards;
+}
+
+.launch .spark:nth-child(2) {
+  top: 10%;
+  right: 18%;
+  animation: sparkOut 0.5s 0.05s ease-out forwards;
+}
+
+.launch .spark:nth-child(3) {
+  bottom: 28%;
+  right: 8%;
+  animation: sparkOut 0.48s 0.08s ease-out forwards;
+}
+
+@keyframes piggyPop {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.12) rotate(-4deg);
+  }
+  100% {
+    transform: scale(1.06) rotate(2deg);
+  }
+}
+
+@keyframes piggyFly {
+  0% {
+    transform: scale(1.06) rotate(2deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.35) translateY(-120px) rotate(12deg);
+    opacity: 0;
+  }
+}
+
+@keyframes sparkOut {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.8) translateY(-18px);
+  }
+}
