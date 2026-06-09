@@ -1,106 +1,117 @@
 import type { CSSProperties } from 'react';
 import { formatBRL } from '../../lib/format';
-import {
-  percentualContasPagas,
-  totalFixosPessoal,
-  totalVariaveisPessoal,
-} from '../../lib/personalFinanceVisuals';
-import type { HubPersonalTransaction } from '../../types/database';
+import type { PessoalFinanceSummary } from '../../lib/pessoalFinanceSummary';
 import styles from './PersonalFinanceKpiGrid.module.css';
 
-export type PersonalKpiValues = {
-  entradas: number;
-  saidas: number;
-  saldo: number;
-};
-
 interface PersonalFinanceKpiGridProps {
-  values: PersonalKpiValues;
-  rows: HubPersonalTransaction[];
+  summary: PessoalFinanceSummary;
   loading?: boolean;
 }
 
-const CARDS = [
-  {
-    key: 'saldo' as const,
-    label: 'Saldo do mês',
-    sub: 'Receitas − gastos',
-    icon: '/img/finance/recebido.svg',
-    tone: 'gold',
-  },
-  {
-    key: 'entradas' as const,
-    label: 'Receitas',
-    sub: 'Entradas registradas',
-    icon: '/img/finance/entradas.svg',
-    tone: 'green',
-  },
-  {
-    key: 'saidas' as const,
-    label: 'Gastos',
-    sub: 'Saídas totais',
-    icon: '/img/finance/saidas.svg',
-    tone: 'rose',
-  },
-];
-
-export function PersonalFinanceKpiGrid({ values, rows, loading }: PersonalFinanceKpiGridProps) {
-  const fixos = totalFixosPessoal(rows);
-  const variaveis = totalVariaveisPessoal(rows);
-  const pagasPct = percentualContasPagas(rows);
+export function PersonalFinanceKpiGrid({ summary, loading }: PersonalFinanceKpiGridProps) {
+  const cards = [
+    {
+      key: 'saldo',
+      label: 'Saldo do mês',
+      sub: 'Receitas − gastos',
+      value: formatBRL(summary.saldo),
+      negative: summary.saldo < 0,
+      icon: '/img/finance/recebido.svg',
+      tone: 'gold',
+    },
+    {
+      key: 'entradas',
+      label: 'Receitas',
+      sub: 'Entradas registradas',
+      value: formatBRL(summary.entradas),
+      icon: '/img/finance/entradas.svg',
+      tone: 'green',
+    },
+    {
+      key: 'saidas',
+      label: 'Gastos totais',
+      sub: 'Fixos + variáveis + outros',
+      value: formatBRL(summary.saidas),
+      icon: '/img/finance/saidas.svg',
+      tone: 'rose',
+    },
+    {
+      key: 'pago',
+      label: 'Já pago',
+      sub: 'Contas marcadas + outros gastos',
+      value: formatBRL(summary.valorPago),
+      icon: '/img/finance/recebido.svg',
+      tone: 'green',
+    },
+    {
+      key: 'apagar',
+      label: 'A pagar',
+      sub: 'Contas ainda em aberto',
+      value: formatBRL(summary.valorAPagar),
+      icon: '/img/finance/pendente.svg',
+      tone: 'rose',
+    },
+    {
+      key: 'fixos',
+      label: 'Compromissos fixos',
+      sub: 'Residencial + carro + rotina',
+      value: formatBRL(summary.fixos),
+      icon: '/img/finance/mensalidade.svg',
+      tone: 'indigo',
+    },
+    {
+      key: 'variaveis',
+      label: 'Variáveis',
+      sub: 'Cartões e extras',
+      value: formatBRL(summary.variaveis),
+      icon: '/img/personal/grupo-variaveis.svg',
+      tone: 'coral',
+      roundIcon: true,
+    },
+    {
+      key: 'pct',
+      label: 'Contas pagas',
+      sub: `${summary.totalContasChecklist} itens no checklist`,
+      value: `${summary.percentualPagas}%`,
+      icon: null,
+      tone: 'sky',
+      ring: summary.percentualPagas,
+    },
+  ] as const;
 
   return (
     <div className={styles.wrap}>
       <div className={styles.grid}>
-        {CARDS.map(({ key, label, sub, icon, tone }) => (
-          <article key={key} className={`${styles.card} ${styles[`tone_${tone}`]}`}>
-            <div className={styles.cardIconWrap}>
-              <img src={icon} alt="" className={styles.cardIcon} aria-hidden />
-            </div>
-            <div className={styles.cardBody}>
-              <span className={styles.cardLabel}>{label}</span>
-              <strong
-                className={`${styles.cardValue} ${key === 'saldo' && values.saldo < 0 ? styles.negative : ''}`}
+        {cards.map((card) => (
+          <article key={card.key} className={`${styles.card} ${styles[`tone_${card.tone}`]}`}>
+            {'ring' in card && card.ring != null ? (
+              <div
+                className={styles.progressRing}
+                style={{ '--pct': `${card.ring}%` } as CSSProperties}
               >
-                {loading ? '…' : formatBRL(values[key])}
+                <span className={styles.progressValue}>{loading ? '…' : card.value}</span>
+              </div>
+            ) : (
+              <div className={styles.cardIconWrap}>
+                <img
+                  src={card.icon!}
+                  alt=""
+                  className={'roundIcon' in card && card.roundIcon ? styles.cardIconRound : styles.cardIcon}
+                  aria-hidden
+                />
+              </div>
+            )}
+            <div className={styles.cardBody}>
+              <span className={styles.cardLabel}>{card.label}</span>
+              <strong
+                className={`${styles.cardValue} ${'negative' in card && card.negative ? styles.negative : ''}`}
+              >
+                {loading ? '…' : card.value}
               </strong>
-              <span className={styles.cardSub}>{sub}</span>
+              <span className={styles.cardSub}>{card.sub}</span>
             </div>
           </article>
         ))}
-
-        <article className={`${styles.card} ${styles.tone_indigo}`}>
-          <div className={styles.cardIconWrap}>
-            <img src="/img/finance/mensalidade.svg" alt="" className={styles.cardIcon} aria-hidden />
-          </div>
-          <div className={styles.cardBody}>
-            <span className={styles.cardLabel}>Compromissos fixos</span>
-            <strong className={styles.cardValue}>{loading ? '…' : formatBRL(fixos)}</strong>
-            <span className={styles.cardSub}>Residencial + carro + rotina</span>
-          </div>
-        </article>
-
-        <article className={`${styles.card} ${styles.tone_coral}`}>
-          <div className={styles.cardIconWrap}>
-            <img src="/img/personal/grupo-variaveis.svg" alt="" className={styles.cardIconRound} aria-hidden />
-          </div>
-          <div className={styles.cardBody}>
-            <span className={styles.cardLabel}>Variáveis</span>
-            <strong className={styles.cardValue}>{loading ? '…' : formatBRL(variaveis)}</strong>
-            <span className={styles.cardSub}>Cartões e extras do mês</span>
-          </div>
-        </article>
-
-        <article className={`${styles.card} ${styles.tone_sky}`}>
-          <div className={styles.progressRing} style={{ '--pct': `${pagasPct}%` } as CSSProperties}>
-            <span className={styles.progressValue}>{loading ? '…' : `${pagasPct}%`}</span>
-          </div>
-          <div className={styles.cardBody}>
-            <span className={styles.cardLabel}>Contas pagas</span>
-            <strong className={styles.cardValue}>{loading ? '…' : `${pagasPct}%`}</strong>
-            <span className={styles.cardSub}>Checklist do mês</span>
-          </div>
-        </article>
       </div>
     </div>
   );

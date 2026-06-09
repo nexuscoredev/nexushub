@@ -76,6 +76,10 @@
   font-variant-numeric: tabular-nums;
 }
 
+.statNegative {
+  color: #fca5a5;
+}
+
 .statDivider {
   width: 1px;
   height: 2rem;

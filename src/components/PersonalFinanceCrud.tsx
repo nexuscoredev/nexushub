@@ -1,7 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { PESSOAL_CATEGORIAS } from '../lib/pessoal';
 import { supabase, supabaseErrorMessage } from '../lib/supabase';
-import type { HubPersonalTipo } from '../types/database';
+import type { HubPersonalTipo, HubPersonalTransaction } from '../types/database';
 
 const PAYLOAD_KEYS = ['tipo', 'descricao', 'valor', 'data_referencia', 'categoria', 'notas'] as const;
 
@@ -26,7 +26,7 @@ interface PersonalRecordFormProps {
   recordId?: string;
   initialValues?: Record<string, unknown>;
   presetTipo?: HubPersonalTipo;
-  onSaved: () => void;
+  onSaved: (row?: HubPersonalTransaction) => void;
   onCancel?: () => void;
 }
 
@@ -61,12 +61,17 @@ export function PersonalRecordForm({
 
     const row = { ...payload, user_id: userId, updated_at: new Date().toISOString() };
 
-    const { error: err } = isEdit
-      ? await supabase.from('hub_personal_transactions').update(row).eq('id', recordId!)
-      : await supabase.from('hub_personal_transactions').insert(row);
+    const { data, error: err } = isEdit
+      ? await supabase
+          .from('hub_personal_transactions')
+          .update(row)
+          .eq('id', recordId!)
+          .select('*')
+          .single()
+      : await supabase.from('hub_personal_transactions').insert(row).select('*').single();
 
     if (err) setError(supabaseErrorMessage(err));
-    else onSaved();
+    else onSaved(data as HubPersonalTransaction);
   };
 
   const defaultTipo = String(merged.tipo ?? presetTipo ?? 'entrada');
@@ -189,7 +194,7 @@ export function PersonalRecordForm({
 
 interface PersonalCrudBarProps {
   presetTipo?: HubPersonalTipo;
-  onSaved: () => void;
+  onSaved: (row?: HubPersonalTransaction) => void;
 }
 
 export function PersonalCrudBar({ presetTipo, onSaved }: PersonalCrudBarProps) {
@@ -204,9 +209,9 @@ export function PersonalCrudBar({ presetTipo, onSaved }: PersonalCrudBarProps) {
         <div style={{ marginTop: '0.75rem' }}>
           <PersonalRecordForm
             presetTipo={presetTipo}
-            onSaved={() => {
+            onSaved={(row) => {
               setOpen(false);
-              onSaved();
+              onSaved(row);
             }}
             onCancel={() => setOpen(false)}
           />

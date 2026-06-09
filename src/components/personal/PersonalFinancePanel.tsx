@@ -1,18 +1,12 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { PersonalContasFixasView } from '../PersonalContasFixasView';
+import { usePersonalFinanceRows } from '../../hooks/usePersonalFinanceRows';
+import { isViniciusPersonalFinance } from '../../lib/viniciusPersonalFinance';
+import type { HubPersonalTransaction } from '../../types/database';
 import { PersonalFinanceHero } from './PersonalFinanceHero';
 import { PersonalFinanceKpiGrid } from './PersonalFinanceKpiGrid';
 import { PersonalFinanceNav } from './PersonalFinanceNav';
 import { PersonalTransactionCards } from './PersonalTransactionCards';
-import {
-  saldoPessoal,
-  totalEntradasPessoal,
-  totalSaidasPessoal,
-} from '../../lib/pessoal';
-import { totalFixosPessoal } from '../../lib/personalFinanceVisuals';
-import { supabase, supabaseErrorMessage } from '../../lib/supabase';
-import { isViniciusPersonalFinance } from '../../lib/viniciusPersonalFinance';
-import type { HubPersonalTransaction } from '../../types/database';
 import styles from './PersonalFinancePanel.module.css';
 
 type ViniciusFinanceView = 'contas' | 'receitas' | 'outros';
@@ -36,28 +30,21 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
   const viniciusLayout = isViniciusPersonalFinance(userEmail);
   const [viniciusView, setViniciusView] = useState<ViniciusFinanceView>('contas');
   const [fluxo, setFluxo] = useState<'entrada' | 'saida'>('entrada');
-  const [rows, setRows] = useState<HubPersonalTransaction[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  const load = useCallback(async () => {
-    if (!supabase) return;
-    setLoading(true);
-    setError(null);
-    const { data, error: err } = await supabase
-      .from('hub_personal_transactions')
-      .select('*')
-      .order('grupo', { ascending: true, nullsFirst: false })
-      .order('ordem', { ascending: true })
-      .order('data_referencia', { ascending: false });
-    if (err) setError(supabaseErrorMessage(err));
-    else setRows((data ?? []) as HubPersonalTransaction[]);
-    setLoading(false);
-  }, []);
+  const {
+    rows,
+    loading,
+    error,
+    summary,
+    refresh,
+    applyPatch,
+    applyRemove,
+    upsertRow,
+  } = usePersonalFinanceRows();
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  const handleUpsert = (row: HubPersonalTransaction) => {
+    upsertRow(row);
+  };
 
   const entradas = useMemo(() => rows.filter((r) => r.tipo === 'entrada'), [rows]);
   const saidasGenericas = useMemo(
@@ -65,44 +52,41 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
     [rows],
   );
 
-  const kpiValues = useMemo(
-    () => ({
-      entradas: totalEntradasPessoal(rows),
-      saidas: totalSaidasPessoal(rows),
-      saldo: saldoPessoal(rows),
-    }),
-    [rows],
-  );
-
-  const activeVinicius = viniciusView;
-  const activeGeneric = fluxo;
-
   return (
     <div className={styles.panel}>
       {error && <div className="error-banner">{error}</div>}
 
-      <PersonalFinanceHero totalFixos={totalFixosPessoal(rows)} loading={loading} />
+      <PersonalFinanceHero summary={summary} loading={loading} />
 
-      <PersonalFinanceKpiGrid values={kpiValues} rows={rows} loading={loading} />
+      <PersonalFinanceKpiGrid summary={summary} loading={loading} />
 
       {viniciusLayout ? (
         <>
           <PersonalFinanceNav
             tabs={[...VINICIUS_TABS]}
-            active={activeVinicius}
+            active={viniciusView}
             onChange={(id) => setViniciusView(id as ViniciusFinanceView)}
           />
 
           {loading ? (
             <p className={styles.loading}>Carregando seu painel…</p>
           ) : viniciusView === 'contas' ? (
-            <PersonalContasFixasView rows={rows} onRefresh={load} />
+            <PersonalContasFixasView
+              rows={rows}
+              summary={summary}
+              onUpsert={handleUpsert}
+              onRemove={applyRemove}
+              onPatch={applyPatch}
+              onSyncError={refresh}
+            />
           ) : (
             <div className={styles.contentCard}>
               <PersonalTransactionCards
                 rows={viniciusView === 'receitas' ? entradas : saidasGenericas}
                 presetTipo={viniciusView === 'receitas' ? 'entrada' : 'saida'}
-                onRefresh={load}
+                onUpsert={handleUpsert}
+                onRemove={applyRemove}
+                onSyncError={refresh}
               />
             </div>
           )}
@@ -111,7 +95,7 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
         <>
           <PersonalFinanceNav
             tabs={[...GENERIC_TABS]}
-            active={activeGeneric}
+            active={fluxo}
             onChange={(id) => setFluxo(id as 'entrada' | 'saida')}
           />
 
@@ -122,7 +106,9 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
               <PersonalTransactionCards
                 rows={fluxo === 'entrada' ? entradas : saidasGenericas}
                 presetTipo={fluxo}
-                onRefresh={load}
+                onUpsert={handleUpsert}
+                onRemove={applyRemove}
+                onSyncError={refresh}
               />
             </div>
           )}

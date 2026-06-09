@@ -13,35 +13,49 @@ import styles from './PersonalTransactionCards.module.css';
 interface PersonalTransactionCardsProps {
   rows: HubPersonalTransaction[];
   presetTipo: HubPersonalTipo;
-  onRefresh: () => void;
+  onUpsert: (row: HubPersonalTransaction) => void;
+  onRemove: (id: string) => void;
+  onSyncError: () => void;
 }
 
 export function PersonalTransactionCards({
   rows,
   presetTipo,
-  onRefresh,
+  onUpsert,
+  onRemove,
+  onSyncError,
 }: PersonalTransactionCardsProps) {
   const [editing, setEditing] = useState<HubPersonalTransaction | null>(null);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (row: HubPersonalTransaction) => {
     if (!confirm('Excluir este lançamento?')) return;
-    const err = await deletePersonalRow(id);
-    if (err) alert(err);
-    else onRefresh();
+    onRemove(row.id);
+    const err = await deletePersonalRow(row.id);
+    if (err) {
+      alert(err);
+      onUpsert(row);
+      onSyncError();
+    }
   };
 
   const isEntrada = presetTipo === 'entrada';
 
   return (
     <div className={styles.wrap}>
-      <PersonalCrudBar presetTipo={presetTipo} onSaved={onRefresh} />
+      <PersonalCrudBar
+        presetTipo={presetTipo}
+        onSaved={(row) => {
+          if (row) onUpsert(row);
+          else onSyncError();
+        }}
+      />
       {editing && (
         <PersonalRecordForm
           recordId={editing.id}
           initialValues={editing as unknown as Record<string, unknown>}
-          onSaved={() => {
+          onSaved={(row) => {
+            if (row) onUpsert(row);
             setEditing(null);
-            onRefresh();
           }}
           onCancel={() => setEditing(null)}
         />
@@ -68,7 +82,7 @@ export function PersonalTransactionCards({
               <button type="button" className="btn-ghost" onClick={() => setEditing(row)}>
                 Editar
               </button>
-              <button type="button" className="btn-ghost" onClick={() => void handleDelete(row.id)}>
+              <button type="button" className="btn-ghost" onClick={() => void handleDelete(row)}>
                 Excluir
               </button>
             </div>

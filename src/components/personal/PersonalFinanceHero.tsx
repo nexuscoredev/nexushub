@@ -1,26 +1,43 @@
 import { formatBRL } from '../../lib/format';
+import type { PessoalFinanceSummary } from '../../lib/pessoalFinanceSummary';
 import { VINICIUS_VR_MENSAL } from '../../lib/viniciusPersonalFinance';
 import styles from './PersonalFinanceHero.module.css';
 
 interface PersonalFinanceHeroProps {
-  totalFixos: number;
+  summary: PessoalFinanceSummary;
   loading?: boolean;
 }
 
-export function PersonalFinanceHero({ totalFixos, loading }: PersonalFinanceHeroProps) {
+export function PersonalFinanceHero({ summary, loading }: PersonalFinanceHeroProps) {
   return (
     <header className={styles.hero}>
       <div className={styles.copy}>
         <span className={styles.badge}>Financeiro pessoal</span>
         <h2 className={styles.title}>Seu painel premium</h2>
         <p className={styles.sub}>
-          Visão clara das contas fixas, variáveis e saldo — tudo privado, só seu.
+          Totais recalculados ao adicionar, editar, remover ou marcar contas como pagas.
         </p>
         <div className={styles.stats}>
           <div className={styles.stat}>
-            <span className={styles.statLabel}>Fixos do mês</span>
+            <span className={styles.statLabel}>Gastos totais</span>
             <strong className={styles.statValue}>
-              {loading ? '…' : formatBRL(totalFixos)}
+              {loading ? '…' : formatBRL(summary.saidas)}
+            </strong>
+          </div>
+          <div className={styles.statDivider} aria-hidden />
+          <div className={styles.stat}>
+            <span className={styles.statLabel}>A pagar</span>
+            <strong className={styles.statValue}>
+              {loading ? '…' : formatBRL(summary.valorAPagar)}
+            </strong>
+          </div>
+          <div className={styles.statDivider} aria-hidden />
+          <div className={styles.stat}>
+            <span className={styles.statLabel}>Saldo</span>
+            <strong
+              className={`${styles.statValue} ${summary.saldo < 0 ? styles.statNegative : ''}`}
+            >
+              {loading ? '…' : formatBRL(summary.saldo)}
             </strong>
           </div>
           <div className={styles.statDivider} aria-hidden />
