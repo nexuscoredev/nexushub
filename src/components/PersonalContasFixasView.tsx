@@ -339,47 +339,28 @@ export function PersonalContasFixasView({
 
                         </label>
 
-                        <div className={styles.itemMain}>
-
+                        <div className={styles.itemBody}>
                           <span className={styles.itemTitle}>{formatContaTitulo(row.descricao)}</span>
-
+                          <strong className={styles.itemValor}>{formatBRL(Number(row.valor))}</strong>
+                          {(provider || row.dia_vencimento != null || (row.notas && !provider)) && (
                           <span className={styles.itemMeta}>
-
                             {provider && (
-
                               <span
-
                                 className={styles.providerChip}
-
                                 style={{ background: provider.bg, color: provider.color }}
-
                               >
-
                                 {provider.label}
-
                               </span>
-
                             )}
-
                             {row.dia_vencimento != null && (
-
                               <span className={styles.diaChip}>Dia {row.dia_vencimento}</span>
-
                             )}
-
                             {row.notas && !provider && (
-
                               <span className={styles.noteChip}>{row.notas}</span>
-
                             )}
-
                           </span>
-
+                          )}
                         </div>
-
-
-
-                        <strong className={styles.itemValor}>{formatBRL(Number(row.valor))}</strong>
 
 
 

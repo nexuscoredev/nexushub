@@ -3,7 +3,7 @@
   flex-direction: column;
   gap: 0.45rem;
   animation: panelIn 0.35s ease;
-  max-width: 1100px;
+  max-width: 1200px;
 }
 
 .toolbar {
