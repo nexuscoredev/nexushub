@@ -339,9 +339,8 @@ export function PersonalContasFixasView({
 
                         </label>
 
-                        <div className={styles.itemBody}>
+                        <div className={styles.itemMain}>
                           <span className={styles.itemTitle}>{formatContaTitulo(row.descricao)}</span>
-                          <strong className={styles.itemValor}>{formatBRL(Number(row.valor))}</strong>
                           {(provider || row.dia_vencimento != null || (row.notas && !provider)) && (
                           <span className={styles.itemMeta}>
                             {provider && (
@@ -361,6 +360,8 @@ export function PersonalContasFixasView({
                           </span>
                           )}
                         </div>
+
+                        <strong className={styles.itemValor}>{formatBRL(Number(row.valor))}</strong>
 
 
 
