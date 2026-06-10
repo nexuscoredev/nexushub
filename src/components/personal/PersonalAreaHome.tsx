@@ -16,13 +16,13 @@ const MUSIC_LINKS = [
     id: 'spotify',
     label: 'Spotify',
     href: 'https://open.spotify.com/',
-    icon: '/img/streaming/spotify.svg',
+    icon: '/img/streaming/spotify.png',
   },
   {
     id: 'youtube-music',
     label: 'YouTube Music',
     href: 'https://music.youtube.com/',
-    icon: '/img/streaming/youtube-music.svg',
+    icon: '/img/streaming/youtube-music.png',
   },
 ] as const;
 
@@ -117,7 +117,15 @@ export function PersonalAreaHome({ onOpenFinance }: PersonalAreaHomeProps) {
               rel="noopener noreferrer"
               className={styles.musicLink}
             >
-              <img src={link.icon} alt="" className={styles.musicLogo} width={28} height={28} />
+              <img
+                src={link.icon}
+                alt=""
+                className={styles.musicLogo}
+                width={32}
+                height={32}
+                loading="lazy"
+                decoding="async"
+              />
               <span>{link.label}</span>
             </a>
           ))}

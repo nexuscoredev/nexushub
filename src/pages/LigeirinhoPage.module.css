@@ -363,10 +363,16 @@
   border: 1px solid rgba(52, 211, 153, 0.25);
 }
 
-.statusPaused {
+.statusPending {
   background: rgba(251, 191, 36, 0.12);
   color: #fcd34d;
   border: 1px solid rgba(251, 191, 36, 0.22);
+}
+
+.statusStudy {
+  background: rgba(129, 140, 248, 0.12);
+  color: #a5b4fc;
+  border: 1px solid rgba(129, 140, 248, 0.22);
 }
 
 /* ── Fluxo do cliente ── */

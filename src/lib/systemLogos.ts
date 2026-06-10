@@ -20,7 +20,7 @@ export const CLIENT_SYSTEMS: ClientSystem[] = [
   },
   {
     id: 'ligeirinho',
-    nome: 'Ligeirinho Parceiros',
+    nome: 'Ligeirinho Hub',
     aliases: ['ligeirinho', 'ligeirinho hub', 'ligeirinhohub', 'ligeirinho bebidas', 'ligeirinho parceiros'],
   },
   {
@@ -62,7 +62,7 @@ export function systemLogoUrl(systemId: string): string {
 /** URLs canônicas quando hub_systems ainda não foi atualizado no Supabase */
 const SYSTEM_URL_OVERRIDES: Record<string, string> = {
   'rh-ambiental': 'https://rgambiental.com.br/',
-  ligeirinho: 'https://ligeirinhobebidas.vercel.app/',
+  ligeirinho: 'https://ligeirinhohub.vercel.app/',
 };
 
 /** Páginas de status/projeto dentro do Hub */

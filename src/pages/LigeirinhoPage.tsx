@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import { PageHeader } from '../components/PageHeader';
 import { systemLogoUrl } from '../lib/systemLogos';
 import {
+  deliveryStatusLabel,
   LIGEIRINHO_ATTENTION_POINTS,
-  LIGEIRINHO_CLIENT_FLOW,
   LIGEIRINHO_DELIVERIES,
+  LIGEIRINHO_HUB_URL,
+  LIGEIRINHO_LOJA_URL,
+  LIGEIRINHO_NEXT_STEPS,
   LIGEIRINHO_READY_GROUPS,
-  LIGEIRINHO_SITE_URL,
   LIGEIRINHO_STATUS_DATE,
   LIGEIRINHO_SUMMARY,
 } from '../lib/ligeirinhoProject';
@@ -23,17 +25,17 @@ export function LigeirinhoPage() {
     <div className={styles.page}>
       <PageHeader
         badge="Produto NEXUS"
-        title="Ligeirinho Parceiros"
-        subtitle="Status do projeto · app de pedidos online"
+        title="Ligeirinho Hub"
+        subtitle="Relatório de atividades · sistema central da operação"
         actions={
           <>
             <a
-              href={LIGEIRINHO_SITE_URL}
+              href={LIGEIRINHO_HUB_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-primary"
             >
-              Abrir loja ao vivo
+              Abrir Ligeirinho Hub
             </a>
             <Link to="/sistemas" className="btn-ghost">
               Todos os sistemas
@@ -44,19 +46,19 @@ export function LigeirinhoPage() {
 
       <section className={styles.hero} aria-labelledby="ligeirinho-hero-title">
         <div className={styles.heroContent}>
-          <p className={styles.eyebrow}>Status report</p>
+          <p className={styles.eyebrow}>Relatório para o cliente</p>
           <h2 id="ligeirinho-hero-title" className={styles.heroTitle}>
-            Pedidos pela internet, prontos para o dia a dia da loja
+            Cadastros, vendas, pedidos e marketing em um só lugar
           </h2>
           <p className={styles.heroLead}>
-            O Ligeirinho virou um aplicativo de pedidos que o cliente usa no celular ou no
-            computador — catálogo, carrinho, login e pagamento online nas versões mais recentes.
+            O Ligeirinho Hub é o sistema central da operação — acessível pelo navegador,
+            com PDV, fila operacional, catálogo unificado e ferramentas de marketing com IA.
           </p>
           <p className={styles.heroMeta}>
-            Atualizado em <time dateTime="2026-06-09">{LIGEIRINHO_STATUS_DATE}</time>
+            Atualizado em <time dateTime="2026-06-10">{LIGEIRINHO_STATUS_DATE}</time>
             {' · '}
-            <a href={LIGEIRINHO_SITE_URL} target="_blank" rel="noopener noreferrer" className={styles.siteLink}>
-              ligeirinhobebidas.vercel.app
+            <a href={LIGEIRINHO_HUB_URL} target="_blank" rel="noopener noreferrer" className={styles.siteLink}>
+              ligeirinhohub.vercel.app
             </a>
           </p>
 
@@ -67,11 +69,11 @@ export function LigeirinhoPage() {
             </div>
             <div className={styles.stat}>
               <span className={styles.statValue}>{LIGEIRINHO_READY_GROUPS.length}</span>
-              <span className={styles.statLabel}>Áreas prontas</span>
+              <span className={styles.statLabel}>Áreas evoluídas</span>
             </div>
             <div className={styles.stat}>
               <span className={styles.statValue}>{progressPct}%</span>
-              <span className={styles.statLabel}>Roadmap deste ciclo</span>
+              <span className={styles.statLabel}>Avanço do relatório</span>
             </div>
           </div>
         </div>
@@ -86,14 +88,14 @@ export function LigeirinhoPage() {
             </div>
           </div>
           <p className={styles.heroStage}>
-            Marca <strong>Ligeirinho Parceiros</strong> no ar
+            Identidade <strong>amarelo/dourado</strong> no ar
           </p>
         </div>
       </section>
 
       <section className={styles.highlight} aria-labelledby="resumo-title">
         <div className={styles.sectionHead}>
-          <p className={styles.sectionLabel}>Em uma frase</p>
+          <p className={styles.sectionLabel}>Visão geral</p>
           <h2 id="resumo-title" className={styles.sectionTitle}>
             Resumo do projeto
           </h2>
@@ -112,7 +114,7 @@ export function LigeirinhoPage() {
           <p className={styles.sectionLabel}>Capacidades</p>
           <h2 className={styles.sectionTitle}>O que já está pronto</h2>
           <p className={styles.sectionDesc}>
-            Funcionalidades em produção ou estáveis para o cliente final usar hoje.
+            Melhorias entregues na operação, cadastros, pagamentos, marketing e organização do Hub.
           </p>
         </div>
 
@@ -136,9 +138,9 @@ export function LigeirinhoPage() {
       <section id="entregas" className={styles.section}>
         <div className={styles.sectionHead}>
           <p className={styles.sectionLabel}>Período recente</p>
-          <h2 className={styles.sectionTitle}>O que fizemos neste período</h2>
+          <h2 className={styles.sectionTitle}>Relatório de atividades</h2>
           <p className={styles.sectionDesc}>
-            Entregas em linguagem simples — o que entrou no ar e o que ficou para depois.
+            Entregas em linguagem simples — o que entrou no ar, o que falta e o que está em estudo.
           </p>
         </div>
 
@@ -160,10 +162,14 @@ export function LigeirinhoPage() {
                   <td>
                     <span
                       className={`${styles.statusBadge} ${
-                        row.status === 'done' ? styles.statusDone : styles.statusPaused
+                        row.status === 'done'
+                          ? styles.statusDone
+                          : row.status === 'pending'
+                            ? styles.statusPending
+                            : styles.statusStudy
                       }`}
                     >
-                      {row.status === 'done' ? 'Concluído' : 'Para depois'}
+                      {deliveryStatusLabel(row.status)}
                     </span>
                   </td>
                 </tr>
@@ -173,17 +179,17 @@ export function LigeirinhoPage() {
         </div>
       </section>
 
-      <section id="fluxo" className={styles.section}>
+      <section id="proximos" className={styles.section}>
         <div className={styles.sectionHead}>
-          <p className={styles.sectionLabel}>Jornada</p>
-          <h2 className={styles.sectionTitle}>Como o cliente usa hoje</h2>
+          <p className={styles.sectionLabel}>Recomendado</p>
+          <h2 className={styles.sectionTitle}>Próximos passos</h2>
           <p className={styles.sectionDesc}>
-            Fluxo real, do primeiro acesso até a confirmação do pedido.
+            Ações sugeridas para validar o marketing com IA e colocar tudo em uso na loja.
           </p>
         </div>
 
         <ol className={styles.flow}>
-          {LIGEIRINHO_CLIENT_FLOW.map((step, index) => (
+          {LIGEIRINHO_NEXT_STEPS.map((step, index) => (
             <li key={step} className={styles.flowItem}>
               <span className={styles.flowMarker}>{index + 1}</span>
               <p className={styles.flowText}>{step}</p>
@@ -197,7 +203,7 @@ export function LigeirinhoPage() {
           <p className={styles.sectionLabel}>Transparência</p>
           <h2 className={styles.sectionTitle}>Pontos de atenção</h2>
           <p className={styles.sectionDesc}>
-            Limitações conscientes e decisões de produto — sem surpresas para o cliente.
+            Pendências, limites e itens em análise — sem surpresas para o cliente.
           </p>
         </div>
 
@@ -213,23 +219,28 @@ export function LigeirinhoPage() {
 
       <section className={styles.cta}>
         <div className={styles.ctaCopy}>
-          <h2 className={styles.ctaTitle}>Ver o app funcionando</h2>
+          <h2 className={styles.ctaTitle}>Acessar os sistemas</h2>
           <p className={styles.ctaText}>
-            Acesse a loja publicada, teste no celular e instale na tela inicial como PWA.
+            Hub para operação interna; loja online para pedidos do cliente final.
           </p>
         </div>
         <div className={styles.ctaActions}>
           <a
-            href={LIGEIRINHO_SITE_URL}
+            href={LIGEIRINHO_HUB_URL}
             target="_blank"
             rel="noopener noreferrer"
             className={`btn-primary ${styles.ctaBtn}`}
           >
-            Abrir ligeirinhobebidas.vercel.app
+            Abrir ligeirinhohub.vercel.app
           </a>
-          <Link to="/cliente/entrar" className={`btn-ghost ${styles.ctaBtn}`}>
-            Portal do cliente NEXUS
-          </Link>
+          <a
+            href={LIGEIRINHO_LOJA_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`btn-ghost ${styles.ctaBtn}`}
+          >
+            Loja online (Parceiros)
+          </a>
         </div>
       </section>
     </div>
