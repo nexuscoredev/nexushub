@@ -162,19 +162,36 @@ export function ClientePortalPage() {
       </section>
 
       {isLigeirinho ? (
-        <section className={styles.ligeirinhoCta} aria-labelledby="ligeirinho-cta-title">
-          <div>
-            <p className={styles.sectionLabel}>Seu sistema</p>
-            <h2 id="ligeirinho-cta-title" className={styles.sectionTitle}>
-              Relatório Ligeirinho Hub
+        <section className={styles.ligeirinhoReports} aria-labelledby="ligeirinho-reports-title">
+          <div className={styles.ligeirinhoReportsHead}>
+            <p className={styles.sectionLabel}>Seus sistemas</p>
+            <h2 id="ligeirinho-reports-title" className={styles.sectionTitle}>
+              Relatórios Ligeirinho
             </h2>
             <p className={styles.sectionDesc}>
-              Entregas recentes, próximos passos e pontos de atenção — tudo em linguagem clara.
+              Dois produtos, dois relatórios — Hub para operação interna e Parceiros para a loja online.
             </p>
           </div>
-          <Link to="/cliente/ligeirinho" className={styles.ligeirinhoCtaBtn}>
-            Ver relatório completo
-          </Link>
+          <div className={styles.ligeirinhoReportsGrid}>
+            <article className={styles.ligeirinhoReportCard}>
+              <h3 className={styles.ligeirinhoReportTitle}>Ligeirinho Hub</h3>
+              <p className={styles.ligeirinhoReportDesc}>
+                PDV, fila, cadastros, marketing com IA e administração da operação.
+              </p>
+              <Link to="/cliente/ligeirinho" className={styles.ligeirinhoCtaBtn}>
+                Ver relatório Hub
+              </Link>
+            </article>
+            <article className={`${styles.ligeirinhoReportCard} ${styles.ligeirinhoReportCardParceiros}`}>
+              <h3 className={styles.ligeirinhoReportTitle}>Ligeirinho Parceiros</h3>
+              <p className={styles.ligeirinhoReportDesc}>
+                App de pedidos online — catálogo, login, Mercado Pago e jornada do cliente final.
+              </p>
+              <Link to="/cliente/ligeirinho-parceiros" className={styles.ligeirinhoCtaBtn}>
+                Ver relatório Parceiros
+              </Link>
+            </article>
+          </div>
         </section>
       ) : null}
 

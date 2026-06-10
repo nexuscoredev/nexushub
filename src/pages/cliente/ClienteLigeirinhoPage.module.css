@@ -5,6 +5,25 @@
   scroll-behavior: smooth;
 }
 
+.pageParceiros .pageEyebrow {
+  color: #a16207;
+}
+
+.pageParceiros .hero {
+  border-color: rgba(247, 213, 60, 0.35);
+  background:
+    radial-gradient(ellipse 90% 70% at 100% 0%, rgba(247, 213, 60, 0.16), transparent 55%),
+    linear-gradient(160deg, rgba(255, 251, 235, 0.9), rgba(255, 255, 255, 0.95));
+}
+
+.pageParceiros .hero::before {
+  background: linear-gradient(90deg, #f7d53c, #eab308, #fde047);
+}
+
+.pageParceiros .progressRing {
+  --ring-color: #f7d53c;
+}
+
 .pageHead {
   display: flex;
   flex-wrap: wrap;
@@ -441,6 +460,12 @@
   background: rgba(251, 191, 36, 0.12);
   color: #b45309;
   border: 1px solid rgba(251, 191, 36, 0.25);
+}
+
+.statusPaused {
+  color: #6b7280;
+  background: rgba(107, 114, 128, 0.12);
+  border-color: rgba(107, 114, 128, 0.25);
 }
 
 .statusStudy {

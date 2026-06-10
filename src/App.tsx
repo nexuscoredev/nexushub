@@ -38,7 +38,8 @@ export default function App() {
           <Route element={<ClientProtectedRoute />}>
             <Route element={<ClientPortalLayout />}>
               <Route path="/cliente" element={<ClientePortalPage />} />
-              <Route path="/cliente/ligeirinho" element={<LigeirinhoClientRoute />} />
+              <Route path="/cliente/ligeirinho" element={<LigeirinhoClientRoute report="hub" />} />
+              <Route path="/cliente/ligeirinho-parceiros" element={<LigeirinhoClientRoute report="parceiros" />} />
             </Route>
           </Route>
           <Route element={<ProtectedRoute />}>

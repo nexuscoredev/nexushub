@@ -12,10 +12,17 @@ const PORTAL_NAV = [
   { href: '#documentos', label: 'Documentos' },
 ] as const;
 
-const LIGEIRINHO_NAV = [
+const LIGEIRINHO_HUB_NAV = [
   { href: '#pronto', label: 'Pronto' },
   { href: '#entregas', label: 'Entregas' },
   { href: '#proximos', label: 'Próximos' },
+  { href: '#atencao', label: 'Atenção' },
+] as const;
+
+const LIGEIRINHO_PARCEIROS_NAV = [
+  { href: '#pronto', label: 'Pronto' },
+  { href: '#entregas', label: 'Entregas' },
+  { href: '#fluxo', label: 'Jornada' },
   { href: '#atencao', label: 'Atenção' },
 ] as const;
 
@@ -23,8 +30,11 @@ export function ClientPortalLayout() {
   const { clienteConta, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const isLigeirinhoPage = location.pathname === '/cliente/ligeirinho';
+  const isLigeirinhoHubPage = location.pathname === '/cliente/ligeirinho';
+  const isLigeirinhoParceirosPage = location.pathname === '/cliente/ligeirinho-parceiros';
+  const isLigeirinhoReportPage = isLigeirinhoHubPage || isLigeirinhoParceirosPage;
   const isLigeirinhoClient = clienteConta?.cliente?.slug === 'ligeirinho';
+  const reportNav = isLigeirinhoParceirosPage ? LIGEIRINHO_PARCEIROS_NAV : LIGEIRINHO_HUB_NAV;
 
   const handleSignOut = async () => {
     await signOut();
@@ -53,12 +63,26 @@ export function ClientPortalLayout() {
           </div>
         </div>
         <nav className={styles.sectionNav} aria-label="Seções do painel">
-          {isLigeirinhoPage ? (
+          {isLigeirinhoReportPage ? (
             <>
               <Link to="/cliente" className={styles.sectionLink}>
                 Painel
               </Link>
-              {LIGEIRINHO_NAV.map((item) => (
+              <Link
+                to="/cliente/ligeirinho"
+                className={styles.sectionLink}
+                aria-current={isLigeirinhoHubPage ? 'page' : undefined}
+              >
+                Hub
+              </Link>
+              <Link
+                to="/cliente/ligeirinho-parceiros"
+                className={styles.sectionLink}
+                aria-current={isLigeirinhoParceirosPage ? 'page' : undefined}
+              >
+                Parceiros
+              </Link>
+              {reportNav.map((item) => (
                 <a key={item.href} href={item.href} className={styles.sectionLink}>
                   {item.label}
                 </a>
@@ -72,9 +96,14 @@ export function ClientPortalLayout() {
                 </a>
               ))}
               {isLigeirinhoClient ? (
-                <Link to="/cliente/ligeirinho" className={styles.sectionLink}>
-                  Relatório
-                </Link>
+                <>
+                  <Link to="/cliente/ligeirinho" className={styles.sectionLink}>
+                    Hub
+                  </Link>
+                  <Link to="/cliente/ligeirinho-parceiros" className={styles.sectionLink}>
+                    Parceiros
+                  </Link>
+                </>
               ) : null}
             </>
           )}
