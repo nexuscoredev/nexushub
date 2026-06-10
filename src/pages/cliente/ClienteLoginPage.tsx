@@ -82,7 +82,7 @@ export function ClienteLoginPage() {
                 className={styles.input}
                 type="text"
                 autoComplete="username"
-                placeholder="rgambiental"
+                placeholder="Usuário"
                 value={usuario}
                 onChange={(e) => setUsuario(e.target.value)}
                 required

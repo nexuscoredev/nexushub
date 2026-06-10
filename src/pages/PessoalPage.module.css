@@ -5,8 +5,8 @@
 .backBtn {
   display: inline-flex;
   align-items: center;
-  margin-bottom: 1rem;
-  padding: 0.35rem 0.65rem;
+  margin-bottom: 0.5rem;
+  padding: 0.3rem 0.55rem;
   border: none;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.05);

@@ -73,3 +73,27 @@ export function parseMonthKey(raw: string | null): string | null {
   if (m < 1 || m > 12) return null;
   return raw;
 }
+
+const SAVED_MONTH_STORAGE_KEY = 'nexushub.personalFinance.mes';
+
+export function loadSavedMonthKey(): string | null {
+  try {
+    return parseMonthKey(localStorage.getItem(SAVED_MONTH_STORAGE_KEY));
+  } catch {
+    return null;
+  }
+}
+
+export function saveMonthKey(monthKey: string): void {
+  if (!parseMonthKey(monthKey)) return;
+  try {
+    localStorage.setItem(SAVED_MONTH_STORAGE_KEY, monthKey);
+  } catch {
+    /* quota / modo privado */
+  }
+}
+
+/** URL ?mes= tem prioridade; senão último mês salvo; senão mês atual. */
+export function resolveFinanceMonthKey(urlMonth: string | null): string {
+  return parseMonthKey(urlMonth) ?? loadSavedMonthKey() ?? currentMonthKey();
+}

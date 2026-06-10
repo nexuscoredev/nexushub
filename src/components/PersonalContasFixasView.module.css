@@ -1,13 +1,13 @@
 .wrap {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 0.75rem;
 }
 
 /* ── Overview ── */
 .overview {
-  padding: 1.15rem 1.2rem 1.05rem;
-  border-radius: 18px;
+  padding: 0.7rem 0.85rem 0.65rem;
+  border-radius: 12px;
   border: 1px solid rgba(129, 140, 248, 0.22);
   background:
     radial-gradient(ellipse 90% 80% at 100% 0%, rgba(99, 102, 241, 0.16), transparent 55%),
@@ -19,8 +19,8 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 0.85rem;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .overviewCopy {
@@ -42,8 +42,8 @@
 }
 
 .overviewTitle {
-  margin: 0.5rem 0 0;
-  font-size: clamp(1.05rem, 4.5vw, 1.25rem);
+  margin: 0.35rem 0 0;
+  font-size: clamp(0.92rem, 3.5vw, 1.05rem);
   font-weight: 700;
   line-height: 1.2;
   color: var(--text);
@@ -88,11 +88,11 @@
 }
 
 .progressTrack {
-  height: 6px;
+  height: 5px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
   overflow: hidden;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 }
 
 .progressFill {

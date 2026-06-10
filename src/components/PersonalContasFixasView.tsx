@@ -234,23 +234,7 @@ export function PersonalContasFixasView({
 
           </div>
 
-          <div
-
-            className={styles.progressRing}
-
-            style={{ '--pct': `${summary.percentualPagas}%` } as CSSProperties}
-
-            aria-hidden
-
-          >
-
-            <span className={styles.progressRingValue}>{summary.percentualPagas}%</span>
-
-          </div>
-
         </div>
-
-
 
         <div
 

@@ -3,7 +3,7 @@ import { PageHeader } from '../components/PageHeader';
 import { PersonalAreaHome } from '../components/personal/PersonalAreaHome';
 import { PersonalFinancePanel } from '../components/personal/PersonalFinancePanel';
 import { useAuth } from '../contexts/AuthContext';
-import { currentMonthKey } from '../lib/personalFinanceMonth';
+import { resolveFinanceMonthKey } from '../lib/personalFinanceMonth';
 import styles from './PessoalPage.module.css';
 
 export function PessoalPage() {
@@ -16,7 +16,8 @@ export function PessoalPage() {
   const email = profile?.email ?? user?.email;
 
   const openFinance = () => {
-    navigate(`/pessoal?financeiro=1&mes=${currentMonthKey()}`);
+    const mes = resolveFinanceMonthKey(searchParams.get('mes'));
+    navigate(`/pessoal?financeiro=1&mes=${mes}`);
   };
 
   const backHome = () => {

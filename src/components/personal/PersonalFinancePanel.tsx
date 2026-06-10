@@ -1,12 +1,13 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { PersonalContasFixasView } from '../PersonalContasFixasView';
 import { usePersonalFinanceRows } from '../../hooks/usePersonalFinanceRows';
 import {
-  currentMonthKey,
   defaultDateForMonth,
   filterRowsForMonth,
   parseMonthKey,
+  resolveFinanceMonthKey,
+  saveMonthKey,
 } from '../../lib/personalFinanceMonth';
 import { buildPessoalFinanceSummary } from '../../lib/pessoalFinanceSummary';
 import { isViniciusPersonalFinance } from '../../lib/viniciusPersonalFinance';
@@ -41,11 +42,12 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
   const [viniciusView, setViniciusView] = useState<ViniciusFinanceView>('contas');
   const [fluxo, setFluxo] = useState<'entrada' | 'saida'>('entrada');
 
-  const selectedMonth =
-    parseMonthKey(searchParams.get('mes')) ?? currentMonthKey();
+  const urlMonth = searchParams.get('mes');
+  const selectedMonth = useMemo(() => resolveFinanceMonthKey(urlMonth), [urlMonth]);
 
   const setSelectedMonth = useCallback(
     (monthKey: string) => {
+      saveMonthKey(monthKey);
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev);
@@ -58,6 +60,23 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
     },
     [setSearchParams],
   );
+
+  useEffect(() => {
+    saveMonthKey(selectedMonth);
+  }, [selectedMonth]);
+
+  useEffect(() => {
+    if (parseMonthKey(urlMonth)) return;
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.set('financeiro', '1');
+        next.set('mes', selectedMonth);
+        return next;
+      },
+      { replace: true },
+    );
+  }, [urlMonth, selectedMonth, setSearchParams]);
 
   const {
     rows: allRows,

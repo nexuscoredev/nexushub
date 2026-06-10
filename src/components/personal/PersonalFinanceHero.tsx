@@ -20,8 +20,7 @@ export function PersonalFinanceHero({
   return (
     <header className={styles.hero}>
       <div className={styles.copy}>
-        <span className={styles.badge}>{formatMonthLabel(monthKey)}</span>
-        <h2 className={styles.title}>Resumo financeiro</h2>
+        <h2 className={styles.title}>Resumo · {formatMonthLabel(monthKey)}</h2>
         <div className={styles.stats}>
           <div className={styles.stat}>
             <span className={styles.statLabel}>Saldo</span>
@@ -62,9 +61,6 @@ export function PersonalFinanceHero({
             </>
           )}
         </div>
-      </div>
-      <div className={styles.visual} aria-hidden>
-        <img src="/img/personal/hero-wallet.svg" alt="" className={styles.heroImg} />
       </div>
     </header>
   );
