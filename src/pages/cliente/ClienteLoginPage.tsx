@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { ClientThemeToggle } from '../../components/client/ClientThemeToggle';
 import { HubLogo } from '../../components/HubLogo';
 import { useAuth } from '../../contexts/AuthContext';
@@ -54,9 +54,6 @@ export function ClienteLoginPage() {
           <span className={`${styles.accessBtn} ${styles.accessBtnActive}`} aria-current="page">
             NexusClient
           </span>
-          <Link to="/login" className={styles.accessBtn}>
-            NexusHub
-          </Link>
           </div>
         </div>
       </header>
