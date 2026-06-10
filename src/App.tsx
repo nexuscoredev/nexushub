@@ -57,6 +57,8 @@ export default function App() {
               <Route path="/configuracoes" element={<SettingsPage />} />
               <Route element={<ProtectedRoute requireGestao />}>
                 <Route path="/usuarios" element={<UsersPage />} />
+              </Route>
+              <Route element={<ProtectedRoute requireCofre />}>
                 <Route path="/cofre" element={<VaultPage />} />
               </Route>
               <Route element={<ProtectedRoute requirePessoal />}>

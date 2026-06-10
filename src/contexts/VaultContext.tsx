@@ -25,7 +25,7 @@ interface VaultState {
 const VaultContext = createContext<VaultState | null>(null);
 
 export function VaultProvider({ children }: { children: ReactNode }) {
-  const { session, user, profile, loading: authLoading, podeGestao } = useAuth();
+  const { session, user, profile, loading: authLoading, podeCofre } = useAuth();
   const [config, setConfig] = useState<HubVaultConfig | null>(null);
   const [configLoading, setConfigLoading] = useState(true);
   const [cryptoKey, setCryptoKey] = useState<CryptoKey | null>(null);
@@ -33,7 +33,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
   const profilePending = Boolean(session && user && profile === null);
 
   const refreshConfig = useCallback(async () => {
-    if (!session || !podeGestao) {
+    if (!session || !podeCofre) {
       setConfig(null);
       setConfigLoading(false);
       return;
@@ -45,7 +45,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
     } finally {
       setConfigLoading(false);
     }
-  }, [session, podeGestao]);
+  }, [session, podeCofre]);
 
   useEffect(() => {
     if (authLoading || profilePending) {

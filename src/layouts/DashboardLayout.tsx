@@ -18,7 +18,7 @@ interface NavItem {
 }
 
 export function DashboardLayout() {
-  const { profile, user, podeFinanceiroAgenda, podeGestao, signOut } = useAuth();
+  const { profile, user, podeFinanceiroAgenda, podeGestao, podeCofre, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -32,7 +32,7 @@ export function DashboardLayout() {
     { to: '/fila', label: 'Fila', icon: 'queue', show: true },
     { to: '/sistemas', label: 'Sistemas', icon: 'systems', show: true },
     { to: '/usuarios', label: 'Usuários', icon: 'users', show: podeGestao },
-    { to: '/cofre', label: 'Cofre', icon: 'vault', show: podeGestao },
+    { to: '/cofre', label: 'Cofre', icon: 'vault', show: podeCofre },
     { to: '/configuracoes', label: 'Config', icon: 'settings', show: true },
   ];
 

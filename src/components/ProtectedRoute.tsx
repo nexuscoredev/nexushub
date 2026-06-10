@@ -6,6 +6,7 @@ interface ProtectedRouteProps {
   requireGestao?: boolean;
   requirePessoal?: boolean;
   requireDocumentacao?: boolean;
+  requireCofre?: boolean;
 }
 
 export function ProtectedRoute({
@@ -13,6 +14,7 @@ export function ProtectedRoute({
   requireGestao = false,
   requirePessoal = false,
   requireDocumentacao = false,
+  requireCofre = false,
 }: ProtectedRouteProps) {
   const {
     session,
@@ -24,6 +26,7 @@ export function ProtectedRoute({
     podeGestao,
     podePessoal,
     podeDocumentacao,
+    podeCofre,
     isCliente,
     isEquipe,
   } = useAuth();
@@ -73,6 +76,10 @@ export function ProtectedRoute({
 
   if (requireDocumentacao && !podeDocumentacao) {
     return <Navigate to="/sistemas" replace />;
+  }
+
+  if (requireCofre && !podeCofre) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <Outlet />;
