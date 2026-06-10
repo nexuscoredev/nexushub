@@ -17,6 +17,7 @@ import { LoginPage } from './pages/LoginPage';
 import { SiteRedirectPage } from './pages/SiteRedirectPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { SettingsPage } from './pages/SettingsPage';
+import { LigeirinhoDocumentacaoPage } from './pages/LigeirinhoDocumentacaoPage';
 import { SystemsPage } from './pages/SystemsPage';
 import { UsersPage } from './pages/UsersPage';
 import { ChatPage } from './pages/ChatPage';
@@ -40,6 +41,7 @@ export default function App() {
               <Route path="/cliente" element={<ClientePortalPage />} />
               <Route path="/cliente/ligeirinho" element={<LigeirinhoClientRoute report="hub" />} />
               <Route path="/cliente/ligeirinho-parceiros" element={<LigeirinhoClientRoute report="parceiros" />} />
+              <Route path="/cliente/documentacao/ligeirinho-contrato" element={<LigeirinhoClientRoute report="documentacao" />} />
             </Route>
           </Route>
           <Route element={<ProtectedRoute />}>
@@ -47,6 +49,7 @@ export default function App() {
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/chat" element={<ChatPage />} />
               <Route path="/sistemas" element={<SystemsPage />} />
+              <Route path="/sistemas/ligeirinho/documentacao" element={<LigeirinhoDocumentacaoPage />} />
               <Route path="/fila" element={<FilaPage />} />
               <Route path="/perfil" element={<ProfilePage />} />
               <Route path="/configuracoes" element={<SettingsPage />} />

@@ -59,6 +59,15 @@ export function systemLogoUrl(systemId: string): string {
   return SYSTEM_LOGOS[systemId] ?? '/img/favicon.png';
 }
 
+/** Documentação interna no Hub (por sistema) */
+export const SYSTEM_DOC_PATHS: Record<string, string> = {
+  ligeirinho: '/sistemas/ligeirinho/documentacao',
+};
+
+export function systemDocPath(systemId: string): string | null {
+  return SYSTEM_DOC_PATHS[systemId] ?? null;
+}
+
 /** URLs canônicas quando hub_systems ainda não foi atualizado no Supabase */
 const SYSTEM_URL_OVERRIDES: Record<string, string> = {
   'rh-ambiental': 'https://rgambiental.com.br/',

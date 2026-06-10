@@ -21,6 +21,7 @@ import {
   listarProcessosCliente,
   listarSolicitacoesCliente,
 } from '../../lib/clientePortal';
+import { LIGEIRINHO_CONTRATO, LIGEIRINHO_CONTRATO_CLIENT_PATH } from '../../lib/ligeirinhoDocumentacao';
 import { formatDate } from '../../lib/format';
 import type {
   HubClienteAtualizacao,
@@ -86,6 +87,24 @@ export function ClientePortalPage() {
 
   const marcosConcluidos = marcos.filter((m) => m.status === 'concluido').length;
   const solicitacoesAbertas = solicitacoes.filter((s) => s.status === 'aberta' || s.status === 'em_analise').length;
+
+  const contratosVisiveis = useMemo(() => {
+    if (!isLigeirinho) return contratos;
+    const hasContrato = contratos.some((c) => c.titulo.toLowerCase().includes('contrato executivo'));
+    if (hasContrato) return contratos;
+    const estatico: HubClienteContrato = {
+      id: 'static-ligeirinho-contrato',
+      cliente_id: clienteId ?? '',
+      titulo: LIGEIRINHO_CONTRATO.titulo,
+      descricao: `${LIGEIRINHO_CONTRATO.subtitulo}. Investimento ${LIGEIRINHO_CONTRATO.investimentoTotal}.`,
+      arquivo_url: LIGEIRINHO_CONTRATO_CLIENT_PATH,
+      vigencia_inicio: LIGEIRINHO_CONTRATO.dataAssinaturaIso,
+      vigencia_fim: null,
+      visivel_cliente: true,
+      created_at: LIGEIRINHO_CONTRATO.dataAssinaturaIso,
+    };
+    return [estatico, ...contratos];
+  }, [clienteId, contratos, isLigeirinho]);
 
   const enviarSolicitacao = async (e: FormEvent) => {
     e.preventDefault();
@@ -355,11 +374,11 @@ export function ClientePortalPage() {
           <h2 className={styles.sectionTitle}>Contratos e arquivos</h2>
         </div>
 
-        {contratos.length === 0 ? (
+        {contratosVisiveis.length === 0 ? (
           <p className={styles.empty}>Documentos disponíveis aparecerão aqui quando forem publicados.</p>
         ) : (
           <div className={styles.docGrid}>
-            {contratos.map((c) => (
+            {contratosVisiveis.map((c) => (
               <article key={c.id} className={styles.docCard}>
                 <h3 className={styles.docTitle}>{c.titulo}</h3>
                 {c.descricao ? <p className={styles.docDesc}>{c.descricao}</p> : null}
@@ -369,7 +388,11 @@ export function ClientePortalPage() {
                     {[c.vigencia_inicio, c.vigencia_fim].filter(Boolean).map((d) => formatDate(d!)).join(' — ')}
                   </p>
                 )}
-                {c.arquivo_url ? (
+                {c.arquivo_url?.startsWith('/cliente') ? (
+                  <Link className={styles.docLink} to={c.arquivo_url}>
+                    Ver documento
+                  </Link>
+                ) : c.arquivo_url ? (
                   <a className={styles.docLink} href={c.arquivo_url} target="_blank" rel="noopener noreferrer">
                     Abrir documento
                   </a>
