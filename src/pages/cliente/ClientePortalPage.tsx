@@ -1,6 +1,12 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
+import { ClientePortalQuickNav } from '../../components/cliente/ClientePortalQuickNav';
+import { ClienteStatusDiario } from '../../components/cliente/ClienteStatusDiario';
 import { useAuth } from '../../contexts/AuthContext';
+import {
+  CLIENTE_PORTAL_NAV,
+  CLIENTE_PORTAL_NAV_LIGEIRINHO,
+} from '../../lib/clientePortalNav';
 import { clienteLogoUrl } from '../../lib/vaultClientes';
 import {
   ATUALIZACAO_TIPO_LABEL,
@@ -23,7 +29,11 @@ import {
 } from '../../lib/clientePortal';
 import { LIGEIRINHO_CONTRATO, LIGEIRINHO_CONTRATO_CLIENT_PATH } from '../../lib/ligeirinhoDocumentacao';
 import { LIGEIRINHO_JORNADA_MARCOS } from '../../lib/ligeirinhoJornadaCliente';
+import { LIGEIRINHO_STATUS_DIARIO } from '../../lib/ligeirinhoStatusDiario';
+import type { StatusDiarioEntry } from '../../lib/ligeirinhoStatusDiario';
 import { formatDate } from '../../lib/format';
+import { ClienteLigeirinhoPage } from './ClienteLigeirinhoPage';
+import { ClienteLigeirinhoParceirosPage } from './ClienteLigeirinhoParceirosPage';
 import type {
   HubClienteAtualizacao,
   HubClienteContrato,
@@ -80,6 +90,39 @@ export function ClientePortalPage() {
   useEffect(() => {
     void recarregar();
   }, [recarregar]);
+
+  useEffect(() => {
+    if (loading) return;
+    const hash = window.location.hash;
+    if (!hash) return;
+    const timer = window.setTimeout(() => {
+      document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
+    return () => window.clearTimeout(timer);
+  }, [loading]);
+
+  const portalNav = isLigeirinho ? CLIENTE_PORTAL_NAV_LIGEIRINHO : CLIENTE_PORTAL_NAV;
+
+  const statusDiarioGenerico = useMemo((): StatusDiarioEntry | null => {
+    if (isLigeirinho) return null;
+    const hoje = new Date();
+    const hojeIso = hoje.toISOString().slice(0, 10);
+    const doDia = atualizacoes.filter((a) => a.publicado_em.slice(0, 10) === hojeIso);
+    if (doDia.length === 0) return null;
+    return {
+      dataIso: hojeIso,
+      dataLabel: formatDate(hojeIso),
+      produto: 'Seu projeto',
+      titulo: 'O que mudou hoje',
+      secoes: [
+        {
+          id: 'hoje',
+          titulo: 'Atualizações publicadas hoje',
+          itens: doDia.map((a) => `${a.titulo} — ${a.mensagem}`),
+        },
+      ],
+    };
+  }, [atualizacoes, isLigeirinho]);
 
   const marcosExibicao = useMemo((): HubClienteMarco[] => {
     if (!isLigeirinho) return marcos;
@@ -198,38 +241,31 @@ export function ClientePortalPage() {
         </div>
       </section>
 
+      <ClientePortalQuickNav items={portalNav} />
+
       {isLigeirinho ? (
-        <section className={styles.ligeirinhoReports} aria-labelledby="ligeirinho-reports-title">
-          <div className={styles.ligeirinhoReportsHead}>
-            <p className={styles.sectionLabel}>Seus sistemas</p>
-            <h2 id="ligeirinho-reports-title" className={styles.sectionTitle}>
-              Relatórios Ligeirinho
-            </h2>
-            <p className={styles.sectionDesc}>
-              Dois produtos, dois relatórios — Hub para operação interna e Parceiros para a loja online.
-            </p>
+        <ClienteStatusDiario entry={LIGEIRINHO_STATUS_DIARIO} />
+      ) : statusDiarioGenerico ? (
+        <ClienteStatusDiario entry={statusDiarioGenerico} />
+      ) : null}
+
+      {isLigeirinho ? (
+        <>
+          <div id="hub" className={styles.reportAnchor}>
+            <div className={styles.reportSectionHead}>
+              <p className={styles.sectionLabel}>Sistema central</p>
+              <h2 className={styles.sectionTitle}>Ligeirinho Hub</h2>
+            </div>
+            <ClienteLigeirinhoPage embedded idPrefix="hub" />
           </div>
-          <div className={styles.ligeirinhoReportsGrid}>
-            <article className={styles.ligeirinhoReportCard}>
-              <h3 className={styles.ligeirinhoReportTitle}>Ligeirinho Hub</h3>
-              <p className={styles.ligeirinhoReportDesc}>
-                PDV, fila, cadastros, marketing com IA e administração da operação.
-              </p>
-              <Link to="/cliente/ligeirinho" className={styles.ligeirinhoCtaBtn}>
-                Ver relatório Hub
-              </Link>
-            </article>
-            <article className={`${styles.ligeirinhoReportCard} ${styles.ligeirinhoReportCardParceiros}`}>
-              <h3 className={styles.ligeirinhoReportTitle}>Ligeirinho Parceiros</h3>
-              <p className={styles.ligeirinhoReportDesc}>
-                App de pedidos online — catálogo, login, Mercado Pago e jornada do cliente final.
-              </p>
-              <Link to="/cliente/ligeirinho-parceiros" className={styles.ligeirinhoCtaBtn}>
-                Ver relatório Parceiros
-              </Link>
-            </article>
+          <div id="parceiros" className={styles.reportAnchor}>
+            <div className={styles.reportSectionHead}>
+              <p className={styles.sectionLabel}>Loja online</p>
+              <h2 className={styles.sectionTitle}>Ligeirinho Parceiros</h2>
+            </div>
+            <ClienteLigeirinhoParceirosPage embedded idPrefix="parceiros" />
           </div>
-        </section>
+        </>
       ) : null}
 
       {projetoAtivo ? (
@@ -292,9 +328,15 @@ export function ClientePortalPage() {
 
       <section id="novidades" className={styles.section}>
         <div className={styles.sectionHead}>
-          <p className={styles.sectionLabel}>Novidades</p>
-          <h2 className={styles.sectionTitle}>O que mudou recentemente</h2>
-          <p className={styles.sectionDesc}>Atualizações constantes para você acompanhar sem precisar perguntar.</p>
+          <p className={styles.sectionLabel}>{isLigeirinho ? 'Histórico' : 'Novidades'}</p>
+          <h2 className={styles.sectionTitle}>
+            {isLigeirinho ? 'Tudo que já publicamos' : 'O que mudou recentemente'}
+          </h2>
+          <p className={styles.sectionDesc}>
+            {isLigeirinho
+              ? 'Arquivo de entregas e comunicados — o resumo do dia está em “Hoje”.'
+              : 'Atualizações constantes para você acompanhar sem precisar perguntar.'}
+          </p>
         </div>
 
         {atualizacoes.length === 0 ? (

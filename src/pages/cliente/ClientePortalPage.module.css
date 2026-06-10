@@ -681,6 +681,23 @@
   }
 }
 
+.reportAnchor {
+  scroll-margin-top: 6.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.reportSectionHead {
+  padding: 0 0.15rem;
+}
+
+.reportAnchor + .reportAnchor {
+  margin-top: 0.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--cl-border, rgba(10, 10, 10, 0.08));
+}
+
 .ligeirinhoReports {
   display: flex;
   flex-direction: column;

@@ -1,0 +1,35 @@
+.nav {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding: 0.15rem 0 0.35rem;
+  scrollbar-width: none;
+}
+
+.nav::-webkit-scrollbar {
+  display: none;
+}
+
+.pill {
+  flex-shrink: 0;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--cl-border, rgba(10, 10, 10, 0.1));
+  background: var(--cl-surface, #fff);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--cl-muted, #4a4a4a);
+  text-decoration: none;
+  transition:
+    transform 0.15s ease,
+    border-color 0.2s,
+    color 0.2s,
+    box-shadow 0.2s;
+}
+
+.pill:hover {
+  transform: translateY(-1px);
+  border-color: rgba(37, 99, 235, 0.35);
+  color: var(--cl-royal, #2563eb);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+}

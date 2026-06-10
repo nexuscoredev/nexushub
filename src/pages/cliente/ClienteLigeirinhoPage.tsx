@@ -14,9 +14,16 @@ import {
 import { systemLogoUrl } from '../../lib/systemLogos';
 import { ClienteLigeirinhoReport } from './ClienteLigeirinhoReport';
 
-export function ClienteLigeirinhoPage() {
+interface ClienteLigeirinhoPageProps {
+  embedded?: boolean;
+  idPrefix?: string;
+}
+
+export function ClienteLigeirinhoPage({ embedded, idPrefix }: ClienteLigeirinhoPageProps = {}) {
   return (
     <ClienteLigeirinhoReport
+      embedded={embedded}
+      idPrefix={idPrefix}
       variant="hub"
       pageTitle="Ligeirinho Hub"
       pageSubtitle="Relatório de atividades · sistema central da operação"
@@ -48,7 +55,11 @@ export function ClienteLigeirinhoPage() {
       ctaText="Hub para operação interna; loja online para pedidos do cliente final."
       ctaPrimaryLabel="Abrir Ligeirinho Hub"
       ctaSecondary={{ href: LIGEIRINHO_LOJA_URL, label: 'Loja online (Parceiros)' }}
-      otherReport={{ to: '/cliente/ligeirinho-parceiros', label: 'Relatório Parceiros' }}
+      otherReport={
+        embedded
+          ? { to: '#parceiros', label: 'Relatório Parceiros' }
+          : { to: '/cliente/ligeirinho-parceiros', label: 'Relatório Parceiros' }
+      }
     />
   );
 }

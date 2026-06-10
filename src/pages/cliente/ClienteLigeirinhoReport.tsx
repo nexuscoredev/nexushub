@@ -58,6 +58,8 @@ export interface ClienteLigeirinhoReportProps {
   ctaPrimaryLabel: string;
   ctaSecondary?: { href?: string; to?: string; label: string };
   otherReport?: { to: string; label: string };
+  embedded?: boolean;
+  idPrefix?: string;
 }
 
 function deliveryStatusClass(status: ReportDeliveryStatus): string {
@@ -92,13 +94,22 @@ export function ClienteLigeirinhoReport({
   ctaPrimaryLabel,
   ctaSecondary,
   otherReport,
+  embedded,
+  idPrefix = '',
 }: ClienteLigeirinhoReportProps) {
   const doneCount = deliveries.filter((d) => d.status === 'done').length;
   const progressPct = Math.round((doneCount / deliveries.length) * 100);
-  const pageClass = variant === 'parceiros' ? `${styles.page} ${styles.pageParceiros}` : styles.page;
+  const pageClass = [
+    variant === 'parceiros' ? `${styles.page} ${styles.pageParceiros}` : styles.page,
+    embedded ? styles.pageEmbedded : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+  const sid = (base: string) => (idPrefix ? `${idPrefix}-${base}` : base);
 
   return (
     <div className={pageClass}>
+      {!embedded ? (
       <header className={styles.pageHead}>
         <div>
           <p className={styles.pageEyebrow}>Seu sistema</p>
@@ -119,6 +130,7 @@ export function ClienteLigeirinhoReport({
           ) : null}
         </div>
       </header>
+      ) : null}
 
       <section className={styles.hero} aria-labelledby="ligeirinho-hero-title">
         <div className={styles.heroContent}>
@@ -182,7 +194,7 @@ export function ClienteLigeirinhoReport({
         </div>
       </section>
 
-      <section id="pronto" className={styles.section}>
+      <section id={sid('pronto')} className={styles.section}>
         <div className={styles.sectionHead}>
           <p className={styles.sectionLabel}>Capacidades</p>
           <h2 className={styles.sectionTitle}>O que já está pronto</h2>
@@ -206,7 +218,7 @@ export function ClienteLigeirinhoReport({
         </div>
       </section>
 
-      <section id="entregas" className={styles.section}>
+      <section id={sid('entregas')} className={styles.section}>
         <div className={styles.sectionHead}>
           <p className={styles.sectionLabel}>Período recente</p>
           <h2 className={styles.sectionTitle}>Relatório de atividades</h2>
@@ -243,7 +255,7 @@ export function ClienteLigeirinhoReport({
       </section>
 
       {flowSection ? (
-        <section id={flowSection.id} className={styles.section}>
+        <section id={sid(flowSection.id)} className={styles.section}>
           <div className={styles.sectionHead}>
             <p className={styles.sectionLabel}>{flowSection.label}</p>
             <h2 className={styles.sectionTitle}>{flowSection.title}</h2>
@@ -262,7 +274,7 @@ export function ClienteLigeirinhoReport({
       ) : null}
 
       {nextStepsSection ? (
-        <section id="proximos" className={styles.section}>
+        <section id={sid('proximos')} className={styles.section}>
           <div className={styles.sectionHead}>
             <p className={styles.sectionLabel}>{nextStepsSection.label}</p>
             <h2 className={styles.sectionTitle}>{nextStepsSection.title}</h2>
@@ -280,7 +292,7 @@ export function ClienteLigeirinhoReport({
         </section>
       ) : null}
 
-      <section id="atencao" className={styles.section}>
+      <section id={sid('atencao')} className={styles.section}>
         <div className={styles.sectionHead}>
           <p className={styles.sectionLabel}>Transparência</p>
           <h2 className={styles.sectionTitle}>Pontos de atenção</h2>
@@ -314,9 +326,15 @@ export function ClienteLigeirinhoReport({
             </a>
           ) : null}
           {ctaSecondary?.to ? (
-            <Link to={ctaSecondary.to} className={styles.btnGhost}>
-              {ctaSecondary.label}
-            </Link>
+            embedded ? (
+              <a href={ctaSecondary.to} className={styles.btnGhost}>
+                {ctaSecondary.label}
+              </a>
+            ) : (
+              <Link to={ctaSecondary.to} className={styles.btnGhost}>
+                {ctaSecondary.label}
+              </Link>
+            )
           ) : null}
         </div>
       </section>

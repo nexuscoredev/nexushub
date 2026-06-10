@@ -5,6 +5,10 @@
   scroll-behavior: smooth;
 }
 
+.pageEmbedded {
+  gap: 1.5rem;
+}
+
 .pageParceiros .pageEyebrow {
   color: #a16207;
 }

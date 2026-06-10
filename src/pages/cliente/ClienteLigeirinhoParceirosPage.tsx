@@ -12,9 +12,16 @@ import {
 import { LIGEIRINHO_HUB_URL } from '../../lib/ligeirinhoProject';
 import { ClienteLigeirinhoReport } from './ClienteLigeirinhoReport';
 
-export function ClienteLigeirinhoParceirosPage() {
+interface ClienteLigeirinhoParceirosPageProps {
+  embedded?: boolean;
+  idPrefix?: string;
+}
+
+export function ClienteLigeirinhoParceirosPage({ embedded, idPrefix }: ClienteLigeirinhoParceirosPageProps = {}) {
   return (
     <ClienteLigeirinhoReport
+      embedded={embedded}
+      idPrefix={idPrefix}
       variant="parceiros"
       pageTitle="Ligeirinho Parceiros"
       pageSubtitle="Relatório de atividades · app de pedidos online"
@@ -47,7 +54,11 @@ export function ClienteLigeirinhoParceirosPage() {
       ctaText="Acesse a loja publicada, teste no celular e instale na tela inicial como PWA."
       ctaPrimaryLabel="Abrir loja ao vivo"
       ctaSecondary={{ href: LIGEIRINHO_HUB_URL, label: 'Ligeirinho Hub (operação)' }}
-      otherReport={{ to: '/cliente/ligeirinho', label: 'Relatório Hub' }}
+      otherReport={
+        embedded
+          ? { to: '#hub', label: 'Relatório Hub' }
+          : { to: '/cliente/ligeirinho', label: 'Relatório Hub' }
+      }
     />
   );
 }
