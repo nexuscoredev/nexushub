@@ -5,6 +5,8 @@ import { formatBRL } from '../lib/format';
 import {
 
   GRUPO_VISUAL,
+  formatContaTitulo,
+  isPhotoIcon,
 
   itemIcon,
 
@@ -350,10 +352,15 @@ export function PersonalContasFixasView({
 
                 <div className={styles.grupoHeadTop}>
 
-                  <div className={styles.grupoIconWrap}>
-
-                    <img src={visual.icon} alt="" className={styles.grupoIcon} aria-hidden />
-
+                  <div
+                    className={`${styles.grupoIconWrap} ${visual.photo ? styles.grupoIconWrapPhoto : ''}`}
+                  >
+                    <img
+                      src={visual.icon}
+                      alt=""
+                      className={`${styles.grupoIcon} ${visual.photo ? styles.grupoIconPhoto : ''}`}
+                      aria-hidden
+                    />
                   </div>
 
                   <div className={styles.grupoMeta}>
@@ -494,17 +501,22 @@ export function PersonalContasFixasView({
 
 
 
-                        <div className={styles.itemIconWrap}>
-
-                          <img src={icon} alt="" className={styles.itemIcon} aria-hidden />
-
+                        <div
+                          className={`${styles.itemIconWrap} ${isPhotoIcon(icon) ? styles.itemIconWrapPhoto : ''}`}
+                        >
+                          <img
+                            src={icon}
+                            alt=""
+                            className={`${styles.itemIcon} ${isPhotoIcon(icon) ? styles.itemIconPhoto : ''}`}
+                            aria-hidden
+                          />
                         </div>
 
 
 
                         <div className={styles.itemMain}>
 
-                          <span className={styles.itemTitle}>{row.descricao}</span>
+                          <span className={styles.itemTitle}>{formatContaTitulo(row.descricao)}</span>
 
                           <span className={styles.itemMeta}>
 
@@ -518,7 +530,7 @@ export function PersonalContasFixasView({
 
                               >
 
-                                {provider.abbr}
+                                {provider.label}
 
                               </span>
 
@@ -604,7 +616,12 @@ export function PersonalContasFixasView({
 
                 <div className={styles.emptyState}>
 
-                  <img src={visual.icon} alt="" className={styles.emptyIcon} aria-hidden />
+                  <img
+                    src={visual.icon}
+                    alt=""
+                    className={`${styles.emptyIcon} ${visual.photo ? styles.emptyIconPhoto : ''}`}
+                    aria-hidden
+                  />
 
                   <p className={styles.empty}>Nenhuma conta neste grupo ainda.</p>
 

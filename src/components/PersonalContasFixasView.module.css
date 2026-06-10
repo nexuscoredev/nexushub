@@ -227,6 +227,19 @@
   object-fit: contain;
 }
 
+.grupoIconWrapPhoto {
+  padding: 0;
+  overflow: hidden;
+  background: #0c0c0c;
+}
+
+.grupoIconPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 52% 58%;
+}
+
 .grupoMeta {
   grid-area: meta;
   min-width: 0;
@@ -440,6 +453,19 @@
   object-fit: contain;
 }
 
+.itemIconWrapPhoto {
+  padding: 0;
+  overflow: hidden;
+  background: #0c0c0c;
+}
+
+.itemIconPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 52% 58%;
+}
+
 .itemMain {
   grid-area: main;
   min-width: 0;
@@ -449,11 +475,15 @@
 }
 
 .itemTitle {
-  font-size: 0.86rem;
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
   color: var(--text);
-  line-height: 1.3;
+  line-height: 1.28;
   overflow-wrap: anywhere;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 .itemMeta {
@@ -472,6 +502,15 @@
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.02em;
+}
+
+.providerChip {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  padding: 0.16rem 0.55rem;
+  white-space: nowrap;
 }
 
 .diaChip,
@@ -539,6 +578,14 @@
   width: 2.5rem;
   height: 2.5rem;
   opacity: 0.45;
+  object-fit: contain;
+}
+
+.emptyIconPhoto {
+  border-radius: 12px;
+  object-fit: cover;
+  object-position: 52% 58%;
+  opacity: 0.7;
 }
 
 .empty {

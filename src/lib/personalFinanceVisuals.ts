@@ -1,11 +1,18 @@
 import type { HubPersonalContaGrupo, HubPersonalTransaction } from '../types/database';
 
+export const CARRO_ICON = '/img/personal/pulse-carro.png';
+
 export type PersonalGrupoVisual = {
   icon: string;
   accent: string;
   glow: string;
   label: string;
+  photo?: boolean;
 };
+
+export function isPhotoIcon(icon: string): boolean {
+  return icon === CARRO_ICON;
+}
 
 export const GRUPO_VISUAL: Record<HubPersonalContaGrupo, PersonalGrupoVisual> = {
   residencial: {
@@ -15,10 +22,11 @@ export const GRUPO_VISUAL: Record<HubPersonalContaGrupo, PersonalGrupoVisual> = 
     label: 'Casa & moradia',
   },
   carro: {
-    icon: '/img/personal/grupo-carro.svg',
+    icon: CARRO_ICON,
+    photo: true,
     accent: '#a78bfa',
     glow: 'rgba(167, 139, 250, 0.22)',
-    label: 'Carro & mobilidade',
+    label: 'Fiat Pulse',
   },
   gastos_fixos: {
     icon: '/img/personal/grupo-fixos.svg',
@@ -35,18 +43,44 @@ export const GRUPO_VISUAL: Record<HubPersonalContaGrupo, PersonalGrupoVisual> = 
 };
 
 export type ProviderVisual = {
-  abbr: string;
+  label: string;
   color: string;
   bg: string;
 };
 
 const PROVIDERS: Record<string, ProviderVisual> = {
-  nubank: { abbr: 'Nu', color: '#fff', bg: '#820ad1' },
-  'mercado pago': { abbr: 'MP', color: '#fff', bg: '#009ee3' },
-  stellantis: { abbr: 'St', color: '#fff', bg: '#1e3a5f' },
-  detran: { abbr: 'DT', color: '#fff', bg: '#2563eb' },
-  vr: { abbr: 'VR', color: '#fff', bg: '#059669' },
+  nubank: { label: 'Nubank', color: '#fff', bg: '#820ad1' },
+  'mercado pago': { label: 'Mercado Pago', color: '#fff', bg: '#009ee3' },
+  stellantis: { label: 'Stellantis', color: '#fff', bg: '#1e3a5f' },
+  detran: { label: 'Detran', color: '#fff', bg: '#2563eb' },
+  vr: { label: 'VR Benefícios', color: '#fff', bg: '#059669' },
 };
+
+const CONTA_TITULO_OVERRIDES: Record<string, string> = {
+  'sem parar': 'Sem Parar',
+  ipva: 'IPVA',
+};
+
+const TITULO_PALAVRAS_MINUSCULAS = new Set(['da', 'de', 'do', 'dos', 'das', 'e']);
+
+/** Exibe título da conta com capitalização adequada (ex.: Sem Parar). */
+export function formatContaTitulo(descricao: string): string {
+  const trimmed = descricao.trim();
+  if (!trimmed) return trimmed;
+
+  const key = trimmed.toLowerCase();
+  if (CONTA_TITULO_OVERRIDES[key]) return CONTA_TITULO_OVERRIDES[key];
+
+  return trimmed
+    .split(/\s+/)
+    .map((word, index) => {
+      const lower = word.toLowerCase();
+      if (index > 0 && TITULO_PALAVRAS_MINUSCULAS.has(lower)) return lower;
+      if (lower === 'ipva') return 'IPVA';
+      return lower.charAt(0).toUpperCase() + lower.slice(1);
+    })
+    .join(' ');
+}
 
 export function providerVisual(notes: string | null | undefined): ProviderVisual | null {
   if (!notes?.trim()) return null;
@@ -57,7 +91,7 @@ export function providerVisual(notes: string | null | undefined): ProviderVisual
 export function itemIcon(descricao: string, categoria: string | null): string {
   const d = descricao.toLowerCase();
   if (d.includes('carro') || d.includes('ipva') || d.includes('gasolina') || d.includes('seguro') || d.includes('sem parar') || categoria === 'transporte') {
-    return '/img/personal/grupo-carro.svg';
+    return CARRO_ICON;
   }
   if (d.includes('faculdade') || d.includes('mayara') || categoria === 'educacao') {
     return '/img/finance/mensalidade.svg';

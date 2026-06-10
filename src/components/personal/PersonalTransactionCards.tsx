@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { formatBRL, formatDate } from '../../lib/format';
 import { formatMonthLabel } from '../../lib/personalFinanceMonth';
 import { categoriaPessoalLabel } from '../../lib/pessoal';
-import { itemIcon } from '../../lib/personalFinanceVisuals';
+import { formatContaTitulo, itemIcon } from '../../lib/personalFinanceVisuals';
 import {
   deletePersonalRow,
   PersonalCrudBar,
@@ -79,7 +79,7 @@ export function PersonalTransactionCards({
               aria-hidden
             />
             <div className={styles.cardBody}>
-              <span className={styles.cardTitle}>{row.descricao}</span>
+              <span className={styles.cardTitle}>{formatContaTitulo(row.descricao)}</span>
               <span className={styles.cardMeta}>
                 {categoriaPessoalLabel(row.categoria)} · {formatDate(row.data_referencia)}
                 {row.notas ? ` · ${row.notas}` : ''}
