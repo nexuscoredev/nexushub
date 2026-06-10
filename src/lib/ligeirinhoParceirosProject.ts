@@ -113,6 +113,22 @@ export const LIGEIRINHO_PARCEIROS_ATTENTION_POINTS = [
   },
 ];
 
+/** Versão Nexus Client — sem detalhes internos de custo/plataforma */
+export const LIGEIRINHO_PARCEIROS_ATTENTION_CLIENTE = [
+  {
+    title: 'Cadastro por telefone',
+    text: 'O cliente informa nome e celular no pedido. Não há confirmação por SMS — a identificação é feita com os dados informados.',
+  },
+  {
+    title: 'Entrar com Apple',
+    text: 'Previsto para uma fase futura do projeto.',
+  },
+  {
+    title: 'Atualizações no celular',
+    text: 'Após mudanças no app, pode ser necessário atualizar a página ou reabrir o atalho na tela inicial.',
+  },
+];
+
 export function parceirosDeliveryStatusLabel(status: ParceirosDeliveryStatus): string {
   if (status === 'done') return 'Concluído';
   return 'Pausado';

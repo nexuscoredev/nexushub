@@ -22,6 +22,7 @@ import {
   listarSolicitacoesCliente,
 } from '../../lib/clientePortal';
 import { LIGEIRINHO_CONTRATO, LIGEIRINHO_CONTRATO_CLIENT_PATH } from '../../lib/ligeirinhoDocumentacao';
+import { LIGEIRINHO_JORNADA_MARCOS } from '../../lib/ligeirinhoJornadaCliente';
 import { formatDate } from '../../lib/format';
 import type {
   HubClienteAtualizacao,
@@ -80,12 +81,29 @@ export function ClientePortalPage() {
     void recarregar();
   }, [recarregar]);
 
-  const progresso = useMemo(() => calcularProgressoGeral(marcos, processos), [marcos, processos]);
-  const etapaAtual = useMemo(() => marcoAtual(marcos), [marcos]);
+  const marcosExibicao = useMemo((): HubClienteMarco[] => {
+    if (!isLigeirinho) return marcos;
+    return LIGEIRINHO_JORNADA_MARCOS.map((m, index) => ({
+      id: `ligeirinho-jornada-${index}`,
+      cliente_id: clienteId ?? '',
+      titulo: m.titulo,
+      descricao: m.descricao,
+      fase_ordem: m.fase_ordem,
+      status: m.status,
+      visivel_cliente: true,
+      updated_at: '',
+    }));
+  }, [clienteId, isLigeirinho, marcos]);
+
+  const progresso = useMemo(
+    () => calcularProgressoGeral(marcosExibicao, processos),
+    [marcosExibicao, processos],
+  );
+  const etapaAtual = useMemo(() => marcoAtual(marcosExibicao), [marcosExibicao]);
   const projetoAtivo = useMemo(() => processoPrincipal(processos), [processos]);
   const boasVindas = useMemo(() => mensagemBoasVindas(clienteNome, progresso), [clienteNome, progresso]);
 
-  const marcosConcluidos = marcos.filter((m) => m.status === 'concluido').length;
+  const marcosConcluidos = marcosExibicao.filter((m) => m.status === 'concluido').length;
   const solicitacoesAbertas = solicitacoes.filter((s) => s.status === 'aberta' || s.status === 'em_analise').length;
 
   const contratosVisiveis = useMemo(() => {
@@ -247,11 +265,11 @@ export function ClientePortalPage() {
           </p>
         </div>
 
-        {marcos.length === 0 ? (
+        {marcosExibicao.length === 0 ? (
           <p className={styles.empty}>Em breve publicaremos as etapas do seu projeto aqui.</p>
         ) : (
           <ol className={styles.timeline}>
-            {marcos.map((marco, index) => (
+            {marcosExibicao.map((marco, index) => (
               <li
                 key={marco.id}
                 className={`${styles.timelineItem} ${styles[`timeline_${marco.status}`]}`}

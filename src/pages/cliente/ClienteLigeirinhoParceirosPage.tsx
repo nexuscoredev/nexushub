@@ -1,5 +1,5 @@
 import {
-  LIGEIRINHO_PARCEIROS_ATTENTION_POINTS,
+  LIGEIRINHO_PARCEIROS_ATTENTION_CLIENTE,
   LIGEIRINHO_PARCEIROS_CLIENT_FLOW,
   LIGEIRINHO_PARCEIROS_DELIVERIES,
   LIGEIRINHO_PARCEIROS_LOGO,
@@ -42,7 +42,7 @@ export function ClienteLigeirinhoParceirosPage() {
         desc: 'Fluxo real, do primeiro acesso até a confirmação do pedido.',
         steps: LIGEIRINHO_PARCEIROS_CLIENT_FLOW,
       }}
-      attentionPoints={LIGEIRINHO_PARCEIROS_ATTENTION_POINTS}
+      attentionPoints={LIGEIRINHO_PARCEIROS_ATTENTION_CLIENTE}
       ctaTitle="Ver o app funcionando"
       ctaText="Acesse a loja publicada, teste no celular e instale na tela inicial como PWA."
       ctaPrimaryLabel="Abrir loja ao vivo"

@@ -52,11 +52,8 @@ export function ClientPortalLayout() {
           <div className={styles.actions}>
             <ClientThemeToggle />
             <a href="/site/home.html" className={styles.actionBtn}>
-              Site
+              Site NEXUS
             </a>
-            <Link to="/login" className={styles.actionBtn} title="Equipe NEXUS">
-              NexusHub
-            </Link>
             <button type="button" className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} onClick={() => void handleSignOut()}>
               Sair
             </button>

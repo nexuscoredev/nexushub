@@ -55,5 +55,48 @@ export const LIGEIRINHO_CONTRATO_FASES = [
   { fase: 'Fase 4 (dias 36–45)', titulo: 'Homologação e Go-Live', descricao: 'Autorização de infraestrutura, domínios e ativação em produção.' },
 ] as const;
 
+/** Versão para o Nexus Client — sem jargão técnico interno */
+export const LIGEIRINHO_CONTRATO_MODULOS_CLIENTE = [
+  {
+    nome: 'Caixa da loja (PDV)',
+    descricao: 'Vendas rápidas no balcão, com busca de produtos, categorias e fechamento do pedido em tempo real.',
+  },
+  {
+    nome: 'Totem de autoatendimento',
+    descricao: 'Cliente escolhe produtos e combos no tablet da loja, com visual da marca Ligeirinho.',
+  },
+  {
+    nome: 'Painel da operação',
+    descricao: 'Equipe acompanha pedidos — novos, em preparação, em rota, entregues e concluídos no dia.',
+  },
+  {
+    nome: 'Entregas e integrações',
+    descricao: 'Organização das entregas e conexão com pedidos recebidos de parceiros, quando aplicável.',
+  },
+] as const;
+
+export const LIGEIRINHO_CONTRATO_FASES_CLIENTE = [
+  {
+    fase: 'Fase 1 (dias 1–12)',
+    titulo: 'Caixa e cadastros da loja',
+    descricao: 'Entendemos o fluxo da loja física e organizamos o PDV e o catálogo para o dia a dia.',
+  },
+  {
+    fase: 'Fase 2 (dias 13–24)',
+    titulo: 'Totem de autoatendimento',
+    descricao: 'Totem na loja com identidade visual da marca e combos prontos para o cliente.',
+  },
+  {
+    fase: 'Fase 3 (dias 25–35)',
+    titulo: 'Operação e entregas',
+    descricao: 'Painel da equipe para acompanhar cada pedido, do recebimento à entrega.',
+  },
+  {
+    fase: 'Fase 4 (dias 36–45)',
+    titulo: 'Validação e lançamento',
+    descricao: 'Testes com sua equipe, ajustes finais e início da operação assistida.',
+  },
+] as const;
+
 export const LIGEIRINHO_CONTRATO_CLIENT_PATH = '/cliente/documentacao/ligeirinho-contrato';
 export const LIGEIRINHO_CONTRATO_HUB_PATH = '/sistemas/ligeirinho/documentacao';
