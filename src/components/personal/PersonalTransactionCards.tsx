@@ -3,6 +3,8 @@ import { formatBRL, formatDate } from '../../lib/format';
 import { formatMonthLabel } from '../../lib/personalFinanceMonth';
 import { categoriaPessoalLabel } from '../../lib/pessoal';
 import { formatContaTitulo, itemIcon } from '../../lib/personalFinanceVisuals';
+import { PersonalFinanceConfirmModal } from './PersonalFinanceConfirmModal';
+import { PersonalFinanceModal } from './PersonalFinanceModal';
 import {
   deletePersonalRow,
   PersonalCrudBar,
@@ -31,9 +33,9 @@ export function PersonalTransactionCards({
   onSyncError,
 }: PersonalTransactionCardsProps) {
   const [editing, setEditing] = useState<HubPersonalTransaction | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<HubPersonalTransaction | null>(null);
 
   const handleDelete = async (row: HubPersonalTransaction) => {
-    if (!confirm('Excluir este lançamento?')) return;
     onRemove(row.id);
     const err = await deletePersonalRow(row.id);
     if (err) {
@@ -56,19 +58,6 @@ export function PersonalTransactionCards({
           else onSyncError();
         }}
       />
-      {editing && (
-        <PersonalRecordForm
-          recordId={editing.id}
-          initialValues={editing as unknown as Record<string, unknown>}
-          defaultDate={defaultDate}
-          onSaved={(row) => {
-            if (row) onUpsert(row);
-            setEditing(null);
-          }}
-          onCancel={() => setEditing(null)}
-        />
-      )}
-
       <ul className={styles.list}>
         {rows.map((row) => (
           <li key={row.id} className={`${styles.card} ${isEntrada ? styles.cardEntrada : styles.cardSaida}`}>
@@ -90,7 +79,7 @@ export function PersonalTransactionCards({
               <button type="button" className="btn-ghost" onClick={() => setEditing(row)}>
                 Editar
               </button>
-              <button type="button" className="btn-ghost" onClick={() => void handleDelete(row)}>
+              <button type="button" className="btn-ghost" onClick={() => setDeleteTarget(row)}>
                 Excluir
               </button>
             </div>
@@ -104,6 +93,42 @@ export function PersonalTransactionCards({
           <p className={styles.emptyHint}>Use o botão acima para adicionar.</p>
         </div>
       )}
+
+      <PersonalFinanceModal
+        open={editing !== null}
+        title={editing ? `Editar · ${formatContaTitulo(editing.descricao)}` : 'Editar lançamento'}
+        onClose={() => setEditing(null)}
+      >
+        {editing && (
+          <PersonalRecordForm
+            recordId={editing.id}
+            initialValues={editing as unknown as Record<string, unknown>}
+            defaultDate={defaultDate}
+            hideHeader
+            onSaved={(row) => {
+              if (row) onUpsert(row);
+              setEditing(null);
+            }}
+            onCancel={() => setEditing(null)}
+          />
+        )}
+      </PersonalFinanceModal>
+
+      <PersonalFinanceConfirmModal
+        open={deleteTarget !== null}
+        title="Excluir lançamento"
+        message={
+          deleteTarget
+            ? `Excluir "${formatContaTitulo(deleteTarget.descricao)}"? Esta ação não pode ser desfeita.`
+            : ''
+        }
+        confirmLabel="Excluir"
+        danger
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (deleteTarget) void handleDelete(deleteTarget);
+        }}
+      />
     </div>
   );
 }

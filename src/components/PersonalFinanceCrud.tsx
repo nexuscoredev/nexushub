@@ -1,4 +1,5 @@
 import { FormEvent, useState } from 'react';
+import { PersonalFinanceModal } from './personal/PersonalFinanceModal';
 import { PESSOAL_CATEGORIAS } from '../lib/pessoal';
 import { supabase, supabaseErrorMessage } from '../lib/supabase';
 import type { HubPersonalTipo, HubPersonalTransaction } from '../types/database';
@@ -29,6 +30,7 @@ interface PersonalRecordFormProps {
   defaultDate?: string;
   onSaved: (row?: HubPersonalTransaction) => void;
   onCancel?: () => void;
+  hideHeader?: boolean;
 }
 
 export function PersonalRecordForm({
@@ -38,6 +40,7 @@ export function PersonalRecordForm({
   defaultDate,
   onSaved,
   onCancel,
+  hideHeader,
 }: PersonalRecordFormProps) {
   const [error, setError] = useState<string | null>(null);
   const isEdit = Boolean(recordId);
@@ -88,9 +91,11 @@ export function PersonalRecordForm({
       style={{ marginBottom: '0.75rem', display: 'grid', gap: '0.75rem' }}
       onSubmit={handleSubmit}
     >
-      <h3 style={{ fontSize: '0.9rem', margin: 0 }}>
-        {isEdit ? 'Editar lançamento' : 'Novo lançamento'}
-      </h3>
+      {!hideHeader && (
+        <h3 style={{ fontSize: '0.9rem', margin: 0 }}>
+          {isEdit ? 'Editar lançamento' : 'Novo lançamento'}
+        </h3>
+      )}
 
       <div>
         <label className="label" htmlFor="pf-tipo">
@@ -202,26 +207,31 @@ interface PersonalCrudBarProps {
 
 export function PersonalCrudBar({ presetTipo, defaultDate, onSaved }: PersonalCrudBarProps) {
   const [open, setOpen] = useState(false);
+  const addLabel =
+    presetTipo === 'entrada' ? 'Adicionar receita' : presetTipo === 'saida' ? 'Adicionar gasto' : 'Adicionar lançamento';
+  const modalTitle =
+    presetTipo === 'entrada' ? 'Nova receita' : presetTipo === 'saida' ? 'Novo gasto' : 'Novo lançamento';
 
   return (
-    <div style={{ marginBottom: '1rem' }}>
-      <button type="button" className="btn-primary" onClick={() => setOpen(!open)}>
-        {open ? 'Cancelar' : 'Adicionar lançamento'}
-      </button>
-      {open && (
-        <div style={{ marginTop: '0.75rem' }}>
-          <PersonalRecordForm
-            presetTipo={presetTipo}
-            defaultDate={defaultDate}
-            onSaved={(row) => {
-              setOpen(false);
-              onSaved(row);
-            }}
-            onCancel={() => setOpen(false)}
-          />
-        </div>
-      )}
-    </div>
+    <>
+      <div style={{ marginBottom: '1rem' }}>
+        <button type="button" className="btn-primary" onClick={() => setOpen(true)}>
+          {addLabel}
+        </button>
+      </div>
+      <PersonalFinanceModal open={open} title={modalTitle} onClose={() => setOpen(false)}>
+        <PersonalRecordForm
+          presetTipo={presetTipo}
+          defaultDate={defaultDate}
+          hideHeader
+          onSaved={(row) => {
+            setOpen(false);
+            onSaved(row);
+          }}
+          onCancel={() => setOpen(false)}
+        />
+      </PersonalFinanceModal>
+    </>
   );
 }
 

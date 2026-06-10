@@ -45,6 +45,7 @@ interface PersonalContaFixaFormProps {
   defaultDate?: string;
   onSaved: (row: HubPersonalTransaction) => void;
   onCancel?: () => void;
+  hideHeader?: boolean;
 }
 
 export function PersonalContaFixaForm({
@@ -55,6 +56,7 @@ export function PersonalContaFixaForm({
   defaultDate,
   onSaved,
   onCancel,
+  hideHeader,
 }: PersonalContaFixaFormProps) {
   const [error, setError] = useState<string | null>(null);
   const isEdit = Boolean(recordId);
@@ -114,9 +116,11 @@ export function PersonalContaFixaForm({
 
   return (
     <form className="card personal-conta-form" onSubmit={handleSubmit}>
-      <h3 style={{ fontSize: '0.9rem', margin: 0 }}>
-        {isEdit ? 'Editar conta' : 'Nova conta'}
-      </h3>
+      {!hideHeader && (
+        <h3 style={{ fontSize: '0.9rem', margin: 0 }}>
+          {isEdit ? 'Editar conta' : 'Nova conta'}
+        </h3>
+      )}
       <input type="hidden" name="grupo" value={grupo} />
 
       <div>

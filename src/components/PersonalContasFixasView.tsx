@@ -18,6 +18,8 @@ import type { PessoalFinanceSummary } from '../lib/pessoalFinanceSummary';
 
 import {
 
+  grupoContaLabel,
+
   PESSOAL_CONTA_GRUPOS,
 
   VINICIUS_VR_MENSAL,
@@ -35,6 +37,9 @@ import {
   togglePersonalContaPago,
 
 } from './personal/PersonalContaFixaForm';
+
+import { PersonalFinanceConfirmModal } from './personal/PersonalFinanceConfirmModal';
+import { PersonalFinanceModal } from './personal/PersonalFinanceModal';
 
 import styles from './PersonalContasFixasView.module.css';
 
@@ -109,6 +114,8 @@ export function PersonalContasFixasView({
   const [addingGrupo, setAddingGrupo] = useState<HubPersonalContaGrupo | null>(null);
 
   const [editing, setEditing] = useState<HubPersonalTransaction | null>(null);
+
+  const [deleteTarget, setDeleteTarget] = useState<HubPersonalTransaction | null>(null);
 
 
 
@@ -187,23 +194,18 @@ export function PersonalContasFixasView({
 
 
   const handleDelete = async (row: HubPersonalTransaction) => {
-
-    if (!confirm(`Remover "${row.descricao}"?`)) return;
-
     onRemove(row.id);
-
     const err = await deletePersonalConta(row.id);
-
     if (err) {
-
       setError(err);
-
       onUpsert(row);
-
       onSyncError();
-
     }
+  };
 
+  const closeFormModal = () => {
+    setEditing(null);
+    setAddingGrupo(null);
   };
 
 
@@ -271,40 +273,6 @@ export function PersonalContasFixasView({
 
 
       {error && <div className="error-banner">{error}</div>}
-
-
-
-      {editing && (
-
-        <div className={styles.formPanel}>
-
-          <PersonalContaFixaForm
-
-            grupo={editing.grupo!}
-
-            rows={rows}
-
-            recordId={editing.id}
-
-            initialValues={editing}
-
-            defaultDate={defaultDate}
-
-            onSaved={(row) => {
-
-              onUpsert(row);
-
-              setEditing(null);
-
-            }}
-
-            onCancel={() => setEditing(null)}
-
-          />
-
-        </div>
-
-      )}
 
 
 
@@ -428,36 +396,6 @@ export function PersonalContasFixasView({
                 )}
 
               </header>
-
-
-
-              {addingGrupo === grupo.id && (
-
-                <div className={styles.formWrap}>
-
-                  <PersonalContaFixaForm
-
-                    grupo={grupo.id}
-
-                    rows={rows}
-
-                    defaultDate={defaultDate}
-
-                    onSaved={(row) => {
-
-                      onUpsert(row);
-
-                      setAddingGrupo(null);
-
-                    }}
-
-                    onCancel={() => setAddingGrupo(null)}
-
-                  />
-
-                </div>
-
-              )}
 
 
 
@@ -590,7 +528,7 @@ export function PersonalContasFixasView({
 
                             title="Remover"
 
-                            onClick={() => void handleDelete(row)}
+                            onClick={() => setDeleteTarget(row)}
 
                           >
 
@@ -612,7 +550,7 @@ export function PersonalContasFixasView({
 
 
 
-              {items.length === 0 && !addingGrupo && (
+              {items.length === 0 && (
 
                 <div className={styles.emptyState}>
 
@@ -631,31 +569,17 @@ export function PersonalContasFixasView({
 
 
 
-              {addingGrupo !== grupo.id && (
-
-                <button
-
-                  type="button"
-
-                  className={styles.addBtn}
-
-                  onClick={() => {
-
-                    setEditing(null);
-
-                    setAddingGrupo(grupo.id);
-
-                  }}
-
-                >
-
-                  <span className={styles.addBtnIcon} aria-hidden>+</span>
-
-                  Adicionar conta
-
-                </button>
-
-              )}
+              <button
+                type="button"
+                className={styles.addBtn}
+                onClick={() => {
+                  setEditing(null);
+                  setAddingGrupo(grupo.id);
+                }}
+              >
+                <span className={styles.addBtnIcon} aria-hidden>+</span>
+                Adicionar conta
+              </button>
 
             </section>
 
@@ -664,6 +588,64 @@ export function PersonalContasFixasView({
         })}
 
       </div>
+
+      <PersonalFinanceModal
+        open={editing !== null || addingGrupo !== null}
+        title={
+          editing
+            ? `Editar · ${formatContaTitulo(editing.descricao)}`
+            : addingGrupo
+              ? `Nova conta · ${grupoContaLabel(addingGrupo)}`
+              : 'Conta'
+        }
+        onClose={closeFormModal}
+      >
+        {editing ? (
+          <PersonalContaFixaForm
+            grupo={editing.grupo!}
+            rows={rows}
+            recordId={editing.id}
+            initialValues={editing}
+            defaultDate={defaultDate}
+            hideHeader
+            onSaved={(row) => {
+              onUpsert(row);
+              closeFormModal();
+            }}
+            onCancel={closeFormModal}
+          />
+        ) : (
+          addingGrupo && (
+            <PersonalContaFixaForm
+              grupo={addingGrupo}
+              rows={rows}
+              defaultDate={defaultDate}
+              hideHeader
+              onSaved={(row) => {
+                onUpsert(row);
+                closeFormModal();
+              }}
+              onCancel={closeFormModal}
+            />
+          )
+        )}
+      </PersonalFinanceModal>
+
+      <PersonalFinanceConfirmModal
+        open={deleteTarget !== null}
+        title="Remover conta"
+        message={
+          deleteTarget
+            ? `Remover "${formatContaTitulo(deleteTarget.descricao)}"? Esta ação não pode ser desfeita.`
+            : ''
+        }
+        confirmLabel="Remover"
+        danger
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (deleteTarget) void handleDelete(deleteTarget);
+        }}
+      />
 
     </div>
 
