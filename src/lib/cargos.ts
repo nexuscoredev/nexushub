@@ -20,3 +20,9 @@ export const CARGOS_PESSOAL: HubCargo[] = ['CEO', 'CTO'];
 export function podeAcessarPessoal(cargo: HubCargo | undefined): boolean {
   return cargo !== undefined && CARGOS_PESSOAL.includes(cargo);
 }
+
+export const CARGOS_DOCUMENTACAO: HubCargo[] = ['CEO', 'CTO'];
+
+export function podeAcessarDocumentacao(cargo: HubCargo | undefined): boolean {
+  return cargo !== undefined && CARGOS_DOCUMENTACAO.includes(cargo);
+}

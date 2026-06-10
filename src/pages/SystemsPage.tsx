@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PageHeader } from '../components/PageHeader';
+import { useAuth } from '../contexts/AuthContext';
 import { SystemCard } from '../components/SystemCard';
 import { LIGEIRINHO_CONTRATO, LIGEIRINHO_CONTRATO_HUB_PATH } from '../lib/ligeirinhoDocumentacao';
 import { supabase, supabaseErrorMessage } from '../lib/supabase';
@@ -8,6 +9,7 @@ import type { HubSystem } from '../types/database';
 import styles from './SystemsPage.module.css';
 
 export function SystemsPage() {
+  const { podeDocumentacao } = useAuth();
   const [systems, setSystems] = useState<HubSystem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +46,7 @@ export function SystemsPage() {
         ))}
       </div>
 
-      {systems.some((s) => s.id === 'ligeirinho') ? (
+      {podeDocumentacao && systems.some((s) => s.id === 'ligeirinho') ? (
         <section className={styles.docSection} aria-labelledby="ligeirinho-doc-title">
           <h2 id="ligeirinho-doc-title" className="section-heading">
             Documentação Ligeirinho

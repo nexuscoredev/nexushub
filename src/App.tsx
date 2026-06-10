@@ -49,7 +49,9 @@ export default function App() {
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/chat" element={<ChatPage />} />
               <Route path="/sistemas" element={<SystemsPage />} />
-              <Route path="/sistemas/ligeirinho/documentacao" element={<LigeirinhoDocumentacaoPage />} />
+              <Route element={<ProtectedRoute requireDocumentacao />}>
+                <Route path="/sistemas/ligeirinho/documentacao" element={<LigeirinhoDocumentacaoPage />} />
+              </Route>
               <Route path="/fila" element={<FilaPage />} />
               <Route path="/perfil" element={<ProfilePage />} />
               <Route path="/configuracoes" element={<SettingsPage />} />

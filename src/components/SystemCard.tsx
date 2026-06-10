@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import { resolveSystemUrl, systemDocPath, systemLogoUrl } from '../lib/systemLogos';
 import type { HubSystem } from '../types/database';
 import styles from './SystemCard.module.css';
@@ -10,9 +11,10 @@ interface SystemCardProps {
 }
 
 export function SystemCard({ system, variant = 'button' }: SystemCardProps) {
+  const { podeDocumentacao } = useAuth();
   const logo = systemLogoUrl(system.id);
   const href = resolveSystemUrl(system.id, system.url, system.nome);
-  const docPath = systemDocPath(system.id);
+  const docPath = podeDocumentacao ? systemDocPath(system.id) : null;
 
   const body = (
     <>
