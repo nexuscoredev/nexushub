@@ -21,7 +21,7 @@ export function LigeirinhoDocumentacaoPage() {
               rel="noopener noreferrer"
               className="btn-primary"
             >
-              Abrir PDF digitalizado
+              Ver contrato em tamanho real
             </a>
           </>
         }

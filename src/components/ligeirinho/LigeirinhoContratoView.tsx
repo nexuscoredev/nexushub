@@ -137,11 +137,23 @@ export function LigeirinhoContratoView({ theme = 'hub' }: LigeirinhoContratoView
             Valores, condições de pagamento e cláusulas completas constam no documento abaixo.
           </p>
         ) : null}
-        <div className={styles.pages}>
+        <p className={styles.pagesHint}>
+          Miniaturas para leitura rápida — clique na página para abrir em tamanho real.
+        </p>
+        <div className={styles.pagesGrid}>
           {c.paginas.map((pagina) => (
             <figure key={pagina.src} className={styles.pageCard}>
               <figcaption className={styles.pageLabel}>{pagina.label}</figcaption>
-              <img src={pagina.src} alt={pagina.alt} className={styles.pageImage} loading="lazy" />
+              <a
+                href={pagina.src}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.pageImageLink}
+                title="Abrir em tamanho real"
+              >
+                <img src={pagina.src} alt={pagina.alt} className={styles.pageImage} loading="lazy" />
+              </a>
+              <p className={styles.pageZoomHint}>Clique para ampliar</p>
             </figure>
           ))}
         </div>

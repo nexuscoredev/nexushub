@@ -24,7 +24,7 @@ export function ClienteLigeirinhoDocumentacaoPage() {
             rel="noopener noreferrer"
             className={styles.btnPrimary}
           >
-            Abrir imagem
+            Ver em tamanho real
           </a>
         </div>
       </header>

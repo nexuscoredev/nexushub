@@ -18,12 +18,13 @@
   margin: 0;
   font-size: 1.05rem;
   font-weight: 700;
+  color: var(--text, #f5f5f5);
 }
 
 .summarySub {
   margin: 0.35rem 0 0;
   font-size: 0.84rem;
-  color: var(--muted);
+  color: var(--muted, #a3a3a3);
 }
 
 .metaGrid {
@@ -36,8 +37,8 @@
 .metaCard {
   padding: 0.85rem 1rem;
   border-radius: 10px;
-  border: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  background: var(--surface-elevated, rgba(28, 28, 28, 0.95));
 }
 
 .metaLabel {
@@ -46,13 +47,14 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--muted, #a3a3a3);
 }
 
 .metaValue {
   margin: 0.35rem 0 0;
   font-size: 0.86rem;
   line-height: 1.5;
+  color: var(--text, #f5f5f5);
 }
 
 .section {
@@ -67,13 +69,14 @@
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #b45309;
+  color: #ca8a04;
 }
 
 .sectionTitle {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 700;
+  color: var(--text, #f5f5f5);
 }
 
 .moduleGrid {
@@ -85,21 +88,22 @@
 .moduleCard {
   padding: 0.9rem 1rem;
   border-radius: 10px;
-  border: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  background: var(--surface-elevated, rgba(28, 28, 28, 0.95));
 }
 
 .moduleName {
   margin: 0;
   font-size: 0.88rem;
   font-weight: 700;
+  color: var(--text, #f5f5f5);
 }
 
 .moduleDesc {
   margin: 0.4rem 0 0;
   font-size: 0.8rem;
   line-height: 1.55;
-  color: var(--muted);
+  color: var(--muted, #a3a3a3);
 }
 
 .phaseList {
@@ -114,8 +118,8 @@
 .phaseItem {
   padding: 0.85rem 1rem;
   border-radius: 10px;
-  border: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  background: var(--surface-elevated, rgba(28, 28, 28, 0.95));
 }
 
 .phaseTag {
@@ -125,33 +129,43 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #ca8a04;
+  color: #facc15;
 }
 
 .phaseTitle {
   margin: 0;
   font-size: 0.9rem;
   font-weight: 700;
+  color: var(--text, #f5f5f5);
 }
 
 .phaseDesc {
   margin: 0.35rem 0 0;
   font-size: 0.8rem;
   line-height: 1.5;
-  color: var(--muted);
+  color: var(--muted, #a3a3a3);
 }
 
-.pages {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+.pagesHint {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--muted, #a3a3a3);
+}
+
+.pagesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  max-width: 36rem;
 }
 
 .pageCard {
   border-radius: 12px;
-  border: 1px solid var(--border);
+  border: 1px solid #e5e5e5;
   overflow: hidden;
-  background: #fff;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .pageLabel {
@@ -161,43 +175,47 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #525252;
+  color: #404040;
   background: #f5f5f5;
   border-bottom: 1px solid #e5e5e5;
+}
+
+.pageImageLink {
+  display: flex;
+  justify-content: center;
+  padding: 0.75rem;
+  background: #fafafa;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.pageImageLink:hover {
+  background: #f0f0f0;
+}
+
+.pageImageLink:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: -2px;
 }
 
 .pageImage {
   display: block;
   width: 100%;
+  max-width: 15.5rem;
   height: auto;
+  border-radius: 4px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+  image-rendering: auto;
 }
 
-.clientTheme .summary {
-  border-color: rgba(250, 204, 21, 0.35);
-  background:
-    linear-gradient(135deg, rgba(250, 204, 21, 0.1), rgba(37, 99, 235, 0.04)),
-    var(--cl-surface, #fff);
-}
-
-.clientTheme .metaCard,
-.clientTheme .moduleCard,
-.clientTheme .phaseItem {
-  background: var(--cl-surface, #fff);
-  border-color: var(--cl-border, #e5e5e5);
-}
-
-.clientTheme .metaValue,
-.clientTheme .moduleDesc,
-.clientTheme .phaseDesc,
-.clientTheme .summarySub {
-  color: var(--cl-muted, #4a4a4a);
-}
-
-.clientTheme .sectionTitle,
-.clientTheme .summaryTitle,
-.clientTheme .moduleName,
-.clientTheme .phaseTitle {
-  color: var(--cl-text, #0a0a0a);
+.pageZoomHint {
+  margin: 0;
+  padding: 0.4rem 0.65rem 0.55rem;
+  font-size: 0.68rem;
+  font-weight: 500;
+  text-align: center;
+  color: #737373;
+  background: #fff;
 }
 
 .metaCardWide {
@@ -208,12 +226,67 @@
   margin: 0;
   font-size: 0.84rem;
   line-height: 1.55;
-  color: var(--cl-muted, #4a4a4a);
+  color: var(--muted, #a3a3a3);
+}
+
+/* Nexus Client — cartão claro com texto escuro fixo (legível no tema escuro) */
+.clientTheme {
+  color-scheme: light;
+  color: #1a1a1a;
+}
+
+.clientTheme .summary {
+  border-color: rgba(250, 204, 21, 0.35);
+  background:
+    linear-gradient(135deg, rgba(250, 204, 21, 0.12), rgba(37, 99, 235, 0.05)),
+    #fffbeb;
+}
+
+.clientTheme .summaryTitle,
+.clientTheme .sectionTitle,
+.clientTheme .moduleName,
+.clientTheme .phaseTitle,
+.clientTheme .metaValue {
+  color: #1a1a1a;
+}
+
+.clientTheme .summarySub,
+.clientTheme .moduleDesc,
+.clientTheme .phaseDesc,
+.clientTheme .docNote,
+.clientTheme .pagesHint {
+  color: #3f3f46;
+}
+
+.clientTheme .metaLabel {
+  color: #737373;
+}
+
+.clientTheme .sectionLabel {
+  color: #92400e;
+}
+
+.clientTheme .phaseTag {
+  color: #a16207;
+}
+
+.clientTheme .metaCard,
+.clientTheme .moduleCard,
+.clientTheme .phaseItem {
+  background: #ffffff;
+  border-color: #e5e5e5;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 @media (max-width: 720px) {
   .metaGrid,
   .moduleGrid {
     grid-template-columns: 1fr;
+  }
+
+  .pagesGrid {
+    grid-template-columns: 1fr;
+    max-width: 18rem;
+    margin: 0 auto;
   }
 }
