@@ -9,19 +9,74 @@
   color: #a16207;
 }
 
+/* Hero Parceiros: cartão sempre claro — texto escuro fixo (evita branco no dark mode) */
 .pageParceiros .hero {
-  border-color: rgba(247, 213, 60, 0.35);
+  color-scheme: light;
+  color: #1a1a1a;
+  border-color: rgba(161, 98, 7, 0.28);
   background:
-    radial-gradient(ellipse 90% 70% at 100% 0%, rgba(247, 213, 60, 0.16), transparent 55%),
-    linear-gradient(160deg, rgba(255, 251, 235, 0.9), rgba(255, 255, 255, 0.95));
+    radial-gradient(ellipse 90% 70% at 100% 0%, rgba(247, 213, 60, 0.22), transparent 55%),
+    linear-gradient(160deg, #fffbeb 0%, #ffffff 100%);
+  box-shadow: 0 8px 32px rgba(10, 10, 10, 0.08);
 }
 
 .pageParceiros .hero::before {
   background: linear-gradient(90deg, #f7d53c, #eab308, #fde047);
 }
 
+.pageParceiros .hero .eyebrow {
+  color: #92400e;
+}
+
+.pageParceiros .hero .heroTitle {
+  color: #1a1a1a;
+}
+
+.pageParceiros .hero .heroLead {
+  color: #3f3f46;
+}
+
+.pageParceiros .hero .heroMeta {
+  color: #52525b;
+}
+
+.pageParceiros .hero .siteLink {
+  color: #92400e;
+  font-weight: 600;
+}
+
+.pageParceiros .hero .siteLink:hover {
+  color: #78350f;
+}
+
+.pageParceiros .hero .stat {
+  background: #ffffff;
+  border-color: rgba(161, 98, 7, 0.22);
+  box-shadow: 0 1px 4px rgba(10, 10, 10, 0.05);
+}
+
+.pageParceiros .hero .statValue {
+  color: #a16207;
+}
+
+.pageParceiros .hero .statLabel {
+  color: #3f3f46;
+}
+
+.pageParceiros .heroVisual .heroStage {
+  color: #3f3f46;
+}
+
+.pageParceiros .heroVisual .heroStage strong {
+  color: #b45309;
+}
+
 .pageParceiros .progressRing {
-  --ring-color: #f7d53c;
+  background: conic-gradient(#f7d53c var(--progress), rgba(26, 26, 26, 0.08) var(--progress));
+}
+
+.pageParceiros .progressRingInner {
+  background: #ffffff;
 }
 
 .pageHead {
