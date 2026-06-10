@@ -87,31 +87,30 @@
   border: none;
   background: transparent;
   color: var(--text);
-  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.45;
   outline: none;
   resize: none;
+  padding-left: 0.85rem;
+  padding-right: 0.85rem;
 }
 
 .composerTitle {
-  padding: 0.65rem 0.85rem 0.45rem;
-  font-size: 0.92rem;
-  font-weight: 500;
+  padding-top: 0.65rem;
+  padding-bottom: 0.35rem;
 }
 
 .composerDescription {
-  padding: 0 0.85rem 0.65rem;
-  font-size: 0.82rem;
-  line-height: 1.45;
-  color: var(--muted);
-  min-height: 2.4rem;
+  padding-top: 0.35rem;
+  padding-bottom: 0.65rem;
+  min-height: 2.75rem;
 }
 
+.composerTitle::placeholder,
 .composerDescription::placeholder {
-  color: rgba(255, 255, 255, 0.28);
-}
-
-.composerTitle::placeholder {
   color: rgba(255, 255, 255, 0.35);
+  font-weight: 500;
 }
 
 .hint {
