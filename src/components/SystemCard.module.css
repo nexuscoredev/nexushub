@@ -41,9 +41,17 @@
   flex: 1;
 }
 
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  width: 100%;
+}
+
 .action {
   align-self: flex-start;
   font-size: 0.85rem;
+  min-height: 40px;
 }
 
 .linkCard {

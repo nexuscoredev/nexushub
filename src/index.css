@@ -244,6 +244,13 @@ textarea {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+@media (max-width: 899px) {
+  .input,
+  select.input {
+    font-size: 16px;
+  }
+}
+
 .input:focus {
   outline: none;
   border-color: var(--border-glow);
@@ -528,7 +535,7 @@ a:hover .brand-logo {
   min-height: 44px;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 720px) {
   .personal-conta-form {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
