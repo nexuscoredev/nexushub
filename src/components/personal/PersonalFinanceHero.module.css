@@ -76,6 +76,10 @@
   font-variant-numeric: tabular-nums;
 }
 
+.statHighlight {
+  font-size: 1.2rem;
+}
+
 .statNegative {
   color: #fca5a5;
 }

@@ -1,10 +1,10 @@
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { ClientThemeToggle } from '../components/client/ClientThemeToggle';
 import { HubLogo } from '../components/HubLogo';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './ClientPortalLayout.module.css';
 
-const NAV = [
+const PORTAL_NAV = [
   { href: '#inicio', label: 'Início' },
   { href: '#jornada', label: 'Jornada' },
   { href: '#novidades', label: 'Novidades' },
@@ -12,9 +12,19 @@ const NAV = [
   { href: '#documentos', label: 'Documentos' },
 ] as const;
 
+const LIGEIRINHO_NAV = [
+  { href: '#pronto', label: 'Pronto' },
+  { href: '#entregas', label: 'Entregas' },
+  { href: '#proximos', label: 'Próximos' },
+  { href: '#atencao', label: 'Atenção' },
+] as const;
+
 export function ClientPortalLayout() {
   const { clienteConta, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isLigeirinhoPage = location.pathname === '/cliente/ligeirinho';
+  const isLigeirinhoClient = clienteConta?.cliente?.slug === 'ligeirinho';
 
   const handleSignOut = async () => {
     await signOut();
@@ -43,11 +53,31 @@ export function ClientPortalLayout() {
           </div>
         </div>
         <nav className={styles.sectionNav} aria-label="Seções do painel">
-          {NAV.map((item) => (
-            <a key={item.href} href={item.href} className={styles.sectionLink}>
-              {item.label}
-            </a>
-          ))}
+          {isLigeirinhoPage ? (
+            <>
+              <Link to="/cliente" className={styles.sectionLink}>
+                Painel
+              </Link>
+              {LIGEIRINHO_NAV.map((item) => (
+                <a key={item.href} href={item.href} className={styles.sectionLink}>
+                  {item.label}
+                </a>
+              ))}
+            </>
+          ) : (
+            <>
+              {PORTAL_NAV.map((item) => (
+                <a key={item.href} href={item.href} className={styles.sectionLink}>
+                  {item.label}
+                </a>
+              ))}
+              {isLigeirinhoClient ? (
+                <Link to="/cliente/ligeirinho" className={styles.sectionLink}>
+                  Relatório
+                </Link>
+              ) : null}
+            </>
+          )}
         </nav>
       </header>
       <main className={styles.main}>

@@ -10,13 +10,13 @@ import { FilaPage } from './pages/FilaPage';
 import { FinanceiroPage } from './pages/FinanceiroPage';
 import { ClientProtectedRoute } from './components/ClientProtectedRoute';
 import { ClientPortalLayout } from './layouts/ClientPortalLayout';
+import { LigeirinhoClientRoute } from './components/LigeirinhoClientRoute';
 import { ClienteLoginPage } from './pages/cliente/ClienteLoginPage';
 import { ClientePortalPage } from './pages/cliente/ClientePortalPage';
 import { LoginPage } from './pages/LoginPage';
 import { SiteRedirectPage } from './pages/SiteRedirectPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { SettingsPage } from './pages/SettingsPage';
-import { LigeirinhoPage } from './pages/LigeirinhoPage';
 import { SystemsPage } from './pages/SystemsPage';
 import { UsersPage } from './pages/UsersPage';
 import { ChatPage } from './pages/ChatPage';
@@ -38,6 +38,7 @@ export default function App() {
           <Route element={<ClientProtectedRoute />}>
             <Route element={<ClientPortalLayout />}>
               <Route path="/cliente" element={<ClientePortalPage />} />
+              <Route path="/cliente/ligeirinho" element={<LigeirinhoClientRoute />} />
             </Route>
           </Route>
           <Route element={<ProtectedRoute />}>
@@ -45,7 +46,6 @@ export default function App() {
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/chat" element={<ChatPage />} />
               <Route path="/sistemas" element={<SystemsPage />} />
-              <Route path="/sistemas/ligeirinho" element={<LigeirinhoPage />} />
               <Route path="/fila" element={<FilaPage />} />
               <Route path="/perfil" element={<ProfilePage />} />
               <Route path="/configuracoes" element={<SettingsPage />} />

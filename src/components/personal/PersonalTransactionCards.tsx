@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { formatBRL, formatDate } from '../../lib/format';
+import { formatMonthLabel } from '../../lib/personalFinanceMonth';
 import { categoriaPessoalLabel } from '../../lib/pessoal';
 import { itemIcon } from '../../lib/personalFinanceVisuals';
 import {
@@ -13,6 +14,8 @@ import styles from './PersonalTransactionCards.module.css';
 interface PersonalTransactionCardsProps {
   rows: HubPersonalTransaction[];
   presetTipo: HubPersonalTipo;
+  defaultDate: string;
+  monthLabel: string;
   onUpsert: (row: HubPersonalTransaction) => void;
   onRemove: (id: string) => void;
   onSyncError: () => void;
@@ -21,6 +24,8 @@ interface PersonalTransactionCardsProps {
 export function PersonalTransactionCards({
   rows,
   presetTipo,
+  defaultDate,
+  monthLabel,
   onUpsert,
   onRemove,
   onSyncError,
@@ -39,11 +44,13 @@ export function PersonalTransactionCards({
   };
 
   const isEntrada = presetTipo === 'entrada';
+  const tipoLabel = isEntrada ? 'receita' : 'gasto';
 
   return (
     <div className={styles.wrap}>
       <PersonalCrudBar
         presetTipo={presetTipo}
+        defaultDate={defaultDate}
         onSaved={(row) => {
           if (row) onUpsert(row);
           else onSyncError();
@@ -53,6 +60,7 @@ export function PersonalTransactionCards({
         <PersonalRecordForm
           recordId={editing.id}
           initialValues={editing as unknown as Record<string, unknown>}
+          defaultDate={defaultDate}
           onSaved={(row) => {
             if (row) onUpsert(row);
             setEditing(null);
@@ -91,7 +99,10 @@ export function PersonalTransactionCards({
       </ul>
 
       {rows.length === 0 && (
-        <p className={styles.empty}>Nenhum lançamento ainda. Adicione o primeiro acima.</p>
+        <div className={styles.empty}>
+          <p>Nenhum {tipoLabel} em {formatMonthLabel(monthLabel)}.</p>
+          <p className={styles.emptyHint}>Use o botão acima para adicionar.</p>
+        </div>
       )}
     </div>
   );

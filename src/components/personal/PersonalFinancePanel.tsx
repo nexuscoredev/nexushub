@@ -1,10 +1,19 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { PersonalContasFixasView } from '../PersonalContasFixasView';
 import { usePersonalFinanceRows } from '../../hooks/usePersonalFinanceRows';
+import {
+  currentMonthKey,
+  defaultDateForMonth,
+  filterRowsForMonth,
+  parseMonthKey,
+} from '../../lib/personalFinanceMonth';
+import { buildPessoalFinanceSummary } from '../../lib/pessoalFinanceSummary';
 import { isViniciusPersonalFinance } from '../../lib/viniciusPersonalFinance';
 import type { HubPersonalTransaction } from '../../types/database';
 import { PersonalFinanceHero } from './PersonalFinanceHero';
 import { PersonalFinanceKpiGrid } from './PersonalFinanceKpiGrid';
+import { PersonalFinanceMonthPicker } from './PersonalFinanceMonthPicker';
 import { PersonalFinanceNav } from './PersonalFinanceNav';
 import { PersonalTransactionCards } from './PersonalTransactionCards';
 import styles from './PersonalFinancePanel.module.css';
@@ -28,19 +37,45 @@ const GENERIC_TABS = [
 
 export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
   const viniciusLayout = isViniciusPersonalFinance(userEmail);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [viniciusView, setViniciusView] = useState<ViniciusFinanceView>('contas');
   const [fluxo, setFluxo] = useState<'entrada' | 'saida'>('entrada');
 
+  const selectedMonth =
+    parseMonthKey(searchParams.get('mes')) ?? currentMonthKey();
+
+  const setSelectedMonth = useCallback(
+    (monthKey: string) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          next.set('financeiro', '1');
+          next.set('mes', monthKey);
+          return next;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
+
   const {
-    rows,
+    rows: allRows,
     loading,
     error,
-    summary,
     refresh,
     applyPatch,
     applyRemove,
     upsertRow,
   } = usePersonalFinanceRows();
+
+  const rows = useMemo(
+    () => filterRowsForMonth(allRows, selectedMonth),
+    [allRows, selectedMonth],
+  );
+
+  const summary = useMemo(() => buildPessoalFinanceSummary(rows), [rows]);
+  const defaultDate = defaultDateForMonth(selectedMonth);
 
   const handleUpsert = (row: HubPersonalTransaction) => {
     upsertRow(row);
@@ -56,7 +91,14 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
     <div className={styles.panel}>
       {error && <div className="error-banner">{error}</div>}
 
-      <PersonalFinanceHero summary={summary} loading={loading} />
+      <PersonalFinanceMonthPicker value={selectedMonth} onChange={setSelectedMonth} />
+
+      <PersonalFinanceHero
+        summary={summary}
+        loading={loading}
+        monthKey={selectedMonth}
+        viniciusLayout={viniciusLayout}
+      />
 
       <PersonalFinanceKpiGrid summary={summary} loading={loading} />
 
@@ -69,11 +111,12 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
           />
 
           {loading ? (
-            <p className={styles.loading}>Carregando seu painel…</p>
+            <p className={styles.loading}>Carregando…</p>
           ) : viniciusView === 'contas' ? (
             <PersonalContasFixasView
               rows={rows}
               summary={summary}
+              defaultDate={defaultDate}
               onUpsert={handleUpsert}
               onRemove={applyRemove}
               onPatch={applyPatch}
@@ -84,6 +127,8 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
               <PersonalTransactionCards
                 rows={viniciusView === 'receitas' ? entradas : saidasGenericas}
                 presetTipo={viniciusView === 'receitas' ? 'entrada' : 'saida'}
+                defaultDate={defaultDate}
+                monthLabel={selectedMonth}
                 onUpsert={handleUpsert}
                 onRemove={applyRemove}
                 onSyncError={refresh}
@@ -100,12 +145,14 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
           />
 
           {loading ? (
-            <p className={styles.loading}>Carregando seu painel…</p>
+            <p className={styles.loading}>Carregando…</p>
           ) : (
             <div className={styles.contentCard}>
               <PersonalTransactionCards
                 rows={fluxo === 'entrada' ? entradas : saidasGenericas}
                 presetTipo={fluxo}
+                defaultDate={defaultDate}
+                monthLabel={selectedMonth}
                 onUpsert={handleUpsert}
                 onRemove={applyRemove}
                 onSyncError={refresh}

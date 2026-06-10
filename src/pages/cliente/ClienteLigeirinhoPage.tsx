@@ -1,7 +1,6 @@
 import { type CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
-import { PageHeader } from '../components/PageHeader';
-import { systemLogoUrl } from '../lib/systemLogos';
+import { useAuth } from '../../contexts/AuthContext';
 import {
   deliveryStatusLabel,
   LIGEIRINHO_ATTENTION_POINTS,
@@ -12,37 +11,41 @@ import {
   LIGEIRINHO_READY_GROUPS,
   LIGEIRINHO_STATUS_DATE,
   LIGEIRINHO_SUMMARY,
-} from '../lib/ligeirinhoProject';
-import styles from './LigeirinhoPage.module.css';
+} from '../../lib/ligeirinhoProject';
+import { systemLogoUrl } from '../../lib/systemLogos';
+import { clienteLogoUrl } from '../../lib/vaultClientes';
+import styles from './ClienteLigeirinhoPage.module.css';
 
 const DONE_COUNT = LIGEIRINHO_DELIVERIES.filter((d) => d.status === 'done').length;
 
-export function LigeirinhoPage() {
-  const logo = systemLogoUrl('ligeirinho');
+export function ClienteLigeirinhoPage() {
+  const { clienteConta } = useAuth();
+  const logo = clienteConta?.cliente ? clienteLogoUrl(clienteConta.cliente) : null;
+  const brandLogo = logo ?? systemLogoUrl('ligeirinho');
   const progressPct = Math.round((DONE_COUNT / LIGEIRINHO_DELIVERIES.length) * 100);
 
   return (
     <div className={styles.page}>
-      <PageHeader
-        badge="Produto NEXUS"
-        title="Ligeirinho Hub"
-        subtitle="Relatório de atividades · sistema central da operação"
-        actions={
-          <>
-            <a
-              href={LIGEIRINHO_HUB_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary"
-            >
-              Abrir Ligeirinho Hub
-            </a>
-            <Link to="/sistemas" className="btn-ghost">
-              Todos os sistemas
-            </Link>
-          </>
-        }
-      />
+      <header className={styles.pageHead}>
+        <div>
+          <p className={styles.pageEyebrow}>Seu sistema</p>
+          <h1 className={styles.pageTitle}>Ligeirinho Hub</h1>
+          <p className={styles.pageSubtitle}>Relatório de atividades · sistema central da operação</p>
+        </div>
+        <div className={styles.pageActions}>
+          <a
+            href={LIGEIRINHO_HUB_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.btnPrimary}
+          >
+            Abrir Ligeirinho Hub
+          </a>
+          <Link to="/cliente" className={styles.btnGhost}>
+            Voltar ao painel
+          </Link>
+        </div>
+      </header>
 
       <section className={styles.hero} aria-labelledby="ligeirinho-hero-title">
         <div className={styles.heroContent}>
@@ -84,7 +87,7 @@ export function LigeirinhoPage() {
             style={{ '--progress': `${progressPct}%` } as CSSProperties}
           >
             <div className={styles.progressRingInner}>
-              <img src={logo} alt="" className={styles.brandLogo} />
+              <img src={brandLogo} alt="" className={styles.brandLogo} />
             </div>
           </div>
           <p className={styles.heroStage}>
@@ -229,7 +232,7 @@ export function LigeirinhoPage() {
             href={LIGEIRINHO_HUB_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className={`btn-primary ${styles.ctaBtn}`}
+            className={styles.btnPrimary}
           >
             Abrir ligeirinhohub.vercel.app
           </a>
@@ -237,7 +240,7 @@ export function LigeirinhoPage() {
             href={LIGEIRINHO_LOJA_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className={`btn-ghost ${styles.ctaBtn}`}
+            className={styles.btnGhost}
           >
             Loja online (Parceiros)
           </a>

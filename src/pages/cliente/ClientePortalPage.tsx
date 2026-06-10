@@ -1,4 +1,5 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { clienteLogoUrl } from '../../lib/vaultClientes';
 import {
@@ -34,6 +35,7 @@ export function ClientePortalPage() {
   const { user, clienteConta } = useAuth();
   const clienteId = clienteConta?.cliente_id;
   const clienteNome = clienteConta?.cliente?.nome ?? 'Cliente';
+  const isLigeirinho = clienteConta?.cliente?.slug === 'ligeirinho';
   const logoUrl = clienteConta?.cliente ? clienteLogoUrl(clienteConta.cliente) : null;
 
   const [processos, setProcessos] = useState<HubClienteProcesso[]>([]);
@@ -158,6 +160,23 @@ export function ClientePortalPage() {
           ) : null}
         </div>
       </section>
+
+      {isLigeirinho ? (
+        <section className={styles.ligeirinhoCta} aria-labelledby="ligeirinho-cta-title">
+          <div>
+            <p className={styles.sectionLabel}>Seu sistema</p>
+            <h2 id="ligeirinho-cta-title" className={styles.sectionTitle}>
+              Relatório Ligeirinho Hub
+            </h2>
+            <p className={styles.sectionDesc}>
+              Entregas recentes, próximos passos e pontos de atenção — tudo em linguagem clara.
+            </p>
+          </div>
+          <Link to="/cliente/ligeirinho" className={styles.ligeirinhoCtaBtn}>
+            Ver relatório completo
+          </Link>
+        </section>
+      ) : null}
 
       {projetoAtivo ? (
         <section className={styles.highlight} aria-labelledby="projeto-ativo-title">

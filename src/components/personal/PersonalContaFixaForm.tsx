@@ -42,6 +42,7 @@ interface PersonalContaFixaFormProps {
   rows: HubPersonalTransaction[];
   recordId?: string;
   initialValues?: Partial<HubPersonalTransaction>;
+  defaultDate?: string;
   onSaved: (row: HubPersonalTransaction) => void;
   onCancel?: () => void;
 }
@@ -51,6 +52,7 @@ export function PersonalContaFixaForm({
   rows,
   recordId,
   initialValues,
+  defaultDate,
   onSaved,
   onCancel,
 }: PersonalContaFixaFormProps) {
@@ -86,7 +88,7 @@ export function PersonalContaFixaForm({
     const row = {
       ...payload,
       user_id: userId,
-      data_referencia: new Date().toISOString().slice(0, 10),
+      data_referencia: defaultDate ?? new Date().toISOString().slice(0, 10),
       updated_at: new Date().toISOString(),
     };
 

@@ -26,6 +26,7 @@ interface PersonalRecordFormProps {
   recordId?: string;
   initialValues?: Record<string, unknown>;
   presetTipo?: HubPersonalTipo;
+  defaultDate?: string;
   onSaved: (row?: HubPersonalTransaction) => void;
   onCancel?: () => void;
 }
@@ -34,6 +35,7 @@ export function PersonalRecordForm({
   recordId,
   initialValues,
   presetTipo,
+  defaultDate,
   onSaved,
   onCancel,
 }: PersonalRecordFormProps) {
@@ -78,7 +80,7 @@ export function PersonalRecordForm({
   const defaultData =
     merged.data_referencia != null
       ? String(merged.data_referencia).slice(0, 10)
-      : new Date().toISOString().slice(0, 10);
+      : (defaultDate ?? new Date().toISOString().slice(0, 10));
 
   return (
     <form
@@ -194,10 +196,11 @@ export function PersonalRecordForm({
 
 interface PersonalCrudBarProps {
   presetTipo?: HubPersonalTipo;
+  defaultDate?: string;
   onSaved: (row?: HubPersonalTransaction) => void;
 }
 
-export function PersonalCrudBar({ presetTipo, onSaved }: PersonalCrudBarProps) {
+export function PersonalCrudBar({ presetTipo, defaultDate, onSaved }: PersonalCrudBarProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -209,6 +212,7 @@ export function PersonalCrudBar({ presetTipo, onSaved }: PersonalCrudBarProps) {
         <div style={{ marginTop: '0.75rem' }}>
           <PersonalRecordForm
             presetTipo={presetTipo}
+            defaultDate={defaultDate}
             onSaved={(row) => {
               setOpen(false);
               onSaved(row);

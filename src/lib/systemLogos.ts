@@ -65,11 +65,6 @@ const SYSTEM_URL_OVERRIDES: Record<string, string> = {
   ligeirinho: 'https://ligeirinhohub.vercel.app/',
 };
 
-/** Páginas de status/projeto dentro do Hub */
-export const SYSTEM_PROJECT_PAGES: Record<string, string> = {
-  ligeirinho: '/sistemas/ligeirinho',
-};
-
 export function resolveSystemUrl(systemId: string, url: string, nome?: string): string {
   if (SYSTEM_URL_OVERRIDES[systemId]) return SYSTEM_URL_OVERRIDES[systemId];
   const n = normalize(nome ?? '');

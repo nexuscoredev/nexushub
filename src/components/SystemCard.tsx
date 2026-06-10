@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom';
-import { resolveSystemUrl, SYSTEM_PROJECT_PAGES, systemLogoUrl } from '../lib/systemLogos';
+import { resolveSystemUrl, systemLogoUrl } from '../lib/systemLogos';
 import type { HubSystem } from '../types/database';
 import styles from './SystemCard.module.css';
 
@@ -12,7 +11,6 @@ interface SystemCardProps {
 export function SystemCard({ system, variant = 'button' }: SystemCardProps) {
   const logo = systemLogoUrl(system.id);
   const href = resolveSystemUrl(system.id, system.url, system.nome);
-  const projectPath = SYSTEM_PROJECT_PAGES[system.id];
 
   const body = (
     <>
@@ -23,11 +21,6 @@ export function SystemCard({ system, variant = 'button' }: SystemCardProps) {
       <p className={styles.desc}>{system.descricao}</p>
       {variant === 'button' && (
         <div className={styles.actions}>
-          {projectPath ? (
-            <Link to={projectPath} className={`btn-ghost ${styles.action}`}>
-              Status do projeto
-            </Link>
-          ) : null}
           <a
             href={href}
             target="_blank"

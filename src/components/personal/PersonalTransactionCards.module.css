@@ -88,9 +88,16 @@
 
 .empty {
   margin: 0;
-  padding: 0.75rem 0;
-  font-size: 0.84rem;
+  padding: 1.25rem 0.5rem;
+  text-align: center;
+  font-size: 0.88rem;
   color: var(--muted);
+}
+
+.emptyHint {
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  opacity: 0.85;
 }
 
 @media (max-width: 599px) {
