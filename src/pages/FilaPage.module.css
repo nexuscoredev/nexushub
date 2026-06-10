@@ -859,6 +859,24 @@
   word-break: break-word;
 }
 
+.detailTitleHeading {
+  margin: 0;
+  word-break: break-word;
+  cursor: default;
+}
+
+.detailHeaderMain .renameRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem 0.15rem;
+}
+
+.detailHeaderMain .renameRow input {
+  flex: 1;
+  min-width: 0;
+}
+
 .detailActions {
   display: flex;
   gap: 0.5rem;

@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import { CreateTaskModal } from '../components/CreateTaskModal';
+import composerStyles from '../components/CreateTaskModal.module.css';
 import { PromptNameModal } from '../components/PromptNameModal';
 import { NavIcon } from '../components/NavIcon';
 import { UserAvatar } from '../components/UserAvatar';
@@ -342,6 +343,7 @@ export function FilaPage() {
   const [comments, setComments] = useState<TodoistComment[]>([]);
   const [renamingTitle, setRenamingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState('');
+  const [descriptionDraft, setDescriptionDraft] = useState('');
 
   const [createOpen, setCreateOpen] = useState(false);
   const [assigneeOptions, setAssigneeOptions] = useState<AssigneeOption[]>(
@@ -553,6 +555,7 @@ export function FilaPage() {
   const closeDetail = useCallback(() => {
     setSelectedTask(null);
     setRenamingTitle(false);
+    setDescriptionDraft('');
     setComments([]);
   }, []);
 
@@ -560,6 +563,7 @@ export function FilaPage() {
     async (task: TodoistTask) => {
       setSelectedTask(task);
       setTitleDraft(task.content);
+      setDescriptionDraft(task.description ?? '');
       setRenamingTitle(false);
       await loadComments(task.id);
     },
@@ -621,6 +625,14 @@ export function FilaPage() {
     if (!selectedTask || !titleDraft.trim()) return;
     await patchSelected({ content: titleDraft.trim() });
     setRenamingTitle(false);
+  };
+
+  const saveDescription = async () => {
+    if (!selectedTask) return;
+    const next = descriptionDraft.trim();
+    const current = (selectedTask.description ?? '').trim();
+    if (next === current) return;
+    await patchSelected({ description: next });
   };
 
   const deleteSelectedTask = async () => {
@@ -1014,27 +1026,41 @@ export function FilaPage() {
               >
                 <div className={styles.detailHeader}>
                   <div className={styles.detailHeaderMain}>
-                    {renamingTitle ? (
-                      <div className={styles.renameRow}>
-                        <input
-                          className="input"
-                          value={titleDraft}
-                          onChange={(e) => setTitleDraft(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') void saveTitle();
-                            if (e.key === 'Escape') setRenamingTitle(false);
-                          }}
-                          autoFocus
-                        />
-                        <button type="button" className="btn-primary" onClick={() => void saveTitle()}>
-                          Ok
-                        </button>
-                      </div>
-                    ) : (
-                      <h2 id="task-detail-title" className={styles.detailTitle}>
-                        <TodoistTaskContent content={selectedTask.content} />
-                      </h2>
-                    )}
+                    <div className={composerStyles.taskComposer}>
+                      {renamingTitle ? (
+                        <div className={styles.renameRow}>
+                          <input
+                            className={composerStyles.composerTitle}
+                            value={titleDraft}
+                            onChange={(e) => setTitleDraft(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') void saveTitle();
+                              if (e.key === 'Escape') setRenamingTitle(false);
+                            }}
+                            autoFocus
+                          />
+                          <button type="button" className="btn-primary" onClick={() => void saveTitle()}>
+                            Ok
+                          </button>
+                        </div>
+                      ) : (
+                        <h2
+                          id="task-detail-title"
+                          className={`${composerStyles.composerTitle} ${styles.detailTitleHeading}`}
+                        >
+                          <TodoistTaskContent content={selectedTask.content} />
+                        </h2>
+                      )}
+                      <textarea
+                        className={composerStyles.composerDescription}
+                        placeholder="Descrição"
+                        value={descriptionDraft}
+                        rows={3}
+                        aria-label="Descrição da tarefa"
+                        onChange={(e) => setDescriptionDraft(e.target.value)}
+                        onBlur={() => void saveDescription()}
+                      />
+                    </div>
                   </div>
                   <div className={styles.detailHeaderActions}>
                     {!renamingTitle && (
