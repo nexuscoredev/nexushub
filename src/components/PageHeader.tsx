@@ -6,11 +6,12 @@ interface PageHeaderProps {
   subtitle?: string;
   badge?: string;
   actions?: ReactNode;
+  compact?: boolean;
 }
 
-export function PageHeader({ title, subtitle, badge, actions }: PageHeaderProps) {
+export function PageHeader({ title, subtitle, badge, actions, compact }: PageHeaderProps) {
   return (
-    <header className={styles.header}>
+    <header className={`${styles.header} ${compact ? styles.headerCompact : ''}`}>
       <div className={styles.accent} aria-hidden />
       <div className={styles.row}>
         <div>

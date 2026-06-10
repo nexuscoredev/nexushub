@@ -12,13 +12,13 @@
 .tab {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.45rem 0.75rem;
-  border-radius: 8px;
+  gap: 0.35rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 7px;
   border: 1px solid transparent;
   background: transparent;
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
   transition:

@@ -3,15 +3,9 @@ import { useMemo, useState, type CSSProperties } from 'react';
 import { formatBRL } from '../lib/format';
 
 import {
-
   GRUPO_VISUAL,
   formatContaTitulo,
-  isPhotoIcon,
-
-  itemIcon,
-
   providerVisual,
-
 } from '../lib/personalFinanceVisuals';
 
 import type { PessoalFinanceSummary } from '../lib/pessoalFinanceSummary';
@@ -21,8 +15,6 @@ import {
   grupoContaLabel,
 
   PESSOAL_CONTA_GRUPOS,
-
-  VINICIUS_VR_MENSAL,
 
 } from '../lib/viniciusPersonalFinance';
 
@@ -90,11 +82,8 @@ interface PersonalContasFixasViewProps {
 
 
 export function PersonalContasFixasView({
-
   rows,
-
-  summary,
-
+  summary: _summary,
   defaultDate,
 
   onUpsert,
@@ -116,6 +105,7 @@ export function PersonalContasFixasView({
   const [editing, setEditing] = useState<HubPersonalTransaction | null>(null);
 
   const [deleteTarget, setDeleteTarget] = useState<HubPersonalTransaction | null>(null);
+  const [collapsed, setCollapsed] = useState<Set<HubPersonalContaGrupo>>(() => new Set());
 
 
 
@@ -210,68 +200,17 @@ export function PersonalContasFixasView({
 
 
 
-  const totalContas = summary.totalContasChecklist;
-
-  const pagasCount = contasRows.filter((r) => r.pago).length;
-
-
+  const toggleGrupo = (grupoId: HubPersonalContaGrupo) => {
+    setCollapsed((prev) => {
+      const next = new Set(prev);
+      if (next.has(grupoId)) next.delete(grupoId);
+      else next.add(grupoId);
+      return next;
+    });
+  };
 
   return (
-
     <div className={styles.wrap}>
-
-      <section className={styles.overview} aria-label="Resumo das contas fixas">
-
-        <div className={styles.overviewHead}>
-
-          <div className={styles.overviewCopy}>
-
-            <span className={styles.overviewBadge}>Checklist mensal</span>
-
-            <h2 className={styles.overviewTitle}>Contas fixas</h2>
-
-            <p className={styles.overviewSub}>
-
-              {pagasCount} de {totalContas} pagas · Fixos + VR {formatBRL(VINICIUS_VR_MENSAL)}
-
-            </p>
-
-          </div>
-
-        </div>
-
-        <div
-
-          className={styles.progressTrack}
-
-          role="progressbar"
-
-          aria-valuenow={summary.percentualPagas}
-
-          aria-valuemin={0}
-
-          aria-valuemax={100}
-
-          aria-label="Progresso de pagamento"
-
-        >
-
-          <div
-
-            className={styles.progressFill}
-
-            style={{ width: `${summary.percentualPagas}%` }}
-
-          />
-
-        </div>
-
-
-
-      </section>
-
-
-
       {error && <div className="error-banner">{error}</div>}
 
 
@@ -291,16 +230,12 @@ export function PersonalContasFixasView({
           const paid = paidCount(items);
 
           const pct = items.length ? Math.round((paid / items.length) * 100) : 0;
-
-
+          const isCollapsed = collapsed.has(grupo.id);
 
           return (
-
             <section
-
               key={grupo.id}
-
-              className={`${styles.grupoCard} ${grupo.variavel ? styles.grupoVariavel : ''}`}
+              className={`${styles.grupoCard} ${grupo.variavel ? styles.grupoVariavel : ''} ${isCollapsed ? styles.grupoCollapsed : ''}`}
 
               style={
 
@@ -316,97 +251,64 @@ export function PersonalContasFixasView({
 
             >
 
-              <header className={styles.grupoHead}>
-
-                <div className={styles.grupoHeadTop}>
-
-                  <div
-                    className={`${styles.grupoIconWrap} ${visual.photo ? styles.grupoIconWrapPhoto : ''}`}
-                  >
-                    <img
-                      src={visual.icon}
-                      alt=""
-                      className={`${styles.grupoIcon} ${visual.photo ? styles.grupoIconPhoto : ''}`}
-                      aria-hidden
-                    />
-                  </div>
-
-                  <div className={styles.grupoMeta}>
-
-                    <h3 className={styles.grupoTitle}>{grupo.label}</h3>
-
-                    <span className={styles.grupoTag}>{visual.label}</span>
-
-                  </div>
-
-                  <div className={styles.grupoStats}>
-
-                    {items.length > 0 ? (
-
-                      <>
-
-                        <span className={styles.grupoTotal}>{formatBRL(subtotal)}</span>
-
-                        <span className={styles.grupoCount}>
-
-                          {paid}/{items.length} pagas
-
-                        </span>
-
-                      </>
-
-                    ) : (
-
-                      <span className={styles.grupoEmptyTag}>Vazio</span>
-
-                    )}
-
-                  </div>
-
+              <button
+                type="button"
+                className={styles.grupoHead}
+                aria-expanded={!isCollapsed}
+                onClick={() => toggleGrupo(grupo.id)}
+              >
+                <div
+                  className={`${styles.grupoIconWrap} ${visual.photo ? styles.grupoIconWrapPhoto : ''}`}
+                >
+                  <img
+                    src={visual.icon}
+                    alt=""
+                    className={`${styles.grupoIcon} ${visual.photo ? styles.grupoIconPhoto : ''}`}
+                    aria-hidden
+                  />
                 </div>
 
+                <div className={styles.grupoMeta}>
+                  <h3 className={styles.grupoTitle}>{grupo.label}</h3>
+                  <span className={styles.grupoTag}>{visual.label}</span>
+                </div>
 
+                <div className={styles.grupoStats}>
+                  {items.length > 0 ? (
+                    <>
+                      <span className={styles.grupoTotal}>{formatBRL(subtotal)}</span>
+                      <span className={styles.grupoCount}>
+                        {paid}/{items.length} · {pct}%
+                      </span>
+                    </>
+                  ) : (
+                    <span className={styles.grupoEmptyTag}>Vazio</span>
+                  )}
+                </div>
+
+                <span className={styles.grupoChevron} aria-hidden>
+                  {isCollapsed ? '▸' : '▾'}
+                </span>
 
                 {items.length > 0 && (
-
-                  <div className={styles.grupoProgress}>
-
-                    <div className={styles.grupoProgressMeta}>
-
-                      <span className={styles.grupoPago}>{formatBRL(subtotalPago)} pago</span>
-
-                      <span className={styles.grupoPct}>{pct}%</span>
-
-                    </div>
-
-                    <div className={styles.grupoProgressTrack}>
-
-                      <div
-
-                        className={styles.grupoProgressFill}
-
-                        style={{ width: `${pct}%` }}
-
-                      />
-
-                    </div>
-
+                  <div
+                    className={styles.grupoProgressTrack}
+                    role="progressbar"
+                    aria-valuenow={pct}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label={`${formatBRL(subtotalPago)} pago`}
+                  >
+                    <div className={styles.grupoProgressFill} style={{ width: `${pct}%` }} />
                   </div>
-
                 )}
+              </button>
 
-              </header>
-
-
-
+              {!isCollapsed && (
               <ul className={styles.lista}>
 
                 {items.map((row) => {
-
                   const provider = providerVisual(row.notas);
-
-                  const icon = itemIcon(row.descricao, row.categoria);
-
                   return (
 
                     <li key={row.id} className={styles.item}>
@@ -436,21 +338,6 @@ export function PersonalContasFixasView({
                           <span className={styles.checkVisual} aria-hidden />
 
                         </label>
-
-
-
-                        <div
-                          className={`${styles.itemIconWrap} ${isPhotoIcon(icon) ? styles.itemIconWrapPhoto : ''}`}
-                        >
-                          <img
-                            src={icon}
-                            alt=""
-                            className={`${styles.itemIcon} ${isPhotoIcon(icon) ? styles.itemIconPhoto : ''}`}
-                            aria-hidden
-                          />
-                        </div>
-
-
 
                         <div className={styles.itemMain}>
 
@@ -499,41 +386,31 @@ export function PersonalContasFixasView({
                         <div className={styles.itemActions}>
 
                           <button
-
                             type="button"
-
                             className={styles.actionBtn}
-
                             title="Editar"
-
-                            onClick={() => {
-
+                            aria-label="Editar"
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setAddingGrupo(null);
-
                               setEditing(row);
-
                             }}
-
                           >
-
-                            Editar
-
+                            <span className={styles.actionIcon} aria-hidden>✎</span>
+                            <span className={styles.actionText}>Editar</span>
                           </button>
-
                           <button
-
                             type="button"
-
                             className={`${styles.actionBtn} ${styles.actionDanger}`}
-
                             title="Remover"
-
-                            onClick={() => setDeleteTarget(row)}
-
+                            aria-label="Remover"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDeleteTarget(row);
+                            }}
                           >
-
-                            Remover
-
+                            <span className={styles.actionIcon} aria-hidden>×</span>
+                            <span className={styles.actionText}>Remover</span>
                           </button>
 
                         </div>
@@ -547,11 +424,9 @@ export function PersonalContasFixasView({
                 })}
 
               </ul>
+              )}
 
-
-
-              {items.length === 0 && (
-
+              {!isCollapsed && items.length === 0 && (
                 <div className={styles.emptyState}>
 
                   <img
@@ -567,8 +442,7 @@ export function PersonalContasFixasView({
 
               )}
 
-
-
+              {!isCollapsed && (
               <button
                 type="button"
                 className={styles.addBtn}
@@ -578,8 +452,9 @@ export function PersonalContasFixasView({
                 }}
               >
                 <span className={styles.addBtnIcon} aria-hidden>+</span>
-                Adicionar conta
+                Adicionar
               </button>
+              )}
 
             </section>
 

@@ -110,24 +110,37 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
     <div className={styles.panel}>
       {error && <div className="error-banner">{error}</div>}
 
-      <PersonalFinanceMonthPicker value={selectedMonth} onChange={setSelectedMonth} />
-
-      <PersonalFinanceHero
-        summary={summary}
-        loading={loading}
-        monthKey={selectedMonth}
-        viniciusLayout={viniciusLayout}
-      />
-
-      <PersonalFinanceKpiGrid summary={summary} loading={loading} />
-
-      {viniciusLayout ? (
-        <>
+      <div className={styles.toolbar}>
+        <PersonalFinanceMonthPicker value={selectedMonth} onChange={setSelectedMonth} />
+        {viniciusLayout ? (
           <PersonalFinanceNav
             tabs={[...VINICIUS_TABS]}
             active={viniciusView}
             onChange={(id) => setViniciusView(id as ViniciusFinanceView)}
           />
+        ) : (
+          <PersonalFinanceNav
+            tabs={[...GENERIC_TABS]}
+            active={fluxo}
+            onChange={(id) => setFluxo(id as 'entrada' | 'saida')}
+          />
+        )}
+      </div>
+
+      <div className={styles.summaryStrip}>
+        <PersonalFinanceHero
+          summary={summary}
+          loading={loading}
+          monthKey={selectedMonth}
+          viniciusLayout={viniciusLayout}
+        />
+        {!(viniciusLayout && viniciusView === 'contas') && (
+          <PersonalFinanceKpiGrid summary={summary} loading={loading} />
+        )}
+      </div>
+
+      {viniciusLayout ? (
+        <>
 
           {loading ? (
             <p className={styles.loading}>Carregando…</p>
@@ -157,12 +170,6 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
         </>
       ) : (
         <>
-          <PersonalFinanceNav
-            tabs={[...GENERIC_TABS]}
-            active={fluxo}
-            onChange={(id) => setFluxo(id as 'entrada' | 'saida')}
-          />
-
           {loading ? (
             <p className={styles.loading}>Carregando…</p>
           ) : (

@@ -26,23 +26,27 @@ export function PessoalPage() {
 
   return (
     <div className={styles.page}>
-      <PageHeader
-        badge="Personal"
-        title="Área pessoal"
-        subtitle={
-          financeiro
-            ? `Finanças de ${firstName} — privado e só seu.`
-            : `Olá, ${firstName}. Respira — este espaço é seu.`
-        }
-      />
+      {financeiro ? (
+        <div className={styles.financeTop}>
+          <PageHeader
+            compact
+            title="Finanças"
+            subtitle={`${firstName} · privado`}
+          />
+          <button type="button" className={styles.backBtn} onClick={backHome}>
+            ← Cantinho
+          </button>
+        </div>
+      ) : (
+        <PageHeader
+          badge="Personal"
+          title="Área pessoal"
+          subtitle={`Olá, ${firstName}. Respira — este espaço é seu.`}
+        />
+      )}
 
       {financeiro ? (
-        <>
-          <button type="button" className={styles.backBtn} onClick={backHome}>
-            ← Voltar ao cantinho
-          </button>
-          <PersonalFinancePanel userEmail={email} />
-        </>
+        <PersonalFinancePanel userEmail={email} />
       ) : (
         <PersonalAreaHome onOpenFinance={openFinance} />
       )}

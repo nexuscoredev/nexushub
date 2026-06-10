@@ -83,6 +83,28 @@
   max-width: 52ch;
 }
 
+.headerCompact {
+  margin-bottom: 0.65rem;
+}
+
+.headerCompact .badge {
+  display: none;
+}
+
+.headerCompact .title {
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  animation: none;
+  background: none;
+  -webkit-text-fill-color: var(--text);
+  color: var(--text);
+}
+
+.headerCompact .subtitle {
+  margin-top: 0.15rem;
+  font-size: 0.78rem;
+}
+
 @media (max-width: 768px) {
   .header {
     margin-bottom: 1.35rem;

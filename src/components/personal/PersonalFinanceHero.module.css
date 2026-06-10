@@ -1,7 +1,7 @@
 .hero {
   margin-bottom: 0;
-  padding: 0.75rem 1rem;
-  border-radius: 14px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 12px;
   border: 1px solid rgba(129, 140, 248, 0.2);
   background:
     radial-gradient(ellipse 80% 120% at 100% 0%, rgba(99, 102, 241, 0.14), transparent 55%),
@@ -14,17 +14,13 @@
 }
 
 .title {
-  margin: 0 0 0.55rem;
-  font-size: 0.92rem;
-  font-weight: 700;
-  line-height: 1.25;
-  color: var(--text);
+  display: none;
 }
 
 .stats {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
@@ -43,14 +39,14 @@
 }
 
 .statValue {
-  font-size: 0.92rem;
+  font-size: 0.84rem;
   font-weight: 700;
   color: #e0e7ff;
   font-variant-numeric: tabular-nums;
 }
 
 .statHighlight {
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 
 .statNegative {

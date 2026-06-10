@@ -1,5 +1,4 @@
 import { formatBRL } from '../../lib/format';
-import { formatMonthLabel } from '../../lib/personalFinanceMonth';
 import type { PessoalFinanceSummary } from '../../lib/pessoalFinanceSummary';
 import { VINICIUS_VR_MENSAL } from '../../lib/viniciusPersonalFinance';
 import styles from './PersonalFinanceHero.module.css';
@@ -14,13 +13,12 @@ interface PersonalFinanceHeroProps {
 export function PersonalFinanceHero({
   summary,
   loading,
-  monthKey,
+  monthKey: _monthKey,
   viniciusLayout,
 }: PersonalFinanceHeroProps) {
   return (
     <header className={styles.hero}>
       <div className={styles.copy}>
-        <h2 className={styles.title}>Resumo · {formatMonthLabel(monthKey)}</h2>
         <div className={styles.stats}>
           <div className={styles.stat}>
             <span className={styles.statLabel}>Saldo</span>
