@@ -99,6 +99,7 @@ export function CreateTaskModal({
   const customDueInputRef = useRef<HTMLInputElement>(null);
   const [projectId, setProjectId] = useState(defaultProjectId);
   const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [due, setDue] = useState<DuePreset>('');
   const [customDueDate, setCustomDueDate] = useState('');
   const [priority, setPriority] = useState(4);
@@ -113,6 +114,7 @@ export function CreateTaskModal({
 
   const resetForm = useCallback(() => {
     setTitle('');
+    setDescription('');
     setDue('');
     setCustomDueDate('');
     setPriority(4);
@@ -207,8 +209,12 @@ export function CreateTaskModal({
         project_id: projectId,
         section_id: sectionId || undefined,
       });
-      if (customDueDate) {
-        created = await todoistApi.updateTask(created.id, { due_date: customDueDate });
+      const desc = description.trim();
+      if (customDueDate || desc) {
+        created = await todoistApi.updateTask(created.id, {
+          ...(customDueDate ? { due_date: customDueDate } : {}),
+          ...(desc ? { description: desc } : {}),
+        });
       }
       onCreated(created.project_id || projectId);
       onClose();
@@ -259,17 +265,36 @@ export function CreateTaskModal({
             <label className={styles.fieldLabel} htmlFor="create-task-title-input">
               Título
             </label>
-            <input
-              id="create-task-title-input"
-              className="input"
-              placeholder="Ex.: Planejar rotina p1 dia 25 de junho"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') void handleSubmit();
-              }}
-              autoFocus
-            />
+            <div className={styles.taskComposer}>
+              <input
+                id="create-task-title-input"
+                className={styles.composerTitle}
+                placeholder="Ex.: Planejar rotina p1 dia 25 de junho"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    void handleSubmit();
+                  }
+                }}
+                autoFocus
+              />
+              <textarea
+                id="create-task-description-input"
+                className={styles.composerDescription}
+                placeholder="Descrição"
+                value={description}
+                rows={2}
+                onChange={(e) => setDescription(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                    e.preventDefault();
+                    void handleSubmit();
+                  }
+                }}
+              />
+            </div>
             <p className={styles.hint}>
               Linguagem natural como no Todoist: <strong>p1</strong>–<strong>p4</strong>,{' '}
               <strong>hoje</strong>, <strong>amanhã</strong>, <strong>dia 25 de junho</strong>,{' '}

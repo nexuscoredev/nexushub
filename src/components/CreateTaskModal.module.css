@@ -66,6 +66,54 @@
   color: var(--muted);
 }
 
+.taskComposer {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.03);
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.taskComposer:focus-within {
+  border-color: rgba(96, 165, 250, 0.55);
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.12);
+}
+
+.composerTitle,
+.composerDescription {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  outline: none;
+  resize: none;
+}
+
+.composerTitle {
+  padding: 0.65rem 0.85rem 0.45rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.composerDescription {
+  padding: 0 0.85rem 0.65rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--muted);
+  min-height: 2.4rem;
+}
+
+.composerDescription::placeholder {
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.composerTitle::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
 .hint {
   font-size: 0.75rem;
   color: var(--muted);
