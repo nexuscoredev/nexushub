@@ -34,9 +34,12 @@
 }
 
 .piggy {
-  width: 5.5rem;
-  height: 5.5rem;
-  filter: drop-shadow(0 4px 12px rgba(249, 168, 201, 0.25));
+  width: 6rem;
+  height: 6rem;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 16px rgba(249, 168, 201, 0.35));
+  pointer-events: none;
+  user-select: none;
 }
 
 .label {
@@ -142,7 +145,7 @@
   }
 
   .piggy {
-    width: 4.75rem;
-    height: 4.75rem;
+    width: 5.25rem;
+    height: 5.25rem;
   }
 }
