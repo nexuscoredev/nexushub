@@ -167,7 +167,7 @@
   margin: 0;
   padding: 0.4rem;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) minmax(4.85rem, auto);
+  grid-template-columns: auto minmax(0, 1fr) minmax(4.85rem, auto) 3.35rem;
   column-gap: 0.35rem;
   row-gap: 0.3rem;
   align-items: center;
@@ -190,11 +190,9 @@
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.07);
   background: rgba(0, 0, 0, 0.24);
-  position: relative;
   transition:
     border-color 0.15s ease,
-    background 0.15s ease,
-    padding-right 0.15s ease;
+    background 0.15s ease;
 }
 
 .itemCard:hover {
@@ -332,10 +330,8 @@
 }
 
 .itemActions {
-  position: absolute;
-  right: 0.3rem;
-  top: 50%;
-  transform: translateY(-50%);
+  justify-self: end;
+  align-self: center;
   display: flex;
   gap: 0.15rem;
   flex-shrink: 0;
@@ -562,16 +558,13 @@
 @media (min-width: 901px) and (hover: hover) {
   .itemActions {
     opacity: 0;
-  }
-
-  .itemCard:hover,
-  .itemCard:focus-within {
-    padding-right: 3.25rem;
+    pointer-events: none;
   }
 
   .itemCard:hover .itemActions,
   .itemCard:focus-within .itemActions {
     opacity: 1;
+    pointer-events: auto;
   }
 }
 
