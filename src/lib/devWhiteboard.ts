@@ -173,6 +173,8 @@ export function moveMovable(
 export function resizeSticky(
   scene: WhiteboardScene,
   id: string,
+  x: number,
+  y: number,
   width: number,
   height: number,
 ): WhiteboardScene {
@@ -180,7 +182,7 @@ export function resizeSticky(
     ...scene,
     elements: scene.elements.map((el) => {
       if (el.id === id && el.type === 'sticky') {
-        return { ...el, width, height };
+        return { ...el, x, y, width, height };
       }
       return el;
     }),

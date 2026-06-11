@@ -192,7 +192,7 @@
 .stickyHandle {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 0.35rem;
   height: 22px;
   flex-shrink: 0;
@@ -200,6 +200,16 @@
   background: rgba(0, 0, 0, 0.08);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   user-select: none;
+  padding: 0 0.25rem 0 0.35rem;
+}
+
+.stickyHandleMain {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  flex: 1;
+  min-width: 0;
 }
 
 .stickyHandleGrip {
@@ -310,49 +320,116 @@
   z-index: 4;
 }
 
-.stickyDeleteBtn {
-  position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  width: 24px;
-  height: 24px;
+.stickyDeleteInline {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
   padding: 0;
-  border: 2px solid #fff;
+  border: 1px solid rgba(255, 255, 255, 0.85);
   border-radius: 50%;
   background: #ef4444;
   color: #fff;
-  font-size: 1rem;
+  font-size: 0.85rem;
   line-height: 1;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.stickyDeleteBtn:hover {
+.stickyDeleteInline:hover {
   background: #dc2626;
 }
 
 .stickyResizeHandle {
   position: absolute;
-  right: -5px;
-  bottom: -5px;
-  width: 14px;
-  height: 14px;
-  border: 2px solid #fff;
-  border-radius: 3px;
-  background: #60a5fa;
-  cursor: nwse-resize;
   z-index: 5;
+  background: #60a5fa;
+  border: 2px solid #fff;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+  touch-action: none;
 }
 
 .stickyResizeHandle:hover {
   background: #93c5fd;
+}
+
+.stickyResize_n,
+.stickyResize_s {
+  width: 24px;
+  height: 8px;
+  border-radius: 4px;
+  cursor: ns-resize;
+}
+
+.stickyResize_e,
+.stickyResize_w {
+  width: 8px;
+  height: 24px;
+  border-radius: 4px;
+  cursor: ew-resize;
+}
+
+.stickyResize_nw,
+.stickyResize_ne,
+.stickyResize_sw,
+.stickyResize_se {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.stickyResize_nw {
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  cursor: nwse-resize;
+}
+
+.stickyResize_n {
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.stickyResize_ne {
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+  cursor: nesw-resize;
+}
+
+.stickyResize_e {
+  top: 50%;
+  right: 0;
+  transform: translate(50%, -50%);
+}
+
+.stickyResize_se {
+  right: 0;
+  bottom: 0;
+  transform: translate(50%, 50%);
+  cursor: nwse-resize;
+}
+
+.stickyResize_s {
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 50%);
+}
+
+.stickyResize_sw {
+  bottom: 0;
+  left: 0;
+  transform: translate(-50%, 50%);
+  cursor: nesw-resize;
+}
+
+.stickyResize_w {
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%);
 }
 
 .objectSelected {

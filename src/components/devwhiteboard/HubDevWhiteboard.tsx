@@ -46,8 +46,54 @@ const STICKY_MAX_H = 420;
 const MARQUEE_MIN_DRAG = 6;
 const HISTORY_LIMIT = 50;
 
+type StickyResizeHandle = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
+
+const STICKY_RESIZE_HANDLES: StickyResizeHandle[] = [
+  'nw',
+  'n',
+  'ne',
+  'e',
+  'se',
+  's',
+  'sw',
+  'w',
+];
+
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
+}
+
+function computeStickyResize(
+  handle: StickyResizeHandle,
+  startX: number,
+  startY: number,
+  startW: number,
+  startH: number,
+  dx: number,
+  dy: number,
+): { x: number; y: number; width: number; height: number } {
+  let x = startX;
+  let y = startY;
+  let width = startW;
+  let height = startH;
+
+  const affectsEast = handle.includes('e');
+  const affectsWest = handle.includes('w');
+  const affectsSouth = handle.includes('s');
+  const affectsNorth = handle.includes('n');
+
+  if (affectsEast) width = clamp(startW + dx, STICKY_MIN_W, STICKY_MAX_W);
+  if (affectsWest) {
+    width = clamp(startW - dx, STICKY_MIN_W, STICKY_MAX_W);
+    x = startX + startW - width;
+  }
+  if (affectsSouth) height = clamp(startH + dy, STICKY_MIN_H, STICKY_MAX_H);
+  if (affectsNorth) {
+    height = clamp(startH - dy, STICKY_MIN_H, STICKY_MAX_H);
+    y = startY + startH - height;
+  }
+
+  return { x, y, width, height };
 }
 
 function cloneScene(scene: WhiteboardScene): WhiteboardScene {
@@ -80,6 +126,9 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
   } | null>(null);
   const resizeRef = useRef<{
     id: string;
+    handle: StickyResizeHandle;
+    startX: number;
+    startY: number;
     startW: number;
     startH: number;
     origin: WhiteboardPoint;
@@ -443,11 +492,14 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
     };
   };
 
-  const startStickyResize = (id: string, world: WhiteboardPoint) => {
+  const startStickyResize = (id: string, handle: StickyResizeHandle, world: WhiteboardPoint) => {
     const el = sceneRef.current.elements.find((item) => item.id === id);
     if (!el || el.type !== 'sticky') return;
     resizeRef.current = {
       id,
+      handle,
+      startX: el.x,
+      startY: el.y,
       startW: el.width,
       startH: el.height,
       origin: world,
@@ -518,9 +570,20 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
     const resize = resizeRef.current;
     if (resize) {
       const world = clientToWorld(event.clientX, event.clientY);
-      const width = clamp(resize.startW + (world.x - resize.origin.x), STICKY_MIN_W, STICKY_MAX_W);
-      const height = clamp(resize.startH + (world.y - resize.origin.y), STICKY_MIN_H, STICKY_MAX_H);
-      setScene((prev) => resizeSticky(prev, resize.id, width, height));
+      const dx = world.x - resize.origin.x;
+      const dy = world.y - resize.origin.y;
+      const next = computeStickyResize(
+        resize.handle,
+        resize.startX,
+        resize.startY,
+        resize.startW,
+        resize.startH,
+        dx,
+        dy,
+      );
+      setScene((prev) =>
+        resizeSticky(prev, resize.id, next.x, next.y, next.width, next.height),
+      );
       return;
     }
 
@@ -696,8 +759,10 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [clearLinkDraft, deleteSelected, pasteImageFromClipboard, redo, selectedIds, undo]);
 
-  const showLinkAnchors = (elementId: string) =>
-    isSelected(elementId) || tool === 'link' || linkFromId !== null;
+  const showLinkAnchors = () => tool === 'link' || linkFromId !== null;
+
+  const showStickyResize = (elementId: string) =>
+    isSelected(elementId) && tool !== 'link' && linkFromId === null;
 
   const anchorLabel: Record<ConnectorAnchor, string> = {
     top: 'topo',
@@ -706,8 +771,27 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
     left: 'esquerda',
   };
 
+  const renderStickyResizeHandles = (elementId: string) => {
+    if (!showStickyResize(elementId)) return null;
+    return STICKY_RESIZE_HANDLES.map((handle) => (
+      <div
+        key={handle}
+        className={`${styles.stickyResizeHandle} ${styles[`stickyResize_${handle}`]}`}
+        title="Redimensionar"
+        onPointerDown={(e) => {
+          e.stopPropagation();
+          selectElement(elementId, e.shiftKey);
+          setTool('select');
+          startStickyResize(elementId, handle, clientToWorld(e.clientX, e.clientY));
+          e.currentTarget.setPointerCapture(e.pointerId);
+        }}
+        onPointerUp={() => finishStickyResize()}
+      />
+    ));
+  };
+
   const renderLinkAnchors = (elementId: string) => {
-    if (!showLinkAnchors(elementId)) return null;
+    if (!showLinkAnchors()) return null;
     return (
       <div className={styles.linkAnchors}>
         {CONNECTOR_ANCHORS.map((anchor) => (
@@ -954,20 +1038,6 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
                     background: el.color,
                   }}
                 >
-                  {isSelected(el.id) && (
-                    <button
-                      type="button"
-                      className={styles.stickyDeleteBtn}
-                      aria-label="Excluir nota"
-                      title="Excluir"
-                      onPointerDown={(e) => {
-                        e.stopPropagation();
-                        deleteElement(el.id);
-                      }}
-                    >
-                      ×
-                    </button>
-                  )}
                   <div className={styles.stickyInner}>
                     <div
                       className={styles.stickyHandle}
@@ -985,8 +1055,24 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
                       }}
                       onPointerUp={() => finishElementDrag()}
                     >
-                      <span className={styles.stickyHandleGrip} aria-hidden />
-                      <span className={styles.stickyHandleLabel}>Mover</span>
+                      <div className={styles.stickyHandleMain}>
+                        <span className={styles.stickyHandleGrip} aria-hidden />
+                        <span className={styles.stickyHandleLabel}>Mover</span>
+                      </div>
+                      {isSelected(el.id) && (
+                        <button
+                          type="button"
+                          className={styles.stickyDeleteInline}
+                          aria-label="Excluir nota"
+                          title="Excluir"
+                          onPointerDown={(e) => {
+                            e.stopPropagation();
+                            deleteElement(el.id);
+                          }}
+                        >
+                          ×
+                        </button>
+                      )}
                     </div>
                     <textarea
                     ref={(node) => {
@@ -1016,20 +1102,7 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
                     }}
                   />
                   </div>
-                  {isSelected(el.id) && (
-                    <div
-                      className={styles.stickyResizeHandle}
-                      title="Redimensionar"
-                      onPointerDown={(e) => {
-                        e.stopPropagation();
-                        selectElement(el.id, e.shiftKey);
-                        setTool('select');
-                        startStickyResize(el.id, clientToWorld(e.clientX, e.clientY));
-                        e.currentTarget.setPointerCapture(e.pointerId);
-                      }}
-                      onPointerUp={() => finishStickyResize()}
-                    />
-                  )}
+                  {renderStickyResizeHandles(el.id)}
                   {renderLinkAnchors(el.id)}
                 </div>
               );
@@ -1042,7 +1115,7 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
 
       <p className={styles.hint}>
         Ctrl+Z desfazer · Ctrl+Y refazer · Ctrl+V colar imagem · Seleção: arraste no vazio · Bolas azuis
-        ligam setas · Barra Mover · Canto inferior redimensiona · Duplo clique escreve · Scroll zoom.
+        ligam setas · Barra Mover · Alças nas bordas redimensionam · Duplo clique escreve · Scroll zoom.
       </p>
     </div>
   );
