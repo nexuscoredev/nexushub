@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
@@ -11,11 +12,19 @@ import {
   DEFAULT_WHITEBOARD_SCENE,
   PEN_COLORS,
   STICKY_COLORS,
+  connectorCurvePath,
+  elementCenter,
   fetchDevWhiteboard,
+  isMovableElement,
+  moveMovable,
   newElementId,
+  readClipboardImage,
   saveDevWhiteboard,
+  sceneWithoutElement,
   strokeToPath,
   subscribeDevWhiteboard,
+  type WhiteboardConnector,
+  type WhiteboardImage,
   type WhiteboardPoint,
   type WhiteboardScene,
   type WhiteboardSticky,
@@ -25,23 +34,41 @@ import styles from './HubDevWhiteboard.module.css';
 
 const STICKY_W = 220;
 const STICKY_H = 150;
+const HISTORY_LIMIT = 50;
 
 function cloneScene(scene: WhiteboardScene): WhiteboardScene {
   return structuredClone(scene);
 }
 
+function isTypingTarget(target: EventTarget | null): boolean {
+  return (
+    target instanceof HTMLTextAreaElement ||
+    target instanceof HTMLInputElement ||
+    (target instanceof HTMLElement && target.isContentEditable)
+  );
+}
+
 export function HubDevWhiteboard() {
   const { user } = useAuth();
   const surfaceRef = useRef<HTMLDivElement>(null);
+  const sceneRef = useRef<WhiteboardScene>(DEFAULT_WHITEBOARD_SCENE);
   const saveTimerRef = useRef<number | null>(null);
   const skipRemoteUntilRef = useRef(0);
   const lastRemoteAtRef = useRef<string | null>(null);
+  const elementDragRef = useRef<{
+    id: string;
+    offsetX: number;
+    offsetY: number;
+  } | null>(null);
 
   const [scene, setScene] = useState<WhiteboardScene>(DEFAULT_WHITEBOARD_SCENE);
-  const [tool, setTool] = useState<WhiteboardTool>('pen');
+  const [historyPast, setHistoryPast] = useState<WhiteboardScene[]>([]);
+  const [historyFuture, setHistoryFuture] = useState<WhiteboardScene[]>([]);
+  const [tool, setTool] = useState<WhiteboardTool>('select');
   const [penColor, setPenColor] = useState<string>(PEN_COLORS[0]);
   const [stickyColor, setStickyColor] = useState<string>(STICKY_COLORS[0]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [linkFromId, setLinkFromId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState<string | null>(null);
@@ -49,6 +76,8 @@ export function HubDevWhiteboard() {
   const [draftStroke, setDraftStroke] = useState<WhiteboardPoint[]>([]);
   const [panning, setPanning] = useState(false);
   const panStartRef = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
+
+  sceneRef.current = scene;
 
   const scheduleSave = useCallback(
     (nextScene: WhiteboardScene) => {
@@ -73,16 +102,45 @@ export function HubDevWhiteboard() {
     [user?.id],
   );
 
-  const commitScene = useCallback(
-    (updater: (prev: WhiteboardScene) => WhiteboardScene) => {
-      setScene((prev) => {
-        const next = updater(prev);
-        scheduleSave(next);
-        return next;
-      });
+  const applyScene = useCallback(
+    (next: WhiteboardScene, options?: { recordHistory?: boolean; persist?: boolean }) => {
+      const recordHistory = options?.recordHistory !== false;
+      const persist = options?.persist !== false;
+      if (recordHistory) {
+        setHistoryPast((past) => [...past.slice(-(HISTORY_LIMIT - 1)), cloneScene(sceneRef.current)]);
+        setHistoryFuture([]);
+      }
+      setScene(next);
+      if (persist) scheduleSave(next);
     },
     [scheduleSave],
   );
+
+  const undo = useCallback(() => {
+    setHistoryPast((past) => {
+      if (past.length === 0) return past;
+      const previous = past[past.length - 1];
+      setHistoryFuture((future) => [cloneScene(sceneRef.current), ...future]);
+      setScene(previous);
+      scheduleSave(previous);
+      setSelectedId(null);
+      setLinkFromId(null);
+      return past.slice(0, -1);
+    });
+  }, [scheduleSave]);
+
+  const redo = useCallback(() => {
+    setHistoryFuture((future) => {
+      if (future.length === 0) return future;
+      const [next, ...rest] = future;
+      setHistoryPast((past) => [...past.slice(-(HISTORY_LIMIT - 1)), cloneScene(sceneRef.current)]);
+      setScene(next);
+      scheduleSave(next);
+      setSelectedId(null);
+      setLinkFromId(null);
+      return rest;
+    });
+  }, [scheduleSave]);
 
   useEffect(() => {
     let cancelled = false;
@@ -90,6 +148,8 @@ export function HubDevWhiteboard() {
       .then(({ scene: loaded, updatedAt }) => {
         if (cancelled) return;
         setScene(loaded);
+        setHistoryPast([]);
+        setHistoryFuture([]);
         setSavedAt(updatedAt);
         lastRemoteAtRef.current = updatedAt;
       })
@@ -109,6 +169,7 @@ export function HubDevWhiteboard() {
       setSavedAt(updatedAt);
       setScene(remoteScene);
       setSelectedId(null);
+      setLinkFromId(null);
     });
 
     return () => {
@@ -122,14 +183,24 @@ export function HubDevWhiteboard() {
     (clientX: number, clientY: number): WhiteboardPoint => {
       const rect = surfaceRef.current?.getBoundingClientRect();
       if (!rect) return { x: 0, y: 0 };
-      const { panX, panY, zoom } = scene.viewport;
+      const { panX, panY, zoom } = sceneRef.current.viewport;
       return {
         x: (clientX - rect.left - panX) / zoom,
         y: (clientY - rect.top - panY) / zoom,
       };
     },
-    [scene.viewport],
+    [],
   );
+
+  const viewportCenter = useCallback((): WhiteboardPoint => {
+    const rect = surfaceRef.current?.getBoundingClientRect();
+    if (!rect) return { x: 200, y: 200 };
+    const { panX, panY, zoom } = sceneRef.current.viewport;
+    return {
+      x: (rect.width / 2 - panX) / zoom,
+      y: (rect.height / 2 - panY) / zoom,
+    };
+  }, []);
 
   const addSticky = useCallback(
     (point: WhiteboardPoint) => {
@@ -143,15 +214,96 @@ export function HubDevWhiteboard() {
         text: '',
         color: stickyColor,
       };
-      commitScene((prev) => ({
-        ...prev,
-        elements: [...prev.elements, sticky],
-      }));
+      applyScene({
+        ...sceneRef.current,
+        elements: [...sceneRef.current.elements, sticky],
+      });
       setSelectedId(sticky.id);
       setTool('select');
     },
-    [commitScene, stickyColor],
+    [applyScene, stickyColor],
   );
+
+  const addImage = useCallback(
+    (src: string, width: number, height: number, at?: WhiteboardPoint) => {
+      const center = at ?? viewportCenter();
+      const image: WhiteboardImage = {
+        id: newElementId(),
+        type: 'image',
+        x: center.x - width / 2,
+        y: center.y - height / 2,
+        width,
+        height,
+        src,
+      };
+      applyScene({
+        ...sceneRef.current,
+        elements: [...sceneRef.current.elements, image],
+      });
+      setSelectedId(image.id);
+    },
+    [applyScene, viewportCenter],
+  );
+
+  const pasteImageFromClipboard = useCallback(async () => {
+    setError(null);
+    const image = await readClipboardImage();
+    if (!image) {
+      setError('Nenhuma imagem na área de transferência (Ctrl+C uma imagem antes).');
+      return;
+    }
+    addImage(image.src, image.width, image.height);
+  }, [addImage]);
+
+  const tryLinkElement = useCallback(
+    (targetId: string) => {
+      const target = sceneRef.current.elements.find((el) => el.id === targetId);
+      if (!target || !isMovableElement(target)) return;
+
+      if (!linkFromId) {
+        setLinkFromId(targetId);
+        setSelectedId(targetId);
+        return;
+      }
+
+      if (linkFromId === targetId) {
+        setLinkFromId(null);
+        return;
+      }
+
+      const exists = sceneRef.current.elements.some(
+        (el) =>
+          el.type === 'connector' &&
+          ((el.fromId === linkFromId && el.toId === targetId) ||
+            (el.fromId === targetId && el.toId === linkFromId)),
+      );
+      if (!exists) {
+        const connector: WhiteboardConnector = {
+          id: newElementId(),
+          type: 'connector',
+          fromId: linkFromId,
+          toId: targetId,
+        };
+        applyScene({
+          ...sceneRef.current,
+          elements: [...sceneRef.current.elements, connector],
+        });
+      }
+      setLinkFromId(null);
+      setSelectedId(targetId);
+    },
+    [applyScene, linkFromId],
+  );
+
+  const startElementDrag = (id: string, world: WhiteboardPoint) => {
+    const el = sceneRef.current.elements.find((item) => item.id === id);
+    if (!el || !isMovableElement(el)) return;
+    elementDragRef.current = {
+      id,
+      offsetX: world.x - el.x,
+      offsetY: world.y - el.y,
+    };
+  };
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (loading) return;
@@ -162,8 +314,8 @@ export function HubDevWhiteboard() {
       panStartRef.current = {
         x: event.clientX,
         y: event.clientY,
-        panX: scene.viewport.panX,
-        panY: scene.viewport.panY,
+        panX: sceneRef.current.viewport.panX,
+        panY: sceneRef.current.viewport.panY,
       };
       event.currentTarget.setPointerCapture(event.pointerId);
       return;
@@ -177,12 +329,14 @@ export function HubDevWhiteboard() {
     if (tool === 'pen') {
       setDraftStroke([world]);
       setSelectedId(null);
+      setLinkFromId(null);
       event.currentTarget.setPointerCapture(event.pointerId);
       return;
     }
 
     if (tool === 'select') {
       setSelectedId(null);
+      setLinkFromId(null);
     }
   };
 
@@ -201,6 +355,15 @@ export function HubDevWhiteboard() {
       return;
     }
 
+    const drag = elementDragRef.current;
+    if (drag) {
+      const world = clientToWorld(event.clientX, event.clientY);
+      setScene((prev) =>
+        moveMovable(prev, drag.id, world.x - drag.offsetX, world.y - drag.offsetY),
+      );
+      return;
+    }
+
     if (tool === 'pen' && draftStroke.length > 0) {
       const world = clientToWorld(event.clientX, event.clientY);
       setDraftStroke((prev) => [...prev, world]);
@@ -210,8 +373,14 @@ export function HubDevWhiteboard() {
   const finishPan = useCallback(() => {
     if (!panning) return;
     setPanning(false);
-    commitScene((prev) => cloneScene(prev));
-  }, [commitScene, panning]);
+    applyScene(cloneScene(sceneRef.current));
+  }, [applyScene, panning]);
+
+  const finishElementDrag = useCallback(() => {
+    if (!elementDragRef.current) return;
+    elementDragRef.current = null;
+    applyScene(cloneScene(sceneRef.current));
+  }, [applyScene]);
 
   const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (panning) {
@@ -219,18 +388,28 @@ export function HubDevWhiteboard() {
       return;
     }
 
+    if (elementDragRef.current) {
+      finishElementDrag();
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+      return;
+    }
+
     if (tool === 'pen' && draftStroke.length > 1) {
-      const stroke = {
-        id: newElementId(),
-        type: 'stroke' as const,
-        points: draftStroke,
-        color: penColor,
-        width: 2.5,
-      };
-      commitScene((prev) => ({
-        ...prev,
-        elements: [...prev.elements, stroke],
-      }));
+      applyScene({
+        ...sceneRef.current,
+        elements: [
+          ...sceneRef.current.elements,
+          {
+            id: newElementId(),
+            type: 'stroke',
+            points: draftStroke,
+            color: penColor,
+            width: 2.5,
+          },
+        ],
+      });
     }
     setDraftStroke([]);
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
@@ -241,41 +420,92 @@ export function HubDevWhiteboard() {
   const handleWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
     event.preventDefault();
     const delta = event.deltaY > 0 ? -0.08 : 0.08;
-    commitScene((prev) => ({
-      ...prev,
+    applyScene({
+      ...sceneRef.current,
       viewport: {
-        ...prev.viewport,
-        zoom: Math.min(3, Math.max(0.35, prev.viewport.zoom + delta)),
+        ...sceneRef.current.viewport,
+        zoom: Math.min(3, Math.max(0.35, sceneRef.current.viewport.zoom + delta)),
       },
-    }));
+    });
   };
 
   const updateStickyText = (id: string, text: string) => {
-    commitScene((prev) => ({
-      ...prev,
-      elements: prev.elements.map((el) =>
-        el.id === id && el.type === 'sticky' ? { ...el, text } : el,
-      ),
-    }));
+    applyScene(
+      {
+        ...sceneRef.current,
+        elements: sceneRef.current.elements.map((el) =>
+          el.id === id && el.type === 'sticky' ? { ...el, text } : el,
+        ),
+      },
+      { recordHistory: false },
+    );
   };
 
-  const deleteSelected = () => {
+  const deleteSelected = useCallback(() => {
     if (!selectedId) return;
-    commitScene((prev) => ({
-      ...prev,
-      elements: prev.elements.filter((el) => el.id !== selectedId),
-    }));
+    applyScene(sceneWithoutElement(sceneRef.current, selectedId));
     setSelectedId(null);
-  };
+    setLinkFromId(null);
+  }, [applyScene, selectedId]);
 
   const clearBoard = () => {
     if (!window.confirm('Limpar todo o quadro? Esta ação afeta a equipe.')) return;
-    commitScene(() => ({
+    applyScene({
       ...DEFAULT_WHITEBOARD_SCENE,
-      viewport: scene.viewport,
-    }));
+      viewport: sceneRef.current.viewport,
+    });
     setSelectedId(null);
+    setLinkFromId(null);
   };
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (isTypingTarget(event.target)) return;
+
+      if (event.ctrlKey && event.key.toLowerCase() === 'z' && !event.shiftKey) {
+        event.preventDefault();
+        undo();
+        return;
+      }
+      if (event.ctrlKey && (event.key.toLowerCase() === 'y' || (event.shiftKey && event.key.toLowerCase() === 'z'))) {
+        event.preventDefault();
+        redo();
+        return;
+      }
+      if (event.ctrlKey && event.key.toLowerCase() === 'v') {
+        event.preventDefault();
+        void pasteImageFromClipboard();
+        return;
+      }
+      if (event.key === 'Delete' || event.key === 'Backspace') {
+        if (selectedId) {
+          event.preventDefault();
+          deleteSelected();
+        }
+      }
+      if (event.key === 'Escape') {
+        setLinkFromId(null);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [deleteSelected, pasteImageFromClipboard, redo, selectedId, undo]);
+
+  const connectors = useMemo(() => {
+    const byId = new Map(scene.elements.map((el) => [el.id, el]));
+    return scene.elements
+      .filter((el): el is WhiteboardConnector => el.type === 'connector')
+      .map((connector) => {
+        const from = byId.get(connector.fromId);
+        const to = byId.get(connector.toId);
+        const fromPoint = from ? elementCenter(from) : null;
+        const toPoint = to ? elementCenter(to) : null;
+        if (!fromPoint || !toPoint) return null;
+        return { connector, d: connectorCurvePath(fromPoint, toPoint) };
+      })
+      .filter(Boolean) as { connector: WhiteboardConnector; d: string }[];
+  }, [scene.elements]);
 
   const { panX, panY, zoom } = scene.viewport;
 
@@ -288,6 +518,7 @@ export function HubDevWhiteboard() {
               ['select', 'Selecionar'],
               ['pen', 'Caneta'],
               ['sticky', 'Nota'],
+              ['link', 'Seta'],
               ['hand', 'Mover'],
             ] as const
           ).map(([id, label]) => (
@@ -295,7 +526,10 @@ export function HubDevWhiteboard() {
               key={id}
               type="button"
               className={`${styles.toolBtn} ${tool === id ? styles.toolBtnActive : ''}`}
-              onClick={() => setTool(id)}
+              onClick={() => {
+                setTool(id);
+                if (id !== 'link') setLinkFromId(null);
+              }}
               title={label}
             >
               {label}
@@ -333,8 +567,20 @@ export function HubDevWhiteboard() {
           </div>
         )}
 
+        {tool === 'link' && (
+          <span className={styles.linkHint}>
+            {linkFromId ? 'Clique no destino · Esc cancela' : 'Clique na origem, depois no destino'}
+          </span>
+        )}
+
         <div className={styles.toolbarSpacer} />
 
+        <button type="button" className="btn-ghost" onClick={undo} disabled={historyPast.length === 0}>
+          Desfazer
+        </button>
+        <button type="button" className="btn-ghost" onClick={redo} disabled={historyFuture.length === 0}>
+          Refazer
+        </button>
         <button
           type="button"
           className="btn-ghost"
@@ -367,6 +613,33 @@ export function HubDevWhiteboard() {
           style={{ transform: `translate(${panX}px, ${panY}px) scale(${zoom})` }}
         >
           <svg className={styles.inkLayer} aria-hidden>
+            <defs>
+              <marker
+                id="nexus-arrow"
+                markerWidth="8"
+                markerHeight="8"
+                refX="7"
+                refY="4"
+                orient="auto"
+              >
+                <path d="M0,0 L8,4 L0,8 Z" fill="#93c5fd" />
+              </marker>
+            </defs>
+
+            {connectors.map(({ connector, d }) => (
+              <path
+                key={connector.id}
+                d={d}
+                className={`${styles.connector} ${selectedId === connector.id ? styles.connectorSelected : ''}`}
+                markerEnd="url(#nexus-arrow)"
+                onPointerDown={(e) => {
+                  e.stopPropagation();
+                  setSelectedId(connector.id);
+                  setTool('select');
+                }}
+              />
+            ))}
+
             {scene.elements.map((el) =>
               el.type === 'stroke' ? (
                 <path
@@ -380,6 +653,7 @@ export function HubDevWhiteboard() {
                 />
               ) : null,
             )}
+
             {draftStroke.length > 1 && (
               <path
                 d={strokeToPath(draftStroke)}
@@ -393,40 +667,78 @@ export function HubDevWhiteboard() {
             )}
           </svg>
 
-          {scene.elements.map((el) =>
-            el.type === 'sticky' ? (
-              <div
-                key={el.id}
-                className={`${styles.sticky} ${selectedId === el.id ? styles.stickySelected : ''}`}
-                style={{
-                  left: el.x,
-                  top: el.y,
-                  width: el.width,
-                  height: el.height,
-                  background: el.color,
-                }}
-                onPointerDown={(e) => {
-                  e.stopPropagation();
-                  setSelectedId(el.id);
-                  setTool('select');
-                }}
-              >
-                <textarea
-                  className={styles.stickyInput}
-                  value={el.text}
-                  placeholder="Escreva aqui…"
-                  onChange={(e) => updateStickyText(el.id, e.target.value)}
-                  onPointerDown={(e) => e.stopPropagation()}
-                />
-              </div>
-            ) : null,
-          )}
+          {scene.elements.map((el) => {
+            if (el.type === 'image') {
+              return (
+                <div
+                  key={el.id}
+                  className={`${styles.imageWrap} ${selectedId === el.id ? styles.objectSelected : ''} ${linkFromId === el.id ? styles.linkSource : ''}`}
+                  style={{ left: el.x, top: el.y, width: el.width, height: el.height }}
+                  onPointerDown={(e) => {
+                    e.stopPropagation();
+                    if (tool === 'link') {
+                      tryLinkElement(el.id);
+                      return;
+                    }
+                    setSelectedId(el.id);
+                    setTool('select');
+                    startElementDrag(el.id, clientToWorld(e.clientX, e.clientY));
+                    e.currentTarget.setPointerCapture(e.pointerId);
+                  }}
+                  onPointerUp={() => finishElementDrag()}
+                >
+                  <img src={el.src} alt="" className={styles.boardImage} draggable={false} />
+                </div>
+              );
+            }
+
+            if (el.type === 'sticky') {
+              return (
+                <div
+                  key={el.id}
+                  className={`${styles.sticky} ${selectedId === el.id ? styles.objectSelected : ''} ${linkFromId === el.id ? styles.linkSource : ''}`}
+                  style={{
+                    left: el.x,
+                    top: el.y,
+                    width: el.width,
+                    height: el.height,
+                    background: el.color,
+                  }}
+                >
+                  <div
+                    className={styles.stickyHandle}
+                    onPointerDown={(e) => {
+                      e.stopPropagation();
+                      if (tool === 'link') {
+                        tryLinkElement(el.id);
+                        return;
+                      }
+                      setSelectedId(el.id);
+                      setTool('select');
+                      startElementDrag(el.id, clientToWorld(e.clientX, e.clientY));
+                      e.currentTarget.setPointerCapture(e.pointerId);
+                    }}
+                    onPointerUp={() => finishElementDrag()}
+                  />
+                  <textarea
+                    className={styles.stickyInput}
+                    value={el.text}
+                    placeholder="Escreva aqui…"
+                    onChange={(e) => updateStickyText(el.id, e.target.value)}
+                    onPointerDown={(e) => e.stopPropagation()}
+                  />
+                </div>
+              );
+            }
+
+            return null;
+          })}
         </div>
       </div>
 
       <p className={styles.hint}>
-        Caneta para desenhar · Nota para post-its · Mover para arrastar o quadro · Scroll para zoom ·
-        Shift+arrastar também move · Salva automaticamente para toda a equipe.
+        Ctrl+Z desfazer · Ctrl+Y refazer · Ctrl+V colar imagem · Seta liga notas/imagens · Arraste pela
+        barra da nota ou pela imagem · Scroll zoom · Shift+arrastar move o quadro.
       </p>
     </div>
   );
