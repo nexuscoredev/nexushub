@@ -19,22 +19,8 @@ export const DEV_CHECKLIST_STORAGE_KEY = 'nexushub-dev-checklist-v1';
 
 export const DEV_STAGES: DevStage[] = [
   {
-    id: 'kickoff',
-    order: 1,
-    title: 'Kickoff comercial',
-    summary: 'Alinhar escopo, prazo e responsáveis antes de abrir repositório ou infra.',
-    tools: ['Contrato', 'Todoist', 'Hub — Fila'],
-    checklist: [
-      'Contrato ou proposta aprovada pelo cliente',
-      'Projeto criado no Todoist (cliente + seções)',
-      'Repositório GitHub reservado (nome e time NEXUS)',
-      'Definir stack (React/Vite, Supabase, Vercel, etc.)',
-      'Responsável técnico e canal com o cliente',
-    ],
-  },
-  {
     id: 'github',
-    order: 2,
+    order: 1,
     title: 'GitHub',
     summary: 'Repositório versionado em disco local — nunca OneDrive/Drive como fonte.',
     tools: ['GitHub', 'Git'],
@@ -48,7 +34,7 @@ export const DEV_STAGES: DevStage[] = [
   },
   {
     id: 'supabase',
-    order: 3,
+    order: 2,
     title: 'Supabase',
     summary: 'Banco, Auth e RLS — migrations na ordem, seed só com service role.',
     tools: ['Supabase', 'SQL Editor', 'CLI'],
@@ -63,7 +49,7 @@ export const DEV_STAGES: DevStage[] = [
   },
   {
     id: 'vercel',
-    order: 4,
+    order: 3,
     title: 'Vercel',
     summary: 'Deploy contínuo a partir do main — variáveis sem prefixo VITE_ para secrets.',
     tools: ['Vercel', 'Time NEXUS'],
@@ -78,7 +64,7 @@ export const DEV_STAGES: DevStage[] = [
   },
   {
     id: 'cursor',
-    order: 5,
+    order: 4,
     title: 'Cursor',
     summary: 'Ambiente local e regras para a IA seguir o padrão NEXUS.',
     tools: ['Cursor', 'Node.js'],
@@ -93,7 +79,7 @@ export const DEV_STAGES: DevStage[] = [
   },
   {
     id: 'build',
-    order: 6,
+    order: 5,
     title: 'Desenvolvimento',
     summary: 'Codar em main (fluxo NEXUS): pull antes, commit claro, push após pull.',
     tools: ['Git', 'Todoist', 'Hub'],
@@ -108,7 +94,7 @@ export const DEV_STAGES: DevStage[] = [
   },
   {
     id: 'qa',
-    order: 7,
+    order: 6,
     title: 'Homologação',
     summary: 'Validar preview Vercel com dados reais ou staging antes do go-live.',
     tools: ['Vercel Preview', 'Hub'],
@@ -122,7 +108,7 @@ export const DEV_STAGES: DevStage[] = [
   },
   {
     id: 'golive',
-    order: 8,
+    order: 7,
     title: 'Go-live',
     summary: 'Promover produção, registrar no Hub e passar operação.',
     tools: ['Vercel', 'Hub — Sistemas'],
