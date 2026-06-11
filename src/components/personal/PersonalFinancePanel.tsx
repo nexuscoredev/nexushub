@@ -5,10 +5,12 @@ import { usePersonalFinanceRows } from '../../hooks/usePersonalFinanceRows';
 import {
   defaultDateForMonth,
   filterRowsForMonth,
+  formatMonthLabel,
   parseMonthKey,
   resolveFinanceMonthKey,
   saveMonthKey,
 } from '../../lib/personalFinanceMonth';
+import { downloadPersonalFinanceCsv } from '../../lib/personalFinanceExport';
 import { buildPessoalFinanceSummary } from '../../lib/pessoalFinanceSummary';
 import { isViniciusPersonalFinance } from '../../lib/viniciusPersonalFinance';
 import type { HubPersonalTransaction } from '../../types/database';
@@ -106,25 +108,46 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
     [rows],
   );
 
+  const handleSaveMonth = () => {
+    if (rows.length === 0) return;
+    downloadPersonalFinanceCsv(rows, selectedMonth);
+  };
+
   return (
     <div className={styles.panel}>
       {error && <div className="error-banner">{error}</div>}
 
       <div className={styles.toolbar}>
-        <PersonalFinanceMonthPicker value={selectedMonth} onChange={setSelectedMonth} />
-        {viniciusLayout ? (
-          <PersonalFinanceNav
-            tabs={[...VINICIUS_TABS]}
-            active={viniciusView}
-            onChange={(id) => setViniciusView(id as ViniciusFinanceView)}
-          />
-        ) : (
-          <PersonalFinanceNav
-            tabs={[...GENERIC_TABS]}
-            active={fluxo}
-            onChange={(id) => setFluxo(id as 'entrada' | 'saida')}
-          />
-        )}
+        <div className={styles.toolbarMain}>
+          <PersonalFinanceMonthPicker value={selectedMonth} onChange={setSelectedMonth} />
+          {viniciusLayout ? (
+            <PersonalFinanceNav
+              tabs={[...VINICIUS_TABS]}
+              active={viniciusView}
+              onChange={(id) => setViniciusView(id as ViniciusFinanceView)}
+            />
+          ) : (
+            <PersonalFinanceNav
+              tabs={[...GENERIC_TABS]}
+              active={fluxo}
+              onChange={(id) => setFluxo(id as 'entrada' | 'saida')}
+            />
+          )}
+        </div>
+        <button
+          type="button"
+          className={styles.saveBtn}
+          onClick={handleSaveMonth}
+          disabled={loading || rows.length === 0}
+          title={
+            rows.length === 0
+              ? 'Nenhum lançamento neste mês'
+              : `Salvar planilha de ${formatMonthLabel(selectedMonth)}`
+          }
+        >
+          <span className={styles.saveBtnIcon} aria-hidden>↓</span>
+          Salvar
+        </button>
       </div>
 
       <div className={styles.summaryStrip}>

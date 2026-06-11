@@ -42,26 +42,38 @@ export function PersonalAreaHome({ onOpenFinance }: PersonalAreaHomeProps) {
   const userId = user?.id;
   const firstName = profile?.nome?.trim().split(/\s+/)[0] ?? 'você';
 
-  const [score, setScore] = useState<number | null>(() => loadHumorDoDia(userId));
+  const [savedScore, setSavedScore] = useState<number | null>(() => loadHumorDoDia(userId));
+  const [pendingScore, setPendingScore] = useState<number | null>(() => loadHumorDoDia(userId));
 
   useEffect(() => {
-    setScore(loadHumorDoDia(userId));
+    const loaded = loadHumorDoDia(userId);
+    setSavedScore(loaded);
+    setPendingScore(loaded);
   }, [userId]);
 
+  const previewScore = pendingScore ?? savedScore;
+
   const mensagem = useMemo(
-    () => (score == null ? null : humorMensagem(score)),
-    [score],
+    () => (previewScore == null ? null : humorMensagem(previewScore)),
+    [previewScore],
   );
 
   const rotulo = useMemo(
-    () => (score == null ? null : humorRotulo(score)),
-    [score],
+    () => (previewScore == null ? null : humorRotulo(previewScore)),
+    [previewScore],
   );
 
+  const hasPendingSave =
+    pendingScore != null && userId != null && pendingScore !== savedScore;
+
   const pickScore = (value: number) => {
-    if (!userId) return;
-    setScore(value);
-    saveHumorDoDia(userId, value);
+    setPendingScore(value);
+  };
+
+  const handleSaveHumor = () => {
+    if (!userId || pendingScore == null) return;
+    saveHumorDoDia(userId, pendingScore);
+    setSavedScore(pendingScore);
   };
 
   return (
@@ -85,9 +97,9 @@ export function PersonalAreaHome({ onOpenFinance }: PersonalAreaHomeProps) {
             <button
               key={n}
               type="button"
-              className={`${styles.scoreBtn} ${score === n ? styles.scoreBtnActive : ''}`}
+              className={`${styles.scoreBtn} ${pendingScore === n ? styles.scoreBtnActive : ''}`}
               onClick={() => pickScore(n)}
-              aria-pressed={score === n}
+              aria-pressed={pendingScore === n}
               aria-label={`Nota ${n}`}
             >
               {n}
@@ -95,12 +107,26 @@ export function PersonalAreaHome({ onOpenFinance }: PersonalAreaHomeProps) {
           ))}
         </div>
 
-        {score != null && (
+        {previewScore != null && (
           <div className={styles.feedback}>
             <span className={styles.feedbackBadge}>{rotulo}</span>
             <p className={styles.feedbackText}>{mensagem}</p>
           </div>
         )}
+
+        <div className={styles.saveRow}>
+          <button
+            type="button"
+            className={styles.saveBtn}
+            onClick={handleSaveHumor}
+            disabled={!hasPendingSave}
+          >
+            Salvar
+          </button>
+          {savedScore != null && !hasPendingSave && (
+            <span className={styles.savedHint}>Humor do dia registrado</span>
+          )}
+        </div>
       </section>
 
       <section className={styles.card} aria-labelledby="musica-trilha">
