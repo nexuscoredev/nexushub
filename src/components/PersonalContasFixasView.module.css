@@ -146,6 +146,7 @@
 
 .grupoChevron {
   grid-area: chevron;
+  justify-self: center;
   font-size: 0.75rem;
   color: var(--muted);
   line-height: 1;
