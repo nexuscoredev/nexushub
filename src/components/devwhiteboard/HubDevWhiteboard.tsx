@@ -5,7 +5,6 @@ import {
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
-  type WheelEvent as ReactWheelEvent,
 } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -48,7 +47,11 @@ function isTypingTarget(target: EventTarget | null): boolean {
   );
 }
 
-export function HubDevWhiteboard() {
+interface HubDevWhiteboardProps {
+  fullHeight?: boolean;
+}
+
+export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) {
   const { user } = useAuth();
   const surfaceRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<WhiteboardScene>(DEFAULT_WHITEBOARD_SCENE);
@@ -60,6 +63,7 @@ export function HubDevWhiteboard() {
     offsetX: number;
     offsetY: number;
   } | null>(null);
+  const stickyInputRefs = useRef<Map<string, HTMLTextAreaElement>>(new Map());
 
   const [scene, setScene] = useState<WhiteboardScene>(DEFAULT_WHITEBOARD_SCENE);
   const [historyPast, setHistoryPast] = useState<WhiteboardScene[]>([]);
@@ -68,6 +72,7 @@ export function HubDevWhiteboard() {
   const [penColor, setPenColor] = useState<string>(PEN_COLORS[0]);
   const [stickyColor, setStickyColor] = useState<string>(STICKY_COLORS[0]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [editingStickyId, setEditingStickyId] = useState<string | null>(null);
   const [linkFromId, setLinkFromId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -219,10 +224,48 @@ export function HubDevWhiteboard() {
         elements: [...sceneRef.current.elements, sticky],
       });
       setSelectedId(sticky.id);
-      setTool('select');
     },
     [applyScene, stickyColor],
   );
+
+  const beginStickyEdit = useCallback((id: string) => {
+    setSelectedId(id);
+    setEditingStickyId(id);
+    setTool('select');
+    window.requestAnimationFrame(() => {
+      stickyInputRefs.current.get(id)?.focus();
+    });
+  }, []);
+
+  const zoomViewport = useCallback(
+    (delta: number) => {
+      const next = {
+        ...sceneRef.current,
+        viewport: {
+          ...sceneRef.current.viewport,
+          zoom: Math.min(3, Math.max(0.35, sceneRef.current.viewport.zoom + delta)),
+        },
+      };
+      setScene(next);
+      scheduleSave(next);
+    },
+    [scheduleSave],
+  );
+
+  useEffect(() => {
+    const surface = surfaceRef.current;
+    if (!surface) return;
+
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const delta = event.deltaY > 0 ? -0.08 : 0.08;
+      zoomViewport(delta);
+    };
+
+    surface.addEventListener('wheel', onWheel, { passive: false });
+    return () => surface.removeEventListener('wheel', onWheel);
+  }, [zoomViewport]);
 
   const addImage = useCallback(
     (src: string, width: number, height: number, at?: WhiteboardPoint) => {
@@ -336,6 +379,7 @@ export function HubDevWhiteboard() {
 
     if (tool === 'select') {
       setSelectedId(null);
+      setEditingStickyId(null);
       setLinkFromId(null);
     }
   };
@@ -417,18 +461,6 @@ export function HubDevWhiteboard() {
     }
   };
 
-  const handleWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    const delta = event.deltaY > 0 ? -0.08 : 0.08;
-    applyScene({
-      ...sceneRef.current,
-      viewport: {
-        ...sceneRef.current.viewport,
-        zoom: Math.min(3, Math.max(0.35, sceneRef.current.viewport.zoom + delta)),
-      },
-    });
-  };
-
   const updateStickyText = (id: string, text: string) => {
     applyScene(
       {
@@ -445,8 +477,15 @@ export function HubDevWhiteboard() {
     if (!selectedId) return;
     applyScene(sceneWithoutElement(sceneRef.current, selectedId));
     setSelectedId(null);
+    setEditingStickyId(null);
     setLinkFromId(null);
   }, [applyScene, selectedId]);
+
+  useEffect(() => {
+    if (editingStickyId && editingStickyId !== selectedId) {
+      setEditingStickyId(null);
+    }
+  }, [selectedId, editingStickyId]);
 
   const clearBoard = () => {
     if (!window.confirm('Limpar todo o quadro? Esta ação afeta a equipe.')) return;
@@ -485,6 +524,7 @@ export function HubDevWhiteboard() {
       }
       if (event.key === 'Escape') {
         setLinkFromId(null);
+        setEditingStickyId(null);
       }
     };
 
@@ -510,7 +550,7 @@ export function HubDevWhiteboard() {
   const { panX, panY, zoom } = scene.viewport;
 
   return (
-    <div className={styles.root}>
+    <div className={`${styles.root} ${fullHeight ? styles.rootFull : ''}`}>
       <div className={styles.toolbar}>
         <div className={styles.toolGroup} role="group" aria-label="Ferramentas">
           {(
@@ -606,7 +646,6 @@ export function HubDevWhiteboard() {
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
-        onWheel={handleWheel}
       >
         <div
           className={styles.world}
@@ -721,11 +760,31 @@ export function HubDevWhiteboard() {
                     onPointerUp={() => finishElementDrag()}
                   />
                   <textarea
-                    className={styles.stickyInput}
+                    ref={(node) => {
+                      if (node) stickyInputRefs.current.set(el.id, node);
+                      else stickyInputRefs.current.delete(el.id);
+                    }}
+                    className={`${styles.stickyInput} ${editingStickyId !== el.id ? styles.stickyInputReadOnly : ''}`}
                     value={el.text}
-                    placeholder="Escreva aqui…"
+                    placeholder="Duplo clique para escrever…"
+                    readOnly={editingStickyId !== el.id}
+                    tabIndex={editingStickyId === el.id ? 0 : -1}
                     onChange={(e) => updateStickyText(el.id, e.target.value)}
-                    onPointerDown={(e) => e.stopPropagation()}
+                    onBlur={() => {
+                      if (editingStickyId === el.id) setEditingStickyId(null);
+                    }}
+                    onPointerDown={(e) => {
+                      e.stopPropagation();
+                      if (editingStickyId !== el.id) {
+                        e.preventDefault();
+                        setSelectedId(el.id);
+                        setTool('select');
+                      }
+                    }}
+                    onDoubleClick={(e) => {
+                      e.stopPropagation();
+                      beginStickyEdit(el.id);
+                    }}
                   />
                 </div>
               );
@@ -738,7 +797,7 @@ export function HubDevWhiteboard() {
 
       <p className={styles.hint}>
         Ctrl+Z desfazer · Ctrl+Y refazer · Ctrl+V colar imagem · Seta liga notas/imagens · Arraste pela
-        barra da nota ou pela imagem · Scroll zoom · Shift+arrastar move o quadro.
+        barra da nota ou pela imagem · Duplo clique na nota para escrever · Scroll zoom · Shift+arrastar move o quadro.
       </p>
     </div>
   );

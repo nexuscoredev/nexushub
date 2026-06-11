@@ -4,6 +4,36 @@
   gap: 0.65rem;
 }
 
+.rootFull {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.rootFull .toolbar {
+  flex-shrink: 0;
+}
+
+.rootFull .hint {
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .rootFull .hint {
+    display: none;
+  }
+}
+
+.rootFull .error {
+  flex-shrink: 0;
+}
+
+.rootFull .surface {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+}
+
 .toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -89,6 +119,7 @@
   border-radius: var(--radius);
   border: 1px solid var(--border);
   overflow: hidden;
+  overscroll-behavior: contain;
   background-color: #0c0c0e;
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
@@ -192,6 +223,11 @@
   outline: none;
 }
 
+.stickyInputReadOnly {
+  cursor: default;
+  user-select: none;
+}
+
 .imageWrap {
   position: absolute;
   border-radius: 6px;
@@ -253,7 +289,7 @@
     display: none;
   }
 
-  .surface {
+  .root:not(.rootFull) .surface {
     min-height: 360px;
     height: 58vh;
   }

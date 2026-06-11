@@ -2,6 +2,33 @@
   margin-bottom: 1.25rem;
 }
 
+.pageQuadro {
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - 3.25rem);
+  max-height: calc(100dvh - 3.25rem);
+  overflow: hidden;
+  margin: -2rem -1.5rem -3rem;
+  padding: 1rem 1.5rem 0.85rem;
+}
+
+.pageQuadro .tabs {
+  margin-bottom: 0.65rem;
+  flex-shrink: 0;
+}
+
+.pageQuadro > header {
+  flex-shrink: 0;
+}
+
+.quadroWrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .timeline {
   display: flex;
   flex-direction: column;
@@ -233,6 +260,18 @@
   white-space: pre-wrap;
   word-break: break-word;
   overflow-x: auto;
+}
+
+@media (max-width: 899px) {
+  .pageQuadro {
+    margin: -1.15rem max(-0.85rem, calc(-1 * env(safe-area-inset-left, 0px)))
+      max(-5.5rem, calc(-2rem - env(safe-area-inset-bottom, 0px)))
+      max(-0.85rem, calc(-1 * env(safe-area-inset-right, 0px)));
+    padding: 0.75rem max(0.85rem, env(safe-area-inset-left, 0px)) 0.65rem
+      max(0.85rem, env(safe-area-inset-right, 0px));
+    height: calc(100dvh - 3.25rem);
+    max-height: calc(100dvh - 3.25rem);
+  }
 }
 
 @media (max-width: 768px) {

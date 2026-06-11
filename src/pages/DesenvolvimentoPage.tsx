@@ -38,6 +38,18 @@ export function DesenvolvimentoPage() {
     saveChecked(checked);
   }, [checked]);
 
+  useEffect(() => {
+    if (tab !== 'quadro') return;
+    const prevHtml = document.documentElement.style.overflow;
+    const prevBody = document.body.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.documentElement.style.overflow = prevHtml;
+      document.body.style.overflow = prevBody;
+    };
+  }, [tab]);
+
   const toggleItem = useCallback((key: string) => {
     setChecked((prev) => ({ ...prev, [key]: !prev[key] }));
   }, []);
@@ -65,11 +77,16 @@ export function DesenvolvimentoPage() {
   };
 
   return (
-    <div>
+    <div className={tab === 'quadro' ? styles.pageQuadro : undefined}>
       <PageHeader
         badge="// DEV"
         title="Painel de Desenvolvimento"
-        subtitle="Fluxo NEXUS, checklists, códigos para o Cursor e quadro colaborativo nativo da equipe."
+        subtitle={
+          tab === 'quadro'
+            ? undefined
+            : 'Fluxo NEXUS, checklists, códigos para o Cursor e quadro colaborativo nativo da equipe.'
+        }
+        compact={tab === 'quadro'}
       />
 
       <div className={styles.tabs}>
@@ -201,7 +218,11 @@ export function DesenvolvimentoPage() {
         </div>
       )}
 
-      {tab === 'quadro' && <HubDevWhiteboard />}
+      {tab === 'quadro' && (
+        <div className={styles.quadroWrap}>
+          <HubDevWhiteboard fullHeight />
+        </div>
+      )}
     </div>
   );
 }
