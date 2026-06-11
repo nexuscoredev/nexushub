@@ -5,10 +5,14 @@ import {
   DEV_SNIPPETS,
   DEV_STAGES,
   devChecklistItemKey,
+  loadWhiteboardEmbedUrl,
+  miroBoardViewUrl,
+  saveWhiteboardEmbedUrl,
+  toMiroLiveEmbedUrl,
 } from '../data/painelDesenvolvimento';
 import styles from './DesenvolvimentoPage.module.css';
 
-type DevTab = 'fluxo' | 'checklists' | 'codigos';
+type DevTab = 'fluxo' | 'checklists' | 'codigos' | 'quadro';
 
 function loadChecked(): Record<string, boolean> {
   try {
@@ -32,6 +36,9 @@ export function DesenvolvimentoPage() {
   const [tab, setTab] = useState<DevTab>('fluxo');
   const [checked, setChecked] = useState<Record<string, boolean>>(loadChecked);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [boardInput, setBoardInput] = useState('');
+  const [boardEmbedUrl, setBoardEmbedUrl] = useState(loadWhiteboardEmbedUrl);
+  const [boardError, setBoardError] = useState<string | null>(null);
 
   useEffect(() => {
     saveChecked(checked);
@@ -63,12 +70,28 @@ export function DesenvolvimentoPage() {
     }
   };
 
+  const saveBoardLink = () => {
+    const embed = toMiroLiveEmbedUrl(boardInput);
+    if (!embed) {
+      setBoardError(
+        'Cole o link do quadro Miro (miro.com/app/board/...). O webwhiteboard.com abre fora do Hub — use Compartilhar e cole o link do board aqui.',
+      );
+      return;
+    }
+    setBoardError(null);
+    setBoardEmbedUrl(embed);
+    saveWhiteboardEmbedUrl(embed);
+    setBoardInput('');
+  };
+
+  const activeBoardEmbed = boardEmbedUrl || toMiroLiveEmbedUrl(boardInput);
+
   return (
     <div>
       <PageHeader
         badge="// DEV"
         title="Painel de Desenvolvimento"
-        subtitle="Fluxo NEXUS da venda ao go-live — timeline, checklists e códigos para o Cursor."
+        subtitle="Fluxo NEXUS, checklists, códigos para o Cursor e quadro colaborativo da equipe."
       />
 
       <div className={styles.tabs}>
@@ -92,6 +115,13 @@ export function DesenvolvimentoPage() {
           onClick={() => setTab('codigos')}
         >
           Códigos
+        </button>
+        <button
+          type="button"
+          className={`tab ${tab === 'quadro' ? 'active' : ''}`}
+          onClick={() => setTab('quadro')}
+        >
+          Quadro
         </button>
       </div>
 
@@ -190,6 +220,82 @@ export function DesenvolvimentoPage() {
               <pre className={styles.snippetPre}>{snippet.content}</pre>
             </article>
           ))}
+        </div>
+      )}
+
+      {tab === 'quadro' && (
+        <div className={styles.whiteboardPanel}>
+          <div className={styles.whiteboardToolbar}>
+            <div className={styles.whiteboardIntro}>
+              <p className={styles.whiteboardLead}>
+                Quadro colaborativo da equipe (Miro / Web Whiteboard). Crie ou abra um board,
+                compartilhe o link e cole abaixo para fixar no Hub.
+              </p>
+            </div>
+            <div className={styles.whiteboardActions}>
+              <a
+                href="https://webwhiteboard.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary"
+              >
+                Novo quadro
+              </a>
+              {activeBoardEmbed ? (
+                <a
+                  href={miroBoardViewUrl(activeBoardEmbed)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-ghost"
+                >
+                  Abrir em nova aba
+                </a>
+              ) : null}
+            </div>
+            <div className={styles.whiteboardLinkRow}>
+              <input
+                className="input"
+                type="url"
+                placeholder="Cole o link: https://miro.com/app/board/..."
+                value={boardInput}
+                onChange={(e) => {
+                  setBoardInput(e.target.value);
+                  if (boardError) setBoardError(null);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') saveBoardLink();
+                }}
+                aria-label="Link do quadro Miro"
+              />
+              <button type="button" className="btn-primary" onClick={saveBoardLink}>
+                Salvar quadro
+              </button>
+            </div>
+            {boardError && <p className={styles.whiteboardError}>{boardError}</p>}
+            <p className={styles.whiteboardHint}>
+              O site webwhiteboard.com não permite iframe externo. Após criar o quadro, use{' '}
+              <strong>Compartilhar</strong> e cole o link do board Miro — o Hub embute aqui para
+              todos com o mesmo link salvo (ou defina{' '}
+              <code>VITE_NEXUS_WHITEBOARD_EMBED</code> na Vercel para a equipe).
+            </p>
+          </div>
+
+          {activeBoardEmbed ? (
+            <div className={styles.whiteboardFrameWrap}>
+              <iframe
+                title="Quadro NEXUS — Miro"
+                src={activeBoardEmbed}
+                className={styles.whiteboardFrame}
+                allow="fullscreen; clipboard-read; clipboard-write"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+          ) : (
+            <div className={styles.whiteboardEmpty}>
+              <p>Nenhum quadro configurado.</p>
+              <p>Clique em <strong>Novo quadro</strong>, crie o board e cole o link acima.</p>
+            </div>
+          )}
         </div>
       )}
     </div>
