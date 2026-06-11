@@ -521,47 +521,6 @@ a:hover .brand-logo {
   opacity: 1;
 }
 
-.personal-conta-form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  margin: 0;
-  border-radius: var(--radius);
-  border: 1px solid var(--pf-border);
-  background: var(--pf-surface);
-  backdrop-filter: blur(16px);
-}
-
-.personal-conta-form h3 {
-  font-size: 0.9rem;
-  margin: 0;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.personal-conta-form .btn-primary,
-.personal-conta-form .btn-ghost {
-  min-height: 44px;
-}
-
-@media (min-width: 720px) {
-  .personal-conta-form {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem 0.85rem;
-  }
-
-  .personal-conta-form h3,
-  .personal-conta-form .error-banner,
-  .personal-conta-form > div:last-child {
-    grid-column: 1 / -1;
-  }
-
-  .personal-conta-form > div:first-of-type {
-    grid-column: 1 / -1;
-  }
-}
-
 @media (max-width: 899px) {
   .tabs {
     width: 100%;
@@ -612,10 +571,6 @@ a:hover .brand-logo {
     font-size: 1.1rem;
   }
 
-  .personal-conta-form {
-    padding: 1rem max(0.9rem, env(safe-area-inset-right)) 1rem
-      max(0.9rem, env(safe-area-inset-left));
-  }
 }
 
 @media (max-width: 768px) {

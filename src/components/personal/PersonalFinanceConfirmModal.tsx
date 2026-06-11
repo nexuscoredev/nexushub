@@ -53,23 +53,27 @@ export function PersonalFinanceConfirmModal({
       }}
     >
       <div
-        className={styles.dialog}
+        className={`${styles.dialog} ${danger ? styles.dialogDanger : ''}`}
         role="alertdialog"
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={messageId}
       >
         <div className={styles.header}>
-          <h2 id={titleId} className={styles.title}>
-            {title}
-          </h2>
-          <button type="button" className={`btn-ghost ${styles.closeBtn}`} onClick={onClose} aria-label="Fechar">
+          <div className={styles.headerCopy}>
+            <h2 id={titleId} className={styles.title}>
+              {title}
+            </h2>
+          </div>
+          <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Fechar">
             <NavIcon name="close" />
           </button>
         </div>
-        <p id={messageId} className={styles.confirmMessage}>
-          {message}
-        </p>
+        <div className={styles.confirmBody}>
+          <p id={messageId} className={styles.confirmMessage}>
+            {message}
+          </p>
+        </div>
         <div className={styles.confirmActions}>
           <button type="button" className="btn-ghost" onClick={onClose}>
             Cancelar

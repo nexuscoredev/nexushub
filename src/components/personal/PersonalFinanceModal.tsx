@@ -9,8 +9,18 @@ interface PersonalFinanceModalProps {
   children: ReactNode;
 }
 
+function splitModalTitle(title: string): { eyebrow: string | null; headline: string } {
+  const sep = title.indexOf(' · ');
+  if (sep === -1) return { eyebrow: null, headline: title };
+  return {
+    eyebrow: title.slice(0, sep).trim(),
+    headline: title.slice(sep + 3).trim() || title,
+  };
+}
+
 export function PersonalFinanceModal({ open, title, onClose, children }: PersonalFinanceModalProps) {
   const titleId = useId();
+  const { eyebrow, headline } = splitModalTitle(title);
 
   useEffect(() => {
     if (!open) return;
@@ -42,10 +52,13 @@ export function PersonalFinanceModal({ open, title, onClose, children }: Persona
     >
       <div className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby={titleId}>
         <div className={styles.header}>
-          <h2 id={titleId} className={styles.title}>
-            {title}
-          </h2>
-          <button type="button" className={`btn-ghost ${styles.closeBtn}`} onClick={onClose} aria-label="Fechar">
+          <div className={styles.headerCopy}>
+            {eyebrow && <span className={styles.eyebrow}>{eyebrow}</span>}
+            <h2 id={titleId} className={styles.title}>
+              {headline}
+            </h2>
+          </div>
+          <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Fechar">
             <NavIcon name="close" />
           </button>
         </div>

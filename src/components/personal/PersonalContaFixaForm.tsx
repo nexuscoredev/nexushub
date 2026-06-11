@@ -3,6 +3,7 @@ import { PESSOAL_CATEGORIAS } from '../../lib/pessoal';
 import { nextOrdemInGrupo } from '../../lib/pessoalFinanceSummary';
 import { supabase, supabaseErrorMessage } from '../../lib/supabase';
 import type { HubPersonalContaGrupo, HubPersonalTransaction } from '../../types/database';
+import formStyles from './PersonalFinanceForm.module.css';
 
 const CONTA_KEYS = [
   'descricao',
@@ -115,115 +116,116 @@ export function PersonalContaFixaForm({
   };
 
   return (
-    <form className="card personal-conta-form" onSubmit={handleSubmit}>
+    <form className={formStyles.form} onSubmit={handleSubmit}>
       {!hideHeader && (
-        <h3 style={{ fontSize: '0.9rem', margin: 0 }}>
-          {isEdit ? 'Editar conta' : 'Nova conta'}
-        </h3>
+        <h3 className={formStyles.label}>{isEdit ? 'Editar conta' : 'Nova conta'}</h3>
       )}
       <input type="hidden" name="grupo" value={grupo} />
 
-      <div>
-        <label className="label" htmlFor="cf-descricao">
+      <div className={`${formStyles.field} ${formStyles.fieldFull}`}>
+        <label className={formStyles.label} htmlFor="cf-descricao">
           Descrição
         </label>
         <input
           id="cf-descricao"
           name="descricao"
           type="text"
-          className="input"
+          className={formStyles.input}
           defaultValue={String(merged.descricao ?? '')}
           required
         />
       </div>
 
-      <div>
-        <label className="label" htmlFor="cf-valor">
-          Valor (R$)
-        </label>
-        <input
-          id="cf-valor"
-          name="valor"
-          type="number"
-          step="0.01"
-          min="0"
-          className="input"
-          defaultValue={merged.valor != null ? String(merged.valor) : ''}
-          required
-        />
-      </div>
+      <div className={formStyles.grid}>
+        <div className={formStyles.field}>
+          <label className={formStyles.label} htmlFor="cf-valor">
+            Valor (R$)
+          </label>
+          <input
+            id="cf-valor"
+            name="valor"
+            type="number"
+            step="0.01"
+            min="0"
+            className={formStyles.input}
+            defaultValue={merged.valor != null ? String(merged.valor) : ''}
+            required
+          />
+        </div>
 
-      <div>
-        <label className="label" htmlFor="cf-notas">
-          Provedor / notas
-        </label>
-        <input
-          id="cf-notas"
-          name="notas"
-          type="text"
-          className="input"
-          placeholder="Ex.: Nubank, Mercado Pago"
-          defaultValue={String(merged.notas ?? '')}
-        />
-      </div>
+        <div className={formStyles.field}>
+          <label className={formStyles.label} htmlFor="cf-notas">
+            Provedor / notas
+          </label>
+          <input
+            id="cf-notas"
+            name="notas"
+            type="text"
+            className={formStyles.input}
+            placeholder="Ex.: Nubank, Mercado Pago"
+            defaultValue={String(merged.notas ?? '')}
+          />
+        </div>
 
-      <div>
-        <label className="label" htmlFor="cf-dia">
-          Dia vencimento
-        </label>
-        <input
-          id="cf-dia"
-          name="dia_vencimento"
-          type="number"
-          min="1"
-          max="31"
-          className="input"
-          defaultValue={merged.dia_vencimento ?? ''}
-        />
-      </div>
+        <div className={formStyles.field}>
+          <label className={formStyles.label} htmlFor="cf-dia">
+            Dia vencimento
+          </label>
+          <input
+            id="cf-dia"
+            name="dia_vencimento"
+            type="number"
+            min="1"
+            max="31"
+            className={formStyles.input}
+            defaultValue={merged.dia_vencimento ?? ''}
+          />
+        </div>
 
-      <div>
-        <label className="label" htmlFor="cf-categoria">
-          Categoria
-        </label>
-        <select
-          id="cf-categoria"
-          name="categoria"
-          className="input"
-          defaultValue={String(merged.categoria ?? '')}
-        >
-          <option value="">—</option>
-          {PESSOAL_CATEGORIAS.map((c) => (
-            <option key={c.value} value={c.value}>
-              {c.label}
-            </option>
-          ))}
-        </select>
+        <div className={formStyles.field}>
+          <label className={formStyles.label} htmlFor="cf-categoria">
+            Categoria
+          </label>
+          <select
+            id="cf-categoria"
+            name="categoria"
+            className={formStyles.input}
+            defaultValue={String(merged.categoria ?? '')}
+          >
+            <option value="">—</option>
+            {PESSOAL_CATEGORIAS.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {isEdit && (
-        <label className="label" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+        <label className={`${formStyles.checkRow} ${formStyles.fieldFull}`}>
           <input
             type="checkbox"
             name="pago"
+            className={formStyles.checkInput}
             defaultChecked={Boolean(merged.pago)}
             value="true"
           />
-          Já pago
+          <span className={formStyles.checkLabel}>Já pago</span>
         </label>
       )}
 
-      {error && <div className="error-banner">{error}</div>}
+      {error && <div className={`error-banner ${formStyles.error}`}>{error}</div>}
 
-      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-        <button type="submit" className="btn-primary">
-          {isEdit ? 'Salvar' : 'Adicionar'}
-        </button>
+      <div className={formStyles.actions}>
         {onCancel && (
           <button type="button" className="btn-ghost" onClick={onCancel}>
             Cancelar
           </button>
         )}
+        <button type="submit" className="btn-primary">
+          {isEdit ? 'Salvar' : 'Adicionar'}
+        </button>
       </div>
     </form>
   );

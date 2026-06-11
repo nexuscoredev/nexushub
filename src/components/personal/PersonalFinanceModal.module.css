@@ -6,90 +6,199 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: rgba(0, 0, 0, 0.76);
-  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(10px);
+  animation: backdropIn 0.2s ease;
 }
 
 .dialog {
-  width: min(100%, 480px);
+  position: relative;
+  width: min(100%, 28rem);
   max-height: min(92vh, 720px);
-  overflow-y: auto;
-  padding: 1.15rem 1.25rem 1.25rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   border-radius: var(--radius);
   border: 1px solid var(--pf-border-strong);
-  background: var(--surface-solid);
+  background: linear-gradient(165deg, var(--nx-graphite-2) 0%, var(--nx-graphite) 48%, #0c0c0c 100%);
   box-shadow:
-    0 0 40px var(--pf-glow),
-    0 28px 56px rgba(0, 0, 0, 0.5);
+    0 0 48px var(--pf-glow),
+    0 24px 64px rgba(0, 0, 0, 0.55);
+  animation: dialogIn 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dialog::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--nx-cyan-bright), transparent);
+  opacity: 0.95;
+  z-index: 1;
+}
+
+.dialogDanger::before {
+  background: linear-gradient(90deg, #f87171, #fb923c, transparent);
 }
 
 .header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 0.75rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.85rem;
+  padding: 1rem 1.1rem 0.85rem;
   border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(110, 181, 255, 0.06), transparent);
+  flex-shrink: 0;
+}
+
+.headerCopy {
+  flex: 1;
+  min-width: 0;
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--nx-cyan-bright);
+}
+
+.eyebrow::before {
+  content: '// ';
+  opacity: 0.8;
 }
 
 .title {
-  font-size: 1.05rem;
-  font-weight: 600;
   margin: 0;
-  line-height: 1.3;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--text);
   overflow-wrap: anywhere;
 }
 
 .closeBtn {
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   padding: 0;
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--muted);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
-.body :global(.card) {
-  margin: 0;
-  padding: 0;
-  border: none;
-  background: transparent;
-  box-shadow: none;
+.closeBtn:hover {
+  color: var(--text);
+  border-color: var(--pf-border-strong);
+  background: rgba(37, 99, 235, 0.12);
+  box-shadow: 0 0 12px var(--pf-glow);
 }
 
-.body :global(.card)::after {
-  display: none;
+.body {
+  padding: 1rem 1.1rem 1.1rem;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.confirmBody {
+  padding: 0 1.1rem 1.1rem;
 }
 
 .confirmMessage {
-  margin: 0 0 1.15rem;
-  font-size: 0.92rem;
-  line-height: 1.5;
+  margin: 0 0 1rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
   color: var(--muted);
 }
 
 .confirmActions {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
+  padding: 0.85rem 1.1rem 1.1rem;
+  border-top: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.confirmActions :global(.btn-ghost) {
+  min-height: 2.5rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
 }
 
 .confirmDanger {
-  padding: 0.45rem 0.85rem;
-  border-radius: var(--radius-sm);
+  min-height: 2.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
   border: 1px solid rgba(248, 113, 113, 0.45);
-  background: rgba(248, 113, 113, 0.18);
+  background: linear-gradient(180deg, rgba(248, 113, 113, 0.28), rgba(220, 38, 38, 0.22));
   color: #fecaca;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .confirmDanger:hover {
-  background: rgba(248, 113, 113, 0.28);
+  border-color: rgba(248, 113, 113, 0.65);
+  background: linear-gradient(180deg, rgba(248, 113, 113, 0.38), rgba(220, 38, 38, 0.3));
+  box-shadow: 0 0 18px rgba(248, 113, 113, 0.2);
+}
+
+@keyframes backdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialogIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .dialog {
+    animation: none;
+  }
 }
 
 @media (max-width: 480px) {
@@ -102,5 +211,14 @@
     width: 100%;
     max-height: 92vh;
     border-radius: var(--radius) var(--radius) 0 0;
+    border-bottom: none;
+  }
+
+  .header,
+  .body,
+  .confirmBody,
+  .confirmActions {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
   }
 }
