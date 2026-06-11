@@ -48,6 +48,14 @@
   --font-body: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --shadow-glow: none;
+
+  --pf-income: var(--nx-emerald-bright);
+  --pf-expense: #f87171;
+  --pf-pending: var(--nx-amber-bright);
+  --pf-surface: var(--surface);
+  --pf-border: rgba(110, 181, 255, 0.14);
+  --pf-border-strong: rgba(110, 181, 255, 0.28);
+  --pf-glow: var(--accent-glow);
 }
 
 @keyframes hubMetalFlow {
@@ -518,9 +526,10 @@ a:hover .brand-logo {
   flex-direction: column;
   gap: 0.85rem;
   margin: 0;
-  border-radius: 14px;
-  border: 1px solid rgba(129, 140, 248, 0.18);
-  background: linear-gradient(165deg, rgba(99, 102, 241, 0.08), rgba(0, 0, 0, 0.28));
+  border-radius: var(--radius);
+  border: 1px solid var(--pf-border);
+  background: var(--pf-surface);
+  backdrop-filter: blur(16px);
 }
 
 .personal-conta-form h3 {

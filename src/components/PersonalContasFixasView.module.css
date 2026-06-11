@@ -11,22 +11,33 @@
 }
 
 .grupoCard {
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  border-radius: var(--radius);
+  border: 1px solid var(--pf-border);
   border-left: 3px solid var(--accent);
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.32));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 6px 20px var(--glow);
+  background: var(--pf-surface);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 24px var(--glow);
   overflow: hidden;
 }
 
+.grupoCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  opacity: 0.75;
+}
+
 .grupoVariavel {
-  border-left-color: #f87171;
+  border-left-color: var(--pf-expense);
 }
 
 .grupoVariavel .grupoTitle {
-  color: #fca5a5;
+  color: #fecaca;
 }
 
 .grupoVariavel .lista {
@@ -123,8 +134,9 @@
 }
 
 .grupoTotal {
-  font-size: 0.82rem;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
   color: var(--accent);
   font-variant-numeric: tabular-nums;
 }
@@ -192,9 +204,9 @@
   align-items: start;
   gap: 0.35rem;
   padding: 0.38rem 0.42rem;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  background: rgba(0, 0, 0, 0.24);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.22);
   transition:
     border-color 0.15s ease,
     background 0.15s ease;
@@ -206,9 +218,9 @@
 }
 
 .itemCardPago {
-  opacity: 0.78;
-  background: rgba(52, 211, 153, 0.07);
-  border-color: rgba(52, 211, 153, 0.18);
+  opacity: 0.82;
+  background: rgba(52, 211, 153, 0.06);
+  border-color: rgba(52, 211, 153, 0.22);
 }
 
 .itemCardPago .itemTitle {
@@ -255,9 +267,9 @@
 }
 
 .checkbox:checked + .checkVisual {
-  border-color: #34d399;
-  background: rgba(52, 211, 153, 0.25);
-  box-shadow: 0 0 10px rgba(52, 211, 153, 0.2);
+  border-color: var(--pf-income);
+  background: rgba(52, 211, 153, 0.22);
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.2);
 }
 
 .checkbox:checked + .checkVisual::after {
@@ -329,8 +341,9 @@
   justify-self: end;
   align-self: start;
   padding-top: 0.05rem;
-  font-size: 0.78rem;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 600;
   color: var(--text);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -378,8 +391,8 @@
 
 .actionBtn:hover {
   color: var(--text);
-  border-color: rgba(129, 140, 248, 0.4);
-  background: rgba(99, 102, 241, 0.1);
+  border-color: var(--pf-border-strong);
+  background: rgba(37, 99, 235, 0.12);
 }
 
 .actionDanger:hover {

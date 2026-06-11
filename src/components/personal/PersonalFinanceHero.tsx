@@ -10,6 +10,12 @@ interface PersonalFinanceHeroProps {
   viniciusLayout?: boolean;
 }
 
+const SECONDARY_STATS = [
+  { key: 'entradas', label: 'Receitas', getValue: (s: PessoalFinanceSummary) => s.entradas },
+  { key: 'saidas', label: 'Gastos', getValue: (s: PessoalFinanceSummary) => s.saidas },
+  { key: 'aPagar', label: 'A pagar', getValue: (s: PessoalFinanceSummary) => s.valorAPagar },
+] as const;
+
 export function PersonalFinanceHero({
   summary,
   loading,
@@ -18,47 +24,30 @@ export function PersonalFinanceHero({
 }: PersonalFinanceHeroProps) {
   return (
     <header className={styles.hero}>
-      <div className={styles.copy}>
-        <div className={styles.stats}>
-          <div className={styles.stat}>
-            <span className={styles.statLabel}>Saldo</span>
-            <strong
-              className={`${styles.statValue} ${styles.statHighlight} ${summary.saldo < 0 ? styles.statNegative : ''}`}
-            >
-              {loading ? '…' : formatBRL(summary.saldo)}
-            </strong>
-          </div>
-          <div className={styles.statDivider} aria-hidden />
-          <div className={styles.stat}>
-            <span className={styles.statLabel}>Receitas</span>
+      <div className={styles.primary}>
+        <span className={styles.primaryLabel}>Saldo do mês</span>
+        <strong
+          className={`${styles.saldoValue} ${summary.saldo < 0 ? styles.saldoNegative : ''}`}
+        >
+          {loading ? '…' : formatBRL(summary.saldo)}
+        </strong>
+      </div>
+
+      <div className={styles.secondary}>
+        {SECONDARY_STATS.map((stat) => (
+          <div key={stat.key} className={styles.stat}>
+            <span className={styles.statLabel}>{stat.label}</span>
             <strong className={styles.statValue}>
-              {loading ? '…' : formatBRL(summary.entradas)}
+              {loading ? '…' : formatBRL(stat.getValue(summary))}
             </strong>
           </div>
-          <div className={styles.statDivider} aria-hidden />
+        ))}
+        {viniciusLayout && (
           <div className={styles.stat}>
-            <span className={styles.statLabel}>Gastos</span>
-            <strong className={styles.statValue}>
-              {loading ? '…' : formatBRL(summary.saidas)}
-            </strong>
+            <span className={styles.statLabel}>VR ref.</span>
+            <strong className={styles.statValue}>{formatBRL(VINICIUS_VR_MENSAL)}</strong>
           </div>
-          <div className={styles.statDivider} aria-hidden />
-          <div className={styles.stat}>
-            <span className={styles.statLabel}>A pagar</span>
-            <strong className={styles.statValue}>
-              {loading ? '…' : formatBRL(summary.valorAPagar)}
-            </strong>
-          </div>
-          {viniciusLayout && (
-            <>
-              <div className={styles.statDivider} aria-hidden />
-              <div className={styles.stat}>
-                <span className={styles.statLabel}>VR ref.</span>
-                <strong className={styles.statValue}>{formatBRL(VINICIUS_VR_MENSAL)}</strong>
-              </div>
-            </>
-          )}
-        </div>
+        )}
       </div>
     </header>
   );

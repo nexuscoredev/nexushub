@@ -16,9 +16,11 @@
   overflow-y: auto;
   padding: 1.15rem 1.25rem 1.25rem;
   border-radius: var(--radius);
-  border: 1px solid var(--border);
+  border: 1px solid var(--pf-border-strong);
   background: var(--surface-solid);
-  box-shadow: var(--shadow-glow), 0 28px 56px rgba(0, 0, 0, 0.5);
+  box-shadow:
+    0 0 40px var(--pf-glow),
+    0 28px 56px rgba(0, 0, 0, 0.5);
 }
 
 .header {

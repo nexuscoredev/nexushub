@@ -9,114 +9,132 @@
 }
 
 .card {
+  position: relative;
   display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.45rem 0.55rem;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.28));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 6px 18px rgba(0, 0, 0, 0.16);
-  min-height: 3rem;
+  align-items: flex-start;
+  gap: 0.55rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--pf-surface);
+  backdrop-filter: blur(16px);
+  overflow: hidden;
+  min-height: 3.5rem;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  opacity: 0.85;
 }
 
 .cardIconWrap {
-  width: 1.65rem;
-  height: 1.65rem;
+  position: relative;
+  z-index: 1;
+  width: 1.75rem;
+  height: 1.75rem;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(110, 181, 255, 0.08);
+  border: 1px solid var(--pf-border);
 }
 
 .cardIcon {
-  width: 1.35rem;
-  height: 1.35rem;
+  width: 1.2rem;
+  height: 1.2rem;
   object-fit: contain;
 }
 
 .cardIconRound {
-  width: 2rem;
-  height: 2rem;
+  width: 1.75rem;
+  height: 1.75rem;
   border-radius: 8px;
   object-fit: cover;
 }
 
 .cardBody {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 0.12rem;
   min-width: 0;
+  flex: 1;
 }
 
 .cardLabel {
-  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
   font-weight: 600;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
 .cardValue {
-  font-size: 0.82rem;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  font-weight: 600;
   line-height: 1.2;
-  color: var(--text);
+  color: var(--accent);
   font-variant-numeric: tabular-nums;
 }
 
 .cardSub {
-  display: none;
+  font-size: 0.62rem;
+  line-height: 1.3;
+  color: var(--muted);
+  opacity: 0.85;
 }
 
-.negative {
-  color: #f87171;
+.tone_green::before {
+  background: linear-gradient(90deg, var(--pf-income), transparent);
 }
 
-.tone_gold {
-  border-color: rgba(251, 191, 36, 0.25);
-  background: linear-gradient(145deg, rgba(251, 191, 36, 0.12), rgba(0, 0, 0, 0.3));
+.tone_green .cardValue {
+  color: var(--pf-income);
 }
 
-.tone_green {
-  border-color: rgba(52, 211, 153, 0.22);
-  background: linear-gradient(145deg, rgba(52, 211, 153, 0.1), rgba(0, 0, 0, 0.28));
+.tone_indigo::before {
+  background: linear-gradient(90deg, var(--accent), transparent);
 }
 
-.tone_rose {
-  border-color: rgba(248, 113, 113, 0.22);
-  background: linear-gradient(145deg, rgba(248, 113, 113, 0.1), rgba(0, 0, 0, 0.28));
+.tone_coral::before {
+  background: linear-gradient(90deg, var(--nx-violet-bright), transparent);
 }
 
-.tone_indigo {
-  border-color: rgba(129, 140, 248, 0.25);
-  background: linear-gradient(145deg, rgba(99, 102, 241, 0.12), rgba(0, 0, 0, 0.28));
+.tone_coral .cardValue {
+  color: var(--nx-violet-bright);
 }
 
-.tone_coral {
-  border-color: rgba(251, 113, 133, 0.22);
+.tone_sky::before {
+  background: linear-gradient(90deg, var(--nx-cyan-bright), transparent);
 }
 
-.tone_sky {
-  border-color: rgba(56, 189, 248, 0.22);
+.tone_sky .cardValue {
+  color: var(--nx-cyan-bright);
 }
 
 .progressRing {
   --pct: 0%;
-  width: 2rem;
-  height: 2rem;
+  position: relative;
+  z-index: 1;
+  width: 2.1rem;
+  height: 2.1rem;
   border-radius: 50%;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: conic-gradient(#38bdf8 var(--pct), rgba(255, 255, 255, 0.08) 0);
-  position: relative;
+  background: conic-gradient(var(--nx-cyan-bright) var(--pct), rgba(255, 255, 255, 0.08) 0);
 }
 
 .progressRing::before {
@@ -124,15 +142,16 @@
   position: absolute;
   inset: 4px;
   border-radius: 50%;
-  background: rgba(12, 12, 14, 0.92);
+  background: var(--nx-graphite);
 }
 
 .progressValue {
   position: relative;
   z-index: 1;
-  font-size: 0.58rem;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
   font-weight: 700;
-  color: #7dd3fc;
+  color: var(--nx-cyan-bright);
 }
 
 @media (max-width: 899px) {
@@ -141,84 +160,17 @@
   }
 }
 
-@media (max-width: 599px) {
-  .grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.55rem;
-  }
-
-  .card {
-    padding: 0.75rem 0.8rem;
-    min-height: 5.5rem;
-    gap: 0.55rem;
-  }
-
-  .cardIconWrap {
-    width: 2.1rem;
-    height: 2.1rem;
-    border-radius: 10px;
-  }
-
-  .cardIcon {
-    width: 1.15rem;
-    height: 1.15rem;
-  }
-
-  .cardIconRound {
-    width: 1.65rem;
-    height: 1.65rem;
-  }
-
-  .cardLabel {
-    font-size: 0.62rem;
-  }
-
-  .cardValue {
-    font-size: 1rem;
-  }
-
-  .cardSub {
-    font-size: 0.68rem;
-  }
-
-  .progressRing {
-    width: 2.1rem;
-    height: 2.1rem;
-  }
-
-  .progressValue {
-    font-size: 0.52rem;
-  }
-}
-
 @media (max-width: 479px) {
   .card {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.4rem;
+    padding: 0.6rem 0.65rem;
     min-height: auto;
-    padding: 0.65rem 0.7rem;
-  }
-
-  .cardBody {
-    width: 100%;
-  }
-
-  .cardLabel {
-    letter-spacing: 0.03em;
-    line-height: 1.25;
   }
 
   .cardValue {
-    font-size: 0.92rem;
-    overflow: visible;
-    text-overflow: unset;
-    white-space: normal;
-    word-break: break-word;
+    font-size: 0.85rem;
   }
 
   .cardSub {
-    font-size: 0.62rem;
-    line-height: 1.25;
+    display: none;
   }
 }
