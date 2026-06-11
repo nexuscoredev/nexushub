@@ -84,7 +84,7 @@ export function DesenvolvimentoPage() {
         subtitle={
           tab === 'quadro'
             ? undefined
-            : 'Fluxo NEXUS, checklists, códigos para o Cursor e quadro colaborativo nativo da equipe.'
+            : 'Fluxo, checklists e códigos da equipe.'
         }
         compact={tab === 'quadro'}
       />
@@ -137,11 +137,6 @@ export function DesenvolvimentoPage() {
                     </span>
                   ))}
                 </div>
-                <ul className={styles.stageChecklist}>
-                  {stage.checklist.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
               </div>
             </article>
           ))}
@@ -204,13 +199,6 @@ export function DesenvolvimentoPage() {
                 >
                   {copiedId === snippet.id ? 'Copiado' : 'Copiar'}
                 </button>
-              </div>
-              <div className={styles.snippetTags}>
-                {snippet.tags.map((tag) => (
-                  <span key={tag} className={styles.toolTag}>
-                    {tag}
-                  </span>
-                ))}
               </div>
               <pre className={styles.snippetPre}>{snippet.content}</pre>
             </article>

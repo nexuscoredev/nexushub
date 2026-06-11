@@ -64,33 +64,68 @@ const STICKY_RESIZE_HANDLES: StickyResizeHandle[] = [
   'w',
 ];
 
-const TOOL_WHEEL_RADIUS = 92;
-const TOOL_WHEEL_DEAD_ZONE = 22;
+const TOOL_WHEEL_SIZE = 268;
+const TOOL_WHEEL_CENTER = TOOL_WHEEL_SIZE / 2;
+const TOOL_WHEEL_INNER = 34;
+const TOOL_WHEEL_OUTER = 124;
+const TOOL_WHEEL_LABEL_RADIUS = 82;
+const TOOL_WHEEL_DEAD_ZONE = 34;
 
-const TOOL_WHEEL_ITEMS: { id: WhiteboardTool; label: string; angle: number }[] = [
-  { id: 'select', label: 'Selecionar', angle: 180 },
-  { id: 'pen', label: 'Caneta', angle: -60 },
-  { id: 'sticky', label: 'Nota', angle: 60 },
+const TOOL_WHEEL_SECTORS: {
+  id: WhiteboardTool;
+  label: string;
+  glyph: string;
+  start: number;
+  end: number;
+  angle: number;
+}[] = [
+  { id: 'sticky', label: 'Nota', glyph: '▢', start: 0, end: 120, angle: 60 },
+  { id: 'select', label: 'Selecionar', glyph: '◎', start: 120, end: 240, angle: 180 },
+  { id: 'pen', label: 'Caneta', glyph: '✎', start: 240, end: 360, angle: -60 },
 ];
+
+function describeDonutSector(
+  cx: number,
+  cy: number,
+  innerR: number,
+  outerR: number,
+  startAngleDeg: number,
+  endAngleDeg: number,
+): string {
+  const rad = (deg: number) => (deg * Math.PI) / 180;
+  const start = rad(startAngleDeg);
+  const end = rad(endAngleDeg);
+  const x1 = cx + outerR * Math.cos(start);
+  const y1 = cy + outerR * Math.sin(start);
+  const x2 = cx + outerR * Math.cos(end);
+  const y2 = cy + outerR * Math.sin(end);
+  const x3 = cx + innerR * Math.cos(end);
+  const y3 = cy + innerR * Math.sin(end);
+  const x4 = cx + innerR * Math.cos(start);
+  const y4 = cy + innerR * Math.sin(start);
+  const largeArc = endAngleDeg - startAngleDeg > 180 ? 1 : 0;
+
+  return [
+    `M ${x1} ${y1}`,
+    `A ${outerR} ${outerR} 0 ${largeArc} 1 ${x2} ${y2}`,
+    `L ${x3} ${y3}`,
+    `A ${innerR} ${innerR} 0 ${largeArc} 0 ${x4} ${y4}`,
+    'Z',
+  ].join(' ');
+}
 
 function pickWheelTool(dx: number, dy: number): WhiteboardTool {
   const dist = Math.hypot(dx, dy);
   if (dist < TOOL_WHEEL_DEAD_ZONE) return 'select';
 
-  const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
-  let best = TOOL_WHEEL_ITEMS[0];
-  let bestDiff = Infinity;
+  let angle = (Math.atan2(dy, dx) * 180) / Math.PI;
+  if (angle < 0) angle += 360;
 
-  for (const item of TOOL_WHEEL_ITEMS) {
-    let diff = Math.abs(angle - item.angle);
-    if (diff > 180) diff = 360 - diff;
-    if (diff < bestDiff) {
-      bestDiff = diff;
-      best = item;
-    }
+  for (const sector of TOOL_WHEEL_SECTORS) {
+    if (angle >= sector.start && angle < sector.end) return sector.id;
   }
 
-  return best.id;
+  return 'pen';
 }
 
 function clamp(value: number, min: number, max: number): number {
@@ -1052,103 +1087,109 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
 
         <div className={styles.boardMain}>
       <div className={styles.toolbar}>
-        <div className={styles.toolGroup} role="group" aria-label="Ferramentas">
-          {(
-            [
-              ['select', 'Selecionar'],
-              ['pen', 'Caneta'],
-              ['sticky', 'Nota'],
-            ] as const
-          ).map(([id, label]) => (
-            <button
-              key={id}
-              type="button"
-              className={`${styles.toolBtn} ${tool === id ? styles.toolBtnActive : ''}`}
-              onClick={() => {
-                setTool(id);
-                clearLinkDraft();
-              }}
-              title={label}
+        <div className={styles.toolbarMain}>
+          <div className={styles.toolGroup} role="group" aria-label="Ferramentas">
+            {(
+              [
+                ['select', 'Selecionar'],
+                ['pen', 'Caneta'],
+                ['sticky', 'Nota'],
+              ] as const
+            ).map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                className={`${styles.toolBtn} ${tool === id ? styles.toolBtnActive : ''}`}
+                onClick={() => {
+                  setTool(id);
+                  clearLinkDraft();
+                }}
+                title={label}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <div className={styles.toolbarColorSlot} aria-hidden={tool === 'select'}>
+            <div
+              className={`${styles.colorRow} ${tool !== 'pen' ? styles.colorRowHidden : ''}`}
+              role="group"
+              aria-label="Cor da caneta"
             >
-              {label}
-            </button>
-          ))}
+              {PEN_COLORS.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  className={`${styles.colorSwatch} ${penColor === color ? styles.colorSwatchActive : ''}`}
+                  style={{ background: color }}
+                  onClick={() => setPenColor(color)}
+                  aria-label={`Cor ${color}`}
+                  tabIndex={tool === 'pen' ? 0 : -1}
+                />
+              ))}
+            </div>
+            <div
+              className={`${styles.colorRow} ${tool !== 'sticky' ? styles.colorRowHidden : ''}`}
+              role="group"
+              aria-label="Cor da nota"
+            >
+              {STICKY_COLORS.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  className={`${styles.colorSwatch} ${stickyColor === color ? styles.colorSwatchActive : ''}`}
+                  style={{ background: color }}
+                  onClick={() => setStickyColor(color)}
+                  aria-label={`Nota ${color}`}
+                  tabIndex={tool === 'sticky' ? 0 : -1}
+                />
+              ))}
+            </div>
+          </div>
         </div>
-
-        {tool === 'pen' && (
-          <div className={styles.colorRow} role="group" aria-label="Cor da caneta">
-            {PEN_COLORS.map((color) => (
-              <button
-                key={color}
-                type="button"
-                className={`${styles.colorSwatch} ${penColor === color ? styles.colorSwatchActive : ''}`}
-                style={{ background: color }}
-                onClick={() => setPenColor(color)}
-                aria-label={`Cor ${color}`}
-              />
-            ))}
-          </div>
-        )}
-
-        {tool === 'sticky' && (
-          <div className={styles.colorRow} role="group" aria-label="Cor da nota">
-            {STICKY_COLORS.map((color) => (
-              <button
-                key={color}
-                type="button"
-                className={`${styles.colorSwatch} ${stickyColor === color ? styles.colorSwatchActive : ''}`}
-                style={{ background: color }}
-                onClick={() => setStickyColor(color)}
-                aria-label={`Nota ${color}`}
-              />
-            ))}
-          </div>
-        )}
-
-        {linkFromId && (
-          <span className={styles.linkHint}>
-            Clique na bola de destino · Esc cancela
-          </span>
-        )}
 
         <div className={styles.toolbarSpacer} />
 
-        <button
-          type="button"
-          className={styles.saveTeamBtn}
-          onClick={() => void handleSaveForTeam()}
-          disabled={loading || savingSnapshot}
-        >
-          {savingSnapshot ? 'Salvando…' : 'Salvar quadro para equipe'}
-        </button>
-
-        <div className={styles.toolbarActions}>
+        <div className={styles.toolbarEnd}>
           <button
             type="button"
-            className={styles.deleteBoardBtn}
-            onClick={() => void deleteActiveBoard()}
-            disabled={!activeViewId}
-            title={activeViewId ? 'Excluir quadro salvo selecionado' : 'Selecione um quadro salvo no menu'}
+            className={styles.saveTeamBtn}
+            onClick={() => void handleSaveForTeam()}
+            disabled={loading || savingSnapshot}
           >
-            Excluir quadro
+            {savingSnapshot ? 'Salvando…' : 'Salvar quadro para equipe'}
           </button>
-          <button type="button" className="btn-ghost" onClick={clearBoard}>
-            Limpar
-          </button>
+
+          <div className={styles.toolbarActions}>
+            <button
+              type="button"
+              className={styles.deleteBoardBtn}
+              onClick={() => void deleteActiveBoard()}
+              disabled={!activeViewId}
+              title={activeViewId ? 'Excluir quadro salvo selecionado' : 'Selecione um quadro salvo no menu'}
+            >
+              Excluir quadro
+            </button>
+            <button type="button" className="btn-ghost" onClick={clearBoard}>
+              Limpar
+            </button>
+          </div>
+
+          <span className={styles.status} aria-live="polite">
+            {loading
+              ? 'Carregando…'
+              : savingSnapshot
+                ? 'Salvando versão…'
+                : saving
+                  ? 'Sincronizando…'
+                  : activeViewId
+                    ? 'Versão salva'
+                    : savedAt
+                      ? 'Ao vivo · Sincronizado'
+                      : 'Pronto'}
+          </span>
         </div>
-        <span className={styles.status}>
-          {loading
-            ? 'Carregando…'
-            : savingSnapshot
-              ? 'Salvando versão…'
-              : saving
-                ? 'Sincronizando…'
-                : activeViewId
-                  ? 'Versão salva'
-                  : savedAt
-                    ? 'Ao vivo · Sincronizado'
-                    : 'Pronto'}
-        </span>
       </div>
 
       {activeViewId && (
@@ -1171,31 +1212,76 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
         onPointerLeave={handlePointerUp}
         onContextMenu={(event) => event.preventDefault()}
       >
+        {linkFromId && (
+          <div className={styles.linkHintOverlay}>Clique na bola de destino · Esc cancela</div>
+        )}
         {toolWheel && (
           <div
             className={styles.toolWheel}
             style={{ left: toolWheel.x, top: toolWheel.y }}
             aria-label="Roleta de ferramentas"
           >
-            <div className={styles.toolWheelRing} aria-hidden />
-            {TOOL_WHEEL_ITEMS.map((item) => {
-              const rad = (item.angle * Math.PI) / 180;
-              const offsetX = Math.cos(rad) * TOOL_WHEEL_RADIUS;
-              const offsetY = Math.sin(rad) * TOOL_WHEEL_RADIUS;
-              const active = toolWheel.hoverTool === item.id;
+            <svg
+              className={styles.toolWheelSvg}
+              viewBox={`0 0 ${TOOL_WHEEL_SIZE} ${TOOL_WHEEL_SIZE}`}
+              aria-hidden
+            >
+              {TOOL_WHEEL_SECTORS.map((sector) => {
+                const active = toolWheel.hoverTool === sector.id;
+                return (
+                  <path
+                    key={sector.id}
+                    d={describeDonutSector(
+                      TOOL_WHEEL_CENTER,
+                      TOOL_WHEEL_CENTER,
+                      TOOL_WHEEL_INNER,
+                      TOOL_WHEEL_OUTER,
+                      sector.start,
+                      sector.end,
+                    )}
+                    className={active ? styles.toolWheelSectorActive : styles.toolWheelSector}
+                  />
+                );
+              })}
+              <circle
+                cx={TOOL_WHEEL_CENTER}
+                cy={TOOL_WHEEL_CENTER}
+                r={TOOL_WHEEL_OUTER}
+                className={styles.toolWheelOuterRing}
+              />
+              <circle
+                cx={TOOL_WHEEL_CENTER}
+                cy={TOOL_WHEEL_CENTER}
+                r={TOOL_WHEEL_INNER}
+                className={styles.toolWheelInnerDisc}
+              />
+            </svg>
+            {TOOL_WHEEL_SECTORS.map((sector) => {
+              const rad = (sector.angle * Math.PI) / 180;
+              const offsetX = Math.cos(rad) * TOOL_WHEEL_LABEL_RADIUS;
+              const offsetY = Math.sin(rad) * TOOL_WHEEL_LABEL_RADIUS;
+              const active = toolWheel.hoverTool === sector.id;
               return (
                 <span
-                  key={item.id}
-                  className={`${styles.toolWheelItem} ${active ? styles.toolWheelItemActive : ''}`}
+                  key={sector.id}
+                  className={`${styles.toolWheelLabel} ${active ? styles.toolWheelLabelActive : ''}`}
                   style={{ transform: `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px))` }}
                 >
-                  {item.label}
+                  <span className={styles.toolWheelGlyph} aria-hidden>
+                    {sector.glyph}
+                  </span>
+                  {sector.label}
                 </span>
               );
             })}
-            <span className={styles.toolWheelCenter}>
-              {TOOL_WHEEL_ITEMS.find((item) => item.id === toolWheel.hoverTool)?.label}
-            </span>
+            <div className={styles.toolWheelCenter}>
+              <span className={styles.toolWheelCenterGlyph} aria-hidden>
+                {TOOL_WHEEL_SECTORS.find((sector) => sector.id === toolWheel.hoverTool)?.glyph}
+              </span>
+              <span className={styles.toolWheelCenterLabel}>
+                {TOOL_WHEEL_SECTORS.find((sector) => sector.id === toolWheel.hoverTool)?.label}
+              </span>
+            </div>
           </div>
         )}
         <div
