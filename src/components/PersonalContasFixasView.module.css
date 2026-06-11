@@ -22,7 +22,6 @@
 }
 
 .grupoVariavel {
-  grid-column: 1 / -1;
   border-left-color: #f87171;
 }
 
@@ -30,14 +29,18 @@
   color: #fca5a5;
 }
 
+.grupoVariavel .lista {
+  grid-template-columns: auto minmax(0, 1fr) 3.5rem minmax(4.75rem, auto);
+}
+
 .grupoHead {
   display: grid;
-  grid-template-columns: auto 1fr auto auto;
+  grid-template-columns: auto minmax(0, 1fr) auto 1.1rem;
   grid-template-areas:
     'icon meta stats chevron'
     'progress progress progress progress';
   align-items: center;
-  gap: 0.45rem 0.55rem;
+  gap: 0.45rem 0.4rem;
   width: 100%;
   padding: 0.55rem 0.65rem;
   border: none;
@@ -116,6 +119,7 @@
   align-items: flex-end;
   gap: 0.05rem;
   flex-shrink: 0;
+  padding-right: 0.15rem;
 }
 
 .grupoTotal {
@@ -167,8 +171,8 @@
   margin: 0;
   padding: 0.4rem;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) minmax(4.85rem, auto) 3.35rem;
-  column-gap: 0.35rem;
+  grid-template-columns: auto minmax(0, 1fr) 3.5rem minmax(5rem, auto);
+  column-gap: 0.3rem;
   row-gap: 0.3rem;
   align-items: center;
 }
@@ -212,6 +216,7 @@
 }
 
 .itemCheck {
+  grid-column: 1;
   position: relative;
   display: flex;
   align-items: center;
@@ -266,6 +271,7 @@
 }
 
 .itemMain {
+  grid-column: 2;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -318,6 +324,7 @@
 }
 
 .itemValor {
+  grid-column: 4;
   justify-self: end;
   align-self: start;
   padding-top: 0.05rem;
@@ -330,10 +337,11 @@
 }
 
 .itemActions {
+  grid-column: 3;
   justify-self: end;
   align-self: center;
   display: flex;
-  gap: 0.15rem;
+  gap: 0.12rem;
   flex-shrink: 0;
 }
 
@@ -341,8 +349,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 1.65rem;
-  padding: 0.25rem 0.4rem;
+  min-width: 1.5rem;
+  padding: 0.2rem 0.32rem;
   border-radius: 7px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.04);
@@ -507,37 +515,41 @@
   .itemCard {
     display: grid;
     grid-column: auto;
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr) minmax(4.5rem, auto);
     grid-template-areas:
-      'check main'
-      'valor valor'
-      'actions actions';
-    gap: 0.25rem 0.35rem;
+      'check main valor'
+      'actions actions actions';
+    gap: 0.25rem 0.3rem;
     padding: 0.4rem 0.45rem;
   }
 
   .itemCheck {
-    grid-area: check;
+    grid-column: 1;
+    grid-row: 1;
   }
 
   .itemMain {
-    grid-area: main;
+    grid-column: 2;
+    grid-row: 1;
   }
 
   .itemValor {
-    grid-area: valor;
+    grid-column: 3;
+    grid-row: 1;
     justify-self: end;
     padding-top: 0;
   }
 
   .itemActions {
-    grid-area: actions;
+    grid-column: 1 / -1;
+    grid-row: 2;
     position: static;
     transform: none;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0.35rem;
     width: 100%;
+    justify-self: stretch;
   }
 
   .actionBtn {

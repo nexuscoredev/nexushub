@@ -361,12 +361,7 @@ export function PersonalContasFixasView({
                           )}
                         </div>
 
-                        <strong className={styles.itemValor}>{formatBRL(Number(row.valor))}</strong>
-
-
-
                         <div className={styles.itemActions}>
-
                           <button
                             type="button"
                             className={styles.actionBtn}
@@ -394,8 +389,9 @@ export function PersonalContasFixasView({
                             <span className={styles.actionIcon} aria-hidden>×</span>
                             <span className={styles.actionText}>Remover</span>
                           </button>
-
                         </div>
+
+                        <strong className={styles.itemValor}>{formatBRL(Number(row.valor))}</strong>
 
                       </div>
 
