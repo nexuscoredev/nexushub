@@ -44,11 +44,17 @@ export interface WhiteboardImage {
   src: string;
 }
 
+export type ConnectorAnchor = 'top' | 'right' | 'bottom' | 'left';
+
+export const CONNECTOR_ANCHORS: ConnectorAnchor[] = ['top', 'right', 'bottom', 'left'];
+
 export interface WhiteboardConnector {
   id: string;
   type: 'connector';
   fromId: string;
   toId: string;
+  fromAnchor?: ConnectorAnchor;
+  toAnchor?: ConnectorAnchor;
 }
 
 export type WhiteboardElement =
@@ -102,6 +108,33 @@ export function elementCenter(el: WhiteboardElement): WhiteboardPoint | null {
     };
   }
   return null;
+}
+
+export function elementAnchorPoint(el: WhiteboardMovable, anchor: ConnectorAnchor): WhiteboardPoint {
+  switch (anchor) {
+    case 'top':
+      return { x: el.x + el.width / 2, y: el.y };
+    case 'right':
+      return { x: el.x + el.width, y: el.y + el.height / 2 };
+    case 'bottom':
+      return { x: el.x + el.width / 2, y: el.y + el.height };
+    case 'left':
+      return { x: el.x, y: el.y + el.height / 2 };
+  }
+}
+
+export function connectorEndpoints(
+  connector: WhiteboardConnector,
+  fromEl: WhiteboardMovable,
+  toEl: WhiteboardMovable,
+): { from: WhiteboardPoint; to: WhiteboardPoint } {
+  const from = connector.fromAnchor
+    ? elementAnchorPoint(fromEl, connector.fromAnchor)
+    : (elementCenter(fromEl) ?? elementAnchorPoint(fromEl, 'top'));
+  const to = connector.toAnchor
+    ? elementAnchorPoint(toEl, connector.toAnchor)
+    : (elementCenter(toEl) ?? elementAnchorPoint(toEl, 'top'));
+  return { from, to };
 }
 
 export function connectorCurvePath(from: WhiteboardPoint, to: WhiteboardPoint): string {
