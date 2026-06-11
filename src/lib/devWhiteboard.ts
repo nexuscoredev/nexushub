@@ -2,7 +2,7 @@ import { supabase, supabaseErrorMessage } from './supabase';
 
 export const DEV_WHITEBOARD_ID = 'nexus-equipe';
 
-export type WhiteboardTool = 'select' | 'pen' | 'sticky' | 'hand' | 'link';
+export type WhiteboardTool = 'select' | 'pen' | 'sticky';
 
 export interface WhiteboardPoint {
   x: number;
@@ -225,8 +225,26 @@ function strokeBounds(stroke: WhiteboardStroke): WhiteboardRect | null {
   };
 }
 
+export function connectorBounds(
+  connector: WhiteboardConnector,
+  fromEl: WhiteboardMovable,
+  toEl: WhiteboardMovable,
+): WhiteboardRect {
+  const { from, to } = connectorEndpoints(connector, fromEl, toEl);
+  const pad = 12;
+  const x = Math.min(from.x, to.x) - pad;
+  const y = Math.min(from.y, to.y) - pad;
+  return {
+    x,
+    y,
+    width: Math.max(Math.abs(to.x - from.x) + pad * 2, 8),
+    height: Math.max(Math.abs(to.y - from.y) + pad * 2, 8),
+  };
+}
+
 export function findElementsInRect(scene: WhiteboardScene, rect: WhiteboardRect): string[] {
   if (rect.width < 1 && rect.height < 1) return [];
+  const byId = new Map(scene.elements.map((el) => [el.id, el]));
   const ids: string[] = [];
   for (const el of scene.elements) {
     if (el.type === 'sticky' || el.type === 'image') {
@@ -238,6 +256,20 @@ export function findElementsInRect(scene: WhiteboardScene, rect: WhiteboardRect)
     if (el.type === 'stroke') {
       const bounds = strokeBounds(el);
       if (bounds && rectsIntersect(rect, bounds)) ids.push(el.id);
+      continue;
+    }
+    if (el.type === 'connector') {
+      const from = byId.get(el.fromId);
+      const to = byId.get(el.toId);
+      if (
+        from &&
+        to &&
+        isMovableElement(from) &&
+        isMovableElement(to) &&
+        rectsIntersect(rect, connectorBounds(el, from, to))
+      ) {
+        ids.push(el.id);
+      }
     }
   }
   return ids;
@@ -377,6 +409,131 @@ export async function saveDevWhiteboard(
 
   if (error) throw new Error(supabaseErrorMessage(error));
   return data.updated_at ?? null;
+}
+
+export interface WhiteboardSnapshot {
+  id: string;
+  boardId: string;
+  title: string;
+  scene: WhiteboardScene;
+  createdAt: string;
+  createdBy: string | null;
+  authorName: string | null;
+}
+
+type SnapshotRow = {
+  id: string;
+  board_id: string;
+  title: string;
+  scene: unknown;
+  created_at: string;
+  created_by: string | null;
+};
+
+function mapSnapshotRow(row: SnapshotRow, authorName: string | null): WhiteboardSnapshot {
+  return {
+    id: row.id,
+    boardId: row.board_id,
+    title: row.title,
+    scene: parseScene(row.scene),
+    createdAt: row.created_at,
+    createdBy: row.created_by,
+    authorName,
+  };
+}
+
+async function fetchAuthorNames(userIds: string[]): Promise<Map<string, string>> {
+  const names = new Map<string, string>();
+  if (!supabase || userIds.length === 0) return names;
+
+  const { data, error } = await supabase
+    .from('hub_profiles')
+    .select('id, nome')
+    .in('id', userIds);
+
+  if (error || !data) return names;
+  for (const profile of data) {
+    if (profile.nome) names.set(profile.id, profile.nome);
+  }
+  return names;
+}
+
+export async function fetchDevWhiteboardSnapshots(): Promise<WhiteboardSnapshot[]> {
+  if (!supabase) return [];
+
+  const { data, error } = await supabase
+    .from('hub_dev_whiteboard_snapshots')
+    .select('id, board_id, title, scene, created_at, created_by')
+    .eq('board_id', DEV_WHITEBOARD_ID)
+    .order('created_at', { ascending: false })
+    .limit(40);
+
+  if (error) throw new Error(supabaseErrorMessage(error));
+  const rows = (data ?? []) as SnapshotRow[];
+  const userIds = [...new Set(rows.map((row) => row.created_by).filter(Boolean))] as string[];
+  const authorNames = await fetchAuthorNames(userIds);
+
+  return rows.map((row) =>
+    mapSnapshotRow(row, row.created_by ? (authorNames.get(row.created_by) ?? null) : null),
+  );
+}
+
+export async function saveDevWhiteboardSnapshot(
+  scene: WhiteboardScene,
+  userId: string | undefined,
+  title: string,
+): Promise<WhiteboardSnapshot> {
+  if (!supabase) throw new Error('Supabase não configurado');
+
+  const trimmed =
+    title.trim() ||
+    `Quadro ${new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}`;
+
+  const { data, error } = await supabase
+    .from('hub_dev_whiteboard_snapshots')
+    .insert({
+      board_id: DEV_WHITEBOARD_ID,
+      title: trimmed,
+      scene,
+      created_by: userId ?? null,
+    })
+    .select('id, board_id, title, scene, created_at, created_by')
+    .single();
+
+  if (error) throw new Error(supabaseErrorMessage(error));
+
+  const row = data as SnapshotRow;
+  let authorName: string | null = null;
+  if (row.created_by) {
+    const names = await fetchAuthorNames([row.created_by]);
+    authorName = names.get(row.created_by) ?? null;
+  }
+
+  return mapSnapshotRow(row, authorName);
+}
+
+export function subscribeDevWhiteboardSnapshots(
+  onChange: () => void,
+): () => void {
+  if (!supabase) return () => undefined;
+
+  const channel = supabase
+    .channel('hub-dev-whiteboard-snapshots')
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'hub_dev_whiteboard_snapshots',
+        filter: `board_id=eq.${DEV_WHITEBOARD_ID}`,
+      },
+      () => onChange(),
+    )
+    .subscribe();
+
+  return () => {
+    void supabase?.removeChannel(channel);
+  };
 }
 
 export function subscribeDevWhiteboard(

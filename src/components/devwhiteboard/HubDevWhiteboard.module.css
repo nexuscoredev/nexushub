@@ -10,6 +10,161 @@
   overflow: hidden;
 }
 
+.boardLayout {
+  display: flex;
+  gap: 0.65rem;
+  min-height: 0;
+  flex: 1;
+}
+
+.rootFull .boardLayout {
+  flex: 1;
+  min-height: 0;
+}
+
+.boardMain {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.snapshotSidebar {
+  width: 220px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.75rem 0.65rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.snapshotSidebarHead {
+  flex-shrink: 0;
+}
+
+.snapshotSidebarTitle {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.snapshotSidebarHint {
+  margin: 0.2rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+.snapshotList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.snapshotItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.snapshotItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.snapshotItemActive {
+  border-color: rgba(96, 165, 250, 0.55);
+  background: rgba(96, 165, 250, 0.12);
+}
+
+.snapshotItemTitle {
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.snapshotItemMeta {
+  font-size: 0.68rem;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+.snapshotEmpty {
+  margin: 0;
+  padding: 0.35rem 0.15rem;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.saveTeamBtn {
+  padding: 0.42rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(96, 165, 250, 0.45);
+  background: rgba(96, 165, 250, 0.16);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.saveTeamBtn:hover:not(:disabled) {
+  background: rgba(96, 165, 250, 0.24);
+  border-color: rgba(96, 165, 250, 0.65);
+}
+
+.saveTeamBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.viewBanner {
+  margin: 0;
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  background: rgba(251, 191, 36, 0.1);
+  font-size: 0.76rem;
+  color: #fde68a;
+}
+
+.viewBannerLink {
+  padding: 0;
+  border: none;
+  background: none;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .rootFull .toolbar {
   flex-shrink: 0;
 }
@@ -32,6 +187,17 @@
   flex: 1;
   min-height: 0;
   height: auto;
+}
+
+@media (max-width: 900px) {
+  .boardLayout {
+    flex-direction: column;
+  }
+
+  .snapshotSidebar {
+    width: 100%;
+    max-height: 180px;
+  }
 }
 
 .toolbar {
@@ -129,6 +295,78 @@
   user-select: none;
 }
 
+.surfaceWheelOpen {
+  cursor: crosshair;
+}
+
+.toolWheel {
+  position: absolute;
+  z-index: 20;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.toolWheelRing {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 148px;
+  height: 148px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  background: rgba(12, 12, 14, 0.94);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.toolWheelCenter {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  min-width: 4.5rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(96, 165, 250, 0.45);
+  background: rgba(96, 165, 250, 0.18);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.toolWheelItem {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 0.38rem 0.72rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease,
+    color 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.toolWheelItemActive {
+  color: #fff;
+  border-color: rgba(96, 165, 250, 0.65);
+  background: rgba(96, 165, 250, 0.28);
+  box-shadow: 0 0 16px rgba(96, 165, 250, 0.35);
+}
+
 .cursor_select {
   cursor: default;
 }
@@ -139,15 +377,6 @@
 
 .cursor_sticky {
   cursor: copy;
-}
-
-.cursor_link {
-  cursor: crosshair;
-}
-
-.cursor_hand,
-.panning {
-  cursor: grab;
 }
 
 .panning {
@@ -489,12 +718,29 @@
   border-radius: 6px;
 }
 
+.connectorLayer {
+  position: absolute;
+  inset: 0;
+  width: 4000px;
+  height: 4000px;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.connectorHit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 16;
+  pointer-events: stroke;
+  cursor: pointer;
+}
+
 .connector {
   fill: none;
   stroke: #93c5fd;
   stroke-width: 2.5;
-  pointer-events: stroke;
-  cursor: pointer;
+  pointer-events: none;
 }
 
 .connectorSelected {
