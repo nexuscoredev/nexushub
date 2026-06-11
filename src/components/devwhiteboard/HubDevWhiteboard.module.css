@@ -131,8 +131,6 @@
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  min-width: 11.75rem;
-  text-align: center;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 
@@ -204,9 +202,11 @@
 
 .toolbar {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem 0.75rem;
+  width: 100%;
+  box-sizing: border-box;
   padding: 0.65rem 0.85rem;
   border-radius: var(--radius);
   border: 1px solid var(--border);
@@ -218,14 +218,18 @@
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  flex-shrink: 0;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .toolbarEnd {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem 0.65rem;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .toolbarColorSlot {
@@ -294,8 +298,21 @@
 }
 
 .toolbarSpacer {
-  flex: 1;
-  min-width: 0.5rem;
+  flex: 1 1 100%;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+@media (min-width: 1101px) {
+  .toolbarSpacer {
+    flex: 1 1 auto;
+    width: auto;
+    height: auto;
+    min-width: 0.5rem;
+  }
 }
 
 .toolbarActions {
@@ -332,8 +349,6 @@
   font-size: 0.72rem;
   color: var(--muted);
   white-space: nowrap;
-  min-width: 9.5rem;
-  text-align: right;
   flex-shrink: 0;
 }
 
@@ -505,6 +520,10 @@
   cursor: copy;
 }
 
+.cursor_link {
+  cursor: crosshair;
+}
+
 .panning {
   cursor: grabbing;
 }
@@ -532,6 +551,54 @@
     0 8px 20px rgba(0, 0, 0, 0.22);
   border: 1px solid rgba(0, 0, 0, 0.08);
   overflow: visible;
+  transform-origin: top center;
+}
+
+@keyframes stickyPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-14deg) translateY(-18px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  }
+
+  55% {
+    opacity: 1;
+    transform: scale(1.06) rotate(4deg) translateY(0);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  }
+
+  78% {
+    transform: scale(0.97) rotate(-2deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    box-shadow:
+      0 1px 0 rgba(0, 0, 0, 0.08),
+      0 8px 20px rgba(0, 0, 0, 0.22);
+  }
+}
+
+.stickyAppear {
+  animation: stickyPopIn 0.42s cubic-bezier(0.22, 1.15, 0.36, 1) both;
+  z-index: 6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stickyAppear {
+    animation: stickyPopInReduced 0.12s ease both;
+  }
+
+  @keyframes stickyPopInReduced {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
 }
 
 .stickyInner {
@@ -545,17 +612,17 @@
 }
 
 .stickyHandle {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.35rem;
+  justify-content: center;
   height: 22px;
   flex-shrink: 0;
   cursor: grab;
   background: rgba(0, 0, 0, 0.08);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   user-select: none;
-  padding: 0 0.25rem 0 0.35rem;
+  padding: 0 0.35rem;
 }
 
 .stickyHandleMain {
@@ -563,8 +630,6 @@
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  flex: 1;
-  min-width: 0;
 }
 
 .stickyHandleGrip {
@@ -676,6 +741,10 @@
 }
 
 .stickyDeleteInline {
+  position: absolute;
+  right: 0.25rem;
+  top: 50%;
+  transform: translateY(-50%);
   flex-shrink: 0;
   width: 18px;
   height: 18px;
@@ -889,34 +958,20 @@
   color: var(--muted);
 }
 
-@media (max-width: 768px) {
-  .toolbar {
-    flex-wrap: wrap;
-    row-gap: 0.55rem;
-  }
-
-  .toolbarMain {
-    flex-wrap: wrap;
-  }
-
+@media (max-width: 1100px) {
   .toolbarEnd {
     width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 768px) {
+  .toolbarMain {
     flex-wrap: wrap;
   }
 
   .toolbarSpacer {
     display: none;
-  }
-
-  .status {
-    min-width: 0;
-    flex: 1;
-    text-align: left;
-  }
-
-  .saveTeamBtn {
-    min-width: 0;
-    flex: 1;
   }
 
   .root:not(.rootFull) .surface {

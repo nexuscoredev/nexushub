@@ -79,9 +79,10 @@ const TOOL_WHEEL_SECTORS: {
   end: number;
   angle: number;
 }[] = [
-  { id: 'sticky', label: 'Nota', glyph: '▢', start: 0, end: 120, angle: 60 },
-  { id: 'select', label: 'Selecionar', glyph: '◎', start: 120, end: 240, angle: 180 },
-  { id: 'pen', label: 'Caneta', glyph: '✎', start: 240, end: 360, angle: -60 },
+  { id: 'sticky', label: 'Nota', glyph: '▢', start: 0, end: 90, angle: 45 },
+  { id: 'select', label: 'Selecionar', glyph: '◎', start: 90, end: 180, angle: 135 },
+  { id: 'pen', label: 'Caneta', glyph: '✎', start: 180, end: 270, angle: 225 },
+  { id: 'link', label: 'Seta', glyph: '→', start: 270, end: 360, angle: 315 },
 ];
 
 function describeDonutSector(
@@ -125,7 +126,7 @@ function pickWheelTool(dx: number, dy: number): WhiteboardTool {
     if (angle >= sector.start && angle < sector.end) return sector.id;
   }
 
-  return 'pen';
+  return 'link';
 }
 
 function clamp(value: number, min: number, max: number): number {
@@ -228,6 +229,7 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
   const [stickyColor, setStickyColor] = useState<string>(STICKY_COLORS[0]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [editingStickyId, setEditingStickyId] = useState<string | null>(null);
+  const [appearingStickyIds, setAppearingStickyIds] = useState<Set<string>>(() => new Set());
   const [marquee, setMarquee] = useState<{ start: WhiteboardPoint; end: WhiteboardPoint } | null>(
     null,
   );
@@ -431,11 +433,21 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
         ...sceneRef.current,
         elements: [...sceneRef.current.elements, sticky],
       });
+      setAppearingStickyIds((prev) => new Set(prev).add(sticky.id));
       setSelectedIds([sticky.id]);
       setTool('select');
     },
     [applyScene, stickyColor],
   );
+
+  const clearStickyAppear = useCallback((id: string) => {
+    setAppearingStickyIds((prev) => {
+      if (!prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  }, []);
 
   const beginStickyEdit = useCallback((id: string) => {
     setSelectedIds([id]);
@@ -692,6 +704,12 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
 
     if (tool === 'sticky') {
       addSticky(world);
+      return;
+    }
+
+    if (tool === 'link') {
+      if (linkFromId) clearLinkDraft();
+      else clearSelection();
       return;
     }
 
@@ -963,18 +981,19 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
         clearLinkDraft();
         setEditingStickyId(null);
         setToolWheel(null);
+        if (tool === 'link') setTool('select');
       }
     };
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [clearLinkDraft, deleteSelected, pasteImageFromClipboard, redo, selectedIds, undo]);
+  }, [clearLinkDraft, deleteSelected, pasteImageFromClipboard, redo, selectedIds, tool, undo]);
 
   const showLinkAnchors = (elementId: string) =>
-    isSelected(elementId) || linkFromId !== null;
+    tool === 'link' || linkFromId !== null || isSelected(elementId);
 
   const showStickyResize = (elementId: string) =>
-    isSelected(elementId) && linkFromId === null;
+    isSelected(elementId) && linkFromId === null && tool !== 'link';
 
   const anchorLabel: Record<ConnectorAnchor, string> = {
     top: 'topo',
@@ -1158,7 +1177,7 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
             onClick={() => void handleSaveForTeam()}
             disabled={loading || savingSnapshot}
           >
-            {savingSnapshot ? 'Salvando…' : 'Salvar quadro para equipe'}
+            {savingSnapshot ? 'Salvando…' : 'Salvar equipe'}
           </button>
 
           <div className={styles.toolbarActions}>
@@ -1180,13 +1199,13 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
             {loading
               ? 'Carregando…'
               : savingSnapshot
-                ? 'Salvando versão…'
+                ? 'Salvando…'
                 : saving
                   ? 'Sincronizando…'
                   : activeViewId
                     ? 'Versão salva'
                     : savedAt
-                      ? 'Ao vivo · Sincronizado'
+                      ? 'Sincronizado'
                       : 'Pronto'}
           </span>
         </div>
@@ -1212,9 +1231,11 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
         onPointerLeave={handlePointerUp}
         onContextMenu={(event) => event.preventDefault()}
       >
-        {linkFromId && (
+        {linkFromId ? (
           <div className={styles.linkHintOverlay}>Clique na bola de destino · Esc cancela</div>
-        )}
+        ) : tool === 'link' ? (
+          <div className={styles.linkHintOverlay}>Clique numa bola azul para ligar seta · Esc cancela</div>
+        ) : null}
         {toolWheel && (
           <div
             className={styles.toolWheel}
@@ -1354,7 +1375,7 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
               return (
                 <div
                   key={el.id}
-                  className={`${styles.sticky} ${isSelected(el.id) ? styles.objectSelected : ''} ${linkFromId === el.id ? styles.linkSource : ''}`}
+                  className={`${styles.sticky} ${appearingStickyIds.has(el.id) ? styles.stickyAppear : ''} ${isSelected(el.id) ? styles.objectSelected : ''} ${linkFromId === el.id ? styles.linkSource : ''}`}
                   style={{
                     left: el.x,
                     top: el.y,
@@ -1362,6 +1383,7 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
                     height: el.height,
                     background: el.color,
                   }}
+                  onAnimationEnd={() => clearStickyAppear(el.id)}
                 >
                   <div className={styles.stickyInner}>
                     <div

@@ -2,7 +2,7 @@ import { supabase, supabaseErrorMessage } from './supabase';
 
 export const DEV_WHITEBOARD_ID = 'nexus-equipe';
 
-export type WhiteboardTool = 'select' | 'pen' | 'sticky';
+export type WhiteboardTool = 'select' | 'pen' | 'sticky' | 'link';
 
 export interface WhiteboardPoint {
   x: number;
