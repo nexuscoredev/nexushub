@@ -11,9 +11,11 @@ import {
   DEFAULT_WHITEBOARD_SCENE,
   PEN_COLORS,
   STICKY_COLORS,
+  CONNECTOR_ANCHORS,
   buildConnector,
   connectorCurvePath,
   deleteDevWhiteboardSnapshot,
+  elementAnchorPoint,
   fetchDevWhiteboard,
   fetchDevWhiteboardSnapshots,
   findElementsInRect,
@@ -33,6 +35,7 @@ import {
   strokeToPath,
   subscribeDevWhiteboard,
   subscribeDevWhiteboardSnapshots,
+  type ConnectorAnchor,
   type ConnectorSnap,
   type WhiteboardConnector,
   type WhiteboardImage,
@@ -527,19 +530,21 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
     setLinkDraft(null);
   }, []);
 
-  const beginLinkDrag = useCallback(
-    (world: WhiteboardPoint, pointerId: number) => {
+  const beginLinkDragFromAnchor = useCallback(
+    (elementId: string, anchor: ConnectorAnchor, pointerId: number) => {
       const surface = surfaceRef.current;
       if (!surface) return;
-      const from = snapConnectorPoint(sceneRef.current, world);
-      const startPoint = isConnectorSnap(from) ? from.point : from;
+      const el = sceneRef.current.elements.find((item) => item.id === elementId);
+      if (!el || !isMovableElement(el)) return;
+      const point = elementAnchorPoint(el, anchor);
+      const from: ConnectorSnap = { elementId, anchor, point };
       linkDragRef.current = { from };
-      setLinkDraft({ start: startPoint, end: startPoint });
-      clearSelection();
+      setLinkDraft({ start: point, end: point });
+      setSelectedIds([elementId]);
       setEditingStickyId(null);
       surface.setPointerCapture(pointerId);
     },
-    [clearSelection],
+    [],
   );
 
   const finishLinkDrag = useCallback(
@@ -554,7 +559,20 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
       const toPoint = isConnectorSnap(to) ? to.point : to;
       if (Math.hypot(toPoint.x - fromPoint.x, toPoint.y - fromPoint.y) < MIN_LINK_DRAG) return;
 
-      const connector = buildConnector(newElementId(), draftRef.from, to);
+      if (!isConnectorSnap(draftRef.from) || !isConnectorSnap(to)) return;
+      const fromSnap = draftRef.from;
+      const toSnap = to;
+      if (toSnap.elementId === fromSnap.elementId) return;
+
+      const exists = sceneRef.current.elements.some(
+        (el) =>
+          el.type === 'connector' &&
+          ((el.fromId === fromSnap.elementId && el.toId === toSnap.elementId) ||
+            (el.fromId === toSnap.elementId && el.toId === fromSnap.elementId)),
+      );
+      if (exists) return;
+
+      const connector = buildConnector(newElementId(), fromSnap, toSnap);
       applyScene({
         ...sceneRef.current,
         elements: [...sceneRef.current.elements, connector],
@@ -705,7 +723,7 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
     }
 
     if (tool === 'link') {
-      beginLinkDrag(world, event.pointerId);
+      clearSelection();
       return;
     }
 
@@ -1021,6 +1039,38 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
     ));
   };
 
+  const renderStickyLinkAnchors = (elementId: string) => {
+    if (tool !== 'link') return null;
+    const dragFrom = linkDragRef.current?.from;
+    return (
+      <div className={styles.linkAnchors}>
+        {CONNECTOR_ANCHORS.map((anchor) => {
+          const isOrigin =
+            dragFrom !== undefined &&
+            isConnectorSnap(dragFrom) &&
+            dragFrom.elementId === elementId &&
+            dragFrom.anchor === anchor;
+          return (
+            <button
+              key={anchor}
+              type="button"
+              className={`${styles.linkAnchor} ${styles[`linkAnchor_${anchor}`]} ${
+                isOrigin ? styles.linkAnchorActive : ''
+              }`}
+              aria-label={`Ligar pela borda ${anchor}`}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                if (e.button !== 0) return;
+                beginLinkDragFromAnchor(elementId, anchor, e.pointerId);
+              }}
+            />
+          );
+        })}
+      </div>
+    );
+  };
+
   const connectors = useMemo(() => {
     const byId = new Map(scene.elements.map((el) => [el.id, el]));
     return scene.elements
@@ -1209,7 +1259,7 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
       >
         {tool === 'link' && (
           <div className={styles.linkHintOverlay}>
-            Arraste para desenhar a seta · Encaixa nas notas · Esc cancela
+            Clique numa bola azul e arraste até outra nota · Esc cancela
           </div>
         )}
         {toolWheel && (
@@ -1333,10 +1383,6 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
                   className={`${styles.imageWrap} ${isSelected(el.id) ? styles.objectSelected : ''}`}
                   style={{ left: el.x, top: el.y, width: el.width, height: el.height }}
                   onPointerDown={(e) => {
-                    if (tool === 'link' && e.button === 0) {
-                      beginLinkDrag(clientToWorld(e.clientX, e.clientY), e.pointerId);
-                      return;
-                    }
                     e.stopPropagation();
                     selectElement(el.id, e.shiftKey);
                     startElementDrag(el.id, clientToWorld(e.clientX, e.clientY));
@@ -1368,10 +1414,6 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
                       className={styles.stickyHandle}
                       title="Arraste para mover"
                       onPointerDown={(e) => {
-                        if (tool === 'link' && e.button === 0) {
-                          beginLinkDrag(clientToWorld(e.clientX, e.clientY), e.pointerId);
-                          return;
-                        }
                         e.stopPropagation();
                         selectElement(el.id, e.shiftKey);
                         startElementDrag(el.id, clientToWorld(e.clientX, e.clientY));
@@ -1414,10 +1456,6 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
                     }}
                     onPointerDown={(e) => {
                       e.stopPropagation();
-                      if (tool === 'link' && e.button === 0) {
-                        beginLinkDrag(clientToWorld(e.clientX, e.clientY), e.pointerId);
-                        return;
-                      }
                       if (editingStickyId !== el.id) {
                         e.preventDefault();
                         selectElement(el.id, e.shiftKey);
@@ -1430,6 +1468,7 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
                   />
                   </div>
                   {renderStickyResizeHandles(el.id)}
+                  {renderStickyLinkAnchors(el.id)}
                 </div>
               );
             }
@@ -1497,7 +1536,7 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
       </div>
 
       <p className={styles.hint}>
-        Salvar equipe · Clique direito: roleta · Seta: arraste no quadro · Shift+arrastar move ·
+        Salvar equipe · Clique direito: roleta · Seta: bola azul → arraste · Shift+arrastar move ·
         Duplo clique escreve · Scroll zoom.
       </p>
         </div>
