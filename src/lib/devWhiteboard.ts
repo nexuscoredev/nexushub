@@ -170,6 +170,89 @@ export function moveMovable(
   };
 }
 
+export function resizeSticky(
+  scene: WhiteboardScene,
+  id: string,
+  width: number,
+  height: number,
+): WhiteboardScene {
+  return {
+    ...scene,
+    elements: scene.elements.map((el) => {
+      if (el.id === id && el.type === 'sticky') {
+        return { ...el, width, height };
+      }
+      return el;
+    }),
+  };
+}
+
+export interface WhiteboardRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export function normalizeRect(a: WhiteboardPoint, b: WhiteboardPoint): WhiteboardRect {
+  const x = Math.min(a.x, b.x);
+  const y = Math.min(a.y, b.y);
+  return {
+    x,
+    y,
+    width: Math.abs(a.x - b.x),
+    height: Math.abs(a.y - b.y),
+  };
+}
+
+function rectsIntersect(a: WhiteboardRect, b: WhiteboardRect): boolean {
+  return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
+}
+
+function strokeBounds(stroke: WhiteboardStroke): WhiteboardRect | null {
+  if (stroke.points.length === 0) return null;
+  const xs = stroke.points.map((p) => p.x);
+  const ys = stroke.points.map((p) => p.y);
+  const minX = Math.min(...xs);
+  const minY = Math.min(...ys);
+  return {
+    x: minX,
+    y: minY,
+    width: Math.max(...xs) - minX,
+    height: Math.max(...ys) - minY,
+  };
+}
+
+export function findElementsInRect(scene: WhiteboardScene, rect: WhiteboardRect): string[] {
+  if (rect.width < 1 && rect.height < 1) return [];
+  const ids: string[] = [];
+  for (const el of scene.elements) {
+    if (el.type === 'sticky' || el.type === 'image') {
+      if (rectsIntersect(rect, { x: el.x, y: el.y, width: el.width, height: el.height })) {
+        ids.push(el.id);
+      }
+      continue;
+    }
+    if (el.type === 'stroke') {
+      const bounds = strokeBounds(el);
+      if (bounds && rectsIntersect(rect, bounds)) ids.push(el.id);
+    }
+  }
+  return ids;
+}
+
+export function sceneWithoutElements(scene: WhiteboardScene, ids: string[]): WhiteboardScene {
+  const idSet = new Set(ids);
+  return {
+    ...scene,
+    elements: scene.elements.filter((el) => {
+      if (idSet.has(el.id)) return false;
+      if (el.type === 'connector' && (idSet.has(el.fromId) || idSet.has(el.toId))) return false;
+      return true;
+    }),
+  };
+}
+
 const MAX_IMAGE_EDGE = 720;
 
 export async function readClipboardImage(): Promise<{
