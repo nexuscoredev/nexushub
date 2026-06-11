@@ -20,15 +20,7 @@ import {
 
 import type { HubPersonalContaGrupo, HubPersonalTransaction } from '../types/database';
 
-import {
-
-  deletePersonalConta,
-
-  PersonalContaFixaForm,
-
-  togglePersonalContaPago,
-
-} from './personal/PersonalContaFixaForm';
+import { deletePersonalConta, PersonalContaFixaForm } from './personal/PersonalContaFixaForm';
 
 import { PersonalFinanceConfirmModal } from './personal/PersonalFinanceConfirmModal';
 import { PersonalFinanceModal } from './personal/PersonalFinanceModal';
@@ -98,8 +90,6 @@ export function PersonalContasFixasView({
 
   const [error, setError] = useState<string | null>(null);
 
-  const [savingId, setSavingId] = useState<string | null>(null);
-
   const [addingGrupo, setAddingGrupo] = useState<HubPersonalContaGrupo | null>(null);
 
   const [editing, setEditing] = useState<HubPersonalTransaction | null>(null);
@@ -151,34 +141,8 @@ export function PersonalContasFixasView({
 
 
 
-  const togglePago = async (row: HubPersonalTransaction) => {
-
-    const next = !row.pago;
-
-    onPatch(row.id, { pago: next });
-
-    setSavingId(row.id);
-
-    setError(null);
-
-    const { error: err, row: saved } = await togglePersonalContaPago(row.id, next);
-
-    setSavingId(null);
-
-    if (err) {
-
-      onPatch(row.id, { pago: row.pago });
-
-      setError(err);
-
-      onSyncError();
-
-    } else if (saved) {
-
-      onUpsert(saved);
-
-    }
-
+  const togglePago = (row: HubPersonalTransaction) => {
+    onPatch(row.id, { pago: !row.pago });
   };
 
 
@@ -329,9 +293,7 @@ export function PersonalContasFixasView({
 
                             checked={Boolean(row.pago)}
 
-                            disabled={savingId === row.id}
-
-                            onChange={() => void togglePago(row)}
+                            onChange={() => togglePago(row)}
 
                           />
 

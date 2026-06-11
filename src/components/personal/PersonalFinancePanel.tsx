@@ -4,21 +4,24 @@ import { PersonalContasFixasView } from '../PersonalContasFixasView';
 import { usePersonalFinanceRows } from '../../hooks/usePersonalFinanceRows';
 import {
   defaultDateForMonth,
-  filterRowsForMonth,
   formatMonthLabel,
   parseMonthKey,
   resolveFinanceMonthKey,
   saveMonthKey,
 } from '../../lib/personalFinanceMonth';
+import { buildInitialMonthRows, clearMonthPagoMarks } from '../../lib/personalFinanceMonthView';
 import {
   formatSnapshotSavedAt,
   loadMonthSnapshot,
+  loadMonthSnapshotFromSupabase,
   persistMonthRowsToSupabase,
+  persistMonthSnapshotToSupabase,
   saveMonthSnapshot,
 } from '../../lib/personalFinanceSnapshot';
 import { buildPessoalFinanceSummary } from '../../lib/pessoalFinanceSummary';
 import { isViniciusPersonalFinance } from '../../lib/viniciusPersonalFinance';
 import type { HubPersonalTransaction } from '../../types/database';
+import { PersonalFinanceConfirmModal } from './PersonalFinanceConfirmModal';
 import { PersonalFinanceHero } from './PersonalFinanceHero';
 import { PersonalFinanceKpiGrid } from './PersonalFinanceKpiGrid';
 import { PersonalFinanceMonthPicker } from './PersonalFinanceMonthPicker';
@@ -46,6 +49,25 @@ const GENERIC_TABS = [
 
 const AUTO_SAVE_MS = 800;
 
+async function resolveMonthRows(
+  userId: string,
+  monthKey: string,
+  allRows: HubPersonalTransaction[],
+): Promise<{ rows: HubPersonalTransaction[]; savedAt: string | null }> {
+  const local = loadMonthSnapshot(userId, monthKey);
+  if (local?.rows.length) {
+    return { rows: local.rows, savedAt: local.savedAt };
+  }
+
+  const remote = await loadMonthSnapshotFromSupabase(userId, monthKey);
+  if (remote?.rows.length) {
+    saveMonthSnapshot(userId, monthKey, remote.rows);
+    return { rows: remote.rows, savedAt: remote.savedAt };
+  }
+
+  return { rows: buildInitialMonthRows(allRows, monthKey), savedAt: null };
+}
+
 export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanelProps) {
   const viniciusLayout = isViniciusPersonalFinance(userEmail);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -54,7 +76,13 @@ export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanel
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
+  const [monthRows, setMonthRows] = useState<HubPersonalTransaction[]>([]);
+  const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
   const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const monthRowsRef = useRef(monthRows);
+  const prevMonthRef = useRef<string | null>(null);
+
+  monthRowsRef.current = monthRows;
 
   const urlMonth = searchParams.get('mes');
   const selectedMonth = useMemo(() => resolveFinanceMonthKey(urlMonth), [urlMonth]);
@@ -100,54 +128,85 @@ export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanel
     applyPatch,
     applyRemove,
     upsertRow,
-    setRows,
   } = usePersonalFinanceRows();
 
-  const rows = useMemo(
-    () => filterRowsForMonth(allRows, selectedMonth),
-    [allRows, selectedMonth],
-  );
-
-  const summary = useMemo(() => buildPessoalFinanceSummary(rows), [rows]);
-  const defaultDate = defaultDateForMonth(selectedMonth);
-
   useEffect(() => {
-    const snapshot = loadMonthSnapshot(userId, selectedMonth);
-    setLastSavedAt(snapshot?.savedAt ?? null);
-    setSaveError(null);
-  }, [userId, selectedMonth]);
+    if (loading || !userId) return;
 
-  useEffect(() => {
-    if (loading || !userId || rows.length > 0) return;
-    const snapshot = loadMonthSnapshot(userId, selectedMonth);
-    if (!snapshot?.rows.length) return;
-    setRows((prev) => {
-      const ids = new Set(prev.map((row) => row.id));
-      const restored = snapshot.rows.filter((row) => !ids.has(row.id));
-      return restored.length ? [...prev, ...restored] : prev;
+    const prev = prevMonthRef.current;
+    if (prev && prev !== selectedMonth && monthRowsRef.current.length) {
+      saveMonthSnapshot(userId, prev, monthRowsRef.current);
+    }
+    prevMonthRef.current = selectedMonth;
+
+    let cancelled = false;
+    void resolveMonthRows(userId, selectedMonth, allRows).then((result) => {
+      if (cancelled) return;
+      setMonthRows(result.rows);
+      setLastSavedAt(result.savedAt);
+      setSaveError(null);
     });
-  }, [loading, userId, selectedMonth, rows.length, setRows]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedMonth, userId, loading, allRows]);
+
+  const summary = useMemo(() => buildPessoalFinanceSummary(monthRows), [monthRows]);
+  const defaultDate = defaultDateForMonth(selectedMonth);
 
   useEffect(() => {
     if (!userId || loading) return;
     if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
     autoSaveTimer.current = setTimeout(() => {
-      const snapshot = saveMonthSnapshot(userId, selectedMonth, rows);
+      if (!monthRowsRef.current.length) return;
+      const snapshot = saveMonthSnapshot(userId, selectedMonth, monthRowsRef.current);
       setLastSavedAt(snapshot.savedAt);
     }, AUTO_SAVE_MS);
     return () => {
       if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
     };
-  }, [userId, selectedMonth, rows, loading]);
+  }, [userId, selectedMonth, monthRows, loading]);
 
-  const handleUpsert = (row: HubPersonalTransaction) => {
-    upsertRow(row);
-  };
+  const handleMonthPatch = useCallback(
+    (id: string, patch: Partial<HubPersonalTransaction>) => {
+      setMonthRows((prev) => prev.map((row) => (row.id === id ? { ...row, ...patch } : row)));
+      const pagoOnly = Object.keys(patch).length === 1 && 'pago' in patch;
+      if (!pagoOnly) {
+        applyPatch(id, patch);
+      }
+    },
+    [applyPatch],
+  );
 
-  const entradas = useMemo(() => rows.filter((r) => r.tipo === 'entrada'), [rows]);
+  const handleMonthUpsert = useCallback(
+    (row: HubPersonalTransaction) => {
+      upsertRow(row);
+      setMonthRows((prev) => {
+        const idx = prev.findIndex((r) => r.id === row.id);
+        if (idx >= 0) {
+          const next = [...prev];
+          next[idx] = row;
+          return next;
+        }
+        return [...prev, row];
+      });
+    },
+    [upsertRow],
+  );
+
+  const handleMonthRemove = useCallback(
+    (id: string) => {
+      applyRemove(id);
+      setMonthRows((prev) => prev.filter((row) => row.id !== id));
+    },
+    [applyRemove],
+  );
+
+  const entradas = useMemo(() => monthRows.filter((r) => r.tipo === 'entrada'), [monthRows]);
   const saidasGenericas = useMemo(
-    () => rows.filter((r) => r.tipo === 'saida' && !r.grupo),
-    [rows],
+    () => monthRows.filter((r) => r.tipo === 'saida' && !r.grupo),
+    [monthRows],
   );
 
   const handleSaveMonth = async () => {
@@ -155,22 +214,36 @@ export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanel
     setSaving(true);
     setSaveError(null);
 
-    const err = await persistMonthRowsToSupabase(rows);
-    if (err) {
-      setSaveError(err);
+    const errTx = await persistMonthRowsToSupabase(monthRows);
+    if (errTx) {
+      setSaveError(errTx);
       setSaving(false);
       return;
     }
 
-    const snapshot = saveMonthSnapshot(userId, selectedMonth, rows);
+    const errSnap = await persistMonthSnapshotToSupabase(userId, selectedMonth, monthRows);
+    if (errSnap) {
+      setSaveError(errSnap);
+      setSaving(false);
+      return;
+    }
+
+    const snapshot = saveMonthSnapshot(userId, selectedMonth, monthRows);
     setLastSavedAt(snapshot.savedAt);
     await refresh();
     setSaving(false);
   };
 
+  const handleClearPagoMarks = () => {
+    setMonthRows((prev) => clearMonthPagoMarks(prev));
+    setClearConfirmOpen(false);
+  };
+
   const savedLabel = lastSavedAt
     ? `Salvo às ${formatSnapshotSavedAt(lastSavedAt)}`
     : null;
+
+  const hasPagoMarks = monthRows.some((row) => row.grupo && row.pago);
 
   return (
     <div className={styles.panel}>
@@ -196,15 +269,28 @@ export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanel
         </div>
         <div className={styles.saveWrap}>
           {savedLabel && <span className={styles.saveHint}>{savedLabel}</span>}
-          <button
-            type="button"
-            className={styles.saveBtn}
-            onClick={() => void handleSaveMonth()}
-            disabled={loading || saving || !userId}
-            title={`Salvar ${formatMonthLabel(selectedMonth)} na nuvem e neste dispositivo`}
-          >
-            {saving ? 'Salvando…' : 'Salvar mês'}
-          </button>
+          <div className={styles.saveActions}>
+            {viniciusLayout && (
+              <button
+                type="button"
+                className={styles.clearBtn}
+                onClick={() => setClearConfirmOpen(true)}
+                disabled={loading || !userId || !hasPagoMarks}
+                title="Desmarcar todos os pagos das contas fixas deste mês"
+              >
+                Limpar marcações
+              </button>
+            )}
+            <button
+              type="button"
+              className={styles.saveBtn}
+              onClick={() => void handleSaveMonth()}
+              disabled={loading || saving || !userId}
+              title={`Salvar ${formatMonthLabel(selectedMonth)} na nuvem e neste dispositivo`}
+            >
+              {saving ? 'Salvando…' : 'Salvar mês'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -226,12 +312,12 @@ export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanel
             <p className={styles.loading}>Carregando…</p>
           ) : viniciusView === 'contas' ? (
             <PersonalContasFixasView
-              rows={rows}
+              rows={monthRows}
               summary={summary}
               defaultDate={defaultDate}
-              onUpsert={handleUpsert}
-              onRemove={applyRemove}
-              onPatch={applyPatch}
+              onUpsert={handleMonthUpsert}
+              onRemove={handleMonthRemove}
+              onPatch={handleMonthPatch}
               onSyncError={refresh}
             />
           ) : (
@@ -241,8 +327,8 @@ export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanel
                 presetTipo={viniciusView === 'receitas' ? 'entrada' : 'saida'}
                 defaultDate={defaultDate}
                 monthLabel={selectedMonth}
-                onUpsert={handleUpsert}
-                onRemove={applyRemove}
+                onUpsert={handleMonthUpsert}
+                onRemove={handleMonthRemove}
                 onSyncError={refresh}
               />
             </div>
@@ -259,14 +345,24 @@ export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanel
                 presetTipo={fluxo}
                 defaultDate={defaultDate}
                 monthLabel={selectedMonth}
-                onUpsert={handleUpsert}
-                onRemove={applyRemove}
+                onUpsert={handleMonthUpsert}
+                onRemove={handleMonthRemove}
                 onSyncError={refresh}
               />
             </div>
           )}
         </>
       )}
+
+      <PersonalFinanceConfirmModal
+        open={clearConfirmOpen}
+        title="Limpar marcações"
+        message={`Desmarcar todos os pagos das contas fixas de ${formatMonthLabel(selectedMonth)}?`}
+        confirmLabel="Limpar"
+        danger
+        onConfirm={handleClearPagoMarks}
+        onClose={() => setClearConfirmOpen(false)}
+      />
     </div>
   );
 }
