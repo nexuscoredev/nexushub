@@ -34,6 +34,7 @@ export function DashboardLayout() {
     { to: '/usuarios', label: 'Usuários', icon: 'users', show: podeGestao },
     { to: '/cofre', label: 'Cofre', icon: 'vault', show: podeCofre },
     { to: '/configuracoes', label: 'Config', icon: 'settings', show: true },
+    { to: '/desenvolvimento', label: 'Dev', icon: 'dev', show: true },
   ];
 
   const visibleNav = navItems.filter((item) => item.show);

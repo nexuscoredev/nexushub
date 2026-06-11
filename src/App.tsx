@@ -23,6 +23,7 @@ import { UsersPage } from './pages/UsersPage';
 import { ChatPage } from './pages/ChatPage';
 import { PessoalPage } from './pages/PessoalPage';
 import { VaultPage } from './pages/VaultPage';
+import { DesenvolvimentoPage } from './pages/DesenvolvimentoPage';
 import { VaultProvider } from './contexts/VaultContext';
 
 export default function App() {
@@ -55,6 +56,7 @@ export default function App() {
               <Route path="/fila" element={<FilaPage />} />
               <Route path="/perfil" element={<ProfilePage />} />
               <Route path="/configuracoes" element={<SettingsPage />} />
+              <Route path="/desenvolvimento" element={<DesenvolvimentoPage />} />
               <Route element={<ProtectedRoute requireGestao />}>
                 <Route path="/usuarios" element={<UsersPage />} />
               </Route>

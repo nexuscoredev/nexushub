@@ -10,6 +10,7 @@ export type NavIconName =
   | 'systems'
   | 'users'
   | 'vault'
+  | 'dev'
   | 'settings'
   | 'menu'
   | 'close'
@@ -78,6 +79,12 @@ const paths: Record<NavIconName, ReactNode> = {
       <rect x="3" y="11" width="18" height="11" rx="2" />
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
       <circle cx="12" cy="16" r="1" />
+    </>
+  ),
+  dev: (
+    <>
+      <polyline points="16 18 22 12 16 6" />
+      <polyline points="8 6 2 12 8 18" />
     </>
   ),
   settings: (
