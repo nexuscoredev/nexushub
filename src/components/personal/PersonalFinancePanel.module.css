@@ -37,6 +37,23 @@
   min-width: 0;
 }
 
+.saveWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+  flex-shrink: 0;
+}
+
+.saveHint {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--nx-emerald-bright);
+  white-space: nowrap;
+}
+
 .saveBtn {
   display: inline-flex;
   align-items: center;
@@ -72,11 +89,6 @@
 .saveBtn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
-}
-
-.saveBtnIcon {
-  font-size: 0.85rem;
-  line-height: 1;
 }
 
 .summaryStrip {
@@ -122,5 +134,9 @@
   .toolbarMain > :last-child {
     flex: 1;
     min-width: 0;
+  }
+
+  .saveWrap {
+    align-self: center;
   }
 }

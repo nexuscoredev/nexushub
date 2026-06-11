@@ -46,7 +46,7 @@ export function PessoalPage() {
       )}
 
       {financeiro ? (
-        <PersonalFinancePanel userEmail={email} />
+        <PersonalFinancePanel userEmail={email} userId={user?.id} />
       ) : (
         <PersonalAreaHome onOpenFinance={openFinance} />
       )}

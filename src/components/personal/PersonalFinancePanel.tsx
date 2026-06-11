@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { PersonalContasFixasView } from '../PersonalContasFixasView';
 import { usePersonalFinanceRows } from '../../hooks/usePersonalFinanceRows';
@@ -10,7 +10,12 @@ import {
   resolveFinanceMonthKey,
   saveMonthKey,
 } from '../../lib/personalFinanceMonth';
-import { downloadPersonalFinanceCsv } from '../../lib/personalFinanceExport';
+import {
+  formatSnapshotSavedAt,
+  loadMonthSnapshot,
+  persistMonthRowsToSupabase,
+  saveMonthSnapshot,
+} from '../../lib/personalFinanceSnapshot';
 import { buildPessoalFinanceSummary } from '../../lib/pessoalFinanceSummary';
 import { isViniciusPersonalFinance } from '../../lib/viniciusPersonalFinance';
 import type { HubPersonalTransaction } from '../../types/database';
@@ -25,6 +30,7 @@ type ViniciusFinanceView = 'contas' | 'receitas' | 'outros';
 
 interface PersonalFinancePanelProps {
   userEmail: string | undefined;
+  userId: string | undefined;
 }
 
 const VINICIUS_TABS = [
@@ -38,11 +44,17 @@ const GENERIC_TABS = [
   { id: 'saida', label: 'Gastos', icon: '/img/finance/saidas.svg' },
 ] as const;
 
-export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
+const AUTO_SAVE_MS = 800;
+
+export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanelProps) {
   const viniciusLayout = isViniciusPersonalFinance(userEmail);
   const [searchParams, setSearchParams] = useSearchParams();
   const [viniciusView, setViniciusView] = useState<ViniciusFinanceView>('contas');
   const [fluxo, setFluxo] = useState<'entrada' | 'saida'>('entrada');
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
+  const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const urlMonth = searchParams.get('mes');
   const selectedMonth = useMemo(() => resolveFinanceMonthKey(urlMonth), [urlMonth]);
@@ -88,6 +100,7 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
     applyPatch,
     applyRemove,
     upsertRow,
+    setRows,
   } = usePersonalFinanceRows();
 
   const rows = useMemo(
@@ -97,6 +110,35 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
 
   const summary = useMemo(() => buildPessoalFinanceSummary(rows), [rows]);
   const defaultDate = defaultDateForMonth(selectedMonth);
+
+  useEffect(() => {
+    const snapshot = loadMonthSnapshot(userId, selectedMonth);
+    setLastSavedAt(snapshot?.savedAt ?? null);
+    setSaveError(null);
+  }, [userId, selectedMonth]);
+
+  useEffect(() => {
+    if (loading || !userId || rows.length > 0) return;
+    const snapshot = loadMonthSnapshot(userId, selectedMonth);
+    if (!snapshot?.rows.length) return;
+    setRows((prev) => {
+      const ids = new Set(prev.map((row) => row.id));
+      const restored = snapshot.rows.filter((row) => !ids.has(row.id));
+      return restored.length ? [...prev, ...restored] : prev;
+    });
+  }, [loading, userId, selectedMonth, rows.length, setRows]);
+
+  useEffect(() => {
+    if (!userId || loading) return;
+    if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+    autoSaveTimer.current = setTimeout(() => {
+      const snapshot = saveMonthSnapshot(userId, selectedMonth, rows);
+      setLastSavedAt(snapshot.savedAt);
+    }, AUTO_SAVE_MS);
+    return () => {
+      if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+    };
+  }, [userId, selectedMonth, rows, loading]);
 
   const handleUpsert = (row: HubPersonalTransaction) => {
     upsertRow(row);
@@ -108,14 +150,32 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
     [rows],
   );
 
-  const handleSaveMonth = () => {
-    if (rows.length === 0) return;
-    downloadPersonalFinanceCsv(rows, selectedMonth);
+  const handleSaveMonth = async () => {
+    if (!userId || saving) return;
+    setSaving(true);
+    setSaveError(null);
+
+    const err = await persistMonthRowsToSupabase(rows);
+    if (err) {
+      setSaveError(err);
+      setSaving(false);
+      return;
+    }
+
+    const snapshot = saveMonthSnapshot(userId, selectedMonth, rows);
+    setLastSavedAt(snapshot.savedAt);
+    await refresh();
+    setSaving(false);
   };
+
+  const savedLabel = lastSavedAt
+    ? `Salvo às ${formatSnapshotSavedAt(lastSavedAt)}`
+    : null;
 
   return (
     <div className={styles.panel}>
       {error && <div className="error-banner">{error}</div>}
+      {saveError && <div className="error-banner">{saveError}</div>}
 
       <div className={styles.toolbar}>
         <div className={styles.toolbarMain}>
@@ -134,20 +194,18 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
             />
           )}
         </div>
-        <button
-          type="button"
-          className={styles.saveBtn}
-          onClick={handleSaveMonth}
-          disabled={loading || rows.length === 0}
-          title={
-            rows.length === 0
-              ? 'Nenhum lançamento neste mês'
-              : `Salvar planilha de ${formatMonthLabel(selectedMonth)}`
-          }
-        >
-          <span className={styles.saveBtnIcon} aria-hidden>↓</span>
-          Salvar
-        </button>
+        <div className={styles.saveWrap}>
+          {savedLabel && <span className={styles.saveHint}>{savedLabel}</span>}
+          <button
+            type="button"
+            className={styles.saveBtn}
+            onClick={() => void handleSaveMonth()}
+            disabled={loading || saving || !userId}
+            title={`Salvar ${formatMonthLabel(selectedMonth)} na nuvem e neste dispositivo`}
+          >
+            {saving ? 'Salvando…' : 'Salvar mês'}
+          </button>
+        </div>
       </div>
 
       <div className={styles.summaryStrip}>
@@ -164,7 +222,6 @@ export function PersonalFinancePanel({ userEmail }: PersonalFinancePanelProps) {
 
       {viniciusLayout ? (
         <>
-
           {loading ? (
             <p className={styles.loading}>Carregando…</p>
           ) : viniciusView === 'contas' ? (
