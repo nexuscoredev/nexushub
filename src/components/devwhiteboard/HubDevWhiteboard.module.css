@@ -943,6 +943,15 @@
   stroke-width: 3.5;
 }
 
+.connectorDraft {
+  fill: none;
+  stroke: #93c5fd;
+  stroke-width: 2.5;
+  stroke-dasharray: 7 5;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
 .linkHint {
   display: none;
 }

@@ -51,10 +51,22 @@ export const CONNECTOR_ANCHORS: ConnectorAnchor[] = ['top', 'right', 'bottom', '
 export interface WhiteboardConnector {
   id: string;
   type: 'connector';
-  fromId: string;
-  toId: string;
+  fromId?: string;
+  toId?: string;
   fromAnchor?: ConnectorAnchor;
   toAnchor?: ConnectorAnchor;
+  fromPoint?: WhiteboardPoint;
+  toPoint?: WhiteboardPoint;
+}
+
+export interface ConnectorSnap {
+  elementId: string;
+  anchor: ConnectorAnchor;
+  point: WhiteboardPoint;
+}
+
+export function isConnectorSnap(value: ConnectorSnap | WhiteboardPoint): value is ConnectorSnap {
+  return typeof value === 'object' && value !== null && 'elementId' in value;
 }
 
 export type WhiteboardElement =
@@ -137,6 +149,104 @@ export function connectorEndpoints(
   return { from, to };
 }
 
+export function resolveConnectorEndpoints(
+  connector: WhiteboardConnector,
+  byId: Map<string, WhiteboardElement>,
+): { from: WhiteboardPoint; to: WhiteboardPoint } | null {
+  let from: WhiteboardPoint | null = null;
+  let to: WhiteboardPoint | null = null;
+
+  if (connector.fromId) {
+    const fromEl = byId.get(connector.fromId);
+    if (fromEl && isMovableElement(fromEl)) {
+      from = connector.fromAnchor
+        ? elementAnchorPoint(fromEl, connector.fromAnchor)
+        : (elementCenter(fromEl) ?? elementAnchorPoint(fromEl, 'top'));
+    }
+  }
+  if (!from && connector.fromPoint) from = connector.fromPoint;
+
+  if (connector.toId) {
+    const toEl = byId.get(connector.toId);
+    if (toEl && isMovableElement(toEl)) {
+      to = connector.toAnchor
+        ? elementAnchorPoint(toEl, connector.toAnchor)
+        : (elementCenter(toEl) ?? elementAnchorPoint(toEl, 'top'));
+    }
+  }
+  if (!to && connector.toPoint) to = connector.toPoint;
+
+  if (!from || !to) {
+    const fromEl = connector.fromId ? byId.get(connector.fromId) : undefined;
+    const toEl = connector.toId ? byId.get(connector.toId) : undefined;
+    if (fromEl && toEl && isMovableElement(fromEl) && isMovableElement(toEl)) {
+      return connectorEndpoints(connector, fromEl, toEl);
+    }
+    return null;
+  }
+
+  return { from, to };
+}
+
+export function connectorBoundsFromPoints(from: WhiteboardPoint, to: WhiteboardPoint): WhiteboardRect {
+  const pad = 12;
+  const x = Math.min(from.x, to.x) - pad;
+  const y = Math.min(from.y, to.y) - pad;
+  return {
+    x,
+    y,
+    width: Math.max(Math.abs(to.x - from.x) + pad * 2, 8),
+    height: Math.max(Math.abs(to.y - from.y) + pad * 2, 8),
+  };
+}
+
+const CONNECTOR_SNAP_RADIUS = 28;
+
+export function snapConnectorPoint(
+  scene: WhiteboardScene,
+  world: WhiteboardPoint,
+  radius = CONNECTOR_SNAP_RADIUS,
+): ConnectorSnap | WhiteboardPoint {
+  let best: { snap: ConnectorSnap; dist: number } | null = null;
+
+  for (const el of scene.elements) {
+    if (!isMovableElement(el)) continue;
+    for (const anchor of CONNECTOR_ANCHORS) {
+      const point = elementAnchorPoint(el, anchor);
+      const dist = Math.hypot(point.x - world.x, point.y - world.y);
+      if (dist <= radius && (!best || dist < best.dist)) {
+        best = { snap: { elementId: el.id, anchor, point }, dist };
+      }
+    }
+  }
+
+  return best ? best.snap : world;
+}
+
+export function buildConnector(
+  id: string,
+  from: ConnectorSnap | WhiteboardPoint,
+  to: ConnectorSnap | WhiteboardPoint,
+): WhiteboardConnector {
+  const connector: WhiteboardConnector = {
+    id,
+    type: 'connector',
+    fromPoint: isConnectorSnap(from) ? from.point : from,
+    toPoint: isConnectorSnap(to) ? to.point : to,
+  };
+
+  if (isConnectorSnap(from)) {
+    connector.fromId = from.elementId;
+    connector.fromAnchor = from.anchor;
+  }
+  if (isConnectorSnap(to)) {
+    connector.toId = to.elementId;
+    connector.toAnchor = to.anchor;
+  }
+
+  return connector;
+}
+
 export function connectorCurvePath(from: WhiteboardPoint, to: WhiteboardPoint): string {
   const mx = (from.x + to.x) / 2;
   return `M ${from.x} ${from.y} C ${mx} ${from.y}, ${mx} ${to.y}, ${to.x} ${to.y}`;
@@ -147,7 +257,7 @@ export function sceneWithoutElement(scene: WhiteboardScene, id: string): Whitebo
     ...scene,
     elements: scene.elements.filter((el) => {
       if (el.id === id) return false;
-      if (el.type === 'connector' && (el.fromId === id || el.toId === id)) return false;
+      if (el.type === 'connector' && ((el.fromId && el.fromId === id) || (el.toId && el.toId === id))) return false;
       return true;
     }),
   };
@@ -227,19 +337,11 @@ function strokeBounds(stroke: WhiteboardStroke): WhiteboardRect | null {
 
 export function connectorBounds(
   connector: WhiteboardConnector,
-  fromEl: WhiteboardMovable,
-  toEl: WhiteboardMovable,
-): WhiteboardRect {
-  const { from, to } = connectorEndpoints(connector, fromEl, toEl);
-  const pad = 12;
-  const x = Math.min(from.x, to.x) - pad;
-  const y = Math.min(from.y, to.y) - pad;
-  return {
-    x,
-    y,
-    width: Math.max(Math.abs(to.x - from.x) + pad * 2, 8),
-    height: Math.max(Math.abs(to.y - from.y) + pad * 2, 8),
-  };
+  byId: Map<string, WhiteboardElement>,
+): WhiteboardRect | null {
+  const endpoints = resolveConnectorEndpoints(connector, byId);
+  if (!endpoints) return null;
+  return connectorBoundsFromPoints(endpoints.from, endpoints.to);
 }
 
 export function findElementsInRect(scene: WhiteboardScene, rect: WhiteboardRect): string[] {
@@ -259,15 +361,8 @@ export function findElementsInRect(scene: WhiteboardScene, rect: WhiteboardRect)
       continue;
     }
     if (el.type === 'connector') {
-      const from = byId.get(el.fromId);
-      const to = byId.get(el.toId);
-      if (
-        from &&
-        to &&
-        isMovableElement(from) &&
-        isMovableElement(to) &&
-        rectsIntersect(rect, connectorBounds(el, from, to))
-      ) {
+      const endpoints = resolveConnectorEndpoints(el, byId);
+      if (endpoints && rectsIntersect(rect, connectorBoundsFromPoints(endpoints.from, endpoints.to))) {
         ids.push(el.id);
       }
     }
@@ -281,7 +376,12 @@ export function sceneWithoutElements(scene: WhiteboardScene, ids: string[]): Whi
     ...scene,
     elements: scene.elements.filter((el) => {
       if (idSet.has(el.id)) return false;
-      if (el.type === 'connector' && (idSet.has(el.fromId) || idSet.has(el.toId))) return false;
+      if (
+        el.type === 'connector' &&
+        ((el.fromId && idSet.has(el.fromId)) || (el.toId && idSet.has(el.toId)))
+      ) {
+        return false;
+      }
       return true;
     }),
   };
@@ -345,7 +445,13 @@ function isWhiteboardElement(value: unknown): value is WhiteboardElement {
   if (!value || typeof value !== 'object') return false;
   const el = value as { type?: string; id?: string };
   if (!el.id || !el.type) return false;
-  return ['stroke', 'sticky', 'image', 'connector'].includes(el.type);
+  if (el.type === 'connector') {
+    const connector = value as WhiteboardConnector;
+    const linked = Boolean(connector.fromId && connector.toId);
+    const free = Boolean(connector.fromPoint && connector.toPoint);
+    return linked || free;
+  }
+  return ['stroke', 'sticky', 'image'].includes(el.type);
 }
 
 function parseScene(raw: unknown): WhiteboardScene {
