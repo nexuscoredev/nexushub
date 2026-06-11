@@ -512,6 +512,18 @@ export async function saveDevWhiteboardSnapshot(
   return mapSnapshotRow(row, authorName);
 }
 
+export async function deleteDevWhiteboardSnapshot(id: string): Promise<void> {
+  if (!supabase) throw new Error('Supabase não configurado');
+
+  const { error } = await supabase
+    .from('hub_dev_whiteboard_snapshots')
+    .delete()
+    .eq('id', id)
+    .eq('board_id', DEV_WHITEBOARD_ID);
+
+  if (error) throw new Error(supabaseErrorMessage(error));
+}
+
 export function subscribeDevWhiteboardSnapshots(
   onChange: () => void,
 ): () => void {
@@ -523,6 +535,16 @@ export function subscribeDevWhiteboardSnapshots(
       'postgres_changes',
       {
         event: 'INSERT',
+        schema: 'public',
+        table: 'hub_dev_whiteboard_snapshots',
+        filter: `board_id=eq.${DEV_WHITEBOARD_ID}`,
+      },
+      () => onChange(),
+    )
+    .on(
+      'postgres_changes',
+      {
+        event: 'DELETE',
         schema: 'public',
         table: 'hub_dev_whiteboard_snapshots',
         filter: `board_id=eq.${DEV_WHITEBOARD_ID}`,

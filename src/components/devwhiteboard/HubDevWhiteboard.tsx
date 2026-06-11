@@ -14,6 +14,7 @@ import {
   CONNECTOR_ANCHORS,
   connectorCurvePath,
   connectorEndpoints,
+  deleteDevWhiteboardSnapshot,
   fetchDevWhiteboard,
   fetchDevWhiteboardSnapshots,
   findElementsInRect,
@@ -63,12 +64,12 @@ const STICKY_RESIZE_HANDLES: StickyResizeHandle[] = [
   'w',
 ];
 
-const TOOL_WHEEL_RADIUS = 58;
-const TOOL_WHEEL_DEAD_ZONE = 16;
+const TOOL_WHEEL_RADIUS = 92;
+const TOOL_WHEEL_DEAD_ZONE = 22;
 
 const TOOL_WHEEL_ITEMS: { id: WhiteboardTool; label: string; angle: number }[] = [
   { id: 'select', label: 'Selecionar', angle: 180 },
-  { id: 'pen', label: 'Caneta', angle: 300 },
+  { id: 'pen', label: 'Caneta', angle: -60 },
   { id: 'sticky', label: 'Nota', angle: 60 },
 ];
 
@@ -185,8 +186,8 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
   const stickyInputRefs = useRef<Map<string, HTMLTextAreaElement>>(new Map());
 
   const [scene, setScene] = useState<WhiteboardScene>(DEFAULT_WHITEBOARD_SCENE);
-  const [historyPast, setHistoryPast] = useState<WhiteboardScene[]>([]);
-  const [historyFuture, setHistoryFuture] = useState<WhiteboardScene[]>([]);
+  const [, setHistoryPast] = useState<WhiteboardScene[]>([]);
+  const [, setHistoryFuture] = useState<WhiteboardScene[]>([]);
   const [tool, setTool] = useState<WhiteboardTool>('select');
   const [penColor, setPenColor] = useState<string>(PEN_COLORS[0]);
   const [stickyColor, setStickyColor] = useState<string>(STICKY_COLORS[0]);
@@ -877,6 +878,27 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
     clearLinkDraft();
   };
 
+  const deleteActiveBoard = useCallback(async () => {
+    if (!activeViewId) return;
+    const snapshot = snapshots.find((item) => item.id === activeViewId);
+    if (
+      !window.confirm(
+        `Excluir o quadro "${snapshot?.title ?? 'salvo'}" da equipe? Esta ação não pode ser desfeita.`,
+      )
+    ) {
+      return;
+    }
+
+    setError(null);
+    try {
+      await deleteDevWhiteboardSnapshot(activeViewId);
+      setSnapshots((prev) => prev.filter((item) => item.id !== activeViewId));
+      await loadLiveBoard();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao excluir quadro');
+    }
+  }, [activeViewId, loadLiveBoard, snapshots]);
+
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (isTypingTarget(event.target)) return;
@@ -1100,23 +1122,20 @@ export function HubDevWhiteboard({ fullHeight = false }: HubDevWhiteboardProps) 
           {savingSnapshot ? 'Salvando…' : 'Salvar quadro para equipe'}
         </button>
 
-        <button type="button" className="btn-ghost" onClick={undo} disabled={historyPast.length === 0}>
-          Desfazer
-        </button>
-        <button type="button" className="btn-ghost" onClick={redo} disabled={historyFuture.length === 0}>
-          Refazer
-        </button>
-        <button
-          type="button"
-          className="btn-ghost"
-          onClick={deleteSelected}
-          disabled={selectedIds.length === 0}
-        >
-          Excluir
-        </button>
-        <button type="button" className="btn-ghost" onClick={clearBoard}>
-          Limpar
-        </button>
+        <div className={styles.toolbarActions}>
+          <button
+            type="button"
+            className={styles.deleteBoardBtn}
+            onClick={() => void deleteActiveBoard()}
+            disabled={!activeViewId}
+            title={activeViewId ? 'Excluir quadro salvo selecionado' : 'Selecione um quadro salvo no menu'}
+          >
+            Excluir quadro
+          </button>
+          <button type="button" className="btn-ghost" onClick={clearBoard}>
+            Limpar
+          </button>
+        </div>
         <span className={styles.status}>
           {loading
             ? 'Carregando…'
