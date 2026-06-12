@@ -214,22 +214,23 @@ export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanel
     setSaving(true);
     setSaveError(null);
 
+    const snapshot = saveMonthSnapshot(userId, selectedMonth, monthRows);
+    setLastSavedAt(snapshot.savedAt);
+
     const errTx = await persistMonthRowsToSupabase(monthRows);
     if (errTx) {
-      setSaveError(errTx);
+      setSaveError(`Salvo neste dispositivo. Nuvem (contas): ${errTx}`);
       setSaving(false);
       return;
     }
 
     const errSnap = await persistMonthSnapshotToSupabase(userId, selectedMonth, monthRows);
     if (errSnap) {
-      setSaveError(errSnap);
+      setSaveError(`Salvo neste dispositivo. Nuvem (mês): ${errSnap}`);
       setSaving(false);
       return;
     }
 
-    const snapshot = saveMonthSnapshot(userId, selectedMonth, monthRows);
-    setLastSavedAt(snapshot.savedAt);
     await refresh();
     setSaving(false);
   };
