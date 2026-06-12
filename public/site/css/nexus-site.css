@@ -2232,6 +2232,54 @@ img {
   object-fit: cover;
 }
 
+/* Home — sob medida: visual compacto e menos dominante */
+.nx-split-section--reality {
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.nx-split-section--reality .nx-media-frame--subtle {
+  aspect-ratio: 3 / 4;
+  max-width: 11.5rem;
+  margin-inline: auto;
+  border-color: var(--nx-border);
+  background: color-mix(in srgb, var(--nx-surface-muted) 72%, transparent);
+}
+
+.nx-split-section--reality .nx-media-frame--subtle img {
+  object-fit: contain;
+  object-position: center;
+  padding: 0.65rem 0.5rem;
+  opacity: 0.82;
+  filter: saturate(0.78) brightness(0.94) contrast(0.96);
+}
+
+@media (min-width: 768px) {
+  .nx-split-section--reality {
+    grid-template-columns: minmax(0, 0.34fr) minmax(0, 0.66fr);
+    gap: 1.35rem;
+    align-items: center;
+  }
+
+  .nx-split-section--reality .nx-media-frame--subtle {
+    max-width: 12.5rem;
+    max-height: 15.5rem;
+    margin-inline: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .nx-split-section--reality {
+    grid-template-columns: minmax(0, 0.32fr) minmax(0, 0.68fr);
+    gap: 1.75rem;
+  }
+
+  .nx-split-section--reality .nx-media-frame--subtle {
+    max-width: 13.5rem;
+    max-height: 16.5rem;
+  }
+}
+
 .nx-quote-float {
   position: absolute;
   z-index: 2;
@@ -3337,6 +3385,12 @@ body {
   body[data-page='home'] .nx-split-section .nx-media-frame {
     max-height: 14rem;
     aspect-ratio: 16 / 10;
+  }
+
+  body[data-page='home'] .nx-split-section--reality .nx-media-frame--subtle {
+    max-width: 10.5rem;
+    max-height: 10.5rem;
+    aspect-ratio: 1;
   }
 
   body[data-page='home'] .nx-check-list li span strong {
