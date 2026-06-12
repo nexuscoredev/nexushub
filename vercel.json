@@ -20,6 +20,7 @@
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/site/(.*)", "destination": "/site/$1" },
+    { "source": "/", "destination": "/site/home.html" },
     { "source": "/((?!api/|site/).*)", "destination": "/index.html" }
   ]
 }

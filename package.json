@@ -11,7 +11,8 @@
     "seed:cliente-users": "node scripts/seed-cliente-users.mjs",
     "check:setup": "node scripts/check-setup.mjs",
     "test:login": "node scripts/test-login.mjs",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "generate:brand": "node scripts/generate-brand-images.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
@@ -25,6 +26,7 @@
     "@types/react-dom": "^19.0.3",
     "@vercel/node": "^5.1.8",
     "@vitejs/plugin-react": "^4.3.4",
+    "sharp": "^0.34.2",
     "typescript": "~5.7.2",
     "vite": "^6.0.7"
   }
