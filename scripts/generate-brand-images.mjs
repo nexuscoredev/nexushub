@@ -9,6 +9,7 @@ import sharp from 'sharp';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
+/** Fonte da marca para OG — não sobrescreve favicon (hero/nav usam o PNG original). */
 const markSvg = fs.readFileSync(path.join(root, 'public/logo-nexus-mark.svg'));
 
 async function pngOnBlack(size, logoScale = 0.74) {
@@ -42,17 +43,6 @@ async function ogImage() {
     .composite([{ input: logo, gravity: 'center' }])
     .png()
     .toBuffer();
-}
-
-const targets = [
-  path.join(root, 'public/img/favicon.png'),
-  path.join(root, 'public/site/img/favicon.png'),
-];
-
-const favicon = await pngOnBlack(512);
-for (const file of targets) {
-  fs.writeFileSync(file, favicon);
-  console.log('OK', path.relative(root, file));
 }
 
 const ogPath = path.join(root, 'public/img/og-nexus.png');
