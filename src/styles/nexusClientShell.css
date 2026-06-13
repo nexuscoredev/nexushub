@@ -7,9 +7,9 @@
   --cl-graphite-2: #1c1c1c;
   --cl-steel: #8a8f98;
   --cl-silver: #c8ccd4;
-  --cl-royal: #2563eb;
-  --cl-royal-bright: #6eb5ff;
-  --cl-royal-deep: #1e3a8a;
+  --cl-royal: #002395;
+  --cl-royal-bright: #1e49d6;
+  --cl-royal-deep: #00104b;
   --cl-violet: #7c3aed;
   --cl-emerald: #059669;
   --cl-radius: 0.5rem;
@@ -38,8 +38,8 @@
   --cl-submit-hover: #2a2a2a;
   --cl-error-bg: #fff5f5;
   --cl-error-text: #8b2e2e;
-  --cl-info-bg: rgba(37, 99, 235, 0.06);
-  --cl-info-text: #1e3a8a;
+  --cl-info-bg: rgba(0, 35, 149, 0.06);
+  --cl-info-text: #00104b;
 }
 
 [data-theme='dark'] .nx-client-shell {
@@ -70,6 +70,6 @@
   --cl-submit-hover: #e8e8ea;
   --cl-error-bg: rgba(180, 60, 60, 0.12);
   --cl-error-text: #fca5a5;
-  --cl-info-bg: rgba(37, 99, 235, 0.14);
-  --cl-info-text: #93c5fd;
+  --cl-info-bg: rgba(0, 35, 149, 0.14);
+  --cl-info-text: #7a9ae8;
 }

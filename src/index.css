@@ -4,9 +4,11 @@
   --nx-graphite-2: #1c1c1c;
   --nx-steel: #8a8f98;
   --nx-silver: #c8ccd4;
-  --nx-royal: #2563eb;
-  --nx-royal-bright: #6eb5ff;
-  --nx-royal-deep: #1e3a8a;
+  --nx-royal: #002395;
+  --nx-royal-bright: #1e49d6;
+  --nx-royal-deep: #00104b;
+  --nx-royal-rgb: 0, 35, 149;
+  --nx-royal-bright-rgb: 30, 73, 214;
   --nx-cyan-bright: #22d3ee;
   --nx-violet-bright: #a78bfa;
   --nx-emerald-bright: #34d399;
@@ -21,12 +23,12 @@
   --text: #f5f5f5;
   --muted: #a3a3a3;
   --border: rgba(255, 255, 255, 0.08);
-  --border-glow: rgba(37, 99, 235, 0.35);
+  --border-glow: rgba(0, 35, 149, 0.42);
   --primary: #f5f5f5;
   --polished-silver: var(--nx-silver);
   --outline-variant: var(--nx-steel);
   --accent: var(--nx-royal-bright);
-  --accent-glow: rgba(110, 181, 255, 0.22);
+  --accent-glow: rgba(30, 73, 214, 0.32);
   --silver-gradient: linear-gradient(
     180deg,
     #e8eaee 0%,
@@ -53,8 +55,8 @@
   --pf-expense: #f87171;
   --pf-pending: var(--nx-amber-bright);
   --pf-surface: var(--surface);
-  --pf-border: rgba(110, 181, 255, 0.14);
-  --pf-border-strong: rgba(110, 181, 255, 0.28);
+  --pf-border: rgba(30, 73, 214, 0.16);
+  --pf-border-strong: rgba(30, 73, 214, 0.32);
   --pf-glow: var(--accent-glow);
 }
 
@@ -113,7 +115,7 @@ body {
   font-family: var(--font-body);
   color: var(--text);
   background:
-    radial-gradient(ellipse 80% 55% at 10% -5%, rgba(37, 99, 235, 0.14), transparent 52%),
+    radial-gradient(ellipse 80% 55% at 10% -5%, rgba(0, 35, 149, 0.14), transparent 52%),
     radial-gradient(ellipse 60% 45% at 95% 15%, rgba(124, 58, 237, 0.1), transparent 48%),
     radial-gradient(ellipse 50% 35% at 50% 100%, rgba(6, 182, 212, 0.08), transparent 42%),
     var(--bg);
@@ -138,7 +140,7 @@ textarea {
 }
 
 ::selection {
-  background: rgba(37, 99, 235, 0.35);
+  background: rgba(0, 35, 149, 0.35);
   color: #fff;
 }
 
@@ -161,8 +163,8 @@ textarea {
   transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    0 0 24px rgba(37, 99, 235, 0.35),
-    0 0 48px rgba(37, 99, 235, 0.12);
+    0 0 24px rgba(0, 35, 149, 0.45),
+    0 0 48px rgba(0, 16, 75, 0.22);
   text-shadow: 0 0 16px rgba(255, 255, 255, 0.2);
 }
 
@@ -201,12 +203,12 @@ textarea {
 .card {
   background: var(--surface);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(110, 181, 255, 0.1);
+  border: 1px solid rgba(30, 73, 214, 0.1);
   border-radius: var(--radius);
   padding: 1.35rem;
   box-shadow:
-    inset 0 0 0 1px rgba(110, 181, 255, 0.05),
-    0 8px 32px rgba(37, 99, 235, 0.06);
+    inset 0 0 0 1px rgba(30, 73, 214, 0.05),
+    0 8px 32px rgba(0, 35, 149, 0.06);
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
   position: relative;
   overflow: hidden;
@@ -228,11 +230,11 @@ textarea {
 }
 
 .card:hover {
-  border-color: rgba(110, 181, 255, 0.28);
+  border-color: rgba(30, 73, 214, 0.28);
   box-shadow:
-    inset 0 0 0 1px rgba(110, 181, 255, 0.12),
-    0 0 28px rgba(37, 99, 235, 0.12),
-    0 12px 40px rgba(37, 99, 235, 0.08);
+    inset 0 0 0 1px rgba(30, 73, 214, 0.12),
+    0 0 28px rgba(0, 35, 149, 0.12),
+    0 12px 40px rgba(0, 35, 149, 0.08);
 }
 
 .card-glass {
@@ -262,7 +264,7 @@ textarea {
 .input:focus {
   outline: none;
   border-color: var(--border-glow);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px rgba(0, 35, 149, 0.15);
 }
 
 .label {
@@ -287,9 +289,9 @@ textarea {
 .info-banner {
   padding: 0.85rem 1rem;
   border-radius: var(--radius-sm);
-  background: rgba(37, 99, 235, 0.08);
-  border: 1px solid rgba(110, 181, 255, 0.25);
-  color: #c7ddff;
+  background: rgba(0, 35, 149, 0.08);
+  border: 1px solid rgba(30, 73, 214, 0.25);
+  color: #b8c8f0;
   font-size: 0.9rem;
 }
 
@@ -365,7 +367,7 @@ textarea {
   overflow-wrap: anywhere;
   color: var(--accent);
   font-variant-numeric: tabular-nums;
-  text-shadow: 0 0 24px rgba(37, 99, 235, 0.2);
+  text-shadow: 0 0 24px rgba(0, 35, 149, 0.2);
 }
 
 .kpi:nth-child(4n + 2) .kpi-value {
@@ -414,7 +416,7 @@ textarea {
   font-family: var(--font-mono);
   color: var(--accent);
   margin-bottom: 0.75rem;
-  text-shadow: 0 0 20px rgba(37, 99, 235, 0.25);
+  text-shadow: 0 0 20px rgba(0, 35, 149, 0.25);
 }
 
 .section-heading::before {
@@ -466,7 +468,7 @@ textarea {
 }
 
 .tab.active {
-  background: rgba(37, 99, 235, 0.18);
+  background: rgba(0, 35, 149, 0.18);
   color: var(--accent);
   box-shadow: 0 0 16px var(--accent-glow);
 }

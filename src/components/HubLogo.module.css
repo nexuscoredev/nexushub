@@ -57,8 +57,10 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: none;
-  color: var(--accent);
-  text-shadow: 0 0 24px var(--accent-glow);
+  color: var(--nx-royal-bright);
+  text-shadow:
+    0 0 20px rgba(30, 73, 214, 0.45),
+    0 0 40px rgba(0, 35, 149, 0.25);
   flex-shrink: 0;
 }
 
