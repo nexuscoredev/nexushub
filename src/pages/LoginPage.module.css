@@ -39,11 +39,91 @@
   margin-bottom: 0.25rem;
 }
 
+.header {
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+.subtitle {
+  margin: 0.45rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: 0.85rem;
   margin-top: 1.5rem;
+}
+
+.field {
+  width: 100%;
+}
+
+.fieldShell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 3.1rem;
+  padding: 0.65rem 1.15rem;
+  border-radius: 999px;
+  background: #121212;
+  box-shadow:
+    inset 3px 3px 8px rgba(0, 0, 0, 0.55),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.04);
+  cursor: text;
+  transition: box-shadow 0.2s ease;
+}
+
+.fieldShell:focus-within {
+  box-shadow:
+    inset 4px 4px 10px rgba(0, 0, 0, 0.6),
+    inset -2px -2px 7px rgba(255, 255, 255, 0.05),
+    0 0 0 1px rgba(30, 73, 214, 0.25);
+}
+
+.fieldIcon {
+  flex-shrink: 0;
+  font-size: 1.15rem;
+  color: #8a8f98;
+  user-select: none;
+}
+
+.fieldShell:focus-within .fieldIcon {
+  color: #c8ccd4;
+}
+
+.fieldInput {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.fieldInput::placeholder {
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.fieldInput:focus {
+  outline: none;
 }
 
 .back {
@@ -72,5 +152,9 @@
 
   .card {
     padding: 1.5rem 1.15rem;
+  }
+
+  .fieldInput {
+    font-size: 16px;
   }
 }

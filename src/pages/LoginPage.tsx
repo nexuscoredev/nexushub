@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { HubLogo } from '../components/HubLogo';
 import { TechShell } from '../components/TechShell';
 import { useAuth } from '../contexts/AuthContext';
@@ -47,14 +47,8 @@ export function LoginPage() {
             <HubLogo size="lg" variant="full" centered />
           </div>
           <div className={styles.header}>
-            <span className={styles.badge}>Secure access</span>
             <h1 className={styles.title}>Entrar</h1>
-            <p className={styles.subtitle}>
-              Acesso restrito à equipe NEXUS ·{' '}
-              <Link to="/cliente/entrar" style={{ color: 'var(--polished-silver)' }}>
-                NexusClient
-              </Link>
-            </p>
+            <p className={styles.subtitle}>Acesso restrito à equipe NEXUS</p>
           </div>
 
           {!configured && (
@@ -70,35 +64,40 @@ export function LoginPage() {
           )}
 
           <form className={styles.form} onSubmit={handleSubmit}>
-            <div>
-              <label className="label" htmlFor="usuario">
-                Usuário
+            <div className={styles.field}>
+              <label className={styles.fieldShell} htmlFor="usuario">
+                <span className={`material-symbols-outlined ${styles.fieldIcon}`} aria-hidden>
+                  alternate_email
+                </span>
+                <input
+                  id="usuario"
+                  type="text"
+                  className={styles.fieldInput}
+                  autoComplete="username"
+                  placeholder="Usuário"
+                  value={usuario}
+                  onChange={(e) => setUsuario(e.target.value)}
+                  required
+                />
               </label>
-              <input
-                id="usuario"
-                type="text"
-                className="input"
-                autoComplete="username"
-                placeholder="Vinicius, Rafael ou Felipe"
-                value={usuario}
-                onChange={(e) => setUsuario(e.target.value)}
-                required
-              />
             </div>
-            <div>
-              <label className="label" htmlFor="password">
-                Senha
+            <div className={styles.field}>
+              <label className={styles.fieldShell} htmlFor="password">
+                <span className={`material-symbols-outlined ${styles.fieldIcon}`} aria-hidden>
+                  lock
+                </span>
+                <input
+                  id="password"
+                  type="password"
+                  className={styles.fieldInput}
+                  autoComplete="current-password"
+                  placeholder="Senha"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                />
               </label>
-              <input
-                id="password"
-                type="password"
-                className="input"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-              />
             </div>
             <button type="submit" className="btn-primary" disabled={loading || !configured}>
               {loading ? 'Autenticando…' : 'Entrar no Hub'}
