@@ -1,4 +1,12 @@
-﻿:root {
+﻿@font-face {
+  font-family: 'Molgan';
+  src: url('/fonts/molgan-regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
   --nx-ink: #0a0a0a;
   --nx-graphite: #141414;
   --nx-graphite-2: #1c1c1c;
@@ -47,7 +55,7 @@
   --sidebar-width: 272px;
   --font-serif: 'Noto Serif', Georgia, 'Times New Roman', serif;
   --font-display: 'Inter', system-ui, sans-serif;
-  --font-hub: 'Orbitron', 'Inter', system-ui, sans-serif;
+  --font-hub: 'Molgan', 'Orbitron', 'Inter', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --shadow-glow: none;
