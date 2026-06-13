@@ -126,6 +126,29 @@
   outline: none;
 }
 
+/* Autofill — mantém visual escuro (sem azul do navegador) */
+.fieldInput:-webkit-autofill,
+.fieldInput:-webkit-autofill:hover,
+.fieldInput:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--text);
+  caret-color: var(--text);
+  border-radius: 999px;
+  transition: background-color 99999s ease-out 0s;
+  box-shadow: 0 0 0 1000px #121212 inset;
+}
+
+.fieldInput:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text);
+  caret-color: var(--text);
+  box-shadow: 0 0 0 1000px #121212 inset;
+}
+
+.fieldInput:autofill {
+  box-shadow: 0 0 0 1000px #121212 inset;
+  -webkit-text-fill-color: var(--text);
+  caret-color: var(--text);
+}
+
 .back {
   margin-top: 1.5rem;
   text-align: center;

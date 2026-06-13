@@ -276,6 +276,29 @@ textarea {
   box-shadow: 0 0 0 3px rgba(0, 35, 149, 0.15);
 }
 
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--text);
+  caret-color: var(--text);
+  transition: background-color 99999s ease-out 0s;
+  box-shadow: 0 0 0 1000px var(--nx-graphite) inset;
+}
+
+.input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text);
+  caret-color: var(--text);
+  box-shadow:
+    0 0 0 1000px var(--nx-graphite) inset,
+    0 0 0 3px rgba(0, 35, 149, 0.15);
+}
+
+.input:autofill {
+  box-shadow: 0 0 0 1000px var(--nx-graphite) inset;
+  -webkit-text-fill-color: var(--text);
+  caret-color: var(--text);
+}
+
 .label {
   display: block;
   font-size: 0.68rem;
