@@ -1,6 +1,5 @@
 import { FormEvent, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { HubLogo } from '../components/HubLogo';
 import { TechShell } from '../components/TechShell';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './LoginPage.module.css';
@@ -39,60 +38,69 @@ export function LoginPage() {
   };
 
   return (
-    <TechShell>
+    <TechShell minimal>
       <div className={styles.page}>
-        <div className={`card ${styles.card}`}>
-          <div className={styles.cardGlow} aria-hidden />
-          <div className={styles.logoWrap}>
-            <HubLogo size="lg" variant="full" centered />
-          </div>
-          <div className={styles.header}>
-            <span className={styles.badge}>Secure access</span>
-            <h1 className={styles.title}>Entrar</h1>
-            <p className={styles.subtitle}>
-              Acesso restrito à equipe NEXUS ·{' '}
-              <Link to="/cliente/entrar" style={{ color: 'var(--polished-silver)' }}>
-                NexusClient
-              </Link>
-            </p>
-          </div>
+        <div className={styles.terminal}>
+          <header className={styles.head}>
+            <div className={styles.headLeft}>
+              <span className="material-symbols-outlined" aria-hidden>
+                shield_lock
+              </span>
+              <span className={styles.headTitle}>NEXUS_HUB</span>
+            </div>
+            <div className={styles.windowDots} aria-hidden>
+              <span />
+              <span />
+              <span />
+            </div>
+          </header>
+
+          <div className={styles.divider} aria-hidden />
+
+          <p className={styles.subline}>
+            SECURE_ACCESS // equipe interna ·{' '}
+            <Link to="/cliente/entrar" className={styles.clientLink}>
+              NEXUS_CLIENT
+            </Link>
+          </p>
 
           {!configured && (
-            <div className="error-banner" style={{ marginTop: '1rem' }}>
-              Supabase não configurado. Copie .env.example para .env.local.
+            <div className={styles.alert} role="alert">
+              SUPABASE_NAO_CONFIGURADO — copie .env.example para .env.local
             </div>
           )}
 
           {error && (
-            <div className="error-banner" style={{ marginTop: '1rem' }}>
-              {error}
+            <div className={`${styles.alert} ${styles.alertError}`} role="alert">
+              {error.toUpperCase().replace(/\s+/g, '_')}
             </div>
           )}
 
           <form className={styles.form} onSubmit={handleSubmit}>
-            <div>
-              <label className="label" htmlFor="usuario">
-                Usuário
+            <div className={styles.field}>
+              <label className={styles.fieldLabel} htmlFor="usuario">
+                USUARIO
               </label>
               <input
                 id="usuario"
                 type="text"
-                className="input"
+                className={styles.fieldInput}
                 autoComplete="username"
-                placeholder="Vinicius, Rafael ou Felipe"
+                placeholder="vinicius_/_rafael_/_felipe"
                 value={usuario}
                 onChange={(e) => setUsuario(e.target.value)}
                 required
               />
             </div>
-            <div>
-              <label className="label" htmlFor="password">
-                Senha
+
+            <div className={styles.field}>
+              <label className={styles.fieldLabel} htmlFor="password">
+                CHAVE_ACESSO
               </label>
               <input
                 id="password"
                 type="password"
-                className="input"
+                className={styles.fieldInput}
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -100,14 +108,17 @@ export function LoginPage() {
                 minLength={6}
               />
             </div>
-            <button type="submit" className="btn-primary" disabled={loading || !configured}>
-              {loading ? 'Autenticando…' : 'Entrar no Hub'}
+
+            <button type="submit" className={styles.submit} disabled={loading || !configured}>
+              {loading ? 'AUTENTICANDO…' : 'INICIAR_CONEXAO'}
             </button>
           </form>
 
-          <p className={styles.back}>
-            <a href="/site/home.html">← Voltar ao site</a>
-          </p>
+          <footer className={styles.footer}>
+            <a href="/site/home.html" className={styles.backLink}>
+              ← VOLTAR_AO_SITE
+            </a>
+          </footer>
         </div>
       </div>
     </TechShell>
