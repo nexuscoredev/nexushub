@@ -244,7 +244,7 @@ export function CreateTaskModal({
           <h2 id="create-task-title" className={styles.title}>
             Nova tarefa
           </h2>
-          <button type="button" className={`btn-ghost ${styles.closeBtn}`} onClick={onClose} aria-label="Fechar">
+          <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Fechar">
             <NavIcon name="close" />
           </button>
         </div>

@@ -54,7 +54,7 @@ export function HubNovidadesModal({ open, onClose }: HubNovidadesModalProps) {
           </div>
           <button
             type="button"
-            className={`btn-ghost ${styles.closeBtn}`}
+            className={styles.closeBtn}
             onClick={onClose}
             aria-label="Fechar novidades"
           >

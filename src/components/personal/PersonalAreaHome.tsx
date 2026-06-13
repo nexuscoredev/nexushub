@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import {
+  humorEmoji,
   humorMensagem,
   humorRotulo,
   loadHumorDoDia,
@@ -11,7 +12,7 @@ import styles from './PersonalAreaHome.module.css';
 
 const SCORES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 
-const MUSIC_LINKS = [
+const QUICK_LINKS = [
   {
     id: 'spotify',
     label: 'Spotify',
@@ -23,6 +24,12 @@ const MUSIC_LINKS = [
     label: 'YouTube Music',
     href: 'https://music.youtube.com/',
     icon: '/img/streaming/youtube-music.png',
+  },
+  {
+    id: 'todoist',
+    label: 'Todoist',
+    href: 'https://todoist.com/app',
+    icon: '/img/providers/todoist.svg',
   },
 ] as const;
 
@@ -90,7 +97,9 @@ export function PersonalAreaHome({ onOpenFinance }: PersonalAreaHomeProps) {
         <h3 id="humor-hoje" className={styles.cardTitle}>
           Como estamos hoje?
         </h3>
-        <p className={styles.cardSub}>De 0 a 10 — sem julgamento, só um termômetro do dia.</p>
+        <p className={styles.cardSub}>
+          De 0 a 10 — sem julgamento, só um termômetro do dia 🌡️
+        </p>
 
         <div className={styles.scoreRow} role="group" aria-label="Nota de 0 a 10">
           {SCORES.map((n) => (
@@ -100,9 +109,14 @@ export function PersonalAreaHome({ onOpenFinance }: PersonalAreaHomeProps) {
               className={`${styles.scoreBtn} ${pendingScore === n ? styles.scoreBtnActive : ''}`}
               onClick={() => pickScore(n)}
               aria-pressed={pendingScore === n}
-              aria-label={`Nota ${n}`}
+              aria-label={`Nota ${n}, ${humorRotulo(n)}`}
             >
-              {n}
+              <span className={styles.scoreEmoji} aria-hidden>
+                {humorEmoji(n)}
+              </span>
+              <span className={styles.scoreNum} aria-hidden>
+                {n}
+              </span>
             </button>
           ))}
         </div>
@@ -129,13 +143,13 @@ export function PersonalAreaHome({ onOpenFinance }: PersonalAreaHomeProps) {
         </div>
       </section>
 
-      <section className={styles.card} aria-labelledby="musica-trilha">
-        <h3 id="musica-trilha" className={styles.cardTitle}>
-          Precisa de trilha?
+      <section className={styles.card} aria-labelledby="atalhos-dia">
+        <h3 id="atalhos-dia" className={styles.cardTitle}>
+          Atalhos do dia
         </h3>
-        <p className={styles.cardSub}>Abre no app que você preferir.</p>
+        <p className={styles.cardSub}>Trilha sonora ou tarefas — abre no app que preferir.</p>
         <div className={styles.musicRow}>
-          {MUSIC_LINKS.map((link) => (
+          {QUICK_LINKS.map((link) => (
             <a
               key={link.id}
               href={link.href}

@@ -100,7 +100,7 @@ const paths: Record<NavIconName, ReactNode> = {
   ),
   close: (
     <>
-      <path d="M6 6 L18 18 M18 6 L6 18" />
+      <path d="M18 6L6 18M6 6l12 12" />
     </>
   ),
   refresh: (
@@ -146,6 +146,8 @@ export function NavIcon({ name, className }: NavIconProps) {
     <svg
       className={className}
       viewBox="0 0 24 24"
+      width="1.25em"
+      height="1.25em"
       fill="none"
       stroke="currentColor"
       strokeWidth="1.75"

@@ -78,7 +78,7 @@ export function PromptNameModal({
           </h2>
           <button
             type="button"
-            className={`btn-ghost ${styles.closeBtn}`}
+            className={styles.closeBtn}
             onClick={onClose}
             disabled={submitting}
             aria-label="Fechar"

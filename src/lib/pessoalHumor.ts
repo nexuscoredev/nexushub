@@ -21,6 +21,25 @@ export function saveHumorDoDia(userId: string, score: number): void {
   localStorage.setItem(storageKey(userId), String(score));
 }
 
+const HUMOR_EMOJIS: Record<number, string> = {
+  0: '💔',
+  1: '😢',
+  2: '😞',
+  3: '😔',
+  4: '😕',
+  5: '😐',
+  6: '🙂',
+  7: '😊',
+  8: '😄',
+  9: '🤩',
+  10: '🔥',
+};
+
+export function humorEmoji(score: number): string {
+  const clamped = Math.max(0, Math.min(10, Math.round(score)));
+  return HUMOR_EMOJIS[clamped] ?? '🙂';
+}
+
 export function humorMensagem(score: number): string {
   if (score <= 2) return 'Dia pesado — tudo bem não estar 100%. Uma pausa curta já ajuda.';
   if (score <= 4) return 'Força. Pequenos passos contam, e amanhã é outra página.';
@@ -30,8 +49,9 @@ export function humorMensagem(score: number): string {
 }
 
 export function humorRotulo(score: number): string {
-  if (score <= 3) return 'Precisando de cuidado';
-  if (score <= 6) return 'Na medida';
-  if (score <= 8) return 'Bem';
-  return 'Ótimo';
+  const emoji = humorEmoji(score);
+  if (score <= 3) return `${emoji} Precisando de cuidado`;
+  if (score <= 6) return `${emoji} Na medida`;
+  if (score <= 8) return `${emoji} Bem`;
+  return `${emoji} Ótimo`;
 }
