@@ -115,14 +115,6 @@
   min-height: 100vh;
 }
 
-.rootMinimal {
-  background: #000;
-}
-
-.rootMinimal .content {
-  background: #000;
-}
-
 @keyframes float {
   0%,
   100% {
