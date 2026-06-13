@@ -53,15 +53,17 @@
 }
 
 .hubMark {
-  font-family: var(--font-display);
+  font-family: var(--font-hub);
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: none;
   color: var(--nx-royal-bright);
   text-shadow:
     0 0 20px rgba(30, 73, 214, 0.45),
     0 0 40px rgba(0, 35, 149, 0.25);
   flex-shrink: 0;
+  line-height: 1;
+  transform: translateY(0.04em);
 }
 
 .siteSurface .wordmark {
