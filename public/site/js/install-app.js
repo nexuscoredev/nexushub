@@ -98,7 +98,21 @@
 
     if (navigator.share) {
       try {
-        await navigator.share(shareData);
+        var logoFile = null;
+        try {
+          var imgRes = await fetch('/img/nexus-share.png');
+          if (imgRes.ok) {
+            var blob = await imgRes.blob();
+            logoFile = new File([blob], 'nexus-share.png', { type: 'image/png' });
+          }
+        } catch (fetchErr) {
+          /* preview sem imagem */
+        }
+        if (logoFile && navigator.canShare && navigator.canShare(Object.assign({}, shareData, { files: [logoFile] }))) {
+          await navigator.share(Object.assign({}, shareData, { files: [logoFile] }));
+        } else {
+          await navigator.share(shareData);
+        }
         return 'shared';
       } catch (err) {
         if (err && err.name === 'AbortError') return 'cancelled';

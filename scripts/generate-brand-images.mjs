@@ -12,7 +12,7 @@ const root = path.join(__dirname, '..');
 /** Fonte da marca — favicon.png original (logo metálico circular). */
 const faviconPath = path.join(root, 'public/img/favicon.png');
 
-async function ogImage() {
+async function ogImageWide() {
   const w = 1200;
   const h = 630;
   const logo = await sharp(faviconPath)
@@ -30,6 +30,11 @@ async function ogImage() {
     .composite([{ input: logo, gravity: 'center' }])
     .png()
     .toBuffer();
+}
+
+/** Quadrado 512 — WhatsApp / Telegram usam og:image; URL nova evita cache da logo antiga. */
+async function ogImageShareSquare() {
+  return pwaIconFromFavicon(512, 0.88);
 }
 
 /** Ícone PWA com a logo inteira — escala para caber no quadrado sem cortar. */
@@ -61,11 +66,18 @@ async function writePwaIcon(relativePath, size, contentScale) {
 }
 
 const ogPath = path.join(root, 'public/img/og-nexus.png');
-fs.writeFileSync(ogPath, await ogImage());
+fs.writeFileSync(ogPath, await ogImageWide());
 console.log('OK', path.relative(root, ogPath));
 
-fs.writeFileSync(path.join(root, 'public/site/img/og-nexus.png'), await ogImage());
+const sharePath = path.join(root, 'public/img/nexus-share.png');
+fs.writeFileSync(sharePath, await ogImageShareSquare());
+console.log('OK', path.relative(root, sharePath));
+
+fs.writeFileSync(path.join(root, 'public/site/img/og-nexus.png'), await ogImageWide());
 console.log('OK public/site/img/og-nexus.png');
+
+fs.writeFileSync(path.join(root, 'public/site/img/nexus-share.png'), await ogImageShareSquare());
+console.log('OK public/site/img/nexus-share.png');
 
 await writePwaIcon('public/img/apple-touch-icon.png', 180, 0.9);
 await writePwaIcon('public/img/pwa-icon-192.png', 192, 0.9);

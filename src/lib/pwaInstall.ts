@@ -1,3 +1,5 @@
+import { NEXUS_SHARE_TEXT, shareNexusWithLogo } from './nexusShare';
+
 const DISMISS_KEY = 'nexus-hub-pwa-install-dismissed';
 const INSTALLED_KEY = 'nexus-pwa-installed';
 const DISMISS_DAYS = 14;
@@ -84,15 +86,14 @@ export function getNexusShareUrl(): string {
 
 export async function shareNexusApp(): Promise<'shared' | 'copied' | 'cancelled' | 'failed'> {
   const url = getNexusShareUrl();
-  const shareData = {
-    title: 'NEXUS',
-    text: 'Conheça a NEXUS — tecnologia personalizada que se adapta ao seu negócio.',
-    url,
-  };
 
   if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
     try {
-      await navigator.share(shareData);
+      await shareNexusWithLogo({
+        url,
+        title: 'NEXUS',
+        text: NEXUS_SHARE_TEXT,
+      });
       return 'shared';
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return 'cancelled';
