@@ -107,7 +107,7 @@ export function ClienteLoginPage() {
               </label>
             </div>
             <button type="submit" className="btn-primary" disabled={loading || !configured}>
-              {loading ? 'Autenticando…' : 'Entrar no Client'}
+              {loading ? 'Autenticando…' : 'Entrar no NexusClient'}
             </button>
           </form>
 

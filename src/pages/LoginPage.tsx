@@ -100,7 +100,7 @@ export function LoginPage() {
               </label>
             </div>
             <button type="submit" className="btn-primary" disabled={loading || !configured}>
-              {loading ? 'Autenticando…' : 'Entrar no Hub'}
+              {loading ? 'Autenticando…' : 'Entrar no NexusHub'}
             </button>
           </form>
 
