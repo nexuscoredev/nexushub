@@ -21,6 +21,12 @@ const QUICK_LINKS = [
     materialIcon: 'menu_book',
   },
   {
+    id: 'the-news',
+    label: 'The News',
+    href: 'https://open.spotify.com/show/5cYtKjFwlRCSZKyV6ZC8Wq',
+    icon: '/img/streaming/spotify.png',
+  },
+  {
     id: 'spotify',
     label: 'Spotify',
     href: 'https://open.spotify.com/',

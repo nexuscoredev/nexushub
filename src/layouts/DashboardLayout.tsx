@@ -5,6 +5,7 @@ import { NavIcon, type NavIconName } from '../components/NavIcon';
 import { UserAvatar } from '../components/UserAvatar';
 import { TechShell } from '../components/TechShell';
 import { HubChatLauncher } from '../components/chat/HubChatLauncher';
+import { JarvisLauncher } from '../components/jarvis/JarvisLauncher';
 import { HubNotificationsBell } from '../components/notifications/HubNotificationsBell';
 import { HubNovidadesModal } from '../components/HubNovidadesModal';
 import { InstallAppPrompt } from '../components/InstallAppPrompt';
@@ -20,7 +21,7 @@ interface NavItem {
 }
 
 export function DashboardLayout() {
-  const { profile, user, podeFinanceiroAgenda, podeGestao, podeCofre, signOut } = useAuth();
+  const { profile, user, podeFinanceiroAgenda, podeGestao, podeCofre, podePessoal, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -234,6 +235,7 @@ export function DashboardLayout() {
           <Outlet />
         </main>
         {profile ? <HubChatLauncher profile={profile} /> : null}
+        {profile && podePessoal ? <JarvisLauncher profile={profile} userId={user?.id} /> : null}
         <HubNovidadesModal open={novidadesOpen} onClose={() => setNovidadesOpen(false)} />
       </div>
     </TechShell>
