@@ -2,7 +2,6 @@ import { FormEvent, useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { LoginThemeToggle } from '../components/LoginThemeToggle';
 import { HubLogo } from '../components/HubLogo';
-import { NexusBrandSubmit } from '../components/NexusBrandSubmit';
 import { TechShell } from '../components/TechShell';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './LoginPage.module.css';
@@ -102,7 +101,9 @@ export function LoginPage() {
                 />
               </label>
             </div>
-            <NexusBrandSubmit product="hub" loading={loading} disabled={!configured} />
+            <button type="submit" className="btn-primary" disabled={loading || !configured}>
+              {loading ? 'Autenticando…' : 'Entrar'}
+            </button>
           </form>
 
           <p className={styles.back}>

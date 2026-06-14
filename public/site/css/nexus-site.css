@@ -1,5 +1,6 @@
 /* NEXUS — minimal · preto · prata */
 
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
@@ -504,6 +505,144 @@ img {
 
 [data-theme='dark'] .nx-nav__access-btn {
   color: var(--nx-silver);
+}
+
+/* Marca NEXUS Hub / Client (site estático) */
+@font-face {
+  font-family: 'Molgan';
+  src: url('/fonts/molgan-regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+.nx-product-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.nx-product-mark__icon {
+  flex-shrink: 0;
+  display: block;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.nx-product-mark__text {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35em;
+}
+
+.nx-product-mark__nexus {
+  font-family: 'Noto Serif', Georgia, 'Times New Roman', serif;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.62rem;
+  background: var(--nx-silver-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nx-product-mark__accent {
+  font-family: 'Molgan', 'Orbitron', 'Inter', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 0.6rem;
+  letter-spacing: 0.02em;
+  transform: translateY(0.04em);
+}
+
+.nx-product-mark__accent--hub {
+  color: var(--nx-royal);
+}
+
+.nx-product-mark__accent--client {
+  color: var(--nx-violet);
+}
+
+.nx-product-mark--sm .nx-product-mark__icon {
+  width: 20px;
+  height: 20px;
+}
+
+.nx-product-mark--sm .nx-product-mark__nexus {
+  font-size: 0.58rem;
+}
+
+.nx-product-mark--sm .nx-product-mark__accent {
+  font-size: 0.56rem;
+}
+
+.nx-product-mark--xs .nx-product-mark__icon {
+  width: 18px;
+  height: 18px;
+}
+
+.nx-product-mark--xs .nx-product-mark__nexus {
+  font-size: 0.52rem;
+  letter-spacing: 0.14em;
+}
+
+.nx-product-mark--xs .nx-product-mark__accent {
+  font-size: 0.5rem;
+}
+
+.nx-product-mark--on-dark .nx-product-mark__nexus {
+  background: linear-gradient(180deg, #ffffff 0%, #c8ccd4 45%, #8a8f98 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nx-product-mark--on-dark .nx-product-mark__accent--hub {
+  color: var(--nx-royal-bright);
+}
+
+.nx-product-mark--on-dark .nx-product-mark__accent--client {
+  color: var(--nx-violet-bright);
+}
+
+[data-theme='dark'] .nx-product-mark__accent--hub {
+  color: var(--nx-royal-bright);
+}
+
+[data-theme='dark'] .nx-product-mark__accent--client {
+  color: var(--nx-violet-bright);
+}
+
+[data-theme='dark'] .nx-product-mark__nexus {
+  background: linear-gradient(180deg, #ffffff 0%, #c8ccd4 45%, #8a8f98 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nx-nav__access-btn .nx-product-mark {
+  pointer-events: none;
+}
+
+.nx-product-mark--drawer {
+  margin-left: -0.15rem;
+}
+
+.nx-footer__quick-product {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.nx-footer__quick-product:hover {
+  opacity: 0.88;
+}
+
+.nx-footer__admin-btn {
+  gap: 0.35rem;
 }
 
 .nx-nav__account {
