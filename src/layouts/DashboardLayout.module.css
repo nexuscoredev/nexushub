@@ -210,6 +210,10 @@
     border-color 0.2s ease;
 }
 
+.installNavBtn {
+  display: none;
+}
+
 .novidadesBtn:hover {
   background: rgba(200, 204, 212, 0.1);
   border-color: rgba(255, 255, 255, 0.16);
@@ -381,6 +385,10 @@
 
   .novidadesBtn {
     display: none;
+  }
+
+  .installNavBtn {
+    display: inline-flex;
   }
 
   .menuBtn {

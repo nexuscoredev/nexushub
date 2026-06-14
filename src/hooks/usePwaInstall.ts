@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { BeforeInstallPromptEvent } from '../lib/pwaInstall';
 import {
+  isAndroidDevice,
   isIosDevice,
   isStandaloneDisplay,
 } from '../lib/pwaInstall';
@@ -9,6 +10,7 @@ export function usePwaInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(isStandaloneDisplay);
   const ios = isIosDevice();
+  const android = isAndroidDevice();
 
   useEffect(() => {
     const onBeforeInstall = (event: Event) => {
@@ -50,6 +52,7 @@ export function usePwaInstall() {
   return {
     installed,
     ios,
+    android,
     canInstallNative: deferredPrompt != null,
     promptInstall,
   };

@@ -115,6 +115,7 @@ export function DashboardLayout() {
             </nav>
 
             <div className={styles.hubNavUtilities}>
+              <InstallAppPrompt variant="icon" className={styles.installNavBtn} />
               <button
                 type="button"
                 className={styles.novidadesBtn}
@@ -227,6 +228,7 @@ export function DashboardLayout() {
         )}
 
         <main className={styles.main}>
+          <InstallAppPrompt variant="banner" />
           <Outlet />
         </main>
         {profile ? <HubChatLauncher profile={profile} /> : null}

@@ -5,16 +5,17 @@ import {
   isInstallBannerDismissed,
   isMobileDevice,
 } from '../lib/pwaInstall';
+import { NavIcon } from './NavIcon';
 import { InstallAppModal } from './InstallAppModal';
 import styles from './InstallAppPrompt.module.css';
 
 interface InstallAppPromptProps {
-  variant?: 'banner' | 'button';
+  variant?: 'banner' | 'button' | 'icon';
   className?: string;
 }
 
 export function InstallAppPrompt({ variant = 'button', className }: InstallAppPromptProps) {
-  const { installed, ios, canInstallNative, promptInstall } = usePwaInstall();
+  const { installed, ios, android, canInstallNative, promptInstall } = usePwaInstall();
   const [open, setOpen] = useState(false);
   const [installing, setInstalling] = useState(false);
 
@@ -24,7 +25,9 @@ export function InstallAppPrompt({ variant = 'button', className }: InstallAppPr
       ? 'ios'
       : canInstallNative
         ? 'native'
-        : 'unavailable';
+        : android
+          ? 'android'
+          : 'unavailable';
 
   const handleOpen = useCallback(() => {
     setOpen(true);
@@ -49,6 +52,8 @@ export function InstallAppPrompt({ variant = 'button', className }: InstallAppPr
     if (installed || isInstallBannerDismissed() || !isMobileDevice()) return null;
   }
 
+  if (variant === 'icon' && installed) return null;
+
   return (
     <>
       {variant === 'banner' ? (
@@ -69,6 +74,16 @@ export function InstallAppPrompt({ variant = 'button', className }: InstallAppPr
             </button>
           </div>
         </div>
+      ) : variant === 'icon' ? (
+        <button
+          type="button"
+          className={`${styles.iconBtn} ${className ?? ''}`}
+          onClick={handleOpen}
+          aria-label="Baixar app"
+          title="Baixar app"
+        >
+          <NavIcon name="install" className={styles.iconBtnGlyph} />
+        </button>
       ) : (
         <button
           type="button"

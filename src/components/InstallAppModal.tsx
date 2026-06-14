@@ -4,7 +4,7 @@ import styles from './InstallAppModal.module.css';
 
 interface InstallAppModalProps {
   open: boolean;
-  mode: 'ios' | 'native' | 'installed' | 'unavailable';
+  mode: 'ios' | 'android' | 'native' | 'installed' | 'unavailable';
   onClose: () => void;
   onInstall: () => void;
   installing?: boolean;
@@ -87,6 +87,29 @@ export function InstallAppModal({
           </ol>
         )}
 
+        {mode === 'android' && (
+          <ol className={styles.steps}>
+            <li className={styles.step}>
+              <span className={styles.stepNum}>1</span>
+              <span>
+                Toque nos <strong>três pontos</strong> (⋮) no canto do Chrome
+              </span>
+            </li>
+            <li className={styles.step}>
+              <span className={styles.stepNum}>2</span>
+              <span>
+                Escolha <strong>Instalar app</strong> ou <strong>Adicionar à tela inicial</strong>
+              </span>
+            </li>
+            <li className={styles.step}>
+              <span className={styles.stepNum}>3</span>
+              <span>
+                Confirme em <strong>Instalar</strong>
+              </span>
+            </li>
+          </ol>
+        )}
+
         {mode === 'native' && (
           <p className={styles.sub}>
             Toque em instalar — o navegador baixa o app na sua tela inicial em segundos.
@@ -115,6 +138,11 @@ export function InstallAppModal({
             </button>
           )}
           {mode === 'ios' && (
+            <button type="button" className={styles.primaryBtn} onClick={onClose}>
+              Entendi
+            </button>
+          )}
+          {mode === 'android' && (
             <button type="button" className={styles.primaryBtn} onClick={onClose}>
               Entendi
             </button>
