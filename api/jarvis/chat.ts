@@ -1,4 +1,14 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import {
+  continueJarvisAgent,
+  createJarvisAgent,
+  CursorApiError,
+  CursorConfigError,
+  CursorRunError,
+  CursorRunTimeoutError,
+  isCursorConfigured,
+  waitForJarvisRun,
+} from '../_lib/cursorAgent.js';
 import { verifyJarvisUser } from '../_lib/jarvisAuth.js';
 
 interface ChatMessage {
@@ -23,6 +33,7 @@ Regras:
 - Para marcar conta como paga, use transactionId exatamente como aparece em contasPendentes ou contasRecentes.
 - Seja conciso (2–4 frases na maioria das respostas). Pode usar **negrito** ou listas curtas.
 - Se não souber ou faltar dado, diga claramente e sugira ir à área pessoal.
+- NÃO altere código, arquivos ou repositórios. Apenas responda ao usuário.
 
 Responda SEMPRE com JSON válido neste formato (sem markdown fora do JSON):
 {
@@ -84,15 +95,53 @@ function parseAssistantPayload(content: string): { message: string; actions: Jar
   }
 }
 
+function buildPrompt(
+  messages: ChatMessage[],
+  contextBlock: string,
+  userName: string,
+  isFollowUp: boolean,
+): string {
+  const history = messages
+    .slice(-10)
+    .map((m) => `${m.role === 'user' ? 'Usuário' : 'JARVIS'}: ${m.content}`)
+    .join('\n');
+
+  const latestUser = [...messages].reverse().find((m) => m.role === 'user')?.content ?? '';
+
+  if (isFollowUp) {
+    return `${SYSTEM_PROMPT}
+
+Contexto atualizado da área pessoal (somente leitura):
+${contextBlock}
+
+Histórico recente:
+${history}
+
+Nova mensagem do ${userName}:
+${latestUser}
+
+Responda em JSON conforme o formato acima.`;
+  }
+
+  return `${SYSTEM_PROMPT}
+
+Contexto atual da área pessoal (somente leitura):
+${contextBlock}
+
+Conversa:
+${history}
+
+Responda à última mensagem do ${userName} em JSON conforme o formato acima.`;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
+  if (!isCursorConfigured()) {
     return res.status(503).json({
-      error: 'JARVIS indisponível: OPENAI_API_KEY não configurada.',
+      error: 'JARVIS indisponível: configure CURSOR_API_KEY na Vercel (conta Pro Nexus).',
       configured: false,
     });
   }
@@ -105,10 +154,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const body = req.body as {
     messages?: ChatMessage[];
     context?: Record<string, unknown>;
+    cursorAgentId?: string;
   };
 
   const messages = Array.isArray(body.messages) ? body.messages.slice(-12) : [];
   const context = body.context ?? {};
+  const existingAgentId =
+    typeof body.cursorAgentId === 'string' && body.cursorAgentId.startsWith('bc-')
+      ? body.cursorAgentId
+      : undefined;
 
   if (messages.length === 0 || messages[messages.length - 1]?.role !== 'user') {
     return res.status(400).json({ error: 'Envie ao menos uma mensagem do usuário' });
@@ -125,50 +179,65 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   );
 
   try {
-    const openAiRes = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: process.env.JARVIS_MODEL ?? 'gpt-4o-mini',
-        temperature: 0.55,
-        max_tokens: 700,
-        response_format: { type: 'json_object' },
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          {
-            role: 'system',
-            content: `Contexto atual da área pessoal (somente leitura):\n${contextBlock}`,
-          },
-          ...messages.map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
-        ],
-      }),
-    });
+    let agentId = existingAgentId;
+    let runId: string;
 
-    if (!openAiRes.ok) {
-      const errText = await openAiRes.text();
-      console.error('[jarvis/chat] OpenAI error', openAiRes.status, errText);
-      return res.status(502).json({ error: 'Falha ao consultar o assistente' });
+    const prompt = buildPrompt(messages, contextBlock, user.nome, Boolean(existingAgentId));
+
+    if (existingAgentId) {
+      try {
+        const continued = await continueJarvisAgent(existingAgentId, prompt);
+        runId = continued.runId;
+      } catch (err) {
+        if (err instanceof CursorApiError && (err.status === 404 || err.status === 409)) {
+          const created = await createJarvisAgent(prompt);
+          agentId = created.agentId;
+          runId = created.runId;
+        } else {
+          throw err;
+        }
+      }
+    } else {
+      const created = await createJarvisAgent(prompt);
+      agentId = created.agentId;
+      runId = created.runId;
     }
 
-    const data = (await openAiRes.json()) as {
-      choices?: Array<{ message?: { content?: string } }>;
-    };
-    const rawContent = data.choices?.[0]?.message?.content ?? '';
+    const rawContent = await waitForJarvisRun(agentId!, runId);
     const { message, actions } = parseAssistantPayload(rawContent);
 
     return res.status(200).json({
       message,
       actions,
       configured: true,
+      cursorAgentId: agentId,
+      provider: 'cursor',
     });
   } catch (e) {
+    if (e instanceof CursorConfigError) {
+      return res.status(503).json({ error: e.message, configured: false });
+    }
+    if (e instanceof CursorRunTimeoutError) {
+      return res.status(504).json({ error: e.message });
+    }
+    if (e instanceof CursorRunError) {
+      return res.status(502).json({ error: 'O agente Cursor não concluiu a resposta.' });
+    }
+    if (e instanceof CursorApiError) {
+      console.error('[jarvis/chat] Cursor API', e.status, e.message);
+      if (e.status === 401 || e.status === 403) {
+        return res.status(503).json({
+          error: 'CURSOR_API_KEY inválida ou sem permissão para Cloud Agents.',
+          configured: false,
+        });
+      }
+      return res.status(502).json({ error: 'Falha ao consultar o Cursor Cloud Agent' });
+    }
     console.error('[jarvis/chat]', e);
     return res.status(500).json({ error: 'Erro interno do JARVIS' });
   }
 }
+
+export const config = {
+  maxDuration: 60,
+};

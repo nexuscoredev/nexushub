@@ -22,6 +22,7 @@ export function useJarvisChat(opts: {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [configured, setConfigured] = useState<boolean | null>(null);
+  const [cursorAgentId, setCursorAgentId] = useState<string | undefined>();
 
   const sendMessage = useCallback(
     async (text: string) => {
@@ -52,6 +53,7 @@ export function useJarvisChat(opts: {
           body: JSON.stringify({
             messages: nextMessages.map((m) => ({ role: m.role, content: m.content })),
             context,
+            cursorAgentId,
           }),
         });
 
@@ -64,6 +66,7 @@ export function useJarvisChat(opts: {
         }
 
         setConfigured(data.configured !== false);
+        if (data.cursorAgentId) setCursorAgentId(data.cursorAgentId);
 
         let actionsExecuted: string[] = [];
         if (data.actions?.length) {
@@ -86,12 +89,13 @@ export function useJarvisChat(opts: {
         setLoading(false);
       }
     },
-    [loading, messages, navigate, onRowsChanged, rows, userId, userName],
+    [loading, messages, navigate, onRowsChanged, rows, userId, userName, cursorAgentId],
   );
 
   const reset = useCallback(() => {
     setMessages([]);
     setError(null);
+    setCursorAgentId(undefined);
   }, []);
 
   return {

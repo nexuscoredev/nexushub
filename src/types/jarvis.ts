@@ -44,4 +44,6 @@ export interface JarvisChatResponse {
   message: string;
   actions?: JarvisAction[];
   configured?: boolean;
+  cursorAgentId?: string;
+  provider?: 'cursor';
 }

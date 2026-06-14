@@ -94,7 +94,8 @@ export function JarvisWidget({
 
         {configured === false && (
           <p className={styles.alert}>
-            JARVIS aguarda configuração da chave OPENAI_API_KEY no servidor (Vercel).
+            JARVIS usa a conta Cursor Pro da Nexus. Configure <strong>CURSOR_API_KEY</strong> na Vercel
+            (Dashboard → Integrations / API Keys).
           </p>
         )}
 
@@ -142,7 +143,7 @@ export function JarvisWidget({
               </div>
             ))
           )}
-          {loading && <p className={styles.typing}>JARVIS está pensando…</p>}
+          {loading && <p className={styles.typing}>JARVIS está pensando via Cursor…</p>}
         </div>
 
         <footer className={styles.foot}>
