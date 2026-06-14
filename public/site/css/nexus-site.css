@@ -3611,3 +3611,251 @@ body {
     height: 6.5rem;
   }
 }
+
+/* ── PWA: Baixar app ── */
+.nx-install-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid var(--nx-border);
+  background: var(--nx-graphite-2);
+  color: var(--nx-accent);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.nx-install-nav-btn:hover {
+  color: #fff;
+  border-color: rgba(110, 181, 255, 0.35);
+  background: rgba(37, 99, 235, 0.12);
+}
+
+.nx-install-nav-btn .material-symbols-outlined {
+  font-size: 1.15rem;
+}
+
+.nx-install-drawer-btn {
+  width: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.nx-install-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 0.85rem;
+  margin-bottom: 1rem;
+  border-radius: var(--nx-radius);
+  border: 1px solid rgba(110, 181, 255, 0.22);
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(0, 0, 0, 0.2));
+}
+
+.nx-install-banner__copy {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.nx-install-banner__copy img {
+  border-radius: 0.55rem;
+}
+
+.nx-install-banner__title {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.nx-install-banner__sub {
+  margin: 0.12rem 0 0;
+  font-size: 0.74rem;
+  color: var(--nx-muted);
+}
+
+.nx-install-banner__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.nx-install-banner__btn {
+  min-height: 2.25rem;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.72rem;
+}
+
+.nx-install-banner__dismiss {
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  background: transparent;
+  color: var(--nx-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+body.nx-install-open {
+  overflow: hidden;
+}
+
+.nx-install-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.nx-install-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.nx-install-modal__dialog {
+  position: relative;
+  width: min(100%, 22rem);
+  padding: 1.15rem 1.2rem 1.05rem;
+  border-radius: var(--nx-radius);
+  border: 1px solid var(--nx-border);
+  background: var(--nx-surface);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+}
+
+.nx-install-modal__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.nx-install-modal__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.nx-install-modal__sub {
+  margin: 0.35rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--nx-muted);
+}
+
+.nx-install-modal__close {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid var(--nx-border);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--nx-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nx-install-modal__preview {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  margin-bottom: 0.85rem;
+  border-radius: 8px;
+  border: 1px solid var(--nx-border);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.nx-install-modal__preview img {
+  border-radius: 0.75rem;
+}
+
+.nx-install-modal__app {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.nx-install-modal__meta {
+  margin: 0.15rem 0 0;
+  font-size: 0.72rem;
+  color: var(--nx-muted);
+}
+
+.nx-install-modal__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.nx-install-modal__steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.nx-install-modal__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--nx-accent);
+  background: rgba(37, 99, 235, 0.14);
+  border: 1px solid rgba(110, 181, 255, 0.25);
+}
+
+.nx-install-modal__hint,
+.nx-install-modal__ok {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--nx-muted);
+}
+
+.nx-install-modal__ok {
+  color: var(--nx-accent);
+}
+
+.nx-install-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.nx-install-modal__actions .nx-btn {
+  flex: 1 1 auto;
+  min-height: 2.5rem;
+  justify-content: center;
+}

@@ -41,6 +41,7 @@
     window.NexusSite?.initMobileNav?.();
     window.NexusTheme?.initButtons?.();
     window.NexusMetal?.init?.();
+    window.NexusInstall?.init?.();
   } catch (err) {
     console.error('[NEXUS components.js]', err);
   }
