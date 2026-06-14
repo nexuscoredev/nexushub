@@ -1,7 +1,7 @@
 import { FormEvent, useState } from 'react';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { ClientThemeToggle } from '../../components/client/ClientThemeToggle';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { HubLogo } from '../../components/HubLogo';
+import { TechShell } from '../../components/TechShell';
 import { useAuth } from '../../contexts/AuthContext';
 import styles from './ClienteLoginPage.module.css';
 
@@ -20,16 +20,14 @@ export function ClienteLoginPage() {
     return <Navigate to={from} replace />;
   }
 
-  if (session && isEquipe) {
-    return <Navigate to="/dashboard" replace />;
-  }
+  const hubSessionActive = Boolean(session && isEquipe && !isCliente);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
     try {
-      await signInCliente(usuario, password);
+      await signInCliente(usuario.trim(), password);
       navigate(from, { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Falha na autenticação');
@@ -39,80 +37,88 @@ export function ClienteLoginPage() {
   };
 
   return (
-    <div className={`nx-client-shell ${styles.shell}`}>
-      <header className={styles.topbar}>
-        <div className={styles.brand}>
-          <HubLogo size="sm" showSubtitle subtitleText="Client" surface="site" />
-          <small>Área do cliente</small>
-        </div>
-        <div className={styles.topbarRight}>
-          <ClientThemeToggle />
-          <div className={styles.access} aria-label="Acesso à plataforma">
-          <a href="/site/home.html" className={styles.accessBtn}>
-            Site
-          </a>
-          <span className={`${styles.accessBtn} ${styles.accessBtnActive}`} aria-current="page">
-            NexusClient
-          </span>
+    <TechShell>
+      <div className={styles.page}>
+        <div className={`card ${styles.card}`}>
+          <div className={styles.cardGlow} aria-hidden />
+          <div className={styles.logoWrap}>
+            <HubLogo size="lg" variant="full" centered subtitleText="Client" />
           </div>
-        </div>
-      </header>
-
-      <main className={styles.main}>
-        <div className={styles.card}>
-          <header className={styles.header}>
-            <span className={styles.eyebrow}>NexusClient</span>
+          <div className={styles.header}>
             <h1 className={styles.title}>Entrar</h1>
-            <p className={styles.lead}>Acompanhe processos, contratos e solicitações do seu projeto.</p>
-          </header>
+            <p className={styles.subtitle}>
+              Acompanhe processos, contratos e solicitações do seu projeto.
+            </p>
+          </div>
 
           {!configured && (
-            <div className={styles.error}>Supabase não configurado neste ambiente.</div>
+            <div className="error-banner" style={{ marginTop: '1rem' }}>
+              Supabase não configurado neste ambiente.
+            </div>
           )}
 
-          {error && <div className={styles.error}>{error}</div>}
+          {hubSessionActive && (
+            <div className={styles.hubNotice}>
+              Você está logado no <Link to="/dashboard">NexusHub</Link>. Para o portal do cliente,
+              entre abaixo com credenciais NexusClient — são áreas separadas.
+            </div>
+          )}
+
+          {error && (
+            <div className="error-banner" style={{ marginTop: '1rem' }}>
+              {error}
+            </div>
+          )}
 
           <form className={styles.form} onSubmit={(e) => void handleSubmit(e)}>
             <div className={styles.field}>
-              <label className={styles.label} htmlFor="cliente-usuario">
-                Usuário
+              <label className={styles.fieldShell} htmlFor="cliente-usuario">
+                <span className={`material-symbols-outlined ${styles.fieldIcon}`} aria-hidden>
+                  alternate_email
+                </span>
+                <input
+                  id="cliente-usuario"
+                  type="text"
+                  className={styles.fieldInput}
+                  autoComplete="username"
+                  placeholder="Usuário"
+                  value={usuario}
+                  onChange={(e) => setUsuario(e.target.value)}
+                  required
+                />
               </label>
-              <input
-                id="cliente-usuario"
-                className={styles.input}
-                type="text"
-                autoComplete="username"
-                placeholder="Usuário"
-                value={usuario}
-                onChange={(e) => setUsuario(e.target.value)}
-                required
-              />
             </div>
             <div className={styles.field}>
-              <label className={styles.label} htmlFor="cliente-password">
-                Senha
+              <label className={styles.fieldShell} htmlFor="cliente-password">
+                <span className={`material-symbols-outlined ${styles.fieldIcon}`} aria-hidden>
+                  lock
+                </span>
+                <input
+                  id="cliente-password"
+                  type="password"
+                  className={styles.fieldInput}
+                  autoComplete="current-password"
+                  placeholder="Senha"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                />
               </label>
-              <input
-                id="cliente-password"
-                className={styles.input}
-                type="password"
-                autoComplete="current-password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
             </div>
-            <button type="submit" className={styles.submit} disabled={loading || !configured}>
-              {loading ? 'Entrando…' : 'Entrar'}
+            <button type="submit" className="btn-primary" disabled={loading || !configured}>
+              {loading ? 'Autenticando…' : 'Entrar no Client'}
             </button>
           </form>
-        </div>
-      </main>
 
-      <footer className={styles.footer}>
-        <span>NEXUS Technology Systems</span>
-      </footer>
-    </div>
+          <p className={styles.back}>
+            <a href="/site/home.html">← Voltar ao site</a>
+          </p>
+          <p className={styles.altAccess}>
+            Equipe NEXUS? <Link to="/login">Acessar o NexusHub</Link>
+          </p>
+        </div>
+      </div>
+    </TechShell>
   );
 }

@@ -26,7 +26,7 @@ export function ClientProtectedRoute() {
   }
 
   if (!isCliente) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/cliente/entrar" state={{ from: location }} replace />;
   }
 
   return <Outlet />;
