@@ -9,7 +9,7 @@
   }
 
   function applyTheme(mode) {
-    const safe = mode === 'dark' || mode === 'light' || mode === 'auto' ? mode : 'light';
+    const safe = mode === 'dark' || mode === 'light' || mode === 'auto' ? mode : 'auto';
     root.setAttribute('data-theme-mode', safe);
     root.setAttribute('data-theme', resolvedTheme(safe));
     try {
@@ -30,11 +30,15 @@
     });
   }
 
-  let stored = 'light';
+  let stored = 'auto';
   try {
-    stored = localStorage.getItem(STORAGE_KEY) || 'light';
+    const fromStorage = localStorage.getItem(STORAGE_KEY);
+    stored =
+      fromStorage === 'dark' || fromStorage === 'light' || fromStorage === 'auto'
+        ? fromStorage
+        : 'auto';
   } catch {
-    stored = 'light';
+    stored = 'auto';
   }
   applyTheme(stored);
 

@@ -15,12 +15,12 @@ export function getStoredSiteTheme(): SiteThemeMode {
   } catch {
     /* ignore */
   }
-  return 'light';
+  return 'auto';
 }
 
 export function applySiteTheme(mode: SiteThemeMode): SiteThemeMode {
   const safe: SiteThemeMode =
-    mode === 'dark' || mode === 'light' || mode === 'auto' ? mode : 'light';
+    mode === 'dark' || mode === 'light' || mode === 'auto' ? mode : 'auto';
   const root = document.documentElement;
   root.setAttribute('data-theme-mode', safe);
   root.setAttribute('data-theme', resolvedSiteTheme(safe));

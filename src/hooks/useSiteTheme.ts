@@ -8,7 +8,7 @@ import {
 
 export function useSiteTheme() {
   const [mode, setMode] = useState<SiteThemeMode>(() => {
-    if (typeof document === 'undefined') return 'light';
+    if (typeof document === 'undefined') return 'auto';
     return (
       (document.documentElement.getAttribute('data-theme-mode') as SiteThemeMode | null) ??
       getStoredSiteTheme()
