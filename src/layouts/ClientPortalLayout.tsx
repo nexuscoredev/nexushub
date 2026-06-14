@@ -27,7 +27,7 @@ export function ClientPortalLayout() {
             <small>{clienteConta?.cliente?.nome ?? 'NexusClient'}</small>
           </div>
           <div className={styles.actions}>
-            <SiteThemeToggle />
+            <SiteThemeToggle accent="client" />
             <a href="/site/home.html" className={styles.actionBtn}>
               Site NEXUS
             </a>

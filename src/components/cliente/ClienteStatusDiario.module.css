@@ -3,10 +3,10 @@
   border-radius: calc(var(--cl-radius, 0.5rem) + 6px);
   border: 1px solid var(--cl-border-strong, var(--cl-border));
   background:
-    linear-gradient(145deg, rgba(37, 99, 235, 0.1) 0%, transparent 48%),
+    linear-gradient(145deg, rgba(124, 58, 237, 0.1) 0%, transparent 48%),
     linear-gradient(315deg, rgba(124, 58, 237, 0.08) 0%, transparent 42%),
     var(--cl-surface, #fff);
-  box-shadow: 0 12px 40px rgba(37, 99, 235, 0.08);
+  box-shadow: 0 12px 40px rgba(124, 58, 237, 0.08);
   color: var(--cl-text);
 }
 
@@ -38,7 +38,7 @@
 .badgeHoje {
   padding: 0.15rem 0.45rem;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--cl-royal, #2563eb), var(--cl-violet, #7c3aed));
+  background: linear-gradient(90deg, var(--cl-royal, #7c3aed), var(--cl-violet, #7c3aed));
   color: #fff;
   font-size: 0.58rem;
   letter-spacing: 0.08em;
@@ -84,8 +84,8 @@
 }
 
 .expandAll:hover {
-  border-color: rgba(37, 99, 235, 0.45);
-  color: var(--cl-royal-bright, var(--cl-royal, #2563eb));
+  border-color: rgba(124, 58, 237, 0.45);
+  color: var(--cl-royal-bright, var(--cl-royal, #7c3aed));
 }
 
 .list {
@@ -103,8 +103,8 @@
 }
 
 .itemOpen {
-  border-color: rgba(37, 99, 235, 0.35);
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.12);
+  border-color: rgba(124, 58, 237, 0.35);
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.12);
 }
 
 .item h3 {
@@ -135,8 +135,8 @@
   justify-content: center;
   font-size: 0.72rem;
   font-weight: 700;
-  background: rgba(37, 99, 235, 0.14);
-  color: var(--cl-royal-bright, var(--cl-royal, #2563eb));
+  background: rgba(124, 58, 237, 0.14);
+  color: var(--cl-royal-bright, var(--cl-royal, #7c3aed));
 }
 
 .triggerLabel {
@@ -167,7 +167,7 @@
   margin: 0 0 0.55rem;
   padding: 0.55rem 0.7rem;
   border-radius: 8px;
-  border-left: 3px solid var(--cl-royal-bright, var(--cl-royal, #2563eb));
+  border-left: 3px solid var(--cl-royal-bright, var(--cl-royal, #7c3aed));
   background: var(--cl-info-bg);
   font-size: 0.88rem;
   line-height: 1.5;
@@ -205,7 +205,7 @@
 :global([data-theme='dark']) .wrap {
   border-color: rgba(255, 255, 255, 0.12);
   background:
-    linear-gradient(145deg, rgba(37, 99, 235, 0.22) 0%, transparent 50%),
+    linear-gradient(145deg, rgba(124, 58, 237, 0.22) 0%, transparent 50%),
     linear-gradient(315deg, rgba(124, 58, 237, 0.18) 0%, transparent 45%),
     var(--cl-graphite-2, #1c1c1c);
   box-shadow:
@@ -224,8 +224,8 @@
 
 :global([data-theme='dark']) .itemOpen {
   border-color: rgba(110, 181, 255, 0.42);
-  background: rgba(37, 99, 235, 0.1);
-  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.15);
+  background: rgba(124, 58, 237, 0.1);
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.15);
 }
 
 :global([data-theme='dark']) .triggerIndex {
@@ -234,7 +234,7 @@
 }
 
 :global([data-theme='dark']) .destaque {
-  background: rgba(37, 99, 235, 0.2);
+  background: rgba(124, 58, 237, 0.2);
   color: #e0edff;
   border-left-color: #6eb5ff;
 }

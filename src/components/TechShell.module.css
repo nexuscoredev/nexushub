@@ -227,3 +227,66 @@
     opacity: 0.03;
   }
 }
+
+/* Nexus Client — lilás como primária no fundo da login */
+.rootClient .mesh {
+  background:
+    radial-gradient(ellipse 100% 80% at 50% -20%, rgba(124, 58, 237, 0.18), transparent 55%),
+    radial-gradient(ellipse 60% 50% at 100% 50%, rgba(167, 139, 250, 0.12), transparent 50%),
+    radial-gradient(ellipse 50% 40% at 0% 80%, rgba(91, 33, 182, 0.08), transparent 45%),
+    #0a0a0a;
+}
+
+.rootClient .grid {
+  background-image:
+    linear-gradient(rgba(124, 58, 237, 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.35) 1px, transparent 1px);
+}
+
+.rootClient .metalSheen {
+  background: radial-gradient(
+    680px circle at var(--metal-px) var(--metal-py),
+    rgba(255, 255, 255, 0.08),
+    rgba(124, 58, 237, 0.1) 28%,
+    transparent 46%
+  );
+}
+
+.rootClient .orbA {
+  background: rgba(124, 58, 237, 0.24);
+}
+
+.rootClient .orbB {
+  background: rgba(167, 139, 250, 0.16);
+}
+
+:global([data-theme='light']) .rootClient .mesh {
+  background:
+    radial-gradient(ellipse 100% 80% at 50% -20%, rgba(124, 58, 237, 0.12), transparent 55%),
+    radial-gradient(ellipse 60% 50% at 100% 50%, rgba(167, 139, 250, 0.08), transparent 50%),
+    radial-gradient(ellipse 50% 40% at 0% 80%, rgba(91, 33, 182, 0.05), transparent 45%),
+    #f5f5f7;
+}
+
+:global([data-theme='light']) .rootClient .grid {
+  background-image:
+    linear-gradient(rgba(124, 58, 237, 0.22) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.22) 1px, transparent 1px);
+}
+
+:global([data-theme='light']) .rootClient .metalSheen {
+  background: radial-gradient(
+    680px circle at var(--metal-px) var(--metal-py),
+    rgba(255, 255, 255, 0.55),
+    rgba(124, 58, 237, 0.07) 28%,
+    transparent 46%
+  );
+}
+
+:global([data-theme='light']) .rootClient .orbA {
+  background: rgba(124, 58, 237, 0.14);
+}
+
+:global([data-theme='light']) .rootClient .orbB {
+  background: rgba(167, 139, 250, 0.1);
+}

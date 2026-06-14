@@ -25,9 +25,9 @@
 }
 
 .bannerInfo {
-  border: 1px solid rgba(37, 99, 235, 0.2);
-  background: rgba(37, 99, 235, 0.06);
-  color: #1e3a8a;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  background: rgba(124, 58, 237, 0.06);
+  color: #5b21b6;
 }
 
 .hero {
@@ -38,7 +38,7 @@
   border-radius: calc(var(--cl-radius, 0.5rem) + 4px);
   border: 1px solid var(--cl-border, rgba(10, 10, 10, 0.1));
   background:
-    linear-gradient(135deg, rgba(37, 99, 235, 0.06) 0%, transparent 55%),
+    linear-gradient(135deg, rgba(124, 58, 237, 0.06) 0%, transparent 55%),
     linear-gradient(225deg, rgba(124, 58, 237, 0.05) 0%, transparent 50%),
     var(--cl-surface, #ffffff);
   position: relative;
@@ -52,7 +52,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--cl-royal, #2563eb), var(--cl-violet, #7c3aed));
+  background: linear-gradient(90deg, var(--cl-violet-bright, #a78bfa), var(--cl-violet, #7c3aed));
 }
 
 .heroContent {
@@ -104,7 +104,7 @@
   display: block;
   font-size: clamp(1.1rem, 3.5vw, 1.35rem);
   font-weight: 700;
-  color: var(--cl-royal, #2563eb);
+  color: var(--cl-royal, #7c3aed);
 }
 
 .statLabel {
@@ -130,7 +130,7 @@
   height: clamp(7.5rem, 28vw, 9.5rem);
   border-radius: 50%;
   background: conic-gradient(
-    var(--cl-royal, #2563eb) var(--progress),
+    var(--cl-royal, #7c3aed) var(--progress),
     rgba(10, 10, 10, 0.06) var(--progress)
   );
   display: grid;
@@ -141,10 +141,10 @@
 @keyframes ringPulse {
   0%,
   100% {
-    filter: drop-shadow(0 0 0 rgba(37, 99, 235, 0));
+    filter: drop-shadow(0 0 0 rgba(124, 58, 237, 0));
   }
   50% {
-    filter: drop-shadow(0 0 12px rgba(37, 99, 235, 0.25));
+    filter: drop-shadow(0 0 12px rgba(124, 58, 237, 0.25));
   }
 }
 
@@ -167,7 +167,7 @@
 .progressPct {
   font-size: 1.35rem;
   font-weight: 700;
-  color: var(--cl-royal, #2563eb);
+  color: var(--cl-royal, #7c3aed);
 }
 
 .heroStage {
@@ -230,7 +230,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--cl-emerald, #059669), var(--cl-royal-bright, #6eb5ff));
+  background: linear-gradient(90deg, var(--cl-emerald, #059669), var(--cl-violet-bright, #a78bfa));
 }
 
 .highlightTop {
@@ -249,8 +249,8 @@
   text-transform: uppercase;
   padding: 0.3rem 0.6rem;
   border-radius: 999px;
-  background: rgba(37, 99, 235, 0.1);
-  color: var(--cl-royal, #2563eb);
+  background: rgba(124, 58, 237, 0.1);
+  color: var(--cl-royal, #7c3aed);
 }
 
 .highlightMeta {
@@ -276,7 +276,7 @@
 .progressFill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--cl-royal, #2563eb), var(--cl-violet, #7c3aed));
+  background: linear-gradient(90deg, var(--cl-violet-bright, #a78bfa), var(--cl-violet, #7c3aed));
   transition: width 0.8s ease;
 }
 
@@ -314,7 +314,7 @@
 }
 
 .timeline_concluido:not(:last-child)::after {
-  background: linear-gradient(180deg, var(--cl-royal, #2563eb), var(--cl-border, rgba(10, 10, 10, 0.12)));
+  background: linear-gradient(180deg, var(--cl-royal, #7c3aed), var(--cl-border, rgba(10, 10, 10, 0.12)));
 }
 
 .timelineMarker {
@@ -332,15 +332,15 @@
 }
 
 .timeline_em_curso .timelineMarker {
-  border-color: var(--cl-royal, #2563eb);
-  background: rgba(37, 99, 235, 0.12);
-  color: var(--cl-royal, #2563eb);
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+  border-color: var(--cl-royal, #7c3aed);
+  background: rgba(124, 58, 237, 0.12);
+  color: var(--cl-royal, #7c3aed);
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12);
 }
 
 .timeline_concluido .timelineMarker {
-  border-color: var(--cl-royal, #2563eb);
-  background: var(--cl-royal, #2563eb);
+  border-color: var(--cl-royal, #7c3aed);
+  background: var(--cl-royal, #7c3aed);
   color: #fff;
 }
 
@@ -352,8 +352,8 @@
 }
 
 .timeline_em_curso .timelineCard {
-  border-color: rgba(37, 99, 235, 0.25);
-  background: linear-gradient(180deg, rgba(37, 99, 235, 0.04), var(--cl-surface, #ffffff));
+  border-color: rgba(124, 58, 237, 0.25);
+  background: linear-gradient(180deg, rgba(124, 58, 237, 0.04), var(--cl-surface, #ffffff));
 }
 
 .timelineHead {
@@ -379,7 +379,7 @@
 }
 
 .timeline_em_curso .timelineBadge {
-  color: var(--cl-royal, #2563eb);
+  color: var(--cl-royal, #7c3aed);
 }
 
 .timelineDesc {
@@ -406,7 +406,7 @@
 }
 
 .feedItem:hover {
-  border-color: rgba(37, 99, 235, 0.2);
+  border-color: rgba(124, 58, 237, 0.2);
   transform: translateY(-1px);
 }
 
@@ -432,8 +432,8 @@
 }
 
 .feedTag_novidade {
-  background: rgba(37, 99, 235, 0.1);
-  color: var(--cl-royal, #2563eb);
+  background: rgba(124, 58, 237, 0.1);
+  color: var(--cl-royal, #7c3aed);
 }
 
 .feedTag_marco {
@@ -504,7 +504,7 @@
 }
 
 .input:focus {
-  border-color: rgba(37, 99, 235, 0.45);
+  border-color: rgba(124, 58, 237, 0.45);
 }
 
 .textarea {
@@ -517,7 +517,7 @@
   padding: 0.75rem 1.25rem;
   border: none;
   border-radius: 999px;
-  background: linear-gradient(180deg, var(--cl-royal-bright, #6eb5ff) 0%, var(--cl-royal, #2563eb) 52%, var(--cl-royal-deep, #1e3a8a) 100%);
+  background: linear-gradient(180deg, var(--cl-royal-bright, #a78bfa) 0%, var(--cl-royal, #7c3aed) 52%, var(--cl-royal-deep, #5b21b6) 100%);
   color: #fff;
   font-size: 0.68rem;
   font-weight: 700;
@@ -593,7 +593,7 @@
   margin-top: 0.65rem;
   padding: 0.65rem 0.75rem;
   border-radius: calc(var(--cl-radius, 0.5rem) - 2px);
-  background: rgba(37, 99, 235, 0.06);
+  background: rgba(124, 58, 237, 0.06);
   font-size: 0.84rem;
 }
 
@@ -632,7 +632,7 @@
   margin-top: 0.65rem;
   font-size: 0.82rem;
   font-weight: 600;
-  color: var(--cl-royal, #2563eb);
+  color: var(--cl-royal, #7c3aed);
 }
 
 .empty,
@@ -722,7 +722,7 @@
   border-radius: var(--cl-radius, 0.5rem);
   border: 1px solid rgba(250, 204, 21, 0.35);
   background:
-    linear-gradient(135deg, rgba(250, 204, 21, 0.1), rgba(37, 99, 235, 0.04)),
+    linear-gradient(135deg, rgba(250, 204, 21, 0.1), rgba(124, 58, 237, 0.04)),
     var(--cl-surface, #ffffff);
 }
 

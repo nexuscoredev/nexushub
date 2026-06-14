@@ -1,4 +1,4 @@
-/* Tokens NexusClient — sincronizados com nexus-site.css via data-theme no html */
+/* Tokens NexusClient — lilás/violeta como cor primária */
 
 .nx-client-shell {
   --cl-ink: #0a0a0a;
@@ -7,10 +7,14 @@
   --cl-graphite-2: #1c1c1c;
   --cl-steel: #8a8f98;
   --cl-silver: #c8ccd4;
-  --cl-royal: #002395;
-  --cl-royal-bright: #1e49d6;
-  --cl-royal-deep: #00104b;
+  /* Primária Client — lilás */
+  --cl-violet-bright: #a78bfa;
   --cl-violet: #7c3aed;
+  --cl-violet-deep: #5b21b6;
+  --cl-royal: var(--cl-violet);
+  --cl-royal-bright: var(--cl-violet-bright);
+  --cl-royal-deep: var(--cl-violet-deep);
+  --cl-primary-rgb: 124, 58, 237;
   --cl-emerald: #059669;
   --cl-radius: 0.5rem;
   --cl-bg: var(--cl-fog);
@@ -38,8 +42,16 @@
   --cl-submit-hover: #2a2a2a;
   --cl-error-bg: #fff5f5;
   --cl-error-text: #8b2e2e;
-  --cl-info-bg: rgba(0, 35, 149, 0.06);
-  --cl-info-text: #00104b;
+  --cl-info-bg: rgba(124, 58, 237, 0.06);
+  --cl-info-text: #5b21b6;
+
+  /* Sincroniza tokens globais do app dentro do portal Client */
+  --nx-royal-bright: var(--cl-violet-bright);
+  --nx-royal: var(--cl-violet);
+  --nx-royal-deep: var(--cl-violet-deep);
+  --accent: var(--cl-violet-bright);
+  --accent-glow: rgba(124, 58, 237, 0.32);
+  --border-glow: rgba(124, 58, 237, 0.22);
 }
 
 [data-theme='dark'] .nx-client-shell {
@@ -70,6 +82,45 @@
   --cl-submit-hover: #e8e8ea;
   --cl-error-bg: rgba(180, 60, 60, 0.12);
   --cl-error-text: #fca5a5;
-  --cl-info-bg: rgba(0, 35, 149, 0.14);
-  --cl-info-text: #7a9ae8;
+  --cl-info-bg: rgba(124, 58, 237, 0.14);
+  --cl-info-text: #c4b5fd;
+  --accent-glow: rgba(167, 139, 250, 0.28);
+}
+
+.nx-client-shell .btn-primary {
+  background: linear-gradient(
+    180deg,
+    var(--cl-violet-bright) 0%,
+    var(--cl-violet) 52%,
+    var(--cl-violet-deep) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 0 24px rgba(124, 58, 237, 0.4),
+    0 0 48px rgba(91, 33, 182, 0.2);
+}
+
+.nx-client-shell .btn-primary:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 0 28px rgba(124, 58, 237, 0.48);
+}
+
+.nx-client-shell .card {
+  border-color: rgba(124, 58, 237, 0.12);
+  box-shadow:
+    inset 0 0 0 1px rgba(124, 58, 237, 0.05),
+    0 8px 32px rgba(91, 33, 182, 0.08);
+}
+
+.nx-client-shell .card:hover {
+  border-color: rgba(124, 58, 237, 0.28);
+  box-shadow:
+    inset 0 0 0 1px rgba(124, 58, 237, 0.1),
+    0 12px 40px rgba(124, 58, 237, 0.12);
+}
+
+:global([data-theme='light']) .nx-client-shell ::selection {
+  background: rgba(124, 58, 237, 0.22);
+  color: #0a0a0a;
 }

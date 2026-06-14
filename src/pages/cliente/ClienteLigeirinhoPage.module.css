@@ -153,9 +153,9 @@
 }
 
 .btnGhost:hover {
-  border-color: rgba(37, 99, 235, 0.3);
-  color: var(--cl-royal, #2563eb);
-  background: rgba(37, 99, 235, 0.04);
+  border-color: rgba(124, 58, 237, 0.3);
+  color: var(--cl-royal, #7c3aed);
+  background: rgba(124, 58, 237, 0.04);
 }
 
 .hero {
@@ -167,7 +167,7 @@
   border: 1px solid rgba(250, 204, 21, 0.35);
   background:
     radial-gradient(ellipse 90% 70% at 100% 0%, rgba(250, 204, 21, 0.12), transparent 55%),
-    linear-gradient(135deg, rgba(37, 99, 235, 0.04) 0%, transparent 55%),
+    linear-gradient(135deg, rgba(124, 58, 237, 0.04) 0%, transparent 55%),
     linear-gradient(225deg, rgba(124, 58, 237, 0.03) 0%, transparent 50%),
     var(--cl-surface, #ffffff);
   box-shadow: 0 8px 32px rgba(10, 10, 10, 0.06);
@@ -182,7 +182,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #facc15, #f59e0b, var(--cl-royal, #2563eb));
+  background: linear-gradient(90deg, #facc15, #f59e0b, var(--cl-royal, #7c3aed));
 }
 
 .heroContent {
@@ -614,7 +614,7 @@
   border-radius: var(--cl-radius, 0.5rem);
   border: 1px solid rgba(250, 204, 21, 0.35);
   background:
-    linear-gradient(135deg, rgba(250, 204, 21, 0.1), rgba(37, 99, 235, 0.04)),
+    linear-gradient(135deg, rgba(250, 204, 21, 0.1), rgba(124, 58, 237, 0.04)),
     var(--cl-surface, #ffffff);
 }
 

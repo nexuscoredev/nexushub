@@ -38,9 +38,9 @@ export function ClienteLoginPage() {
   };
 
   return (
-    <TechShell>
+    <TechShell variant="client">
       <LoginThemeToggle accent="client" />
-      <div className={styles.page}>
+      <div className={`nx-client-shell ${styles.page}`}>
         <div className={`card ${styles.card}`}>
           <div className={styles.cardGlow} aria-hidden />
           <div className={styles.logoWrap}>

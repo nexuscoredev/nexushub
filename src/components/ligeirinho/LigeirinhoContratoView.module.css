@@ -238,8 +238,13 @@
 .clientTheme .summary {
   border-color: rgba(250, 204, 21, 0.35);
   background:
-    linear-gradient(135deg, rgba(250, 204, 21, 0.12), rgba(37, 99, 235, 0.05)),
+    linear-gradient(135deg, rgba(250, 204, 21, 0.12), rgba(124, 58, 237, 0.05)),
     #fffbeb;
+}
+
+.clientTheme .pageImageLink:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: -2px;
 }
 
 .clientTheme .summaryTitle,

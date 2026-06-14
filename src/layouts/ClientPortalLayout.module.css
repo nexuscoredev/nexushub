@@ -4,8 +4,8 @@
   display: flex;
   flex-direction: column;
   background:
-    radial-gradient(ellipse 80% 60% at 100% 0%, rgba(37, 99, 235, 0.08), transparent 50%),
-    radial-gradient(ellipse 60% 50% at 0% 100%, rgba(124, 58, 237, 0.06), transparent 45%),
+    radial-gradient(ellipse 80% 60% at 100% 0%, rgba(124, 58, 237, 0.1), transparent 50%),
+    radial-gradient(ellipse 60% 50% at 0% 100%, rgba(167, 139, 250, 0.08), transparent 45%),
     var(--cl-bg);
   color: var(--cl-text);
 }
@@ -72,8 +72,8 @@
 
 .sectionLink:hover {
   color: var(--cl-royal);
-  border-color: rgba(37, 99, 235, 0.2);
-  background: rgba(37, 99, 235, 0.06);
+  border-color: rgba(124, 58, 237, 0.2);
+  background: rgba(124, 58, 237, 0.06);
 }
 
 .actions {
@@ -102,12 +102,12 @@
 
 .actionBtn:hover {
   color: var(--cl-royal);
-  border-color: rgba(37, 99, 235, 0.35);
-  background: rgba(37, 99, 235, 0.06);
+  border-color: rgba(124, 58, 237, 0.35);
+  background: rgba(124, 58, 237, 0.06);
 }
 
 .actionBtnPrimary {
-  border-color: rgba(37, 99, 235, 0.25);
+  border-color: rgba(124, 58, 237, 0.25);
   background: linear-gradient(180deg, var(--cl-royal-bright) 0%, var(--cl-royal) 52%, var(--cl-royal-deep) 100%);
   color: #ffffff;
 }

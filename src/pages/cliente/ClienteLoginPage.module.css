@@ -64,15 +64,15 @@
   margin-top: 1rem;
   padding: 0.75rem 0.9rem;
   border-radius: var(--radius);
-  border: 1px solid rgba(110, 181, 255, 0.22);
-  background: rgba(37, 99, 235, 0.08);
+  border: 1px solid rgba(167, 139, 250, 0.28);
+  background: rgba(124, 58, 237, 0.08);
   color: var(--muted);
   font-size: 0.82rem;
   line-height: 1.5;
 }
 
 .hubNotice a {
-  color: var(--primary);
+  color: var(--cl-violet-bright, #a78bfa);
   font-weight: 600;
   text-decoration: none;
 }
@@ -112,7 +112,7 @@
   box-shadow:
     inset 4px 4px 10px rgba(0, 0, 0, 0.6),
     inset -2px -2px 7px rgba(255, 255, 255, 0.05),
-    0 0 0 1px rgba(30, 73, 214, 0.25);
+    0 0 0 1px rgba(124, 58, 237, 0.25);
 }
 
 .fieldIcon {
@@ -181,7 +181,7 @@
 }
 
 .back a:hover {
-  color: var(--primary);
+  color: var(--cl-violet-bright, #a78bfa);
 }
 
 @media (max-width: 480px) {
@@ -206,16 +206,16 @@
   box-shadow:
     0 0 0 1px rgba(10, 10, 10, 0.04) inset,
     0 16px 48px rgba(10, 10, 10, 0.08),
-    0 0 24px rgba(37, 99, 235, 0.04);
+    0 0 24px rgba(124, 58, 237, 0.06);
 }
 
 :global([data-theme='light']) .cardGlow {
-  background: radial-gradient(ellipse, rgba(37, 99, 235, 0.06), transparent 70%);
+  background: radial-gradient(ellipse, rgba(124, 58, 237, 0.08), transparent 70%);
 }
 
 :global([data-theme='light']) .hubNotice {
-  border-color: rgba(37, 99, 235, 0.18);
-  background: rgba(37, 99, 235, 0.06);
+  border-color: rgba(124, 58, 237, 0.2);
+  background: rgba(124, 58, 237, 0.06);
 }
 
 :global([data-theme='light']) .fieldShell {
@@ -229,7 +229,7 @@
   box-shadow:
     inset 2px 2px 6px rgba(10, 10, 10, 0.08),
     inset -2px -2px 5px rgba(255, 255, 255, 0.95),
-    0 0 0 1px rgba(37, 99, 235, 0.3);
+    0 0 0 1px rgba(124, 58, 237, 0.32);
 }
 
 :global([data-theme='light']) .fieldIcon {

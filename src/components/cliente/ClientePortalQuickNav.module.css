@@ -29,7 +29,7 @@
 
 .pill:hover {
   transform: translateY(-1px);
-  border-color: rgba(37, 99, 235, 0.35);
-  color: var(--cl-royal, #2563eb);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+  border-color: rgba(124, 58, 237, 0.35);
+  color: var(--cl-royal, #7c3aed);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.12);
 }
