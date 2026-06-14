@@ -105,6 +105,25 @@
   font-size: 0.78rem;
 }
 
+.headerCentered {
+  text-align: center;
+  padding-left: max(0.75rem, env(safe-area-inset-left, 0px));
+  padding-right: max(0.75rem, env(safe-area-inset-right, 0px));
+}
+
+.headerCentered .accent {
+  display: none;
+}
+
+.headerCentered .row {
+  justify-content: center;
+}
+
+.headerCentered .subtitle {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 @media (max-width: 768px) {
   .header {
     margin-bottom: 1.35rem;

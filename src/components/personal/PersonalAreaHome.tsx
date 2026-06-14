@@ -7,6 +7,7 @@ import {
   loadHumorDoDia,
   saveHumorDoDia,
 } from '../../lib/pessoalHumor';
+import { TodoistIcon } from '../TodoistIcon';
 import { PiggyFinanceButton } from './PiggyFinanceButton';
 import styles from './PersonalAreaHome.module.css';
 
@@ -29,7 +30,6 @@ const QUICK_LINKS = [
     id: 'todoist',
     label: 'Todoist',
     href: 'https://todoist.com/app',
-    icon: '/img/providers/todoist.svg',
   },
 ] as const;
 
@@ -157,15 +157,19 @@ export function PersonalAreaHome({ onOpenFinance }: PersonalAreaHomeProps) {
               rel="noopener noreferrer"
               className={styles.musicLink}
             >
-              <img
-                src={link.icon}
-                alt=""
-                className={styles.musicLogo}
-                width={32}
-                height={32}
-                loading="lazy"
-                decoding="async"
-              />
+              {link.id === 'todoist' ? (
+                <TodoistIcon className={styles.todoistLogo} />
+              ) : (
+                <img
+                  src={link.icon}
+                  alt=""
+                  className={styles.musicLogo}
+                  width={32}
+                  height={32}
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
               <span>{link.label}</span>
             </a>
           ))}

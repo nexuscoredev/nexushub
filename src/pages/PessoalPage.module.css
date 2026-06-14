@@ -2,6 +2,12 @@
   max-width: 1200px;
 }
 
+.homeShell {
+  width: 100%;
+  max-width: 640px;
+  margin-inline: auto;
+}
+
 .financeTop {
   display: flex;
   align-items: flex-start;

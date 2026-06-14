@@ -27,28 +27,29 @@ export function PessoalPage() {
   return (
     <div className={styles.page}>
       {financeiro ? (
-        <div className={styles.financeTop}>
+        <>
+          <div className={styles.financeTop}>
+            <PageHeader
+              compact
+              title="Finanças"
+              subtitle={`${firstName} · privado`}
+            />
+            <button type="button" className={styles.backBtn} onClick={backHome}>
+              ← Cantinho
+            </button>
+          </div>
+          <PersonalFinancePanel userEmail={email} userId={user?.id} />
+        </>
+      ) : (
+        <div className={styles.homeShell}>
           <PageHeader
-            compact
-            title="Finanças"
-            subtitle={`${firstName} · privado`}
+            centered
+            badge="Personal"
+            title="Área pessoal"
+            subtitle={`Olá, ${firstName}. Respira — este espaço é seu.`}
           />
-          <button type="button" className={styles.backBtn} onClick={backHome}>
-            ← Cantinho
-          </button>
+          <PersonalAreaHome onOpenFinance={openFinance} />
         </div>
-      ) : (
-        <PageHeader
-          badge="Personal"
-          title="Área pessoal"
-          subtitle={`Olá, ${firstName}. Respira — este espaço é seu.`}
-        />
-      )}
-
-      {financeiro ? (
-        <PersonalFinancePanel userEmail={email} userId={user?.id} />
-      ) : (
-        <PersonalAreaHome onOpenFinance={openFinance} />
       )}
     </div>
   );

@@ -2,7 +2,7 @@ interface TodoistIconProps {
   className?: string;
 }
 
-/** Marca Todoist simplificada (vermelho + listas) */
+/** Marca Todoist (vermelho + check) */
 export function TodoistIcon({ className }: TodoistIconProps) {
   return (
     <svg
@@ -11,12 +11,13 @@ export function TodoistIcon({ className }: TodoistIconProps) {
       fill="none"
       aria-hidden
     >
-      <rect width="24" height="24" rx="5.5" fill="#E44332" />
+      <rect width="24" height="24" rx="5" fill="#E44332" />
       <path
+        d="M7 12.5 10 15.5 17 8.5"
         stroke="#fff"
-        strokeWidth="2"
+        strokeWidth="2.2"
         strokeLinecap="round"
-        d="M7 8.5h10M7 12h7.5M7 15.5h5"
+        strokeLinejoin="round"
       />
     </svg>
   );
