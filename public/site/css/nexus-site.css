@@ -486,15 +486,14 @@ img {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 0.9rem;
+  padding: 0.55rem 1.05rem;
   border-radius: 999px;
   border: 1.5px solid var(--nx-steel);
   background: var(--nx-nav-bg);
   color: var(--nx-steel);
-  font-size: 0.72rem;
-  font-weight: 600;
+  font: inherit;
   line-height: 1.2;
-  letter-spacing: 0.04em;
+  text-decoration: none;
   transition: box-shadow 0.2s, color 0.2s, border-color 0.2s, background 0.2s;
 }
 
@@ -542,7 +541,7 @@ img {
   font-weight: 400;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  font-size: 0.62rem;
+  font-size: 0.72rem;
   background: var(--nx-silver-text);
   -webkit-background-clip: text;
   background-clip: text;
@@ -552,8 +551,9 @@ img {
 .nx-product-mark__accent {
   font-family: 'Molgan', 'Orbitron', 'Inter', system-ui, sans-serif;
   font-weight: 400;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   letter-spacing: 0.02em;
+  text-transform: none;
   transform: translateY(0.04em);
 }
 
@@ -566,16 +566,17 @@ img {
 }
 
 .nx-product-mark--sm .nx-product-mark__icon {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
 }
 
 .nx-product-mark--sm .nx-product-mark__nexus {
-  font-size: 0.58rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
 }
 
 .nx-product-mark--sm .nx-product-mark__accent {
-  font-size: 0.56rem;
+  font-size: 0.78rem;
 }
 
 .nx-product-mark--xs .nx-product-mark__icon {
@@ -885,16 +886,16 @@ img {
   }
 
   .nx-nav-drawer .nx-product-mark--sm .nx-product-mark__icon {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
   }
 
   .nx-nav-drawer .nx-product-mark--sm .nx-product-mark__nexus {
-    font-size: 0.66rem;
+    font-size: 0.78rem;
   }
 
   .nx-nav-drawer .nx-product-mark--sm .nx-product-mark__accent {
-    font-size: 0.64rem;
+    font-size: 0.74rem;
   }
 
   .nx-nav-panel__cta {
@@ -1711,18 +1712,20 @@ img {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 34px;
-  padding: 0.35rem 0.9rem;
+  min-height: 38px;
+  padding: 0.5rem 1.05rem;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.22);
   background: rgba(255, 255, 255, 0.06);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font: inherit;
   text-decoration: none;
   color: #d4d4d4;
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.nx-footer__admin-btn .nx-product-mark,
+.nx-footer__quick-product .nx-product-mark {
+  pointer-events: none;
 }
 
 .nx-footer__admin-btn:hover {
