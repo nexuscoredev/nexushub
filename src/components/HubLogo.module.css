@@ -66,6 +66,20 @@
   transform: translateY(0.06em);
 }
 
+.clientMark {
+  color: #7c3aed;
+  text-shadow:
+    0 0 20px rgba(124, 58, 237, 0.45),
+    0 0 40px rgba(124, 58, 237, 0.22);
+}
+
+:global([data-theme='dark']) .clientMark {
+  color: #a78bfa;
+  text-shadow:
+    0 0 20px rgba(167, 139, 250, 0.4),
+    0 0 36px rgba(124, 58, 237, 0.2);
+}
+
 .siteSurface .wordmark {
   background: linear-gradient(180deg, #1a1a1a 0%, #6b6f78 55%, #a8acb4 100%);
   -webkit-background-clip: text;
@@ -102,6 +116,24 @@
 
 .sm .hubMark {
   font-size: 0.95rem;
+}
+
+.compactBrand {
+  gap: 0.55rem;
+}
+
+.compactBrand .markImg {
+  width: 24px;
+  height: 24px;
+}
+
+.compactBrand .wordmark {
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+}
+
+.compactBrand .hubMark {
+  font-size: 0.76rem;
 }
 
 @media (max-width: 480px) {

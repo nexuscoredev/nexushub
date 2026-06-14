@@ -1,6 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { HubLogo } from '../components/HubLogo';
+import { NexusBrandSubmit } from '../components/NexusBrandSubmit';
 import { TechShell } from '../components/TechShell';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './LoginPage.module.css';
@@ -99,9 +100,7 @@ export function LoginPage() {
                 />
               </label>
             </div>
-            <button type="submit" className="btn-primary" disabled={loading || !configured}>
-              {loading ? 'Autenticando…' : 'Entrar no NexusHub'}
-            </button>
+            <NexusBrandSubmit product="hub" loading={loading} disabled={!configured} />
           </form>
 
           <p className={styles.back}>

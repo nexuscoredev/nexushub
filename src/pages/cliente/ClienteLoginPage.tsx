@@ -1,6 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { HubLogo } from '../../components/HubLogo';
+import { NexusBrandSubmit } from '../../components/NexusBrandSubmit';
 import { TechShell } from '../../components/TechShell';
 import { useAuth } from '../../contexts/AuthContext';
 import styles from './ClienteLoginPage.module.css';
@@ -42,7 +43,7 @@ export function ClienteLoginPage() {
         <div className={`card ${styles.card}`}>
           <div className={styles.cardGlow} aria-hidden />
           <div className={styles.logoWrap}>
-            <HubLogo size="lg" variant="full" centered subtitleText="Client" />
+            <HubLogo size="lg" variant="full" centered subtitleText="Client" accent="client" />
           </div>
           <div className={styles.header}>
             <h1 className={styles.title}>Entrar</h1>
@@ -106,16 +107,11 @@ export function ClienteLoginPage() {
                 />
               </label>
             </div>
-            <button type="submit" className="btn-primary" disabled={loading || !configured}>
-              {loading ? 'Autenticando…' : 'Entrar no NexusClient'}
-            </button>
+            <NexusBrandSubmit product="client" loading={loading} disabled={!configured} />
           </form>
 
           <p className={styles.back}>
             <a href="/site/home.html">← Voltar ao site</a>
-          </p>
-          <p className={styles.altAccess}>
-            Equipe NEXUS? <Link to="/login">Acessar o NexusHub</Link>
           </p>
         </div>
       </div>

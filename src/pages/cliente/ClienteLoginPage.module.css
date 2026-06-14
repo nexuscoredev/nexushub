@@ -184,23 +184,6 @@
   color: var(--primary);
 }
 
-.altAccess {
-  margin: 0.85rem 0 0;
-  text-align: center;
-  font-size: 0.82rem;
-  color: var(--muted);
-}
-
-.altAccess a {
-  color: var(--primary);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.altAccess a:hover {
-  text-decoration: underline;
-}
-
 @media (max-width: 480px) {
   .page {
     min-height: 100dvh;

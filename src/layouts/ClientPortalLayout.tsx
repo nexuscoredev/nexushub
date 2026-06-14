@@ -23,7 +23,7 @@ export function ClientPortalLayout() {
       <header className={styles.topbar}>
         <div className={styles.topbarMain}>
           <div className={styles.brand}>
-            <HubLogo size="sm" showSubtitle subtitleText="Client" surface="site" />
+            <HubLogo size="sm" showSubtitle subtitleText="Client" surface="site" accent="client" />
             <small>{clienteConta?.cliente?.nome ?? 'NexusClient'}</small>
           </div>
           <div className={styles.actions}>
