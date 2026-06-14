@@ -1,4 +1,5 @@
 const DISMISS_KEY = 'nexus-hub-pwa-install-dismissed';
+const INSTALLED_KEY = 'nexus-pwa-installed';
 const DISMISS_DAYS = 14;
 
 export interface BeforeInstallPromptEvent extends Event {
@@ -51,4 +52,61 @@ export function dismissInstallBanner(): void {
 export function clearInstallBannerDismiss(): void {
   if (typeof localStorage === 'undefined') return;
   localStorage.removeItem(DISMISS_KEY);
+}
+
+export function isPwaInstalledFlag(): boolean {
+  if (typeof localStorage === 'undefined') return false;
+  try {
+    return localStorage.getItem(INSTALLED_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export function markPwaInstalled(): void {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem(INSTALLED_KEY, '1');
+  } catch {
+    /* ignore */
+  }
+}
+
+export function hasInstalledApp(): boolean {
+  return isStandaloneDisplay() || isPwaInstalledFlag();
+}
+
+export function getNexusShareUrl(): string {
+  if (typeof window === 'undefined') return 'https://nexussystems.dev/';
+  const origin = window.location.origin.replace(/\/$/, '');
+  return `${origin}/`;
+}
+
+export async function shareNexusApp(): Promise<'shared' | 'copied' | 'cancelled' | 'failed'> {
+  const url = getNexusShareUrl();
+  const shareData = {
+    title: 'NEXUS',
+    text: 'Conheça a NEXUS — tecnologia personalizada que se adapta ao seu negócio.',
+    url,
+  };
+
+  if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+    try {
+      await navigator.share(shareData);
+      return 'shared';
+    } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') return 'cancelled';
+    }
+  }
+
+  if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(url);
+      return 'copied';
+    } catch {
+      /* fall through */
+    }
+  }
+
+  return 'failed';
 }

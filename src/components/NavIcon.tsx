@@ -20,6 +20,7 @@ export type NavIconName =
   | 'sparkles'
   | 'pencil'
   | 'install'
+  | 'share'
   | 'bell';
 
 interface NavIconProps {
@@ -145,6 +146,14 @@ const paths: Record<NavIconName, ReactNode> = {
     <>
       <rect x="7" y="2.5" width="10" height="16" rx="2" />
       <path d="M12 11v6M9.5 13.5 12 16l2.5-2.5" />
+    </>
+  ),
+  share: (
+    <>
+      <circle cx="18" cy="5" r="3" />
+      <circle cx="6" cy="12" r="3" />
+      <circle cx="18" cy="19" r="3" />
+      <path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98" />
     </>
   ),
   bell: (

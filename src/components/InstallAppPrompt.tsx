@@ -15,9 +15,11 @@ interface InstallAppPromptProps {
 }
 
 export function InstallAppPrompt({ variant = 'button', className }: InstallAppPromptProps) {
-  const { installed, ios, android, canInstallNative, promptInstall } = usePwaInstall();
+  const { installed, ios, android, canInstallNative, promptInstall, shareApp } = usePwaInstall();
   const [open, setOpen] = useState(false);
   const [installing, setInstalling] = useState(false);
+  const [sharing, setSharing] = useState(false);
+  const [shareFeedback, setShareFeedback] = useState<string | null>(null);
 
   const modalMode = installed
     ? 'installed'
@@ -30,11 +32,13 @@ export function InstallAppPrompt({ variant = 'button', className }: InstallAppPr
           : 'unavailable';
 
   const handleOpen = useCallback(() => {
+    setShareFeedback(null);
     setOpen(true);
   }, []);
 
   const handleClose = useCallback(() => {
     setOpen(false);
+    setShareFeedback(null);
     if (variant === 'banner') dismissInstallBanner();
   }, [variant]);
 
@@ -48,11 +52,32 @@ export function InstallAppPrompt({ variant = 'button', className }: InstallAppPr
     }
   }, [promptInstall]);
 
+  const handleShare = useCallback(async () => {
+    setSharing(true);
+    setShareFeedback(null);
+    try {
+      const outcome = await shareApp();
+      if (outcome === 'shared') {
+        setOpen(false);
+        return;
+      }
+      if (outcome === 'copied') {
+        setShareFeedback('Link copiado para a área de transferência.');
+        return;
+      }
+      if (outcome === 'cancelled') return;
+      setShareFeedback('Não foi possível compartilhar. Copie o link manualmente: nexussystems.dev');
+    } finally {
+      setSharing(false);
+    }
+  }, [shareApp]);
+
   if (variant === 'banner') {
     if (installed || isInstallBannerDismissed() || !isMobileDevice()) return null;
   }
 
-  if (variant === 'icon' && installed) return null;
+  const iconLabel = installed ? 'Compartilhar app' : 'Baixar app';
+  const buttonLabel = installed ? 'Compartilhar app' : 'Baixar app';
 
   return (
     <>
@@ -79,10 +104,10 @@ export function InstallAppPrompt({ variant = 'button', className }: InstallAppPr
           type="button"
           className={`${styles.iconBtn} ${className ?? ''}`}
           onClick={handleOpen}
-          aria-label="Baixar app"
-          title="Baixar app"
+          aria-label={iconLabel}
+          title={iconLabel}
         >
-          <NavIcon name="install" className={styles.iconBtnGlyph} />
+          <NavIcon name={installed ? 'share' : 'install'} className={styles.iconBtnGlyph} />
         </button>
       ) : (
         <button
@@ -91,7 +116,7 @@ export function InstallAppPrompt({ variant = 'button', className }: InstallAppPr
           onClick={handleOpen}
         >
           <img src="/img/favicon.png" alt="" className={styles.buttonIcon} width={20} height={20} />
-          <span>{installed ? 'App instalado' : 'Baixar app'}</span>
+          <span>{buttonLabel}</span>
         </button>
       )}
 
@@ -100,7 +125,10 @@ export function InstallAppPrompt({ variant = 'button', className }: InstallAppPr
         mode={modalMode}
         onClose={handleClose}
         onInstall={handleInstall}
+        onShare={installed ? handleShare : undefined}
+        shareFeedback={shareFeedback}
         installing={installing}
+        sharing={sharing}
       />
     </>
   );

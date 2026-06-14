@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { BeforeInstallPromptEvent } from '../lib/pwaInstall';
 import {
+  hasInstalledApp,
   isAndroidDevice,
   isIosDevice,
-  isStandaloneDisplay,
+  markPwaInstalled,
+  shareNexusApp,
 } from '../lib/pwaInstall';
 
 export function usePwaInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [installed, setInstalled] = useState(isStandaloneDisplay);
+  const [installed, setInstalled] = useState(hasInstalledApp);
   const ios = isIosDevice();
   const android = isAndroidDevice();
 
@@ -19,6 +21,7 @@ export function usePwaInstall() {
     };
 
     const onInstalled = () => {
+      markPwaInstalled();
       setInstalled(true);
       setDeferredPrompt(null);
     };
@@ -27,7 +30,7 @@ export function usePwaInstall() {
     window.addEventListener('appinstalled', onInstalled);
 
     const standaloneMq = window.matchMedia('(display-mode: standalone)');
-    const onDisplayChange = () => setInstalled(isStandaloneDisplay());
+    const onDisplayChange = () => setInstalled(hasInstalledApp());
     standaloneMq.addEventListener('change', onDisplayChange);
 
     return () => {
@@ -55,5 +58,6 @@ export function usePwaInstall() {
     android,
     canInstallNative: deferredPrompt != null,
     promptInstall,
+    shareApp: shareNexusApp,
   };
 }

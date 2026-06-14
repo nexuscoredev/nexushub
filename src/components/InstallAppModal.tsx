@@ -7,7 +7,10 @@ interface InstallAppModalProps {
   mode: 'ios' | 'android' | 'native' | 'installed' | 'unavailable';
   onClose: () => void;
   onInstall: () => void;
+  onShare?: () => void | Promise<void>;
+  shareFeedback?: string | null;
   installing?: boolean;
+  sharing?: boolean;
 }
 
 export function InstallAppModal({
@@ -15,7 +18,10 @@ export function InstallAppModal({
   mode,
   onClose,
   onInstall,
+  onShare,
+  shareFeedback = null,
   installing = false,
+  sharing = false,
 }: InstallAppModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -43,11 +49,11 @@ export function InstallAppModal({
         <div className={styles.head}>
           <div>
             <h2 id="install-app-title" className={styles.title}>
-              {mode === 'installed' ? 'App instalado' : 'Baixar o app'}
+              {mode === 'installed' ? 'Compartilhar o app' : 'Baixar o app'}
             </h2>
             <p className={styles.sub}>
               {mode === 'installed'
-                ? 'O NEXUS já está na sua tela inicial.'
+                ? 'Indique a NEXUS para colegas e clientes.'
                 : 'Instale o site NEXUS no celular — acesso rápido como app nativo.'}
             </p>
           </div>
@@ -123,10 +129,25 @@ export function InstallAppModal({
         )}
 
         {mode === 'installed' && (
-          <p className={styles.installedNote}>Você já pode abrir pelo ícone na home.</p>
+          <>
+            <p className={styles.installedNote}>
+              O NEXUS já está na sua tela inicial. Envie o link para outras pessoas instalarem também.
+            </p>
+            {shareFeedback ? <p className={styles.shareFeedback}>{shareFeedback}</p> : null}
+          </>
         )}
 
         <div className={styles.actions}>
+          {mode === 'installed' && onShare && (
+            <button
+              type="button"
+              className={styles.primaryBtn}
+              onClick={() => void onShare()}
+              disabled={sharing}
+            >
+              {sharing ? 'Compartilhando…' : 'Compartilhar'}
+            </button>
+          )}
           {mode === 'native' && (
             <button
               type="button"

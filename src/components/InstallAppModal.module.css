@@ -193,3 +193,9 @@
   font-size: 0.82rem;
   color: var(--accent);
 }
+
+.shareFeedback {
+  margin: 0.65rem 0 0;
+  font-size: 0.78rem;
+  color: var(--success);
+}
