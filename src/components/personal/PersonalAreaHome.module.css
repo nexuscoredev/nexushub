@@ -260,6 +260,20 @@
   border-radius: 0.35rem;
 }
 
+.materialLogo {
+  width: 1.85rem;
+  height: 1.85rem;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.15rem;
+  color: var(--nx-cyan-bright);
+  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(34, 211, 238, 0.22);
+}
+
 .piggySection {
   display: flex;
   justify-content: center;

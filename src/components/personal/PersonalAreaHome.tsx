@@ -15,6 +15,12 @@ const SCORES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 
 const QUICK_LINKS = [
   {
+    id: 'texto-diario',
+    label: 'Texto diário',
+    href: 'https://wol.jw.org/pt/wol/h/r5/lp-t',
+    materialIcon: 'menu_book',
+  },
+  {
     id: 'spotify',
     label: 'Spotify',
     href: 'https://open.spotify.com/',
@@ -147,7 +153,7 @@ export function PersonalAreaHome({ onOpenFinance }: PersonalAreaHomeProps) {
         <h3 id="atalhos-dia" className={styles.cardTitle}>
           Atalhos do dia
         </h3>
-        <p className={styles.cardSub}>Trilha sonora ou tarefas — abre no app que preferir.</p>
+        <p className={styles.cardSub}>Texto diário, trilha sonora ou tarefas — no app que preferir.</p>
         <div className={styles.musicRow}>
           {QUICK_LINKS.map((link) => (
             <a
@@ -157,9 +163,13 @@ export function PersonalAreaHome({ onOpenFinance }: PersonalAreaHomeProps) {
               rel="noopener noreferrer"
               className={styles.musicLink}
             >
-              {link.id === 'todoist' ? (
+              {'materialIcon' in link && link.materialIcon ? (
+                <span className={`material-symbols-outlined ${styles.materialLogo}`} aria-hidden>
+                  {link.materialIcon}
+                </span>
+              ) : link.id === 'todoist' ? (
                 <TodoistIcon className={styles.todoistLogo} />
-              ) : (
+              ) : 'icon' in link ? (
                 <img
                   src={link.icon}
                   alt=""
@@ -169,7 +179,7 @@ export function PersonalAreaHome({ onOpenFinance }: PersonalAreaHomeProps) {
                   loading="lazy"
                   decoding="async"
                 />
-              )}
+              ) : null}
               <span>{link.label}</span>
             </a>
           ))}
