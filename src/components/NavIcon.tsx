@@ -19,7 +19,8 @@ export type NavIconName =
   | 'chevronDown'
   | 'sparkles'
   | 'pencil'
-  | 'install';
+  | 'install'
+  | 'bell';
 
 interface NavIconProps {
   name: NavIconName;
@@ -144,6 +145,12 @@ const paths: Record<NavIconName, ReactNode> = {
     <>
       <rect x="7" y="2.5" width="10" height="16" rx="2" />
       <path d="M12 11v6M9.5 13.5 12 16l2.5-2.5" />
+    </>
+  ),
+  bell: (
+    <>
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
     </>
   ),
 };

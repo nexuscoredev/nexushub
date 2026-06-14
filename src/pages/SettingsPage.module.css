@@ -20,6 +20,28 @@
   color: var(--muted);
 }
 
+.cardLead strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.cardHint {
+  margin: -0.35rem 0 1rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.updateActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .installBtn {
   width: 100%;
   justify-content: center;

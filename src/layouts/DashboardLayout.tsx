@@ -5,6 +5,7 @@ import { NavIcon, type NavIconName } from '../components/NavIcon';
 import { UserAvatar } from '../components/UserAvatar';
 import { TechShell } from '../components/TechShell';
 import { HubChatLauncher } from '../components/chat/HubChatLauncher';
+import { HubNotificationsBell } from '../components/notifications/HubNotificationsBell';
 import { HubNovidadesModal } from '../components/HubNovidadesModal';
 import { InstallAppPrompt } from '../components/InstallAppPrompt';
 import { hasUnseenNovidades } from '../data/hubNovidades';
@@ -116,6 +117,7 @@ export function DashboardLayout() {
 
             <div className={styles.hubNavUtilities}>
               <InstallAppPrompt variant="icon" className={styles.installNavBtn} />
+              {user?.id ? <HubNotificationsBell userId={user.id} /> : null}
               <button
                 type="button"
                 className={styles.novidadesBtn}

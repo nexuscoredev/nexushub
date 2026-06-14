@@ -1,5 +1,5 @@
 /** Atualize ao publicar novidades — controla o indicador “novo” no botão. */
-export const HUB_NOVIDADES_VERSION = '2025-06-02-v2';
+export const HUB_NOVIDADES_VERSION = '2026-06-02-v1';
 
 export const HUB_NOVIDADES_STORAGE_KEY = 'nexushub-novidades-visto';
 
@@ -19,6 +19,31 @@ export interface NovidadeRelease {
 }
 
 export const HUB_NOVIDADES: NovidadeRelease[] = [
+  {
+    id: '2026-06-02',
+    dateLabel: 'Junho 2026',
+    title: 'Notificações da equipe e atualizações do app',
+    items: [
+      {
+        area: 'Geral',
+        title: 'Sino de notificações no Hub',
+        description:
+          'Avisos internos aparecem no sino ao lado do avatar, com contador de não lidas e atualização em tempo real. Gestão envia em Configurações → Notificações da equipe.',
+      },
+      {
+        area: 'Geral',
+        title: 'Atualizar sem reinstalar o app',
+        description:
+          'Depois de um deploy, toque em “Atualizar agora” se o aviso aparecer — não precisa desinstalar o app. Reinstale só se o ícone ou a página inicial estiverem errados (comum no iPhone).',
+      },
+      {
+        area: 'Mobile',
+        title: 'App NEXUS na tela inicial',
+        description:
+          'O atalho instalado abre o site institucional. Para o painel da equipe, acesse o Hub pelo navegador e faça login.',
+      },
+    ],
+  },
   {
     id: '2025-06-02',
     dateLabel: 'Junho 2025',

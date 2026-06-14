@@ -49,7 +49,8 @@ export function HubNovidadesModal({ open, onClose }: HubNovidadesModalProps) {
               Novidades do Hub
             </h2>
             <p className={styles.subtitle}>
-              O que mudou recentemente no NEXUS Hub — Fila, Financeiro, mobile e integração Todoist.
+              O que mudou recentemente — notificações da equipe, atualizações do app, Fila, Financeiro
+              e mobile.
             </p>
           </div>
           <button

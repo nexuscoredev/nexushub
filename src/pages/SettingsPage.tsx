@@ -1,11 +1,14 @@
 import { Link } from 'react-router-dom';
 import { InstallAppPrompt } from '../components/InstallAppPrompt';
+import { HubNotificationSendForm } from '../components/notifications/HubNotificationSendForm';
 import { PageHeader } from '../components/PageHeader';
+import { useAppUpdateContext } from '../contexts/AppUpdateContext';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './SettingsPage.module.css';
 
 export function SettingsPage() {
-  const { user, profile, configured } = useAuth();
+  const { user, profile, configured, podeGestao } = useAuth();
+  const { updateAvailable, checking, applyUpdate, checkForUpdate } = useAppUpdateContext();
 
   return (
     <div>
@@ -46,9 +49,36 @@ export function SettingsPage() {
         </section>
 
         <section className="card">
+          <h2 className={styles.cardTitle}>Atualizações do Hub</h2>
+          <p className={styles.cardLead}>
+            Quando sair versão nova, use <strong>Atualizar agora</strong> — não precisa desinstalar o
+            app. Reinstale só se o ícone ou a página inicial estiverem errados.
+          </p>
+          <div className={styles.updateActions}>
+            {updateAvailable ? (
+              <button type="button" className="btn-primary" onClick={applyUpdate}>
+                Atualizar agora
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="btn-ghost"
+                onClick={() => void checkForUpdate()}
+                disabled={checking}
+              >
+                {checking ? 'Verificando…' : 'Verificar atualizações'}
+              </button>
+            )}
+          </div>
+        </section>
+
+        <section className="card">
           <h2 className={styles.cardTitle}>App no celular</h2>
           <p className={styles.cardLead}>
             Instale o site NEXUS na tela inicial — acesso rápido como app, sem loja.
+          </p>
+          <p className={styles.cardHint}>
+            O atalho abre o site. Para o painel interno, entre no Hub pelo navegador.
           </p>
           <InstallAppPrompt variant="button" className={styles.installBtn} />
         </section>
@@ -76,6 +106,16 @@ export function SettingsPage() {
             </li>
           </ul>
         </section>
+
+        {podeGestao ? (
+          <section className="card">
+            <h2 className={styles.cardTitle}>Notificações da equipe</h2>
+            <p className={styles.cardLead}>
+              Envie aviso para um membro ou para toda a equipe. O destinatário vê no sino do header.
+            </p>
+            <HubNotificationSendForm />
+          </section>
+        ) : null}
       </div>
     </div>
   );
