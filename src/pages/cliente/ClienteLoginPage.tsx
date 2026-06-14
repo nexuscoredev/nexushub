@@ -39,7 +39,7 @@ export function ClienteLoginPage() {
 
   return (
     <TechShell>
-      <LoginThemeToggle />
+      <LoginThemeToggle accent="client" />
       <div className={styles.page}>
         <div className={`card ${styles.card}`}>
           <div className={styles.cardGlow} aria-hidden />

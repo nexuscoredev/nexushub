@@ -8,6 +8,15 @@
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
 
+  function syncThemeButtons(mode) {
+    const safe = mode === 'dark' || mode === 'light' || mode === 'auto' ? mode : 'auto';
+    document.querySelectorAll('[data-theme-btn]').forEach((btn) => {
+      const active = btn.getAttribute('data-theme-btn') === safe;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+  }
+
   function applyTheme(mode) {
     const safe = mode === 'dark' || mode === 'light' || mode === 'auto' ? mode : 'auto';
     root.setAttribute('data-theme-mode', safe);
@@ -17,17 +26,16 @@
     } catch {
       /* ignore */
     }
-    document.querySelectorAll('[data-theme-btn]').forEach((btn) => {
-      const active = btn.getAttribute('data-theme-btn') === safe;
-      btn.classList.toggle('is-active', active);
-      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
-    });
+    syncThemeButtons(safe);
   }
 
   function initThemeButtons() {
     document.querySelectorAll('[data-theme-btn]').forEach((btn) => {
+      if (btn.dataset.themeBound === 'true') return;
+      btn.dataset.themeBound = 'true';
       btn.addEventListener('click', () => applyTheme(btn.getAttribute('data-theme-btn')));
     });
+    syncThemeButtons(root.getAttribute('data-theme-mode') || stored);
   }
 
   let stored = 'auto';
@@ -46,5 +54,5 @@
     if (root.getAttribute('data-theme-mode') === 'auto') applyTheme('auto');
   });
 
-  window.NexusTheme = { apply: applyTheme, initButtons: initThemeButtons };
+  window.NexusTheme = { apply: applyTheme, initButtons: initThemeButtons, syncButtons: syncThemeButtons };
 })();

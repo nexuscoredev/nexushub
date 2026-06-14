@@ -2,17 +2,24 @@ import { useSiteTheme } from '../hooks/useSiteTheme';
 import type { SiteThemeMode } from '../lib/siteTheme';
 import styles from './SiteThemeToggle.module.css';
 
+type ThemeAccent = 'hub' | 'client';
+
+interface SiteThemeToggleProps {
+  accent?: ThemeAccent;
+}
+
 const OPTIONS: { mode: SiteThemeMode; label: string; icon: string }[] = [
   { mode: 'light', label: 'Tema claro', icon: 'light_mode' },
   { mode: 'dark', label: 'Tema escuro', icon: 'dark_mode' },
   { mode: 'auto', label: 'Tema automático', icon: 'brightness_auto' },
 ];
 
-export function SiteThemeToggle() {
+export function SiteThemeToggle({ accent = 'hub' }: SiteThemeToggleProps) {
   const { mode, setTheme } = useSiteTheme();
+  const themeClass = accent === 'client' ? `${styles.theme} ${styles.themeClient}` : styles.theme;
 
   return (
-    <div className={styles.theme} role="group" aria-label="Tema">
+    <div className={themeClass} role="group" aria-label="Tema">
       {OPTIONS.map((option) => (
         <button
           key={option.mode}
