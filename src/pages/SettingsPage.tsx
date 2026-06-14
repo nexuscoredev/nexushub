@@ -48,7 +48,7 @@ export function SettingsPage() {
         <section className="card">
           <h2 className={styles.cardTitle}>App no celular</h2>
           <p className={styles.cardLead}>
-            Instale o NEXUS Hub na tela inicial — acesso rápido como app, sem loja.
+            Instale o site NEXUS na tela inicial — acesso rápido como app, sem loja.
           </p>
           <InstallAppPrompt variant="button" className={styles.installBtn} />
         </section>

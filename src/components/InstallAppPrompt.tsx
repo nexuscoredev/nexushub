@@ -62,7 +62,7 @@ export function InstallAppPrompt({ variant = 'button', className }: InstallAppPr
             <img src="/img/favicon.png" alt="" className={styles.bannerIcon} width={36} height={36} />
             <div>
               <p className={styles.bannerTitle}>Baixar o app</p>
-              <p className={styles.bannerSub}>NEXUS Hub na sua tela inicial</p>
+              <p className={styles.bannerSub}>Site NEXUS na sua tela inicial</p>
             </div>
           </div>
           <div className={styles.bannerActions}>

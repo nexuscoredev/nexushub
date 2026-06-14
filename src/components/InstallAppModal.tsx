@@ -47,8 +47,8 @@ export function InstallAppModal({
             </h2>
             <p className={styles.sub}>
               {mode === 'installed'
-                ? 'O NEXUS Hub já está na sua tela inicial.'
-                : 'Instale o NEXUS Hub no celular — acesso rápido como app nativo.'}
+                ? 'O NEXUS já está na sua tela inicial.'
+                : 'Instale o site NEXUS no celular — acesso rápido como app nativo.'}
             </p>
           </div>
           <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Fechar">
@@ -59,8 +59,8 @@ export function InstallAppModal({
         <div className={styles.appPreview}>
           <img src="/img/favicon.png" alt="" className={styles.appIcon} width={48} height={48} />
           <div>
-            <p className={styles.appName}>NEXUS Hub</p>
-            <p className={styles.appMeta}>Painel · equipe NEXUS</p>
+            <p className={styles.appName}>NEXUS</p>
+            <p className={styles.appMeta}>Site · tecnologia sob medida</p>
           </div>
         </div>
 
@@ -118,7 +118,7 @@ export function InstallAppModal({
 
         {mode === 'unavailable' && (
           <p className={styles.sub}>
-            Abra este link no Chrome (Android) ou Safari (iPhone) para instalar o app.
+            Abra no Chrome (Android) ou Safari (iPhone) para instalar o site NEXUS.
           </p>
         )}
 

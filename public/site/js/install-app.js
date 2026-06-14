@@ -91,7 +91,7 @@
     if (mode === 'installed') {
       return '<p class="nx-install-modal__ok">Você já pode abrir pelo ícone na home.</p>';
     }
-    return '<p class="nx-install-modal__hint">Abra no Chrome (Android) ou Safari (iPhone) para instalar o NEXUS Hub.</p>';
+    return '<p class="nx-install-modal__hint">Abra no Chrome (Android) ou Safari (iPhone) para instalar o site NEXUS.</p>';
   }
 
   function openModal() {
@@ -109,12 +109,12 @@
       '<div><h2 id="nx-install-title" class="nx-install-modal__title">' +
       (mode === 'installed' ? 'App instalado' : 'Baixar o app') +
       '</h2>' +
-      '<p class="nx-install-modal__sub">Instale o NEXUS Hub — acesso rápido como app nativo.</p></div>' +
+      '<p class="nx-install-modal__sub">Instale o site NEXUS — acesso rápido como app nativo.</p></div>' +
       '<button type="button" class="nx-install-modal__close" data-install-close aria-label="Fechar">' +
       '<span class="material-symbols-outlined" aria-hidden="true">close</span></button></div>' +
       '<div class="nx-install-modal__preview">' +
       '<img src="/img/favicon.png" alt="" width="48" height="48" />' +
-      '<div><p class="nx-install-modal__app">NEXUS Hub</p><p class="nx-install-modal__meta">Painel · equipe NEXUS</p></div></div>' +
+      '<div><p class="nx-install-modal__app">NEXUS</p><p class="nx-install-modal__meta">Site · tecnologia sob medida</p></div></div>' +
       stepsHtml(mode) +
       '<div class="nx-install-modal__actions">' +
       (mode === 'native'
@@ -171,7 +171,7 @@
       '<div class="nx-install-banner__copy">' +
       '<img src="/img/favicon.png" alt="" width="36" height="36" />' +
       '<div><p class="nx-install-banner__title">Baixar o app</p>' +
-      '<p class="nx-install-banner__sub">NEXUS Hub na sua tela inicial</p></div></div>' +
+      '<p class="nx-install-banner__sub">Site NEXUS na sua tela inicial</p></div></div>' +
       '<div class="nx-install-banner__actions">' +
       '<button type="button" class="nx-btn nx-btn--primary nx-install-banner__btn">Baixar</button>' +
       '<button type="button" class="nx-install-banner__dismiss" aria-label="Dispensar">×</button></div>';
