@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DashboardFinanceKpi } from '../components/DashboardFinanceKpi';
 import { DashboardPersonalEntry } from '../components/personal/DashboardPersonalEntry';
+import { InstallAppPrompt } from '../components/InstallAppPrompt';
 import { PageHeader } from '../components/PageHeader';
 import { SystemCard } from '../components/SystemCard';
 import { useAuth } from '../contexts/AuthContext';
@@ -81,6 +82,8 @@ export function DashboardPage() {
             : 'Visão geral do NEXUS Hub'
         }
       />
+
+      <InstallAppPrompt variant="banner" />
 
       {error && <div className="error-banner">{error}</div>}
 

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { InstallAppPrompt } from '../components/InstallAppPrompt';
 import { PageHeader } from '../components/PageHeader';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './SettingsPage.module.css';
@@ -42,6 +43,14 @@ export function SettingsPage() {
               <dd className={styles.mono}>{user?.id ?? '—'}</dd>
             </div>
           </dl>
+        </section>
+
+        <section className="card">
+          <h2 className={styles.cardTitle}>App no celular</h2>
+          <p className={styles.cardLead}>
+            Instale o NEXUS Hub na tela inicial — acesso rápido como app, sem loja.
+          </p>
+          <InstallAppPrompt variant="button" className={styles.installBtn} />
         </section>
 
         <section className="card">

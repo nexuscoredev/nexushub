@@ -6,6 +6,7 @@ import { UserAvatar } from '../components/UserAvatar';
 import { TechShell } from '../components/TechShell';
 import { HubChatLauncher } from '../components/chat/HubChatLauncher';
 import { HubNovidadesModal } from '../components/HubNovidadesModal';
+import { InstallAppPrompt } from '../components/InstallAppPrompt';
 import { hasUnseenNovidades } from '../data/hubNovidades';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './DashboardLayout.module.css';
@@ -200,6 +201,7 @@ export function DashboardLayout() {
                   <span>Novidades</span>
                   {novidadesBadge && <span className={styles.mobileNovidadesDot} aria-hidden />}
                 </button>
+                <InstallAppPrompt variant="button" className={styles.mobileInstallBtn} />
                 <NavLink
                   to="/perfil"
                   className={styles.mobileFootLink}

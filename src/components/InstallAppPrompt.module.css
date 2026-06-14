@@ -1,0 +1,112 @@
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 0.85rem;
+  margin-bottom: 1rem;
+  border-radius: var(--radius);
+  border: 1px solid rgba(110, 181, 255, 0.22);
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(0, 0, 0, 0.28));
+}
+
+.bannerCopy {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.bannerIcon {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.55rem;
+  flex-shrink: 0;
+}
+
+.bannerTitle {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.bannerSub {
+  margin: 0.12rem 0 0;
+  font-size: 0.74rem;
+  color: var(--muted);
+}
+
+.bannerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.bannerPrimary {
+  min-height: 2.25rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(110, 181, 255, 0.35);
+  background: rgba(37, 99, 235, 0.22);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.bannerPrimary:hover {
+  color: #fff;
+}
+
+.bannerGhost {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.bannerGhost:hover {
+  color: var(--text);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.35rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.button:hover {
+  border-color: rgba(110, 181, 255, 0.35);
+  background: rgba(37, 99, 235, 0.08);
+  transform: translateY(-1px);
+}
+
+.buttonIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 0.3rem;
+  flex-shrink: 0;
+}
