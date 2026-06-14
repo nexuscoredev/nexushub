@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { ClientThemeToggle } from '../components/client/ClientThemeToggle';
+import { SiteThemeToggle } from '../components/SiteThemeToggle';
 import { HubLogo } from '../components/HubLogo';
 import { useAuth } from '../contexts/AuthContext';
 import { CLIENTE_PORTAL_NAV, CLIENTE_PORTAL_NAV_LIGEIRINHO } from '../lib/clientePortalNav';
@@ -27,7 +27,7 @@ export function ClientPortalLayout() {
             <small>{clienteConta?.cliente?.nome ?? 'NexusClient'}</small>
           </div>
           <div className={styles.actions}>
-            <ClientThemeToggle />
+            <SiteThemeToggle />
             <a href="/site/home.html" className={styles.actionBtn}>
               Site NEXUS
             </a>

@@ -30,23 +30,31 @@ async function ogImage() {
     .toBuffer();
 }
 
-/** Recorte central do favicon.png — mesma logo, só preenche melhor o quadrado do app. */
-async function pwaIconFromFavicon(size, zoom = 1.18) {
-  const meta = await sharp(faviconPath).metadata();
-  const base = meta.width ?? 512;
-  const cropSize = Math.max(1, Math.round(base / zoom));
-  const offset = Math.round((base - cropSize) / 2);
-  return sharp(faviconPath)
-    .extract({ left: offset, top: offset, width: cropSize, height: cropSize })
-    .resize(size, size)
+/** Ícone PWA com a logo inteira — escala para caber no quadrado sem cortar. */
+async function pwaIconFromFavicon(size, contentScale = 0.9) {
+  const inner = Math.max(1, Math.round(size * contentScale));
+  const logo = await sharp(faviconPath)
+    .resize(inner, inner, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .png()
+    .toBuffer();
+
+  return sharp({
+    create: {
+      width: size,
+      height: size,
+      channels: 4,
+      background: { r: 10, g: 10, b: 10, alpha: 255 },
+    },
+  })
+    .composite([{ input: logo, gravity: 'center' }])
     .png()
     .toBuffer();
 }
 
-async function writePwaIcon(relativePath, size, zoom) {
+async function writePwaIcon(relativePath, size, contentScale) {
   const fullPath = path.join(root, relativePath);
   fs.mkdirSync(path.dirname(fullPath), { recursive: true });
-  fs.writeFileSync(fullPath, await pwaIconFromFavicon(size, zoom));
+  fs.writeFileSync(fullPath, await pwaIconFromFavicon(size, contentScale));
   console.log('OK', relativePath);
 }
 
@@ -57,10 +65,10 @@ console.log('OK', path.relative(root, ogPath));
 fs.writeFileSync(path.join(root, 'public/site/img/og-nexus.png'), await ogImage());
 console.log('OK public/site/img/og-nexus.png');
 
-await writePwaIcon('public/img/apple-touch-icon.png', 180, 1.18);
-await writePwaIcon('public/img/pwa-icon-192.png', 192, 1.18);
-await writePwaIcon('public/img/pwa-icon-512.png', 512, 1.18);
-await writePwaIcon('public/img/pwa-icon-maskable-512.png', 512, 1.02);
+await writePwaIcon('public/img/apple-touch-icon.png', 180, 0.9);
+await writePwaIcon('public/img/pwa-icon-192.png', 192, 0.9);
+await writePwaIcon('public/img/pwa-icon-512.png', 512, 0.9);
+await writePwaIcon('public/img/pwa-icon-maskable-512.png', 512, 0.78);
 
-await writePwaIcon('public/site/img/apple-touch-icon.png', 180, 1.18);
-await writePwaIcon('public/site/img/pwa-icon-192.png', 192, 1.18);
+await writePwaIcon('public/site/img/apple-touch-icon.png', 180, 0.9);
+await writePwaIcon('public/site/img/pwa-icon-192.png', 192, 0.9);

@@ -42,3 +42,19 @@
   font-weight: 500;
   color: var(--muted);
 }
+
+:global([data-theme='light']) .button {
+  background: #efeff1;
+  border-color: rgba(10, 10, 10, 0.12);
+  box-shadow:
+    inset 2px 2px 6px rgba(10, 10, 10, 0.06),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.9);
+}
+
+:global([data-theme='light']) .button:hover:not(:disabled) {
+  border-color: rgba(10, 10, 10, 0.18);
+  box-shadow:
+    inset 2px 2px 6px rgba(10, 10, 10, 0.08),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.95),
+    0 0 0 3px rgba(37, 99, 235, 0.08);
+}

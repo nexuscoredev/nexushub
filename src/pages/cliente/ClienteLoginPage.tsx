@@ -1,5 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { LoginThemeToggle } from '../../components/LoginThemeToggle';
 import { HubLogo } from '../../components/HubLogo';
 import { NexusBrandSubmit } from '../../components/NexusBrandSubmit';
 import { TechShell } from '../../components/TechShell';
@@ -39,6 +40,7 @@ export function ClienteLoginPage() {
 
   return (
     <TechShell>
+      <LoginThemeToggle />
       <div className={styles.page}>
         <div className={`card ${styles.card}`}>
           <div className={styles.cardGlow} aria-hidden />

@@ -201,3 +201,56 @@
     font-size: 16px;
   }
 }
+
+:global([data-theme='light']) .card {
+  box-shadow:
+    0 0 0 1px rgba(10, 10, 10, 0.04) inset,
+    0 16px 48px rgba(10, 10, 10, 0.08),
+    0 0 24px rgba(37, 99, 235, 0.04);
+}
+
+:global([data-theme='light']) .cardGlow {
+  background: radial-gradient(ellipse, rgba(37, 99, 235, 0.06), transparent 70%);
+}
+
+:global([data-theme='light']) .hubNotice {
+  border-color: rgba(37, 99, 235, 0.18);
+  background: rgba(37, 99, 235, 0.06);
+}
+
+:global([data-theme='light']) .fieldShell {
+  background: #efeff1;
+  box-shadow:
+    inset 2px 2px 6px rgba(10, 10, 10, 0.06),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.9);
+}
+
+:global([data-theme='light']) .fieldShell:focus-within {
+  box-shadow:
+    inset 2px 2px 6px rgba(10, 10, 10, 0.08),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.95),
+    0 0 0 1px rgba(37, 99, 235, 0.3);
+}
+
+:global([data-theme='light']) .fieldIcon {
+  color: #6b6f78;
+}
+
+:global([data-theme='light']) .fieldShell:focus-within .fieldIcon {
+  color: #4a4a4a;
+}
+
+:global([data-theme='light']) .fieldInput::placeholder {
+  color: #8a8f98;
+}
+
+:global([data-theme='light']) .fieldInput:-webkit-autofill,
+:global([data-theme='light']) .fieldInput:-webkit-autofill:hover,
+:global([data-theme='light']) .fieldInput:-webkit-autofill:active,
+:global([data-theme='light']) .fieldInput:-webkit-autofill:focus {
+  box-shadow: 0 0 0 1000px #efeff1 inset;
+}
+
+:global([data-theme='light']) .fieldInput:autofill {
+  box-shadow: 0 0 0 1000px #efeff1 inset;
+}
