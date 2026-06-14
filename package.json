@@ -12,7 +12,10 @@
     "check:setup": "node scripts/check-setup.mjs",
     "test:login": "node scripts/test-login.mjs",
     "lint": "tsc --noEmit",
-    "generate:brand": "node scripts/generate-brand-images.mjs"
+    "generate:brand": "node scripts/generate-brand-images.mjs",
+    "db:migrations:status": "npx supabase migration list --linked",
+    "db:migrations:repair": "node scripts/repair-migrations.mjs",
+    "db:migrations:push": "npx supabase db push --linked"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
