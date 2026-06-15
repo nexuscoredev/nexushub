@@ -74,6 +74,41 @@ export function markPwaInstalled(): void {
   }
 }
 
+export function clearPwaInstalled(): void {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.removeItem(INSTALLED_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Sincroniza flag local com PWA realmente instalado (detecta desinstalação no Android/Chrome). */
+export async function reconcilePwaInstallState(): Promise<void> {
+  if (typeof window === 'undefined') return;
+
+  if (isStandaloneDisplay()) {
+    markPwaInstalled();
+    return;
+  }
+
+  const nav = navigator as Navigator & {
+    getInstalledRelatedApps?: () => Promise<{ id?: string; platform?: string; url?: string }[]>;
+  };
+  if (typeof nav.getInstalledRelatedApps !== 'function') return;
+
+  try {
+    const apps = await nav.getInstalledRelatedApps();
+    if (apps?.length) {
+      markPwaInstalled();
+    } else {
+      clearPwaInstalled();
+    }
+  } catch {
+    /* keep existing state */
+  }
+}
+
 export function hasInstalledApp(): boolean {
   return isStandaloneDisplay() || isPwaInstalledFlag();
 }

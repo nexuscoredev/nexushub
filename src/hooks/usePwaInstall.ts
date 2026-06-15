@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { BeforeInstallPromptEvent } from '../lib/pwaInstall';
 import {
+  clearPwaInstalled,
   hasInstalledApp,
   isAndroidDevice,
   isIosDevice,
   markPwaInstalled,
+  reconcilePwaInstallState,
   shareNexusApp,
 } from '../lib/pwaInstall';
 
@@ -15,9 +17,13 @@ export function usePwaInstall() {
   const android = isAndroidDevice();
 
   useEffect(() => {
+    const syncInstalled = () => setInstalled(hasInstalledApp());
+
     const onBeforeInstall = (event: Event) => {
       event.preventDefault();
+      clearPwaInstalled();
       setDeferredPrompt(event as BeforeInstallPromptEvent);
+      syncInstalled();
     };
 
     const onInstalled = () => {
@@ -26,17 +32,29 @@ export function usePwaInstall() {
       setDeferredPrompt(null);
     };
 
+    void reconcilePwaInstallState().then(syncInstalled);
+
     window.addEventListener('beforeinstallprompt', onBeforeInstall);
     window.addEventListener('appinstalled', onInstalled);
 
     const standaloneMq = window.matchMedia('(display-mode: standalone)');
-    const onDisplayChange = () => setInstalled(hasInstalledApp());
+    const onDisplayChange = () => {
+      void reconcilePwaInstallState().then(syncInstalled);
+    };
     standaloneMq.addEventListener('change', onDisplayChange);
+
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') {
+        void reconcilePwaInstallState().then(syncInstalled);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisible);
 
     return () => {
       window.removeEventListener('beforeinstallprompt', onBeforeInstall);
       window.removeEventListener('appinstalled', onInstalled);
       standaloneMq.removeEventListener('change', onDisplayChange);
+      document.removeEventListener('visibilitychange', onVisible);
     };
   }, []);
 
