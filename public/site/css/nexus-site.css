@@ -31,6 +31,9 @@
   --nx-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --nx-glow: 0 0 24px rgba(37, 99, 235, 0.35);
   --nx-glow-soft: 0 0 48px rgba(37, 99, 235, 0.12);
+  --nx-nav-bar-height: 3.5rem;
+  --nx-main-zoom: 0.75;
+  --nx-page-header-gap: 2rem;
 }
 
 :root,
@@ -309,8 +312,13 @@ img {
 }
 
 .nx-page {
-  padding-top: clamp(4.75rem, 7vh, 5.5rem);
+  /* main usa zoom 0.75 — compensar para não colar no header fixo */
+  padding-top: calc((var(--nx-nav-bar-height) + var(--nx-page-header-gap)) / var(--nx-main-zoom));
   padding-bottom: 0.5rem;
+}
+
+.nx-page-flow > :first-child {
+  margin-top: calc(0.5rem / var(--nx-main-zoom));
 }
 
 /* ── Nav (estilo Nintendo · NEXUS · prata metálica) ── */
@@ -3394,7 +3402,7 @@ body {
   }
 
   .nx-page {
-    padding-top: clamp(5.25rem, 9vh, 6rem);
+    padding-top: calc((var(--nx-nav-bar-height) + 2.5rem) / var(--nx-main-zoom));
   }
 
   .nx-page-flow {
