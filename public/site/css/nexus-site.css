@@ -2456,6 +2456,34 @@ img {
   object-fit: cover;
 }
 
+.nx-media-frame--exploded-logo {
+  aspect-ratio: 1;
+  width: min(100%, 11rem);
+  max-height: 11rem;
+  margin-inline: auto;
+  border: none;
+  background: transparent;
+  overflow: visible;
+}
+
+.nx-media-frame--exploded-logo img {
+  object-fit: contain;
+}
+
+@media (min-width: 768px) {
+  .nx-media-frame--exploded-logo {
+    width: min(100%, 13rem);
+    max-height: 13rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .nx-media-frame--exploded-logo {
+    width: min(100%, 14rem);
+    max-height: 14rem;
+  }
+}
+
 .nx-quote-float {
   position: absolute;
   z-index: 2;
@@ -3562,9 +3590,14 @@ body {
     order: 2;
   }
 
-  body[data-page='home'] .nx-split-section .nx-media-frame {
+  body[data-page='home'] .nx-split-section .nx-media-frame:not(.nx-media-frame--exploded-logo) {
     max-height: 14rem;
     aspect-ratio: 16 / 10;
+  }
+
+  body[data-page='home'] .nx-split-section .nx-media-frame--exploded-logo {
+    width: min(100%, 10rem);
+    max-height: 10rem;
   }
 
   body[data-page='home'] .nx-check-list li span strong {
