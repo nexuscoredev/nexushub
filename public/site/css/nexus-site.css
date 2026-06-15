@@ -309,12 +309,8 @@ img {
 }
 
 .nx-page {
-  padding-top: 3.5rem;
-  padding-bottom: 0.5rem;
-}
-
-body[data-page='home'] .nx-page {
   padding-top: clamp(4.75rem, 7vh, 5.5rem);
+  padding-bottom: 0.5rem;
 }
 
 /* ── Nav (estilo Nintendo · NEXUS · prata metálica) ── */
@@ -2170,7 +2166,6 @@ body[data-page='home'] .nx-page {
 
 .nx-hero-cinema--brand {
   align-items: end;
-  margin-top: clamp(1.75rem, 4vh, 3rem);
   padding-top: clamp(2.25rem, 6vh, 3.75rem);
   padding-bottom: clamp(1.5rem, 3.5vh, 2.25rem);
 }
@@ -3382,10 +3377,6 @@ body {
   }
 
   .nx-page {
-    padding-top: 4.35rem;
-  }
-
-  body[data-page='home'] .nx-page {
     padding-top: clamp(5.25rem, 9vh, 6rem);
   }
 
@@ -3483,7 +3474,7 @@ body {
     justify-content: flex-start;
     align-items: stretch;
     min-height: auto;
-    margin-top: 1.75rem;
+    margin-top: 0;
     padding: 0;
     overflow: visible;
   }
