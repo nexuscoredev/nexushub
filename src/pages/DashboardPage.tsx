@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DashboardFinanceKpi } from '../components/DashboardFinanceKpi';
-import { DashboardPersonalEntry } from '../components/personal/DashboardPersonalEntry';
 import { PageHeader } from '../components/PageHeader';
 import { SystemCard } from '../components/SystemCard';
 import { useAuth } from '../contexts/AuthContext';
@@ -19,7 +18,7 @@ import type {
 import styles from './DashboardPage.module.css';
 
 export function DashboardPage() {
-  const { profile, podeFinanceiroAgenda, podePessoal } = useAuth();
+  const { profile, podeFinanceiroAgenda } = useAuth();
   const [systems, setSystems] = useState<HubSystem[]>([]);
   const [receivables, setReceivables] = useState<HubFinanceReceivable[]>([]);
   const [subscriptions, setSubscriptions] = useState<HubFinanceSubscription[]>([]);
@@ -83,8 +82,6 @@ export function DashboardPage() {
       />
 
       {error && <div className="error-banner">{error}</div>}
-
-      {podePessoal && <DashboardPersonalEntry />}
 
       <div className="kpi-grid">
         <div className="kpi">

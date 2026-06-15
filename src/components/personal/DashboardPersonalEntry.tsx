@@ -1,7 +1,28 @@
 import { Link } from 'react-router-dom';
 import styles from './DashboardPersonalEntry.module.css';
 
-export function DashboardPersonalEntry() {
+interface DashboardPersonalEntryProps {
+  variant?: 'banner' | 'nav';
+  className?: string;
+}
+
+export function DashboardPersonalEntry({ variant = 'banner', className }: DashboardPersonalEntryProps) {
+  if (variant === 'nav') {
+    return (
+      <Link
+        to="/pessoal"
+        className={`${styles.navBtn} ${className ?? ''}`.trim()}
+        title="Área Pessoal — Como você está hoje? Um cantinho só seu."
+        aria-label="Área Pessoal"
+      >
+        <span className={styles.navIcon} aria-hidden>
+          ✦
+        </span>
+        <span className={styles.navLabel}>Pessoal</span>
+      </Link>
+    );
+  }
+
   return (
     <Link to="/pessoal" className={styles.entry}>
       <span className={styles.icon} aria-hidden>

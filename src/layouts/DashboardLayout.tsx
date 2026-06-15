@@ -7,6 +7,7 @@ import { TechShell } from '../components/TechShell';
 import { HubChatLauncher } from '../components/chat/HubChatLauncher';
 import { JarvisLauncher } from '../components/jarvis/JarvisLauncher';
 import { HubNotificationsBell } from '../components/notifications/HubNotificationsBell';
+import { DashboardPersonalEntry } from '../components/personal/DashboardPersonalEntry';
 import { HubNovidadesModal } from '../components/HubNovidadesModal';
 import { InstallAppPrompt } from '../components/InstallAppPrompt';
 import { hasUnseenNovidades } from '../data/hubNovidades';
@@ -119,16 +120,19 @@ export function DashboardLayout() {
             <div className={styles.hubNavUtilities}>
               <InstallAppPrompt variant="icon" className={styles.installNavBtn} />
               {user?.id ? <HubNotificationsBell userId={user.id} /> : null}
-              <button
-                type="button"
-                className={styles.novidadesBtn}
-                onClick={openNovidades}
-                aria-label="Novidades"
-                title="Novidades"
-              >
-                <NovidadesSparkIcon className={styles.novidadesIcon} />
-                {novidadesBadge && <span className={styles.novidadesBadge} aria-hidden />}
-              </button>
+              <div className={styles.utilityCluster}>
+                {podePessoal ? <DashboardPersonalEntry variant="nav" /> : null}
+                <button
+                  type="button"
+                  className={styles.novidadesBtn}
+                  onClick={openNovidades}
+                  aria-label="Novidades"
+                  title="Novidades"
+                >
+                  <NovidadesSparkIcon className={styles.novidadesIcon} />
+                  {novidadesBadge && <span className={styles.novidadesBadge} aria-hidden />}
+                </button>
+              </div>
               <NavLink
                 to="/perfil"
                 className={styles.accountPill}
@@ -191,6 +195,18 @@ export function DashboardLayout() {
               </ul>
 
               <div className={styles.mobileDrawerFoot}>
+                {podePessoal ? (
+                  <NavLink
+                    to="/pessoal"
+                    className={styles.mobileFootLink}
+                    onClick={closeMenu}
+                  >
+                    <span className={styles.mobilePessoalIcon} aria-hidden>
+                      ✦
+                    </span>
+                    <span>Área Pessoal</span>
+                  </NavLink>
+                ) : null}
                 <button
                   type="button"
                   className={`${styles.mobileFootLink} ${styles.mobileNovidadesBtn}`}

@@ -70,6 +70,50 @@
   line-height: 1;
 }
 
+.navBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  height: 2.15rem;
+  padding: 0 0.7rem 0 0.4rem;
+  border-radius: 999px;
+  border: 1px solid rgba(165, 180, 252, 0.28);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.14), rgba(129, 140, 248, 0.06));
+  color: var(--text);
+  text-decoration: none;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.navBtn:hover {
+  border-color: rgba(165, 180, 252, 0.45);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.navIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.22);
+  color: #c7d2fe;
+  font-size: 0.72rem;
+  flex-shrink: 0;
+}
+
+.navLabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  color: #e0e7ff;
+}
+
 @media (max-width: 899px) {
   .entry {
     padding-left: max(1rem, env(safe-area-inset-left));
