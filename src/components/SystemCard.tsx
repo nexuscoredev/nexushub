@@ -8,9 +8,10 @@ interface SystemCardProps {
   system: HubSystem;
   /** link = card inteiro clicável; button = só botão abre URL */
   variant?: 'link' | 'button';
+  onDetalhes?: (system: HubSystem) => void;
 }
 
-export function SystemCard({ system, variant = 'button' }: SystemCardProps) {
+export function SystemCard({ system, variant = 'button', onDetalhes }: SystemCardProps) {
   const { podeDocumentacao } = useAuth();
   const logo = systemLogoUrl(system.id);
   const href = resolveSystemUrl(system.id, system.url, system.nome);
@@ -33,6 +34,15 @@ export function SystemCard({ system, variant = 'button' }: SystemCardProps) {
           >
             Abrir sistema
           </a>
+          {onDetalhes ? (
+            <button
+              type="button"
+              className={`btn-ghost ${styles.action}`}
+              onClick={() => onDetalhes(system)}
+            >
+              Detalhes
+            </button>
+          ) : null}
           {docPath ? (
             <Link to={docPath} className={`btn-ghost ${styles.action}`}>
               Documentação

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { HubSystemHealthPanel } from '../components/HubSystemHealthPanel';
 import { PageHeader } from '../components/PageHeader';
+import { SystemDetailsModal } from '../components/SystemDetailsModal';
 import { useAuth } from '../contexts/AuthContext';
 import { SystemCard } from '../components/SystemCard';
 import { LIGEIRINHO_CONTRATO, LIGEIRINHO_CONTRATO_HUB_PATH } from '../lib/ligeirinhoDocumentacao';
@@ -13,6 +15,7 @@ export function SystemsPage() {
   const [systems, setSystems] = useState<HubSystem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [detailsSystem, setDetailsSystem] = useState<HubSystem | null>(null);
 
   useEffect(() => {
     if (!supabase) {
@@ -39,12 +42,19 @@ export function SystemsPage() {
         subtitle="Produtos NEXUS — abrem em nova aba."
       />
       {error && <div className="error-banner">{error}</div>}
+      <HubSystemHealthPanel />
       {loading && <p style={{ color: 'var(--muted)' }}>Carregando…</p>}
       <div className="product-grid">
         {systems.map((sys) => (
-          <SystemCard key={sys.id} system={sys} />
+          <SystemCard key={sys.id} system={sys} onDetalhes={setDetailsSystem} />
         ))}
       </div>
+
+      <SystemDetailsModal
+        system={detailsSystem}
+        open={detailsSystem !== null}
+        onClose={() => setDetailsSystem(null)}
+      />
 
       {podeDocumentacao && systems.some((s) => s.id === 'ligeirinho') ? (
         <section className={styles.docSection} aria-labelledby="ligeirinho-doc-title">
