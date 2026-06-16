@@ -79,6 +79,9 @@ export interface HubFinanceInvestment {
   status: string;
   data_investimento: string | null;
   notas: string | null;
+  parcelado?: boolean;
+  qtd_parcelas?: number | null;
+  parcelas_pagas?: number[];
   created_at?: string;
 }
 

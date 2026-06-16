@@ -1,13 +1,8 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { FinanceKpiStrip } from '../components/FinanceKpiStrip';
+import { InvestmentsTable } from '../components/InvestmentsTable';
 import { MensalidadesEntradaView } from '../components/MensalidadesEntradaView';
 import { ReceivablesTable } from '../components/ReceivablesTable';
-import {
-  deleteFinanceRow,
-  FinanceCrudBar,
-  FinanceRecordForm,
-  type FinanceTable,
-} from '../components/FinanceCrudBar';
 import { PageHeader } from '../components/PageHeader';
 import {
   ENTRADA_SECOES,
@@ -16,7 +11,6 @@ import {
   secaoSaidaInvestment,
   type EntradaSecao,
   type FinanceFluxo,
-  type FinanceFluxoSecao,
   type SaidaSecao,
 } from '../lib/financeCategories';
 import {
@@ -27,7 +21,8 @@ import {
   totalRecebido,
   totalSaidas,
 } from '../lib/financeiro';
-import { formatBRL, formatDate } from '../lib/format';
+import { formatBRL } from '../lib/format';
+import { valorPagoInvestment } from '../lib/investmentParcelas';
 import { valorPagoReceivable } from '../lib/receivableParcelas';
 import { supabase, supabaseErrorMessage } from '../lib/supabase';
 import type {
@@ -36,14 +31,6 @@ import type {
   HubFinanceSubscription,
 } from '../types/database';
 import styles from './FinanceiroPage.module.css';
-
-const CATEGORIA_LABELS: Record<string, string> = {
-  implantacao: 'Implantação',
-  mensalidade: 'Mensalidade',
-  assinatura: 'Assinatura',
-  transporte: 'Transporte',
-  outras: 'Outras',
-};
 
 export function FinanceiroPage() {
   const [fluxo, setFluxo] = useState<FinanceFluxo>('entrada');
@@ -186,16 +173,14 @@ export function FinanceiroPage() {
             <FinanceQueueSection
               key={secao.id}
               title={secao.label}
-              totalLabel={formatBRL(sumInvestments(investmentsBySecao[secao.id]))}
+              totalLabel={formatInvestmentSectionMeta(investmentsBySecao[secao.id])}
             >
-              <FinanceTable
-                table="hub_finance_investments"
+              <InvestmentsTable
                 rows={investmentsBySecao[secao.id]}
-                columns={['titulo', 'valor', 'responsavel', 'status', 'data_investimento']}
                 preset={{ tipo: 'Saída' }}
                 fluxoSecao={{ fluxo: 'saida', secao: secao.id }}
                 onRefresh={load}
-                hideTitle
+                compactParcelas
               />
             </FinanceQueueSection>
           ))}
@@ -231,6 +216,17 @@ function sumInvestments(items: HubFinanceInvestment[]): number {
   return items.reduce((s, i) => s + Number(i.valor), 0);
 }
 
+function sumInvestmentsPago(items: HubFinanceInvestment[]): number {
+  return items.reduce((s, i) => s + valorPagoInvestment(i), 0);
+}
+
+function formatInvestmentSectionMeta(items: HubFinanceInvestment[]): string {
+  const total = sumInvestments(items);
+  const pago = sumInvestmentsPago(items);
+  const falta = Math.max(0, total - pago);
+  return `${formatBRL(total)} total · ${formatBRL(pago)} pago · ${formatBRL(falta)} falta`;
+}
+
 function FinanceQueueSection({
   title,
   subtitle,
@@ -253,115 +249,5 @@ function FinanceQueueSection({
       </div>
       <div className={styles.sectionBody}>{children}</div>
     </section>
-  );
-}
-
-function FinanceTable<T extends { id: string }>({
-  title,
-  table,
-  rows,
-  columns,
-  preset,
-  fluxoSecao,
-  onRefresh,
-  compact,
-  hideTitle,
-}: {
-  title?: string;
-  table: FinanceTable;
-  rows: T[];
-  columns: string[];
-  preset?: Record<string, unknown>;
-  fluxoSecao?: FinanceFluxoSecao;
-  onRefresh: () => void;
-  compact?: boolean;
-  hideTitle?: boolean;
-}) {
-  const [editing, setEditing] = useState<T | null>(null);
-
-  const handleDelete = async (id: string) => {
-    if (!confirm('Excluir este registro?')) return;
-    const err = await deleteFinanceRow(table, id);
-    if (err) alert(err);
-    else onRefresh();
-  };
-
-  return (
-    <div
-      className={`table-wrap ${styles.financeMobileCards}`}
-      style={{
-        marginBottom: compact ? '1rem' : 0,
-        padding: compact ? '0' : undefined,
-        border: compact ? 'none' : undefined,
-        background: compact ? 'transparent' : undefined,
-      }}
-    >
-      {title && !hideTitle && (
-        <h3 style={{ fontSize: '0.88rem', marginBottom: '0.65rem', color: 'var(--muted)' }}>{title}</h3>
-      )}
-      <FinanceCrudBar
-        table={table}
-        onSaved={onRefresh}
-        preset={preset}
-        fluxoSecao={fluxoSecao}
-      />
-      {editing && (
-        <FinanceRecordForm
-          table={table}
-          recordId={editing.id}
-          initialValues={editing as Record<string, unknown>}
-          preset={preset}
-          fluxoSecao={fluxoSecao}
-          onSaved={() => {
-            setEditing(null);
-            onRefresh();
-          }}
-          onCancel={() => setEditing(null)}
-        />
-      )}
-      <table className="data-table">
-        <thead>
-          <tr>
-            {columns.map((c) => (
-              <th key={c}>{c.replace(/_/g, ' ')}</th>
-            ))}
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr key={row.id}>
-              {columns.map((col) => {
-                const val = (row as Record<string, unknown>)[col];
-                let display: string;
-                if (col === 'valor' || col === 'valor_mensal') display = formatBRL(Number(val));
-                else if (col.includes('data')) display = formatDate(String(val ?? ''));
-                else if (col === 'categoria') display = CATEGORIA_LABELS[String(val)] ?? String(val ?? '—');
-                else if (col === 'notas') display = String(val ?? '—');
-                else if (typeof val === 'boolean') display = val ? 'Sim' : 'Não';
-                else display = String(val ?? '—');
-                const label = col.replace(/_/g, ' ');
-                return (
-                  <td key={col} data-label={label}>
-                    {display}
-                  </td>
-                );
-              })}
-              <td className={styles.cellActions} data-label="Ações">
-                <button type="button" className="btn-ghost" onClick={() => setEditing(row)}>
-                  Editar
-                </button>
-                <button type="button" className="btn-ghost" onClick={() => void handleDelete(row.id)}>
-                  Excluir
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {rows.length === 0 && (
-        <p style={{ color: 'var(--muted)', padding: '0.75rem 0' }}>Nenhum registro nesta fila.</p>
-      )}
-    </div>
   );
 }
