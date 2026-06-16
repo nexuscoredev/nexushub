@@ -2201,8 +2201,8 @@ img {
     top: auto;
     bottom: clamp(0.75rem, 4vw, 1.25rem);
     transform: translateX(-50%);
-    width: clamp(9rem, 52vw, 13rem);
-    max-height: 42%;
+    width: clamp(4.5rem, 26vw, 6.5rem);
+    max-height: 21%;
     padding: 0;
   }
 
@@ -2253,9 +2253,9 @@ img {
   right: clamp(1rem, 3vw, 2.5rem);
   left: auto;
   transform: none;
-  width: clamp(11rem, 26vw, 22rem);
+  width: clamp(5.5rem, 13vw, 11rem);
   height: auto;
-  max-height: 72%;
+  max-height: 36%;
   object-fit: contain;
   object-position: center;
   padding: 0;
@@ -2298,8 +2298,8 @@ img {
   .nx-hero-cinema--brand .nx-hero-cinema__bg img {
     bottom: clamp(1.25rem, 3vh, 2rem);
     right: clamp(1.25rem, 4vw, 3rem);
-    width: clamp(12rem, 22vw, 24rem);
-    max-height: 68%;
+    width: clamp(6rem, 11vw, 12rem);
+    max-height: 34%;
   }
 
   .nx-hero-cinema__overlay {
@@ -3459,8 +3459,8 @@ body {
   }
 
   .nx-hero-cinema--brand .nx-hero-cinema__bg img {
-    width: clamp(8.5rem, 24vw, 13rem);
-    max-height: 52%;
+    width: clamp(4.25rem, 12vw, 6.5rem);
+    max-height: 26%;
     right: clamp(0.75rem, 2vw, 1.5rem);
     bottom: clamp(0.85rem, 2vh, 1.5rem);
   }
@@ -3520,7 +3520,7 @@ body {
   .nx-hero-cinema--brand .nx-hero-cinema__bg img {
     position: relative;
     inset: auto;
-    width: clamp(5.5rem, 30vw, 7rem);
+    width: clamp(2.75rem, 15vw, 3.5rem);
     height: auto;
     max-height: none;
     bottom: auto;
