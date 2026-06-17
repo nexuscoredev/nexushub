@@ -96,7 +96,7 @@ export function secaoSaidaInvestment(i: HubFinanceInvestment): SaidaSecao {
   if (cat === 'transporte') return 'transporte';
   if (cat === 'outras') return 'outras';
   const t = i.titulo.toLowerCase();
-  if (t.includes('cursor') || t.includes('supabase')) return 'assinaturas';
+  if (t.includes('cursor') || t.includes('supabase') || t.includes('vercel')) return 'assinaturas';
   if (t.includes('transport')) return 'transporte';
   if (i.tipo === 'investimento') return 'outras';
   return 'outras';

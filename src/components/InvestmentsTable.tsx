@@ -14,6 +14,7 @@ import { supabase } from '../lib/supabase';
 import type { HubFinanceInvestment } from '../types/database';
 import styles from '../pages/FinanceiroPage.module.css';
 import { deleteFinanceRow } from './FinanceCrudBar';
+import { FinanceProviderLabel } from './FinanceProviderLabel';
 import { InvestmentFinanceForm } from './InvestmentFinanceForm';
 
 interface InvestmentsTableProps {
@@ -174,7 +175,9 @@ export function InvestmentsTable({
 
             return (
               <tr key={row.id}>
-                <td data-label="Descrição">{row.titulo}</td>
+                <td data-label="Descrição">
+                  <FinanceProviderLabel titulo={row.titulo} />
+                </td>
                 <td data-label="Valor total">{formatBRL(Number(row.valor))}</td>
                 <td className={pagoClass} data-label="Pago">
                   {formatBRL(pago)}
