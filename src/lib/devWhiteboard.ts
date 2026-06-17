@@ -89,9 +89,9 @@ export const DEFAULT_WHITEBOARD_SCENE: WhiteboardScene = {
   elements: [],
 };
 
-export const PEN_COLORS = ['#f5f5f5', '#93c5fd', '#86efac', '#fca5a5', '#fbbf24'] as const;
+export const PEN_COLORS = ['#f5f5f5', '#93c5fd', '#86efac', '#fca5a5', '#fbbf24', '#ff3333'] as const;
 
-export const STICKY_COLORS = ['#fef08a', '#bbf7d0', '#bfdbfe', '#fbcfe8', '#e9d5ff'] as const;
+export const STICKY_COLORS = ['#fef08a', '#bbf7d0', '#bfdbfe', '#fbcfe8', '#e9d5ff', '#ff6b6b'] as const;
 
 export function newElementId(): string {
   return crypto.randomUUID();
