@@ -1,0 +1,24 @@
+---
+description: Ações pré-aprovadas — push main, deploy prod, git rebase/stash, assets externos
+alwaysApply: true
+---
+
+# Ações pré-aprovadas (NEXUS Hub)
+
+O utilizador aprovou antecipadamente estas ações neste projeto. **Executar sem pedir confirmação adicional**, salvo conflito de git ou working tree suja (parar e perguntar, conforme Fluxo Git).
+
+## Git & deploy
+
+- `git push origin main`
+- `git pull --rebase origin main` (inclui stash/pop quando necessário para sincronizar)
+- `npx vercel --prod --yes` e deploy de produção via MCP Vercel
+- Fluxo completo de publicação do `fluxo-git-nexushub.mdc` quando o utilizador pedir commit/deploy
+
+## Assets & ficheiros
+
+- Copiar imagens/assets do cache/workspace do Cursor para `public/` ou paths do repo quando pedido ou necessário para a tarefa
+
+## Não abrandar
+
+- Continuar a **nunca** commitar `.env`, tokens ou service role
+- Em conflitos de rebase ou working tree ambígua: parar e perguntar

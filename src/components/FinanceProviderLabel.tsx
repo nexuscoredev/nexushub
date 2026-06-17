@@ -12,7 +12,12 @@ export function FinanceProviderLabel({ titulo }: FinanceProviderLabelProps) {
 
   return (
     <span className={styles.pill}>
-      <img src={brand.src} alt={brand.alt} className={styles.brandLabel} />
+      <img
+        src={brand.src}
+        alt={brand.alt}
+        className={styles.brandLabel}
+        style={{ transform: `scale(${brand.visualScale})` }}
+      />
     </span>
   );
 }
