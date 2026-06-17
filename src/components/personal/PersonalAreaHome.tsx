@@ -8,7 +8,9 @@ import {
   saveHumorDoDia,
 } from '../../lib/pessoalHumor';
 import { TodoistIcon } from '../TodoistIcon';
+import { TheNewsMark } from './TheNewsMark';
 import { PiggyFinanceButton } from './PiggyFinanceButton';
+import { ViniciusDrinksEntry } from './ViniciusDrinksEntry';
 import styles from './PersonalAreaHome.module.css';
 
 const SCORES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
@@ -22,9 +24,9 @@ const QUICK_LINKS = [
   },
   {
     id: 'the-news',
-    label: 'The News',
+    label: 'the news',
     href: 'https://open.spotify.com/show/5cYtKjFwlRCSZKyV6ZC8Wq',
-    icon: '/img/streaming/spotify.png',
+    variant: 'the-news',
   },
   {
     id: 'spotify',
@@ -54,9 +56,10 @@ function saudacao(nome: string): string {
 
 interface PersonalAreaHomeProps {
   onOpenFinance: () => void;
+  onOpenDrinks?: () => void;
 }
 
-export function PersonalAreaHome({ onOpenFinance }: PersonalAreaHomeProps) {
+export function PersonalAreaHome({ onOpenFinance, onOpenDrinks }: PersonalAreaHomeProps) {
   const { profile, user } = useAuth();
   const userId = user?.id;
   const firstName = profile?.nome?.trim().split(/\s+/)[0] ?? 'você';
@@ -167,9 +170,18 @@ export function PersonalAreaHome({ onOpenFinance }: PersonalAreaHomeProps) {
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
-              className={styles.musicLink}
+              className={
+                'variant' in link && link.variant === 'the-news'
+                  ? `${styles.musicLink} ${styles.theNewsLink}`
+                  : styles.musicLink
+              }
             >
-              {'materialIcon' in link && link.materialIcon ? (
+              {'variant' in link && link.variant === 'the-news' ? (
+                <>
+                  <TheNewsMark className={styles.theNewsMark} />
+                  <span className={styles.theNewsLabel}>{link.label}</span>
+                </>
+              ) : 'materialIcon' in link && link.materialIcon ? (
                 <span className={`material-symbols-outlined ${styles.materialLogo}`} aria-hidden>
                   {link.materialIcon}
                 </span>
@@ -195,6 +207,8 @@ export function PersonalAreaHome({ onOpenFinance }: PersonalAreaHomeProps) {
       <section className={styles.piggySection}>
         <PiggyFinanceButton onLaunch={onOpenFinance} />
       </section>
+
+      {onOpenDrinks ? <ViniciusDrinksEntry onOpen={onOpenDrinks} /> : null}
     </div>
   );
 }

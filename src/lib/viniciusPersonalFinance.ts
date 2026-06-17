@@ -9,6 +9,11 @@ export function isViniciusPersonalFinance(email: string | undefined | null): boo
   return normalizeEmail(email) === VINICIUS_PERSONAL_EMAIL;
 }
 
+/** Recursos exclusivos do Vinícius na área pessoal (ninguém mais vê). */
+export function isViniciusOnly(email: string | undefined | null): boolean {
+  return isViniciusPersonalFinance(email);
+}
+
 export const PESSOAL_CONTA_GRUPOS: {
   id: HubPersonalContaGrupo;
   label: string;

@@ -8,6 +8,10 @@
   margin-inline: auto;
 }
 
+.drinksPage {
+  max-width: 760px;
+}
+
 .financeTop {
   display: flex;
   align-items: flex-start;
