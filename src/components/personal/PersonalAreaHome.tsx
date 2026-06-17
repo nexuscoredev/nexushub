@@ -198,7 +198,9 @@ export function PersonalAreaHome({ onOpenFinance, onOpenDrinks }: PersonalAreaHo
                   decoding="async"
                 />
               ) : null}
-              <span>{link.label}</span>
+              {!('variant' in link && link.variant === 'the-news') ? (
+                <span>{link.label}</span>
+              ) : null}
             </a>
           ))}
         </div>
