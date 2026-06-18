@@ -12,7 +12,7 @@ const VAULT_PROVIDER_LOGOS: Record<VaultProvedorId, string> = {
   notion: '/img/providers/notion.svg',
   slack: '/img/providers/slack.svg',
   microsoft: '/img/providers/microsoft.svg',
-  todoist: '/img/providers/todoist.svg',
+  todoist: '/img/apps/todoist.png',
   docker: '/img/providers/docker.svg',
   npm: '/img/providers/npm.svg',
   outro: '/img/providers/outro.svg',

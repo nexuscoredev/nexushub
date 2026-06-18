@@ -2,23 +2,20 @@ interface TodoistIconProps {
   className?: string;
 }
 
-/** Marca Todoist (vermelho + check) */
+const TODOIST_ICON_SRC = '/img/apps/todoist.png';
+
+/** Marca Todoist oficial (vermelho + três checks). */
 export function TodoistIcon({ className }: TodoistIconProps) {
   return (
-    <svg
+    <img
+      src={TODOIST_ICON_SRC}
+      alt=""
       className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden
-    >
-      <rect width="24" height="24" rx="5" fill="#E44332" />
-      <path
-        d="M7 12.5 10 15.5 17 8.5"
-        stroke="#fff"
-        strokeWidth="2.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+      width={24}
+      height={24}
+      loading="lazy"
+      decoding="async"
+      draggable={false}
+    />
   );
 }
