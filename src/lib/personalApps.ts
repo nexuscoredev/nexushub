@@ -92,7 +92,7 @@ export const PERSONAL_APP_CATALOG: PersonalAppDefinition[] = [
     subtitle: 'Música',
     kind: 'external',
     href: 'https://music.youtube.com/',
-    icon: { type: 'image', src: '/img/streaming/youtube-music.png' },
+    icon: { type: 'image', src: '/img/apps/youtube-music.png' },
   },
 ];
 
