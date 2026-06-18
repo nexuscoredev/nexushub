@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-const CARGOS_JARVIS = new Set(['CEO', 'CTO']);
+const CARGOS_JARVIS = new Set(['CEO', 'CTO', 'Desenvolvedor']);
 
 export interface JarvisAuthUser {
   id: string;

@@ -21,6 +21,12 @@ export function podeAcessarPessoal(cargo: HubCargo | undefined): boolean {
   return cargo !== undefined && CARGOS_PESSOAL.includes(cargo);
 }
 
+export const CARGOS_JARVIS: HubCargo[] = ['CEO', 'CTO', 'Desenvolvedor'];
+
+export function podeUsarJarvis(cargo: HubCargo | undefined): boolean {
+  return cargo !== undefined && CARGOS_JARVIS.includes(cargo);
+}
+
 export const CARGOS_DOCUMENTACAO: HubCargo[] = ['CEO', 'CTO'];
 
 export function podeAcessarDocumentacao(cargo: HubCargo | undefined): boolean {
