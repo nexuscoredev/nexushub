@@ -83,27 +83,109 @@ function jarvisModel(): { id: string; params?: Array<{ id: string; value: string
   return { id };
 }
 
+/**
+ * Repositórios que o JARVIS pode acessar (até 20, limite da API de Cloud Agents).
+ * - `JARVIS_CURSOR_REPOS`: lista separada por vírgula (ex: "url1,url2"). Cada item
+ *   aceita o formato "url" ou "url#ref" para fixar branch/SHA.
+ * - `JARVIS_CURSOR_REPO` (legado): um único repo, com ref em `JARVIS_CURSOR_REPO_REF`.
+ */
 function optionalRepos():
   | Array<{ url: string; startingRef?: string }>
   | undefined {
+  const defaultRef = process.env.JARVIS_CURSOR_REPO_REF?.trim() || 'main';
+  const list = process.env.JARVIS_CURSOR_REPOS?.trim();
+
+  if (list) {
+    const repos = list
+      .split(',')
+      .map((entry) => entry.trim())
+      .filter(Boolean)
+      .slice(0, 20)
+      .map((entry) => {
+        const [url, ref] = entry.split('#').map((p) => p.trim());
+        return { url, startingRef: ref || defaultRef };
+      })
+      .filter((r) => /^https?:\/\//i.test(r.url));
+    return repos.length ? repos : undefined;
+  }
+
   const url = process.env.JARVIS_CURSOR_REPO?.trim();
-  const ref = process.env.JARVIS_CURSOR_REPO_REF?.trim() || 'main';
   if (!url) return undefined;
-  return [{ url, startingRef: ref }];
+  return [{ url, startingRef: defaultRef }];
 }
 
-export async function createJarvisAgent(promptText: string): Promise<{
+interface CursorMcpServer {
+  name: string;
+  type?: 'http' | 'sse' | 'stdio';
+  url?: string;
+  headers?: Record<string, string>;
+  command?: string;
+  args?: string[];
+  env?: Record<string, string>;
+}
+
+/**
+ * Servidores MCP disponíveis ao JARVIS (Supabase, Vercel, etc.), até 50.
+ * Definidos em `JARVIS_MCP_SERVERS` como JSON (array no formato da API de Cloud Agents).
+ * Mantém-se desligado se a env estiver ausente ou inválida.
+ */
+function optionalMcpServers(): CursorMcpServer[] | undefined {
+  const raw = process.env.JARVIS_MCP_SERVERS?.trim();
+  if (!raw) return undefined;
+
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return undefined;
+
+    const servers = parsed
+      .filter((s): s is CursorMcpServer => {
+        if (!s || typeof s !== 'object') return false;
+        const cand = s as CursorMcpServer;
+        return typeof cand.name === 'string' && (Boolean(cand.url) || Boolean(cand.command));
+      })
+      .slice(0, 50);
+
+    return servers.length ? servers : undefined;
+  } catch {
+    console.error('[cursorAgent] JARVIS_MCP_SERVERS inválido (JSON malformado)');
+    return undefined;
+  }
+}
+
+export interface JarvisAgentConfig {
+  /** Repo selecionado para esta sessão (sobrepõe a config padrão por env). */
+  repoUrl?: string;
+  repoRef?: string;
+  /** Nome amigável do agente (ex: "JARVIS — cliente X / repo Y"). */
+  name?: string;
+}
+
+function resolveRepos(
+  config?: JarvisAgentConfig,
+): Array<{ url: string; startingRef?: string }> | undefined {
+  if (config?.repoUrl && /^https?:\/\//i.test(config.repoUrl)) {
+    return [{ url: config.repoUrl, startingRef: config.repoRef?.trim() || 'main' }];
+  }
+  return optionalRepos();
+}
+
+export async function createJarvisAgent(
+  promptText: string,
+  config?: JarvisAgentConfig,
+): Promise<{
   agentId: string;
   runId: string;
 }> {
-  const repos = optionalRepos();
+  const repos = resolveRepos(config);
+  const mcpServers = optionalMcpServers();
   const body: Record<string, unknown> = {
-    name: 'JARVIS — NEXUS Hub',
+    name: config?.name?.slice(0, 100) || 'JARVIS — NEXUS Hub',
     prompt: { text: promptText },
     model: jarvisModel(),
     autoCreatePR: false,
   };
   if (repos?.length) body.repos = repos;
+  if (mcpServers?.length) body.mcpServers = mcpServers;
 
   const data = await cursorFetch<{
     agent: { id: string };
