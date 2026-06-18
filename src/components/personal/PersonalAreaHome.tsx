@@ -23,9 +23,10 @@ function saudacao(nome: string): string {
 interface PersonalAreaHomeProps {
   onOpenFinance: () => void;
   onOpenDrinks?: () => void;
+  onOpenPcGuide?: () => void;
 }
 
-export function PersonalAreaHome({ onOpenFinance, onOpenDrinks }: PersonalAreaHomeProps) {
+export function PersonalAreaHome({ onOpenFinance, onOpenDrinks, onOpenPcGuide }: PersonalAreaHomeProps) {
   const { profile, user } = useAuth();
   const userId = user?.id;
   const email = profile?.email ?? user?.email;
@@ -81,6 +82,7 @@ export function PersonalAreaHome({ onOpenFinance, onOpenDrinks }: PersonalAreaHo
         viniciusOnly={viniciusOnly}
         onOpenFinance={onOpenFinance}
         onOpenDrinks={onOpenDrinks}
+        onOpenPcGuide={onOpenPcGuide}
       />
 
       <section className={styles.card} aria-labelledby="humor-hoje">

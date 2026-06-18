@@ -4,6 +4,7 @@ import { PageHeader } from '../components/PageHeader';
 import { PersonalAreaHome } from '../components/personal/PersonalAreaHome';
 import { PersonalFinancePanel } from '../components/personal/PersonalFinancePanel';
 import { ViniciusDrinksCarta } from '../components/personal/ViniciusDrinksCarta';
+import { ViniciusPcGuide } from '../components/personal/ViniciusPcGuide';
 import { useAuth } from '../contexts/AuthContext';
 import { resolveFinanceMonthKey } from '../lib/personalFinanceMonth';
 import { isViniciusOnly } from '../lib/viniciusPersonalFinance';
@@ -15,16 +16,17 @@ export function PessoalPage() {
   const [searchParams] = useSearchParams();
   const financeiro = searchParams.get('financeiro') === '1';
   const drinks = searchParams.get('drinks') === '1';
+  const pcGuide = searchParams.get('pc-guide') === '1';
 
   const firstName = profile?.nome?.trim().split(/\s+/)[0] ?? 'você';
   const email = profile?.email ?? user?.email;
   const viniciusOnly = isViniciusOnly(email);
 
   useEffect(() => {
-    if (drinks && !viniciusOnly) {
+    if ((drinks || pcGuide) && !viniciusOnly) {
       navigate('/pessoal', { replace: true });
     }
-  }, [drinks, viniciusOnly, navigate]);
+  }, [drinks, pcGuide, viniciusOnly, navigate]);
 
   const openFinance = () => {
     const mes = resolveFinanceMonthKey(searchParams.get('mes'));
@@ -33,6 +35,10 @@ export function PessoalPage() {
 
   const openDrinks = () => {
     navigate('/pessoal?drinks=1');
+  };
+
+  const openPcGuide = () => {
+    navigate('/pessoal?pc-guide=1');
   };
 
   const backHome = () => {
@@ -49,6 +55,20 @@ export function PessoalPage() {
           </button>
         </div>
         <ViniciusDrinksCarta />
+      </div>
+    );
+  }
+
+  if (pcGuide && viniciusOnly) {
+    return (
+      <div className={`${styles.page} ${styles.drinksPage}`}>
+        <div className={styles.financeTop}>
+          <PageHeader compact title="PC Guide" subtitle={`${firstName} · referências`} />
+          <button type="button" className={styles.backBtn} onClick={backHome}>
+            ← Cantinho
+          </button>
+        </div>
+        <ViniciusPcGuide />
       </div>
     );
   }
@@ -80,6 +100,7 @@ export function PessoalPage() {
           <PersonalAreaHome
             onOpenFinance={openFinance}
             onOpenDrinks={viniciusOnly ? openDrinks : undefined}
+            onOpenPcGuide={viniciusOnly ? openPcGuide : undefined}
           />
         </div>
       )}

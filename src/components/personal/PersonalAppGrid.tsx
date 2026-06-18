@@ -19,6 +19,7 @@ interface PersonalAppGridProps {
   viniciusOnly: boolean;
   onOpenFinance: () => void;
   onOpenDrinks?: () => void;
+  onOpenPcGuide?: () => void;
 }
 
 export function PersonalAppGrid({
@@ -26,6 +27,7 @@ export function PersonalAppGrid({
   viniciusOnly,
   onOpenFinance,
   onOpenDrinks,
+  onOpenPcGuide,
 }: PersonalAppGridProps) {
   const catalog = useMemo(() => catalogForUser(viniciusOnly), [viniciusOnly]);
 
@@ -64,6 +66,7 @@ export function PersonalAppGrid({
   const handleInternal = (action: PersonalInternalAction) => {
     if (action === 'finance') onOpenFinance();
     if (action === 'drinks') onOpenDrinks?.();
+    if (action === 'pc-guide') onOpenPcGuide?.();
   };
 
   const removeFromHome = (id: string) => {

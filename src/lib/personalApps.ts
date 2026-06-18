@@ -7,7 +7,7 @@ export type PersonalAppIcon =
   | { type: 'piggy' }
   | { type: 'letter'; value: string };
 
-export type PersonalInternalAction = 'finance' | 'drinks';
+export type PersonalInternalAction = 'finance' | 'drinks' | 'pc-guide';
 
 export type PersonalAppDefinition = {
   id: string;
@@ -43,6 +43,15 @@ export const PERSONAL_APP_CATALOG: PersonalAppDefinition[] = [
     kind: 'internal',
     internalAction: 'drinks',
     icon: { type: 'emoji', value: '🍸' },
+    viniciusOnly: true,
+  },
+  {
+    id: 'pc-guide',
+    label: 'PC Guide',
+    subtitle: 'Controles e PC',
+    kind: 'internal',
+    internalAction: 'pc-guide',
+    icon: { type: 'material', name: 'sports_esports', tone: 'violet' },
     viniciusOnly: true,
   },
   {

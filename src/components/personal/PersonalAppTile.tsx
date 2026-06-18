@@ -19,6 +19,7 @@ function iconWrapClass(app: ResolvedPersonalApp): string {
   const base = styles.iconWrap;
   if (app.internalAction === 'finance') return `${base} ${styles.iconWrapFinance}`;
   if (app.internalAction === 'drinks') return `${base} ${styles.iconWrapDrinks}`;
+  if (app.internalAction === 'pc-guide') return `${base} ${styles.iconWrapPcGuide}`;
   if (app.icon.type === 'the-news') return `${base} ${styles.iconWrapTheNews}`;
   if (app.icon.type === 'material' && app.icon.tone === 'green') return `${base} ${styles.iconWrapGreen}`;
   if (app.icon.type === 'letter') return `${base} ${styles.iconWrapLetter}`;
