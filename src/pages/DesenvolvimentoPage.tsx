@@ -8,8 +8,6 @@ import {
   DEV_KANBAN,
   DEV_PDCA_STEPS,
   DEV_PIPELINE_STAGES,
-  DEV_PLANNING_IDEAS,
-  DEV_PLANNING_STATUS_LABEL,
   DEV_SNIPPETS,
   DEV_STAGES,
   devChecklistItemKey,
@@ -200,26 +198,6 @@ export function DesenvolvimentoPage() {
               />
               <figcaption className={styles.whiteboardCap}>Referência do quadro da equipe</figcaption>
             </figure>
-          </section>
-
-          <section className={styles.fluxoSection} aria-labelledby="fluxo-planejamento">
-            <h2 id="fluxo-planejamento" className={styles.fluxoSectionTitle}>
-              Planejamento — Hub
-            </h2>
-            <ul className={styles.planningList}>
-              {DEV_PLANNING_IDEAS.map((idea) => (
-                <li key={idea.id} className={styles.planningItem}>
-                  <div className={styles.planningHead}>
-                    <span className={styles.planningArea}>{idea.area}</span>
-                    <span className={`${styles.planningStatus} ${styles[`planningStatus${idea.status}`]}`}>
-                      {DEV_PLANNING_STATUS_LABEL[idea.status]}
-                    </span>
-                  </div>
-                  <p className={styles.planningTitle}>{idea.title}</p>
-                  <p className={styles.planningNotes}>{idea.notes}</p>
-                </li>
-              ))}
-            </ul>
           </section>
 
           <section className={styles.fluxoSection} aria-labelledby="fluxo-tecnico">

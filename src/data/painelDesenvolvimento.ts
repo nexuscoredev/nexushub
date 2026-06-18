@@ -24,16 +24,6 @@ export interface DevPDCAStep {
   summary: string;
 }
 
-export type DevPlanningStatus = 'done' | 'active' | 'backlog';
-
-export interface DevPlanningIdea {
-  id: string;
-  title: string;
-  area: string;
-  status: DevPlanningStatus;
-  notes: string;
-}
-
 export const DEV_CHECKLIST_STORAGE_KEY = 'nexushub-dev-checklist-v3';
 
 export const DEV_FLUXO_WHITEBOARD_IMAGE = '/img/dev/fluxo-whiteboard.png';
@@ -143,38 +133,6 @@ export const DEV_PIPELINE_STAGES: DevStage[] = [
       'Melhorias de UX priorizadas no quadro',
       'Cliente informado sobre entregas e próximos passos',
     ],
-  },
-];
-
-/** Ideias e entregas no planejamento do Hub (área pessoal e produto). */
-export const DEV_PLANNING_IDEAS: DevPlanningIdea[] = [
-  {
-    id: 'pessoal-apps',
-    title: 'Central de apps personalizável',
-    area: 'Área pessoal',
-    status: 'done',
-    notes: 'Grade estilo launcher, reorganizar, atalhos e biblioteca.',
-  },
-  {
-    id: 'pessoal-pc-guide',
-    title: 'PC Guide — guias de controle e conexão',
-    area: 'Área pessoal',
-    status: 'done',
-    notes: 'JOYXOFF, XInput, Inova, 8BitDo2 e Moonlight.',
-  },
-  {
-    id: 'pessoal-icones',
-    title: 'Ícones customizáveis + upload local (.ico)',
-    area: 'Área pessoal',
-    status: 'done',
-    notes: 'Modo Organizar: emoji, símbolo, URL e arquivo do PC.',
-  },
-  {
-    id: 'fluxo-documentado',
-    title: 'Fluxo comercial → entrega no Painel Dev',
-    area: 'Hub',
-    status: 'active',
-    notes: 'PDCA, Kanban e pipeline do quadro físico documentados aqui.',
   },
 ];
 
@@ -303,9 +261,3 @@ A — Act: corrija, commite e publique; registre no quadro Kanban.`,
 export function devChecklistItemKey(stageId: string, index: number): string {
   return `${stageId}:${index}`;
 }
-
-export const DEV_PLANNING_STATUS_LABEL: Record<DevPlanningStatus, string> = {
-  done: 'Entregue',
-  active: 'Em andamento',
-  backlog: 'Backlog',
-};
