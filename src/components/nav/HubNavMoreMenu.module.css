@@ -1,0 +1,134 @@
+.root {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 2.35rem;
+  padding: 0 0.65rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.trigger:hover {
+  background: rgba(200, 204, 212, 0.1);
+  color: var(--nx-silver);
+}
+
+.triggerOpen,
+.triggerActive {
+  color: #fff;
+  background: rgba(200, 204, 212, 0.12);
+  border-color: rgba(200, 204, 212, 0.18);
+}
+
+.triggerActive {
+  box-shadow: inset 0 -2px 0 var(--nx-steel);
+}
+
+.triggerIcon {
+  width: 1.05rem;
+  height: 1.05rem;
+  color: var(--nx-steel);
+}
+
+.trigger:hover .triggerIcon,
+.triggerOpen .triggerIcon,
+.triggerActive .triggerIcon {
+  color: var(--nx-silver);
+}
+
+.triggerLabel {
+  line-height: 1;
+}
+
+.chevron {
+  width: 0.85rem;
+  height: 0.85rem;
+  opacity: 0.65;
+  transition: transform 0.2s ease;
+}
+
+.triggerOpen .chevron {
+  transform: rotate(180deg);
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  z-index: 50;
+  min-width: 11.5rem;
+  padding: 0.35rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(12, 12, 16, 0.98);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.menuItem:hover {
+  background: rgba(200, 204, 212, 0.1);
+  color: #fff;
+}
+
+.menuItemActive {
+  color: #fff;
+  background: rgba(37, 99, 235, 0.18);
+}
+
+.menuIcon {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex-shrink: 0;
+  color: var(--nx-steel);
+}
+
+.menuItemActive .menuIcon {
+  color: var(--nx-silver);
+}
+
+@media (min-width: 900px) and (max-width: 1279px) {
+  .triggerLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  .trigger {
+    width: 2.35rem;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .chevron {
+    display: none;
+  }
+}

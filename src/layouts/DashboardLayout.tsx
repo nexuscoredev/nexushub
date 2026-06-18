@@ -1,25 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { NovidadesSparkIcon } from '../components/NovidadesSparkIcon';
-import { NavIcon, type NavIconName } from '../components/NavIcon';
+import { NavIcon } from '../components/NavIcon';
 import { UserAvatar } from '../components/UserAvatar';
 import { TechShell } from '../components/TechShell';
 import { HubChatLauncher } from '../components/chat/HubChatLauncher';
 import { JarvisLauncher } from '../components/jarvis/JarvisLauncher';
 import { HubNotificationsBell } from '../components/notifications/HubNotificationsBell';
-import { DashboardPersonalEntry } from '../components/personal/DashboardPersonalEntry';
+import { HubAccountMenu } from '../components/nav/HubAccountMenu';
+import { HubNavMoreMenu } from '../components/nav/HubNavMoreMenu';
 import { HubNovidadesModal } from '../components/HubNovidadesModal';
 import { InstallAppPrompt } from '../components/InstallAppPrompt';
 import { hasUnseenNovidades } from '../data/hubNovidades';
+import { resolveHubNavItems } from '../lib/hubNav';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './DashboardLayout.module.css';
-
-interface NavItem {
-  to: string;
-  label: string;
-  icon: NavIconName;
-  show: boolean;
-}
 
 export function DashboardLayout() {
   const { profile, user, podeFinanceiroAgenda, podeGestao, podeCofre, podePessoal, podeJarvis, signOut } = useAuth();
@@ -29,24 +24,21 @@ export function DashboardLayout() {
   const [novidadesOpen, setNovidadesOpen] = useState(false);
   const [novidadesBadge, setNovidadesBadge] = useState(hasUnseenNovidades);
 
-  const navItems: NavItem[] = [
-    { to: '/dashboard', label: 'Painel', icon: 'dashboard', show: true },
-    { to: '/agenda', label: 'Agenda', icon: 'calendar', show: podeFinanceiroAgenda },
-    { to: '/financeiro', label: 'Financeiro', icon: 'finance', show: podeFinanceiroAgenda },
-    { to: '/fila', label: 'Fila', icon: 'queue', show: true },
-    { to: '/sistemas', label: 'Sistemas', icon: 'systems', show: true },
-    { to: '/usuarios', label: 'Usuários', icon: 'users', show: podeGestao },
-    { to: '/cofre', label: 'Cofre', icon: 'vault', show: podeCofre },
-    { to: '/configuracoes', label: 'Config', icon: 'settings', show: true },
-    { to: '/desenvolvimento', label: 'Dev', icon: 'dev', show: true },
-  ];
+  const { principal, mais } = useMemo(
+    () =>
+      resolveHubNavItems({
+        finance: podeFinanceiroAgenda,
+        gestao: podeGestao,
+        cofre: podeCofre,
+      }),
+    [podeFinanceiroAgenda, podeGestao, podeCofre],
+  );
 
-  const visibleNav = navItems.filter((item) => item.show);
+  const visibleNav = useMemo(() => [...principal, ...mais], [principal, mais]);
 
   const handleSignOut = async () => {
     setMenuOpen(false);
     await signOut();
-    navigate('/login');
   };
 
   useEffect(() => {
@@ -103,11 +95,11 @@ export function DashboardLayout() {
             </button>
 
             <nav className={styles.hubNavLinks} aria-label="Navegação principal">
-              {visibleNav.map((item) => (
+              {principal.map((item) => (
                 <NavLink
-                  key={item.to}
+                  key={item.id}
                   to={item.to}
-                  title={item.label}
+                  data-label={item.label}
                   className={({ isActive }) =>
                     `${styles.hubNavLink} ${isActive ? styles.hubNavLinkActive : ''}`
                   }
@@ -116,44 +108,30 @@ export function DashboardLayout() {
                   <span className={styles.hubNavLabel}>{item.label}</span>
                 </NavLink>
               ))}
+              <HubNavMoreMenu items={mais} />
             </nav>
 
             <div className={styles.hubNavUtilities}>
               <InstallAppPrompt variant="icon" className={styles.installNavBtn} />
               {user?.id ? <HubNotificationsBell userId={user.id} /> : null}
-              <div className={styles.utilityCluster}>
-                {podePessoal ? <DashboardPersonalEntry variant="nav" /> : null}
-                <button
-                  type="button"
-                  className={styles.novidadesBtn}
-                  onClick={openNovidades}
-                  aria-label="Novidades"
-                  title="Novidades"
-                >
-                  <NovidadesSparkIcon className={styles.novidadesIcon} />
-                  {novidadesBadge && <span className={styles.novidadesBadge} aria-hidden />}
-                </button>
-              </div>
-              <NavLink
-                to="/perfil"
-                className={styles.accountPill}
-                title="Meu perfil"
-                aria-label="Meu perfil"
+              <button
+                type="button"
+                className={styles.utilityBtn}
+                onClick={openNovidades}
+                aria-label="Novidades"
+                title="Novidades"
               >
-                <UserAvatar
-                  name={profile?.nome}
-                  email={user?.email}
-                  avatarUrl={profile?.avatar_url}
-                  size="xs"
-                />
-                <span className={styles.accountText}>
-                  {profileShortName}
-                  <span className={styles.accountSuffix}> · Hub</span>
-                </span>
-              </NavLink>
-              <button type="button" className={styles.signOutBtn} onClick={handleSignOut}>
-                Sair
+                <NovidadesSparkIcon className={styles.novidadesIcon} />
+                {novidadesBadge ? <span className={styles.novidadesBadge} aria-hidden /> : null}
               </button>
+              <HubAccountMenu
+                name={profile?.nome}
+                email={user?.email}
+                avatarUrl={profile?.avatar_url}
+                shortName={profileShortName}
+                podePessoal={podePessoal}
+                onSignOut={handleSignOut}
+              />
             </div>
           </div>
         </header>
@@ -172,6 +150,11 @@ export function DashboardLayout() {
               aria-label="Menu de navegação"
             >
               <div className={styles.mobileDrawerHead}>
+                <UserAvatar
+                  name={profile?.nome}
+                  email={user?.email}
+                  avatarUrl={profile?.avatar_url}
+                />
                 <div className={styles.mobileUser}>
                   <span className={styles.mobileUserName}>{profile?.nome ?? user?.email}</span>
                   <span className={styles.mobileUserRole}>{profile?.cargo ?? '—'}</span>
@@ -180,7 +163,7 @@ export function DashboardLayout() {
 
               <ul className={styles.mobileNavList}>
                 {visibleNav.map((item) => (
-                  <li key={item.to}>
+                  <li key={item.id}>
                     <NavLink
                       to={item.to}
                       className={({ isActive }) =>
@@ -197,15 +180,11 @@ export function DashboardLayout() {
 
               <div className={styles.mobileDrawerFoot}>
                 {podePessoal ? (
-                  <NavLink
-                    to="/pessoal"
-                    className={styles.mobileFootLink}
-                    onClick={closeMenu}
-                  >
+                  <NavLink to="/pessoal" className={styles.mobileFootLink} onClick={closeMenu}>
                     <span className={styles.mobilePessoalIcon} aria-hidden>
                       ✦
                     </span>
-                    <span>Área Pessoal</span>
+                    <span>Área pessoal</span>
                   </NavLink>
                 ) : null}
                 <button
@@ -216,29 +195,20 @@ export function DashboardLayout() {
                     openNovidades();
                   }}
                   aria-label="Novidades"
-                  title="Novidades"
                 >
                   <NovidadesSparkIcon className={styles.novidadesIcon} />
                   <span>Novidades</span>
-                  {novidadesBadge && <span className={styles.mobileNovidadesDot} aria-hidden />}
+                  {novidadesBadge ? <span className={styles.mobileNovidadesDot} aria-hidden /> : null}
                 </button>
                 <InstallAppPrompt variant="button" className={styles.mobileInstallBtn} />
-                <NavLink
-                  to="/perfil"
-                  className={styles.mobileFootLink}
-                  onClick={closeMenu}
-                >
-                  <UserAvatar
-                    name={profile?.nome}
-                    email={user?.email}
-                    avatarUrl={profile?.avatar_url}
-                  />
+                <NavLink to="/perfil" className={styles.mobileFootLink} onClick={closeMenu}>
+                  <NavIcon name="personal" className={styles.mobileNavIcon} />
                   <span>Meu perfil</span>
                 </NavLink>
                 <button
                   type="button"
                   className={`btn-ghost ${styles.mobileSignOut}`}
-                  onClick={() => void handleSignOut()}
+                  onClick={() => void handleSignOut().then(() => navigate('/login'))}
                 >
                   Sair
                 </button>
