@@ -2,7 +2,14 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { HubDevWhiteboard } from '../components/devwhiteboard/HubDevWhiteboard';
 import { PageHeader } from '../components/PageHeader';
 import {
+  DEV_ALL_CHECKLIST_STAGES,
   DEV_CHECKLIST_STORAGE_KEY,
+  DEV_FLUXO_WHITEBOARD_IMAGE,
+  DEV_KANBAN,
+  DEV_PDCA_STEPS,
+  DEV_PIPELINE_STAGES,
+  DEV_PLANNING_IDEAS,
+  DEV_PLANNING_STATUS_LABEL,
   DEV_SNIPPETS,
   DEV_STAGES,
   devChecklistItemKey,
@@ -56,7 +63,7 @@ export function DesenvolvimentoPage() {
 
   const stageProgress = useMemo(() => {
     const map = new Map<string, { done: number; total: number }>();
-    for (const stage of DEV_STAGES) {
+    for (const stage of DEV_ALL_CHECKLIST_STAGES) {
       let done = 0;
       stage.checklist.forEach((_, index) => {
         if (checked[devChecklistItemKey(stage.id, index)]) done++;
@@ -121,31 +128,135 @@ export function DesenvolvimentoPage() {
       </div>
 
       {tab === 'fluxo' && (
-        <div className={styles.timeline}>
-          {DEV_STAGES.map((stage) => (
-            <article key={stage.id} className={styles.stageCard}>
-              <span className={styles.stageOrder} aria-hidden>
-                {stage.order}
-              </span>
-              <div className={styles.stageBody}>
-                <h2 className={styles.stageTitle}>{stage.title}</h2>
-                <p className={styles.stageSummary}>{stage.summary}</p>
-                <div className={styles.toolRow}>
-                  {stage.tools.map((tool) => (
-                    <span key={tool} className={styles.toolTag}>
-                      {tool}
-                    </span>
-                  ))}
-                </div>
-              </div>
+        <div className={styles.fluxo}>
+          <section className={styles.fluxoSection} aria-labelledby="fluxo-metodologias">
+            <h2 id="fluxo-metodologias" className={styles.fluxoSectionTitle}>
+              Metodologias
+            </h2>
+            <div className={styles.pdcaGrid}>
+              {DEV_PDCA_STEPS.map((step) => (
+                <article key={step.id} className={styles.pdcaCard}>
+                  <span className={styles.pdcaLetter} aria-hidden>
+                    {step.letter}
+                  </span>
+                  <div className={styles.pdcaBody}>
+                    <h3 className={styles.pdcaTitle}>
+                      {step.verb} <span className={styles.pdcaEn}>({step.title})</span>
+                    </h3>
+                    <p className={styles.pdcaSummary}>{step.summary}</p>
+                    <span className={styles.toolTag}>{step.tool}</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+            <article className={styles.kanbanCard}>
+              <h3 className={styles.kanbanTitle}>{DEV_KANBAN.title}</h3>
+              <p className={styles.kanbanSub}>{DEV_KANBAN.subtitle}</p>
+              <p className={styles.kanbanSummary}>{DEV_KANBAN.summary}</p>
             </article>
-          ))}
+          </section>
+
+          <section className={styles.fluxoSection} aria-labelledby="fluxo-pipeline">
+            <h2 id="fluxo-pipeline" className={styles.fluxoSectionTitle}>
+              Pipeline comercial → entrega
+            </h2>
+            <p className={styles.fluxoLead}>
+              Do marketing ao contrato, depois Dev + QA e manutenção com melhoria de experiência.
+            </p>
+            <div className={styles.pipeline}>
+              {DEV_PIPELINE_STAGES.map((stage, index) => (
+                <div key={stage.id} className={styles.pipelineStep}>
+                  <article className={`${styles.stageCard} ${styles.pipelineCard}`}>
+                    <span className={styles.stageOrder} aria-hidden>
+                      {stage.order}
+                    </span>
+                    <div className={styles.stageBody}>
+                      <h3 className={styles.stageTitle}>{stage.title}</h3>
+                      <p className={styles.stageSummary}>{stage.summary}</p>
+                      <div className={styles.toolRow}>
+                        {stage.tools.map((tool) => (
+                          <span key={tool} className={styles.toolTag}>
+                            {tool}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </article>
+                  {index < DEV_PIPELINE_STAGES.length - 1 ? (
+                    <span className={styles.pipelineArrow} aria-hidden>
+                      ↓
+                    </span>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+            <figure className={styles.whiteboardFig}>
+              <img
+                src={DEV_FLUXO_WHITEBOARD_IMAGE}
+                alt="Quadro físico da equipe: PDCA, Kanban e pipeline comercial até manutenção"
+                className={styles.whiteboardImg}
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption className={styles.whiteboardCap}>Referência do quadro da equipe</figcaption>
+            </figure>
+          </section>
+
+          <section className={styles.fluxoSection} aria-labelledby="fluxo-planejamento">
+            <h2 id="fluxo-planejamento" className={styles.fluxoSectionTitle}>
+              Planejamento — Hub
+            </h2>
+            <ul className={styles.planningList}>
+              {DEV_PLANNING_IDEAS.map((idea) => (
+                <li key={idea.id} className={styles.planningItem}>
+                  <div className={styles.planningHead}>
+                    <span className={styles.planningArea}>{idea.area}</span>
+                    <span className={`${styles.planningStatus} ${styles[`planningStatus${idea.status}`]}`}>
+                      {DEV_PLANNING_STATUS_LABEL[idea.status]}
+                    </span>
+                  </div>
+                  <p className={styles.planningTitle}>{idea.title}</p>
+                  <p className={styles.planningNotes}>{idea.notes}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className={styles.fluxoSection} aria-labelledby="fluxo-tecnico">
+            <h2 id="fluxo-tecnico" className={styles.fluxoSectionTitle}>
+              Stack técnica
+            </h2>
+            <p className={styles.fluxoLead}>Infraestrutura e publicação de cada entrega.</p>
+            <div className={styles.timeline}>
+              {DEV_STAGES.map((stage) => (
+                <article key={stage.id} className={styles.stageCard}>
+                  <span className={styles.stageOrder} aria-hidden>
+                    {stage.order}
+                  </span>
+                  <div className={styles.stageBody}>
+                    <h3 className={styles.stageTitle}>{stage.title}</h3>
+                    <p className={styles.stageSummary}>{stage.summary}</p>
+                    <div className={styles.toolRow}>
+                      {stage.tools.map((tool) => (
+                        <span key={tool} className={styles.toolTag}>
+                          {tool}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
         </div>
       )}
 
       {tab === 'checklists' && (
         <div className={styles.checklistGrid}>
-          {DEV_STAGES.map((stage) => {
+          <p className={styles.checklistIntro}>
+            Pipeline comercial e stack técnica — marque conforme cada etapa avança.
+          </p>
+          {DEV_ALL_CHECKLIST_STAGES.map((stage) => {
             const progress = stageProgress.get(stage.id) ?? { done: 0, total: stage.checklist.length };
             return (
               <section key={stage.id} className={styles.checklistCard}>
