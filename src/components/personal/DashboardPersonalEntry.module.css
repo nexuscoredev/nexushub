@@ -114,6 +114,19 @@
   color: #e0e7ff;
 }
 
+@media (min-width: 900px) and (max-width: 1439px) {
+  .navBtn {
+    width: 2.15rem;
+    height: 2.15rem;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .navLabel {
+    display: none;
+  }
+}
+
 @media (max-width: 899px) {
   .entry {
     padding-left: max(1rem, env(safe-area-inset-left));

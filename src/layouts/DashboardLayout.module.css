@@ -18,10 +18,11 @@
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: none;
+  max-width: 100%;
   margin-inline: auto;
   min-height: 3.25rem;
   gap: 0;
+  min-width: 0;
 }
 
 .brandBlock {
@@ -61,19 +62,14 @@
 .hubNavLinks {
   display: none;
   align-items: center;
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
   padding: 0 0.35rem;
   gap: 0.1rem;
   overflow-x: auto;
   overscroll-behavior-x: contain;
-  scrollbar-width: none;
+  scrollbar-width: thin;
   -webkit-overflow-scrolling: touch;
-  mask-image: linear-gradient(90deg, transparent, #000 0.75rem, #000 calc(100% - 0.75rem), transparent);
-}
-
-.hubNavLinks::-webkit-scrollbar {
-  display: none;
 }
 
 .hubNavLink {
@@ -89,6 +85,7 @@
   color: rgba(255, 255, 255, 0.72);
   white-space: nowrap;
   border: 1px solid transparent;
+  position: relative;
   transition:
     color 0.2s ease,
     background 0.2s ease,
@@ -131,10 +128,11 @@
 .hubNavUtilities {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   margin-left: auto;
-  padding: 0 0.85rem 0 0.5rem;
-  flex-shrink: 0;
+  padding: 0 0.65rem 0 0.45rem;
+  flex: 0 0 auto;
+  min-width: 0;
   border-left: 1px solid var(--border);
   align-self: stretch;
 }
@@ -312,31 +310,76 @@
   }
 
   .hubNavUtilities {
-    padding-left: 0.65rem;
+    padding-left: 0.55rem;
+    padding-right: 0.75rem;
+  }
+}
+
+/* Telas médias: só ícone nos links — cabe tudo sem cortar */
+@media (min-width: 900px) and (max-width: 1439px) {
+  .hubNavLink {
+    justify-content: center;
+    width: 2.35rem;
+    padding: 0;
+    gap: 0;
+  }
+
+  .hubNavLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .accountText {
+    display: none;
+  }
+
+  .accountPill {
+    padding: 0.35rem;
+    border-radius: 50%;
+    min-width: 2.35rem;
+    min-height: 2.35rem;
+    justify-content: center;
+  }
+
+  .signOutBtn {
+    display: none;
   }
 }
 
 @media (min-width: 900px) and (max-width: 1180px) {
   .hubNavLink {
-    padding: 0 0.55rem;
-    font-size: 0.78rem;
-    gap: 0.32rem;
+    width: 2.15rem;
+    height: 2.15rem;
   }
 
   .hubNavIcon {
     width: 1rem;
     height: 1rem;
   }
+}
 
-  .accountSuffix {
-    display: none;
+@media (min-width: 1181px) and (max-width: 1439px) {
+  .hubNavLink {
+    width: 2.35rem;
+    height: 2.35rem;
   }
 }
 
-@media (min-width: 1181px) {
+@media (min-width: 1440px) {
   .hubNavLink {
     padding: 0 0.75rem;
     font-size: 0.8125rem;
+  }
+
+  .accountSuffix {
+    display: inline;
   }
 }
 

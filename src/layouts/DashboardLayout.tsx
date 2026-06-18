@@ -107,6 +107,7 @@ export function DashboardLayout() {
                 <NavLink
                   key={item.to}
                   to={item.to}
+                  title={item.label}
                   className={({ isActive }) =>
                     `${styles.hubNavLink} ${isActive ? styles.hubNavLinkActive : ''}`
                   }
