@@ -53,6 +53,8 @@ export function PersonalAppIcon({ icon, label }: PersonalAppIconProps) {
           {icon.name}
         </span>
       );
+    case 'letter':
+      return <span className={styles.letterIcon}>{icon.value}</span>;
     default:
       return <span className={styles.fallbackIcon}>{label.charAt(0)}</span>;
   }

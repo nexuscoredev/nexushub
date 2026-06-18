@@ -1,0 +1,120 @@
+import type { PersonalInternalAction, ResolvedPersonalApp } from '../../lib/personalApps';
+import { PersonalAppIcon } from './PersonalAppIcon';
+import styles from './PersonalAppGrid.module.css';
+
+interface PersonalAppTileProps {
+  app: ResolvedPersonalApp;
+  editing: boolean;
+  dragging: boolean;
+  dragOver: boolean;
+  onInternal?: (action: PersonalInternalAction) => void;
+  onRemove?: () => void;
+  onDragStart: () => void;
+  onDragEnd: () => void;
+  onDragOver: (e: React.DragEvent) => void;
+  onDrop: (e: React.DragEvent) => void;
+}
+
+function iconWrapClass(app: ResolvedPersonalApp): string {
+  const base = styles.iconWrap;
+  if (app.internalAction === 'finance') return `${base} ${styles.iconWrapFinance}`;
+  if (app.internalAction === 'drinks') return `${base} ${styles.iconWrapDrinks}`;
+  if (app.icon.type === 'the-news') return `${base} ${styles.iconWrapTheNews}`;
+  if (app.icon.type === 'material' && app.icon.tone === 'green') return `${base} ${styles.iconWrapGreen}`;
+  if (app.icon.type === 'letter') return `${base} ${styles.iconWrapLetter}`;
+  return base;
+}
+
+export function PersonalAppTile({
+  app,
+  editing,
+  dragging,
+  dragOver,
+  onInternal,
+  onRemove,
+  onDragStart,
+  onDragEnd,
+  onDragOver,
+  onDrop,
+}: PersonalAppTileProps) {
+  const tileClass = [
+    styles.tile,
+    editing ? styles.tileEditing : '',
+    dragging ? styles.tileDragging : '',
+    dragOver ? styles.tileDragOver : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  const body = (
+    <>
+      {editing && onRemove ? (
+        <button
+          type="button"
+          className={styles.removeBtn}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onRemove();
+          }}
+          aria-label={`Remover ${app.label} da home`}
+        >
+          −
+        </button>
+      ) : null}
+      <span className={iconWrapClass(app)}>
+        <PersonalAppIcon icon={app.icon} label={app.label} />
+      </span>
+      <span className={styles.label}>{app.label}</span>
+    </>
+  );
+
+  if (editing) {
+    return (
+      <div
+        className={tileClass}
+        role="listitem"
+        draggable
+        onDragStart={(e) => {
+          e.dataTransfer.effectAllowed = 'move';
+          onDragStart();
+        }}
+        onDragEnd={onDragEnd}
+        onDragOver={onDragOver}
+        onDrop={onDrop}
+        aria-label={app.subtitle ? `${app.label} — ${app.subtitle}` : app.label}
+        aria-grabbed={dragging}
+      >
+        {body}
+      </div>
+    );
+  }
+
+  if (app.kind === 'internal' && app.internalAction) {
+    return (
+      <button
+        type="button"
+        className={tileClass}
+        role="listitem"
+        onClick={() => onInternal?.(app.internalAction!)}
+        aria-label={app.subtitle ? `${app.label} — ${app.subtitle}` : app.label}
+      >
+        {body}
+      </button>
+    );
+  }
+
+  return (
+    <a
+      href={app.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={tileClass}
+      role="listitem"
+      aria-label={app.subtitle ? `${app.label} — ${app.subtitle}` : app.label}
+      title={app.subtitle}
+    >
+      {body}
+    </a>
+  );
+}

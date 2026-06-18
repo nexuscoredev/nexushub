@@ -77,6 +77,7 @@ export function PersonalAreaHome({ onOpenFinance, onOpenDrinks }: PersonalAreaHo
       </section>
 
       <PersonalAppGrid
+        userId={userId}
         viniciusOnly={viniciusOnly}
         onOpenFinance={onOpenFinance}
         onOpenDrinks={onOpenDrinks}
