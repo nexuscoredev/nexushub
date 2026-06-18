@@ -153,6 +153,45 @@
   color: #c4b5fd;
 }
 
+.hint {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.fileInput {
+  display: none;
+}
+
+.fileBtn {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border-radius: 10px;
+  border: 1px dashed var(--pf-border-strong);
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.fileBtn:hover:not(:disabled) {
+  background: rgba(37, 99, 235, 0.2);
+}
+
+.fileBtn:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.fileName {
+  margin: 0.45rem 0 0;
+  font-size: 0.72rem;
+  color: var(--muted);
+  word-break: break-all;
+}
+
 .inlineField {
   display: flex;
   gap: 0.4rem;

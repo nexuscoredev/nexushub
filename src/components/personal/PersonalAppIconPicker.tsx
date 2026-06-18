@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
+  fileToAppIconImage,
   iconsEqual,
+  imageIconSourceLabel,
   parseEmojiIcon,
   parseImageIconUrl,
   parseLetterIcon,
@@ -28,17 +30,32 @@ export function PersonalAppIconPicker({
   onSelect,
   onReset,
 }: PersonalAppIconPickerProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [emojiInput, setEmojiInput] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [localFileName, setLocalFileName] = useState<string | null>(null);
   const [letterInput, setLetterInput] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [fileLoading, setFileLoading] = useState(false);
 
   useEffect(() => {
     if (!open || !app) return;
     setEmojiInput(app.icon.type === 'emoji' ? app.icon.value : '');
-    setImageUrl(app.icon.type === 'image' ? app.icon.src : '');
+    if (app.icon.type === 'image') {
+      if (app.icon.src.startsWith('data:')) {
+        setImageUrl('');
+        setLocalFileName(imageIconSourceLabel(app.icon.src));
+      } else {
+        setImageUrl(app.icon.src);
+        setLocalFileName(null);
+      }
+    } else {
+      setImageUrl('');
+      setLocalFileName(null);
+    }
     setLetterInput(app.icon.type === 'letter' ? app.icon.value : '');
     setError(null);
+    setFileLoading(false);
   }, [open, app]);
 
   if (!open || !app) return null;
@@ -65,6 +82,23 @@ export function PersonalAppIconPicker({
 
   const applyLetter = () => {
     onSelect(parseLetterIcon(letterInput, app.label));
+  };
+
+  const handleFileChange = async (file: File | null) => {
+    if (!file) return;
+    setFileLoading(true);
+    setError(null);
+    try {
+      const icon = await fileToAppIconImage(file);
+      setLocalFileName(file.name);
+      setImageUrl('');
+      onSelect(icon);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Não foi possível usar este arquivo.');
+    } finally {
+      setFileLoading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   return (
@@ -179,6 +213,29 @@ export function PersonalAppIconPicker({
         </section>
 
         <section className={styles.section}>
+          <p className={styles.sectionLabel}>Do computador</p>
+          <p className={styles.hint}>.ico, .icon, .png, .jpg, .webp ou .svg — até 2 MB.</p>
+          <input
+            ref={fileInputRef}
+            type="file"
+            className={styles.fileInput}
+            accept=".ico,.icon,.png,.jpg,.jpeg,.webp,.gif,.svg,image/x-icon,image/vnd.microsoft.icon,image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
+            onChange={(e) => {
+              void handleFileChange(e.target.files?.[0] ?? null);
+            }}
+          />
+          <button
+            type="button"
+            className={styles.fileBtn}
+            disabled={fileLoading}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {fileLoading ? 'Processando…' : 'Escolher arquivo'}
+          </button>
+          {localFileName ? <p className={styles.fileName}>{localFileName}</p> : null}
+        </section>
+
+        <section className={styles.section}>
           <p className={styles.sectionLabel}>Imagem (URL)</p>
           <div className={styles.inlineField}>
             <input
@@ -186,6 +243,7 @@ export function PersonalAppIconPicker({
               value={imageUrl}
               onChange={(e) => {
                 setImageUrl(e.target.value);
+                setLocalFileName(null);
                 setError(null);
               }}
               placeholder="https://…"
