@@ -144,7 +144,7 @@ export async function waitForJarvisRun(
   const terminal = new Set(['FINISHED', 'ERROR', 'CANCELLED', 'EXPIRED']);
   const start = Date.now();
 
-  while Date.now() - start < maxMs) {
+  while (Date.now() - start < maxMs) {
     const run = await getJarvisRun(agentId, runId);
     if (run.status === 'FINISHED') {
       return run.result?.trim() ?? '';
