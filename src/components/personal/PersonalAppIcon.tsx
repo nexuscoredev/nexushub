@@ -16,8 +16,8 @@ export function PersonalAppIcon({ icon, label }: PersonalAppIconProps) {
           src="/img/personal/piggy.png"
           alt=""
           className={styles.piggyIcon}
-          width={44}
-          height={44}
+          width={52}
+          height={52}
           loading="lazy"
           decoding="async"
         />
@@ -38,8 +38,8 @@ export function PersonalAppIcon({ icon, label }: PersonalAppIconProps) {
           src={icon.src}
           alt=""
           className={styles.imageIcon}
-          width={44}
-          height={44}
+          width={52}
+          height={52}
           loading="lazy"
           decoding="async"
         />
