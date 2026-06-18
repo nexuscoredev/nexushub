@@ -68,7 +68,7 @@ export const PERSONAL_APP_CATALOG: PersonalAppDefinition[] = [
     subtitle: 'Leitura',
     kind: 'external',
     href: 'https://wol.jw.org/pt/wol/h/r5/lp-t',
-    icon: { type: 'material', name: 'menu_book', tone: 'cyan' },
+    icon: { type: 'image', src: '/img/apps/texto-diario.png' },
   },
   {
     id: 'the-news',

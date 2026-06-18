@@ -262,15 +262,16 @@
 .imageIcon {
   width: 2.35rem;
   height: 2.35rem;
-  object-fit: contain;
 }
 
 .piggyIcon {
+  object-fit: contain;
   filter: drop-shadow(0 4px 10px rgba(110, 181, 255, 0.25));
 }
 
 .imageIcon {
-  border-radius: 50%;
+  object-fit: cover;
+  border-radius: 22%;
 }
 
 .todoistIcon {
