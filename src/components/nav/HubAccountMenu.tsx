@@ -57,7 +57,12 @@ export function HubAccountMenu({
         aria-haspopup="menu"
         aria-label="Menu da conta"
       >
-        <UserAvatar name={name} email={email} avatarUrl={avatarUrl} size="xs" />
+        <UserAvatar
+          name={name ?? undefined}
+          email={email ?? undefined}
+          avatarUrl={avatarUrl ?? undefined}
+          size="xs"
+        />
         <span className={styles.triggerText}>
           {shortName}
           <span className={styles.triggerSuffix}> · Hub</span>
