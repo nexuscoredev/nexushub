@@ -4,7 +4,6 @@ import {
   createCustomAppId,
   customAppToDefinition,
   normalizeCustomHref,
-  resolveAppById,
   type PersonalCustomApp,
   type ResolvedPersonalApp,
 } from '../../lib/personalApps';
