@@ -7,45 +7,11 @@ import {
   loadHumorDoDia,
   saveHumorDoDia,
 } from '../../lib/pessoalHumor';
-import { TodoistIcon } from '../TodoistIcon';
-import { TheNewsMark } from './TheNewsMark';
-import { PiggyFinanceButton } from './PiggyFinanceButton';
-import { ViniciusDrinksEntry } from './ViniciusDrinksEntry';
+import { isViniciusOnly } from '../../lib/viniciusPersonalFinance';
+import { PersonalAppGrid } from './PersonalAppGrid';
 import styles from './PersonalAreaHome.module.css';
 
 const SCORES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
-
-const QUICK_LINKS = [
-  {
-    id: 'texto-diario',
-    label: 'Texto diário',
-    href: 'https://wol.jw.org/pt/wol/h/r5/lp-t',
-    materialIcon: 'menu_book',
-  },
-  {
-    id: 'the-news',
-    label: 'the news',
-    href: 'https://open.spotify.com/show/5cYtKjFwlRCSZKyV6ZC8Wq',
-    variant: 'the-news',
-  },
-  {
-    id: 'spotify',
-    label: 'Spotify',
-    href: 'https://open.spotify.com/',
-    icon: '/img/streaming/spotify.png',
-  },
-  {
-    id: 'youtube-music',
-    label: 'YouTube Music',
-    href: 'https://music.youtube.com/',
-    icon: '/img/streaming/youtube-music.png',
-  },
-  {
-    id: 'todoist',
-    label: 'Todoist',
-    href: 'https://todoist.com/app',
-  },
-] as const;
 
 function saudacao(nome: string): string {
   const h = new Date().getHours();
@@ -62,6 +28,8 @@ interface PersonalAreaHomeProps {
 export function PersonalAreaHome({ onOpenFinance, onOpenDrinks }: PersonalAreaHomeProps) {
   const { profile, user } = useAuth();
   const userId = user?.id;
+  const email = profile?.email ?? user?.email;
+  const viniciusOnly = isViniciusOnly(email);
   const firstName = profile?.nome?.trim().split(/\s+/)[0] ?? 'você';
 
   const [savedScore, setSavedScore] = useState<number | null>(() => loadHumorDoDia(userId));
@@ -101,12 +69,18 @@ export function PersonalAreaHome({ onOpenFinance, onOpenDrinks }: PersonalAreaHo
   return (
     <div className={styles.home}>
       <section className={styles.hero}>
-        <p className={styles.eyebrow}>Seu cantinho</p>
+        <p className={styles.eyebrow}>Sua central</p>
         <h2 className={styles.greeting}>{saudacao(firstName)}</h2>
         <p className={styles.lead}>
-          Um espaço leve para checar como você está, respirar um pouco e cuidar do que importa.
+          Humor do dia, apps e finanças — tudo organizado num cantinho só seu.
         </p>
       </section>
+
+      <PersonalAppGrid
+        viniciusOnly={viniciusOnly}
+        onOpenFinance={onOpenFinance}
+        onOpenDrinks={onOpenDrinks}
+      />
 
       <section className={styles.card} aria-labelledby="humor-hoje">
         <h3 id="humor-hoje" className={styles.cardTitle}>
@@ -157,60 +131,6 @@ export function PersonalAreaHome({ onOpenFinance, onOpenDrinks }: PersonalAreaHo
           )}
         </div>
       </section>
-
-      <section className={styles.card} aria-labelledby="atalhos-dia">
-        <h3 id="atalhos-dia" className={styles.cardTitle}>
-          Atalhos do dia
-        </h3>
-        <p className={styles.cardSub}>Texto diário, trilha sonora ou tarefas — no app que preferir.</p>
-        <div className={styles.musicRow}>
-          {QUICK_LINKS.map((link) => (
-            <a
-              key={link.id}
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={
-                'variant' in link && link.variant === 'the-news'
-                  ? `${styles.musicLink} ${styles.theNewsLink}`
-                  : styles.musicLink
-              }
-            >
-              {'variant' in link && link.variant === 'the-news' ? (
-                <>
-                  <TheNewsMark className={styles.theNewsMark} />
-                  <span className={styles.theNewsLabel}>{link.label}</span>
-                </>
-              ) : 'materialIcon' in link && link.materialIcon ? (
-                <span className={`material-symbols-outlined ${styles.materialLogo}`} aria-hidden>
-                  {link.materialIcon}
-                </span>
-              ) : link.id === 'todoist' ? (
-                <TodoistIcon className={styles.todoistLogo} />
-              ) : 'icon' in link ? (
-                <img
-                  src={link.icon}
-                  alt=""
-                  className={styles.musicLogo}
-                  width={32}
-                  height={32}
-                  loading="lazy"
-                  decoding="async"
-                />
-              ) : null}
-              {!('variant' in link && link.variant === 'the-news') ? (
-                <span>{link.label}</span>
-              ) : null}
-            </a>
-          ))}
-        </div>
-      </section>
-
-      <section className={styles.piggySection}>
-        <PiggyFinanceButton onLaunch={onOpenFinance} />
-      </section>
-
-      {onOpenDrinks ? <ViniciusDrinksEntry onOpen={onOpenDrinks} /> : null}
     </div>
   );
 }

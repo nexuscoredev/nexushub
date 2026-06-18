@@ -75,7 +75,7 @@ export function PessoalPage() {
             centered
             badge="Personal"
             title="Área pessoal"
-            subtitle={`Olá, ${firstName}. Respira — este espaço é seu.`}
+            subtitle={`Olá, ${firstName}. Sua central pessoal — apps, humor e finanças.`}
           />
           <PersonalAreaHome
             onOpenFinance={openFinance}
