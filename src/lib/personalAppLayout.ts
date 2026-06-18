@@ -3,12 +3,15 @@ import {
   defaultAppOrder,
   type PersonalCustomApp,
 } from './personalApps';
+import { isPersonalAppIcon } from './personalAppIconOptions';
+import type { PersonalAppIcon } from './personalApps';
 
 const STORAGE_PREFIX = 'nexus-pessoal-apps';
 
 export type PersonalAppLayout = {
   order: string[];
   customApps: PersonalCustomApp[];
+  iconOverrides: Record<string, PersonalAppIcon>;
 };
 
 function storageKey(userId: string): string {
@@ -31,7 +34,15 @@ function parseLayout(raw: string | null): PersonalAppLayout | null {
             typeof app.href === 'string',
         )
       : [];
-    return { order, customApps };
+    const iconOverrides: Record<string, PersonalAppIcon> = {};
+    if (data.iconOverrides && typeof data.iconOverrides === 'object') {
+      for (const [id, icon] of Object.entries(data.iconOverrides)) {
+        if (typeof id === 'string' && isPersonalAppIcon(icon)) {
+          iconOverrides[id] = icon;
+        }
+      }
+    }
+    return { order, customApps, iconOverrides };
   } catch {
     return null;
   }
@@ -67,11 +78,19 @@ export function normalizePersonalAppLayout(
     }
   }
 
-  if (order.length === 0) {
-    return { order: defaults, customApps };
+  const allowedIds = new Set([...allowedCatalogIds, ...customIds]);
+  const iconOverrides: Record<string, PersonalAppIcon> = {};
+  for (const [id, icon] of Object.entries(layout?.iconOverrides ?? {})) {
+    if (allowedIds.has(id) && isPersonalAppIcon(icon)) {
+      iconOverrides[id] = icon;
+    }
   }
 
-  return { order, customApps };
+  if (order.length === 0) {
+    return { order: defaults, customApps, iconOverrides };
+  }
+
+  return { order, customApps, iconOverrides };
 }
 
 export function loadPersonalAppLayout(

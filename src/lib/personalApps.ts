@@ -131,11 +131,19 @@ export function resolveAppById(
   id: string,
   catalog: PersonalAppDefinition[],
   customApps: PersonalCustomApp[],
+  iconOverrides?: Record<string, PersonalAppIcon>,
 ): ResolvedPersonalApp | null {
   const builtin = catalog.find((app) => app.id === id);
-  if (builtin) return builtin;
+  if (builtin) {
+    const override = iconOverrides?.[id];
+    return override ? { ...builtin, icon: override } : builtin;
+  }
   const custom = customApps.find((app) => app.id === id);
-  if (custom) return customAppToDefinition(custom);
+  if (custom) {
+    const base = customAppToDefinition(custom);
+    const override = iconOverrides?.[id];
+    return override ? { ...base, icon: override } : base;
+  }
   return null;
 }
 

@@ -1,0 +1,233 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+.sheet {
+  width: min(100%, 28rem);
+  max-height: min(88vh, 40rem);
+  overflow: auto;
+  padding: 1rem 1rem 1.25rem;
+  border-radius: 16px 16px 12px 12px;
+  border: 1px solid var(--pf-border);
+  background: #0c0c10;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.sub {
+  margin: 0.25rem 0 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.closeBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.closeBtn:hover {
+  color: var(--text);
+  border-color: var(--pf-border-strong);
+}
+
+.preview {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.previewWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.25rem;
+  height: 4.25rem;
+  border-radius: 22%;
+  border: 1px solid var(--pf-border-strong);
+  background: rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+.section {
+  margin-bottom: 1rem;
+}
+
+.sectionLabel {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nx-cyan-bright);
+}
+
+.emojiGrid,
+.symbolGrid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.symbolGrid {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.emojiBtn,
+.symbolBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  padding: 0;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.28);
+  color: inherit;
+  cursor: pointer;
+  font-size: 1.15rem;
+}
+
+.symbolBtn {
+  font-size: 1rem;
+}
+
+.emojiBtn:hover,
+.symbolBtn:hover {
+  border-color: var(--pf-border-strong);
+  background: rgba(110, 181, 255, 0.08);
+}
+
+.optionActive {
+  border-color: var(--accent);
+  background: rgba(37, 99, 235, 0.2);
+  box-shadow: 0 0 0 1px rgba(110, 181, 255, 0.25);
+}
+
+.symbolIcon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.tonecyan {
+  color: var(--nx-cyan-bright);
+}
+
+.tonegreen {
+  color: #4ade80;
+}
+
+.toneviolet {
+  color: #c4b5fd;
+}
+
+.inlineField {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.inlineField input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--text);
+  font-size: 0.82rem;
+}
+
+.inlineField input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.applyBtn {
+  flex-shrink: 0;
+  padding: 0.45rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid var(--pf-border-strong);
+  background: rgba(37, 99, 235, 0.15);
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.applyBtn:hover {
+  background: rgba(37, 99, 235, 0.28);
+}
+
+.error {
+  margin: 0 0 0.75rem;
+  font-size: 0.75rem;
+  color: #f87171;
+}
+
+.resetBtn {
+  width: 100%;
+  padding: 0.5rem;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.78rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.resetBtn:hover {
+  color: var(--text);
+}
+
+@media (max-width: 479px) {
+  .emojiGrid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .symbolGrid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 600px) {
+  .backdrop {
+    align-items: center;
+  }
+
+  .sheet {
+    border-radius: var(--radius);
+  }
+}

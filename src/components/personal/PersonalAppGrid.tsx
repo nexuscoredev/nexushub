@@ -2,14 +2,17 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   catalogForUser,
   resolveAppById,
+  type PersonalAppIcon,
   type PersonalCustomApp,
   type PersonalInternalAction,
 } from '../../lib/personalApps';
+import { defaultIconForApp, iconsEqual } from '../../lib/personalAppIconOptions';
 import {
   loadPersonalAppLayout,
   savePersonalAppLayout,
   type PersonalAppLayout,
 } from '../../lib/personalAppLayout';
+import { PersonalAppIconPicker } from './PersonalAppIconPicker';
 import { PersonalAppLibrary } from './PersonalAppLibrary';
 import { PersonalAppTile } from './PersonalAppTile';
 import styles from './PersonalAppGrid.module.css';
@@ -36,6 +39,7 @@ export function PersonalAppGrid({
   );
   const [editing, setEditing] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
+  const [iconPickerId, setIconPickerId] = useState<string | null>(null);
   const [dragId, setDragId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
 
@@ -43,6 +47,7 @@ export function PersonalAppGrid({
     setLayout(loadPersonalAppLayout(userId, viniciusOnly));
     setEditing(false);
     setLibraryOpen(false);
+    setIconPickerId(null);
   }, [userId, viniciusOnly]);
 
   const persist = useCallback(
@@ -56,10 +61,20 @@ export function PersonalAppGrid({
   const homeApps = useMemo(
     () =>
       layout.order
-        .map((id) => resolveAppById(id, catalog, layout.customApps))
+        .map((id) => resolveAppById(id, catalog, layout.customApps, layout.iconOverrides))
         .filter((app): app is NonNullable<typeof app> => app != null),
     [layout, catalog],
   );
+
+  const iconPickerApp = useMemo(
+    () => (iconPickerId ? homeApps.find((app) => app.id === iconPickerId) ?? null : null),
+    [homeApps, iconPickerId],
+  );
+
+  const iconPickerDefault = useMemo(() => {
+    if (!iconPickerId) return null;
+    return defaultIconForApp(iconPickerId, catalog, layout.customApps);
+  }, [iconPickerId, catalog, layout.customApps]);
 
   const homeIds = useMemo(() => new Set(layout.order), [layout.order]);
 
@@ -70,9 +85,12 @@ export function PersonalAppGrid({
   };
 
   const removeFromHome = (id: string) => {
+    const nextOverrides = { ...layout.iconOverrides };
+    delete nextOverrides[id];
     persist({
       ...layout,
       order: layout.order.filter((item) => item !== id),
+      iconOverrides: nextOverrides,
     });
   };
 
@@ -85,7 +103,25 @@ export function PersonalAppGrid({
     persist({
       order: [...layout.order, app.id],
       customApps: [...layout.customApps.filter((c) => c.id !== app.id), app],
+      iconOverrides: layout.iconOverrides,
     });
+  };
+
+  const setAppIcon = (appId: string, icon: PersonalAppIcon) => {
+    const defaultIcon = defaultIconForApp(appId, catalog, layout.customApps);
+    const nextOverrides = { ...layout.iconOverrides };
+    if (defaultIcon && iconsEqual(icon, defaultIcon)) {
+      delete nextOverrides[appId];
+    } else {
+      nextOverrides[appId] = icon;
+    }
+    persist({ ...layout, iconOverrides: nextOverrides });
+  };
+
+  const resetAppIcon = (appId: string) => {
+    const nextOverrides = { ...layout.iconOverrides };
+    delete nextOverrides[appId];
+    persist({ ...layout, iconOverrides: nextOverrides });
   };
 
   const moveApp = (fromId: string, toId: string) => {
@@ -114,7 +150,7 @@ export function PersonalAppGrid({
             </h3>
             <p className={styles.sub}>
               {editing
-                ? 'Arraste para reorganizar. Toque em − para remover da home.'
+                ? 'Toque no ícone para alterar. Arraste para reorganizar. Toque em − para remover.'
                 : 'Sua home pessoal — toque em Organizar para customizar.'}
             </p>
           </div>
@@ -136,6 +172,7 @@ export function PersonalAppGrid({
                   onClick={() => {
                     setEditing(false);
                     setLibraryOpen(false);
+                    setIconPickerId(null);
                   }}
                 >
                   Concluído
@@ -159,6 +196,7 @@ export function PersonalAppGrid({
               dragOver={dragOverId === app.id && dragId !== app.id}
               onInternal={handleInternal}
               onRemove={() => removeFromHome(app.id)}
+              onEditIcon={() => setIconPickerId(app.id)}
               onDragStart={() => setDragId(app.id)}
               onDragEnd={() => {
                 setDragId(null);
@@ -207,6 +245,19 @@ export function PersonalAppGrid({
         onClose={() => setLibraryOpen(false)}
         onAdd={addToHome}
         onAddCustom={addCustomApp}
+      />
+
+      <PersonalAppIconPicker
+        open={iconPickerId != null}
+        app={iconPickerApp}
+        defaultIcon={iconPickerDefault}
+        onClose={() => setIconPickerId(null)}
+        onSelect={(icon) => {
+          if (iconPickerId) setAppIcon(iconPickerId, icon);
+        }}
+        onReset={() => {
+          if (iconPickerId) resetAppIcon(iconPickerId);
+        }}
       />
     </>
   );
