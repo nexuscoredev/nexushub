@@ -89,7 +89,7 @@
 }
 
 .filtersWrap {
-  margin-inline: -0.15rem;
+  margin-inline: 0;
 }
 
 .filters {
@@ -637,9 +637,8 @@
     position: sticky;
     top: 0;
     z-index: 2;
-    margin-inline: calc(-1 * max(0rem, env(safe-area-inset-left, 0px)));
-    padding: 0.35rem max(0rem, env(safe-area-inset-right, 0px)) 0.55rem
-      max(0rem, env(safe-area-inset-left, 0px));
+    margin-inline: 0;
+    padding: 0.35rem 0 0.55rem;
     background: linear-gradient(180deg, rgba(12, 12, 14, 0.98) 75%, transparent);
   }
 
