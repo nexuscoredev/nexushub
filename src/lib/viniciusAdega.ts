@@ -26,6 +26,8 @@ export type AdegaItem = {
   origin?: string;
   notes?: string;
   opened?: boolean;
+  imageUrl?: string;
+  barcode?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -40,6 +42,8 @@ export type AdegaItemInput = {
   origin?: string;
   notes?: string;
   opened?: boolean;
+  imageUrl?: string;
+  barcode?: string;
 };
 
 function storageKey(userId: string): string {
@@ -57,6 +61,15 @@ function parseItems(raw: string | null): AdegaItem[] {
   }
 }
 
+function isValidImageUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 function isValidItem(value: unknown): value is AdegaItem {
   if (!value || typeof value !== 'object') return false;
   const item = value as Partial<AdegaItem>;
@@ -70,7 +83,9 @@ function isValidItem(value: unknown): value is AdegaItem {
     Number.isFinite(item.quantity) &&
     item.quantity >= 0 &&
     typeof item.createdAt === 'string' &&
-    typeof item.updatedAt === 'string'
+    typeof item.updatedAt === 'string' &&
+    (item.imageUrl == null || (typeof item.imageUrl === 'string' && isValidImageUrl(item.imageUrl))) &&
+    (item.barcode == null || (typeof item.barcode === 'string' && item.barcode.trim().length > 0))
   );
 }
 
@@ -114,6 +129,8 @@ export function normalizeAdegaInput(input: AdegaItemInput): AdegaItemInput | nul
     origin: input.origin?.trim() || undefined,
     notes: input.notes?.trim() || undefined,
     opened: Boolean(input.opened),
+    imageUrl: input.imageUrl?.trim() && isValidImageUrl(input.imageUrl.trim()) ? input.imageUrl.trim() : undefined,
+    barcode: input.barcode?.trim() || undefined,
   };
 }
 

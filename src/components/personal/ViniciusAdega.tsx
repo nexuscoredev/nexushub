@@ -1,5 +1,7 @@
-import { FormEvent, useEffect, useMemo, useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';import {
+import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import type { AdegaSearchResult } from '../../lib/adegaSearch';
+import {
   ADEGA_CATEGORY_PRESETS,
   adegaStats,
   categoryEmoji,
@@ -11,6 +13,7 @@ import { useAuth } from '../../contexts/AuthContext';import {
   type AdegaItem,
   type AdegaItemInput,
 } from '../../lib/viniciusAdega';
+import { AdegaProductSearch } from './AdegaProductSearch';
 import styles from './ViniciusAdega.module.css';
 
 type FormState = {
@@ -24,6 +27,8 @@ type FormState = {
   origin: string;
   notes: string;
   opened: boolean;
+  imageUrl: string;
+  barcode: string;
 };
 
 const EMPTY_FORM: FormState = {
@@ -37,6 +42,8 @@ const EMPTY_FORM: FormState = {
   origin: '',
   notes: '',
   opened: false,
+  imageUrl: '',
+  barcode: '',
 };
 
 function itemToForm(item: AdegaItem): FormState {
@@ -52,6 +59,8 @@ function itemToForm(item: AdegaItem): FormState {
     origin: item.origin ?? '',
     notes: item.notes ?? '',
     opened: Boolean(item.opened),
+    imageUrl: item.imageUrl ?? '',
+    barcode: item.barcode ?? '',
   };
 }
 
@@ -67,6 +76,24 @@ function formToInput(form: FormState): AdegaItemInput {
     origin: form.origin || undefined,
     notes: form.notes || undefined,
     opened: form.opened,
+    imageUrl: form.imageUrl || undefined,
+    barcode: form.barcode || undefined,
+  };
+}
+
+function applySearchResult(form: FormState, hit: AdegaSearchResult): FormState {
+  const preset = ADEGA_CATEGORY_PRESETS.includes(hit.category as (typeof ADEGA_CATEGORY_PRESETS)[number]);
+  return {
+    ...form,
+    name: hit.name,
+    brand: hit.brand ?? '',
+    category: preset ? hit.category : 'Outro',
+    customCategory: preset ? form.customCategory : hit.category !== 'Outro' ? hit.category : form.customCategory,
+    volumeMl: hit.volumeMl != null ? String(hit.volumeMl) : form.volumeMl,
+    abv: hit.abv != null ? String(hit.abv) : form.abv,
+    origin: hit.origin ?? form.origin,
+    imageUrl: hit.imageUrl ?? '',
+    barcode: hit.barcode,
   };
 }
 
@@ -178,6 +205,11 @@ export function ViniciusAdega() {
     persist(items.filter((item) => item.id !== id));
   };
 
+  const handleCatalogPick = useCallback((hit: AdegaSearchResult) => {
+    setForm((prev) => applySearchResult(prev, hit));
+    setFormError(null);
+  }, []);
+
   return (
     <div className={styles.adega}>
       <header className={styles.banner}>
@@ -265,7 +297,11 @@ export function ViniciusAdega() {
                   aria-label={`Editar ${item.name}`}
                 >
                   <span className={styles.cardIcon} aria-hidden>
-                    {categoryEmoji(item.category)}
+                    {item.imageUrl ? (
+                      <img src={item.imageUrl} alt="" className={styles.cardPhoto} loading="lazy" decoding="async" />
+                    ) : (
+                      categoryEmoji(item.category)
+                    )}
                   </span>
                   <div className={styles.cardBody}>
                     <h3 className={styles.cardTitle}>{item.name}</h3>
@@ -340,6 +376,21 @@ export function ViniciusAdega() {
             </div>
             <form className={styles.form} onSubmit={handleSubmit}>
               <div className={styles.dialogBody}>
+              {!editingId ? <AdegaProductSearch onSelect={handleCatalogPick} /> : null}
+
+              {form.imageUrl ? (
+                <div className={styles.formPreview}>
+                  <img src={form.imageUrl} alt="" className={styles.formPreviewImg} loading="lazy" decoding="async" />
+                  <button
+                    type="button"
+                    className={styles.formPreviewClear}
+                    onClick={() => setForm((prev) => ({ ...prev, imageUrl: '', barcode: '' }))}
+                  >
+                    Remover foto
+                  </button>
+                </div>
+              ) : null}
+
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="adega-name">
                   Nome
