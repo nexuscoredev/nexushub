@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { NovidadesSparkIcon } from '../components/NovidadesSparkIcon';
+import { PersonalAreaNavIcon } from '../components/PersonalAreaNavIcon';
 import { NavIcon } from '../components/NavIcon';
 import { UserAvatar } from '../components/UserAvatar';
 import { TechShell } from '../components/TechShell';
@@ -115,6 +116,18 @@ export function DashboardLayout() {
             <div className={styles.hubNavUtilities}>
               <InstallAppPrompt variant="icon" className={styles.installNavBtn} />
               {user?.id ? <HubNotificationsBell userId={user.id} /> : null}
+              {podePessoal ? (
+                <NavLink
+                  to="/pessoal"
+                  className={({ isActive }) =>
+                    `${styles.utilityBtn} ${styles.utilityNavLink} ${isActive ? styles.utilityNavLinkActive : ''}`
+                  }
+                  aria-label="Área pessoal"
+                  title="Área pessoal"
+                >
+                  <PersonalAreaNavIcon className={styles.pessoalNavIcon} />
+                </NavLink>
+              ) : null}
               <button
                 type="button"
                 className={styles.utilityBtn}
@@ -182,9 +195,7 @@ export function DashboardLayout() {
               <div className={styles.mobileDrawerFoot}>
                 {podePessoal ? (
                   <NavLink to="/pessoal" className={styles.mobileFootLink} onClick={closeMenu}>
-                    <span className={styles.mobilePessoalIcon} aria-hidden>
-                      ✦
-                    </span>
+                    <PersonalAreaNavIcon className={styles.mobilePessoalNavIcon} />
                     <span>Área pessoal</span>
                   </NavLink>
                 ) : null}

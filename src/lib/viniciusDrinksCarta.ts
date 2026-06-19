@@ -13,6 +13,11 @@ export function drinkImagePath(slug: string): string {
   return `/img/personal/drinks/${slug}.jpg`;
 }
 
+/** Foto só do copo (sem texto da receita na arte). */
+export function drinkThumbPath(slug: string): string {
+  return `/img/personal/drinks/thumbs/${slug}.jpg`;
+}
+
 /** Banner compartilhado do site original (bar com coquetéis). */
 export const VINICIUS_DRINKS_BANNER_URL = drinkImagePath('banner');
 
@@ -23,7 +28,7 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     slug: 'whisky-sour',
     title: 'Whisky Sour',
     tagline: 'Whisky, limão e um toque doce, bem batido pra ficar cremoso.',
-    imageUrl: drinkImagePath('whisky-sour'),
+    imageUrl: drinkThumbPath('whisky-sour'),
     ingredients: ['1 Limão', '1/2 dose de xarope de açúcar', '60ml de Whisky'],
     steps: ['Esprema o limão;', 'Ferva o xarope de açúcar;', 'Acrescentar whisky;'],
     notes: 'Xarope de açúcar = 1 de água para de açúcar. Drink batido!',
@@ -32,7 +37,7 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     slug: 'whisky-cola',
     title: 'Whisky Cola',
     tagline: 'Whisky, Coca-Cola, Gelo e Limão',
-    imageUrl: drinkImagePath('whisky-cola'),
+    imageUrl: drinkThumbPath('whisky-cola'),
     ingredients: ['1 limão ou 1/2', '1 dose de Whisky', '1 Coca Cola'],
     steps: ['Esprema o limão;', 'Acrescente o Whisky;', 'Acrescente a Coca-Cola;'],
     notes: 'De preferência sem coqueteleira. Drink misturado (não batido)!',
@@ -41,7 +46,7 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     slug: 'mojito',
     title: 'Mojito',
     tagline: 'Cerveja gelada, limão e sal na borda — versão bem brasileira.',
-    imageUrl: drinkImagePath('mojito'),
+    imageUrl: drinkThumbPath('mojito'),
     ingredients: [
       '1 lata ou garrafa de cerveja clara (preferencialmente pilsen), bem gelada',
       'Suco de 1/2 limão-taiti (cerca de 20 ml)',
@@ -61,7 +66,7 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     slug: 'negroni',
     title: 'Negroni',
     tagline: 'Clássico amargo e elegante — gin, vermute e bitter.',
-    imageUrl: drinkImagePath('negroni'),
+    imageUrl: drinkThumbPath('negroni'),
     ingredients: [
       '1 lata ou garrafa de cerveja clara (preferencialmente pilsen), bem gelada',
       'Suco de 1/2 limão-taiti (cerca de 20 ml)',
@@ -81,7 +86,7 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     slug: 'moscow-mule',
     title: 'Moscow Mule',
     tagline: 'Vodka, ginger beer e limão na caneca de cobre.',
-    imageUrl: drinkImagePath('moscow-mule'),
+    imageUrl: drinkThumbPath('moscow-mule'),
     ingredients: [
       '50ml de Vodka;',
       'Suco de 1/2 limão thaiti;',
@@ -102,7 +107,7 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     slug: 'daiquiri',
     title: 'Daiquiri',
     tagline: 'Direto do Caribe pro seu copo. Rum branco, limão e açúcar.',
-    imageUrl: drinkImagePath('daiquiri'),
+    imageUrl: drinkThumbPath('daiquiri'),
     ingredients: ['1 ou 2 Limões', '1/2 dose de xarope de açúcar', '60ml de Rum Carta Branca'],
     steps: ['Esprema o limão;', 'Ferva o xarope de açúcar;', 'Acrescentar Rum;'],
     notes: 'Xarope de açúcar = 1 de água para de açúcar. Drink batido!',
@@ -111,7 +116,7 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     slug: 'margarita',
     title: 'Margarita',
     tagline: 'Tequila, triple sec e limão com borda salgada.',
-    imageUrl: drinkImagePath('margarita'),
+    imageUrl: drinkThumbPath('margarita'),
     ingredients: [
       'Gelo',
       'Sal',
@@ -132,7 +137,7 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     slug: 'margarita-blue',
     title: 'Margarita Blue',
     tagline: 'Margarita com curaçau blue — visual e sabor marcantes.',
-    imageUrl: drinkImagePath('margarita-blue'),
+    imageUrl: drinkThumbPath('margarita-blue'),
     ingredients: [
       'Gelo',
       'Sal',
@@ -152,7 +157,7 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     slug: 'dry-martini',
     title: 'Dry Martini',
     tagline: 'Gin e vermute seco, bem gelado — seco e clássico.',
-    imageUrl: drinkImagePath('dry-martini'),
+    imageUrl: drinkThumbPath('dry-martini'),
     ingredients: ['60 ml de gin', '20 ml de Vermouth Extra Dry', 'Azeitona'],
     steps: [
       'Em uma coqueteleira com gelo, coloque o gin e o Vermouth. Misture!',
@@ -165,7 +170,7 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     slug: 'vesper-martini',
     title: 'Vesper Martini',
     tagline: 'Gin, vodka e Lillet — o martini de James Bond.',
-    imageUrl: drinkImagePath('vesper-martini'),
+    imageUrl: drinkThumbPath('vesper-martini'),
     ingredients: [
       '60 ml de gin',
       '20 ml de vodka',
@@ -183,7 +188,7 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     slug: 'cuba-libre',
     title: 'Cuba Libre',
     tagline: 'Rum, cola e limão — tropical e fácil.',
-    imageUrl: drinkImagePath('cuba-libre'),
+    imageUrl: drinkThumbPath('cuba-libre'),
     ingredients: [
       '1 lata ou garrafa de cerveja clara (preferencialmente pilsen), bem gelada',
       'Suco de 1/2 limão-taiti (cerca de 20 ml)',
@@ -203,7 +208,7 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     slug: 'cozumel',
     title: 'Cozumel',
     tagline: 'Tequila e limão com toque doce — leve e cítrico.',
-    imageUrl: drinkImagePath('cozumel'),
+    imageUrl: drinkThumbPath('cozumel'),
     ingredients: [
       '1 lata ou garrafa de cerveja clara (preferencialmente pilsen), bem gelada',
       'Suco de 1/2 limão-taiti (cerca de 20 ml)',
@@ -224,7 +229,7 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     title: 'Caipitudo',
     tagline:
       'O clássico do seu jeito. Escolha sua fruta fresca e seu destilado favorito (cachaça, vodka ou saquê).',
-    imageUrl: drinkImagePath('caipitudo'),
+    imageUrl: drinkThumbPath('caipitudo'),
     ingredients: [
       '2 ou 1 fruta(s) de sua escolha',
       '2 colheres de açúcar',
@@ -243,7 +248,7 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     slug: 'caipiroska-de-limao',
     title: 'Caipiroska de Limão',
     tagline: 'Limões macerados com açúcar, Vodka e gelo.',
-    imageUrl: drinkImagePath('caipiroska-de-limao'),
+    imageUrl: drinkThumbPath('caipiroska-de-limao'),
     ingredients: [
       '2 limões thaiti ou siciliano',
       '2 colheres de açúcar',
@@ -263,7 +268,7 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     title: 'Caipiroska de Maracujá',
     tagline:
       'Tropical e vibrante. A acidez do maracujá fresco perfeitamente equilibrada com vodka e açúcar.',
-    imageUrl: drinkImagePath('caipiroska-de-maracuja'),
+    imageUrl: drinkThumbPath('caipiroska-de-maracuja'),
     ingredients: [
       '1 limão thaiti ou siciliano',
       '2 colheres de açúcar',
@@ -284,7 +289,7 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     slug: 'blue-lagoon',
     title: 'Blue Lagoon',
     tagline: 'Vodka, curaçau blue e limão — azul e tropical.',
-    imageUrl: drinkImagePath('blue-lagoon'),
+    imageUrl: drinkThumbPath('blue-lagoon'),
     ingredients: [
       'Gelo a gosto',
       'Rodela de limão-siciliano para decorar',
@@ -307,7 +312,7 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     slug: 'bloody-mary',
     title: 'Bloody Mary',
     tagline: 'Vodka, tomate e especiarias — salgado e encorpado.',
-    imageUrl: drinkImagePath('bloody-mary'),
+    imageUrl: drinkThumbPath('bloody-mary'),
     ingredients: [
       '50ml de Vodka;',
       'Suco de 1/2 limão thaiti',

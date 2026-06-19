@@ -1,5 +1,6 @@
 import { TodoistIcon } from '../TodoistIcon';
 import { TheNewsMark } from './TheNewsMark';
+import { AdegaMark, DrinksCartaMark, PcGuideMark } from './PersonalAppMarks';
 import type { PersonalAppIcon as PersonalAppIconDef } from '../../lib/personalApps';
 import styles from './PersonalAppGrid.module.css';
 
@@ -30,6 +31,12 @@ export function PersonalAppIcon({ icon, label }: PersonalAppIconProps) {
       );
     case 'the-news':
       return <TheNewsMark className={styles.theNewsIcon} />;
+    case 'drinks-carta':
+      return <DrinksCartaMark className={styles.brandMarkIcon} />;
+    case 'adega':
+      return <AdegaMark className={styles.brandMarkIcon} />;
+    case 'pc-guide':
+      return <PcGuideMark className={styles.brandMarkIcon} />;
     case 'todoist':
       return <TodoistIcon className={styles.todoistIcon} />;
     case 'image':

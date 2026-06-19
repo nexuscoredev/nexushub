@@ -3,6 +3,9 @@ export type PersonalAppIcon =
   | { type: 'material'; name: string; tone?: 'cyan' | 'green' | 'violet' }
   | { type: 'todoist' }
   | { type: 'the-news' }
+  | { type: 'drinks-carta' }
+  | { type: 'adega' }
+  | { type: 'pc-guide' }
   | { type: 'emoji'; value: string }
   | { type: 'piggy' }
   | { type: 'letter'; value: string };
@@ -42,7 +45,7 @@ export const PERSONAL_APP_CATALOG: PersonalAppDefinition[] = [
     subtitle: 'Receitas',
     kind: 'internal',
     internalAction: 'drinks',
-    icon: { type: 'emoji', value: '🍸' },
+    icon: { type: 'drinks-carta' },
     viniciusOnly: true,
   },
   {
@@ -51,7 +54,7 @@ export const PERSONAL_APP_CATALOG: PersonalAppDefinition[] = [
     subtitle: 'Controles e PC',
     kind: 'internal',
     internalAction: 'pc-guide',
-    icon: { type: 'material', name: 'sports_esports', tone: 'violet' },
+    icon: { type: 'pc-guide' },
     viniciusOnly: true,
   },
   {
@@ -60,7 +63,7 @@ export const PERSONAL_APP_CATALOG: PersonalAppDefinition[] = [
     subtitle: 'Coleção',
     kind: 'internal',
     internalAction: 'adega',
-    icon: { type: 'emoji', value: '🍷' },
+    icon: { type: 'adega' },
     viniciusOnly: true,
   },
   {

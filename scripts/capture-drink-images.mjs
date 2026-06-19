@@ -58,4 +58,8 @@ await banner.screenshot({
 });
 
 await browser.close();
+
+console.log('cropping drink thumbs…');
+await import('./crop-drink-thumbs.mjs');
+
 console.log('done', outDir);

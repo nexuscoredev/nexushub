@@ -174,6 +174,9 @@ export function isPersonalAppIcon(value: unknown): value is PersonalAppIcon {
     case 'piggy':
     case 'todoist':
     case 'the-news':
+    case 'drinks-carta':
+    case 'adega':
+    case 'pc-guide':
       return true;
     case 'emoji':
       return typeof icon.value === 'string' && icon.value.length > 0;
