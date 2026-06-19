@@ -30,8 +30,9 @@ export function DashboardLayout() {
         finance: podeFinanceiroAgenda,
         gestao: podeGestao,
         cofre: podeCofre,
+        jarvis: podeJarvis,
       }),
-    [podeFinanceiroAgenda, podeGestao, podeCofre],
+    [podeFinanceiroAgenda, podeGestao, podeCofre, podeJarvis],
   );
 
   const visibleNav = useMemo(() => [...principal, ...mais], [principal, mais]);

@@ -21,6 +21,7 @@ import { LigeirinhoDocumentacaoPage } from './pages/LigeirinhoDocumentacaoPage';
 import { SystemsPage } from './pages/SystemsPage';
 import { UsersPage } from './pages/UsersPage';
 import { ChatPage } from './pages/ChatPage';
+import { JarvisChatsPage } from './pages/JarvisChatsPage';
 import { PessoalPage } from './pages/PessoalPage';
 import { VaultPage } from './pages/VaultPage';
 import { DesenvolvimentoPage } from './pages/DesenvolvimentoPage';
@@ -62,6 +63,9 @@ export default function App() {
               </Route>
               <Route element={<ProtectedRoute requireCofre />}>
                 <Route path="/cofre" element={<VaultPage />} />
+              </Route>
+              <Route element={<ProtectedRoute requireJarvis />}>
+                <Route path="/jarvis" element={<JarvisChatsPage />} />
               </Route>
               <Route element={<ProtectedRoute requirePessoal />}>
                 <Route path="/pessoal" element={<PessoalPage />} />

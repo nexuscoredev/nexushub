@@ -7,6 +7,7 @@ interface ProtectedRouteProps {
   requirePessoal?: boolean;
   requireDocumentacao?: boolean;
   requireCofre?: boolean;
+  requireJarvis?: boolean;
 }
 
 export function ProtectedRoute({
@@ -15,6 +16,7 @@ export function ProtectedRoute({
   requirePessoal = false,
   requireDocumentacao = false,
   requireCofre = false,
+  requireJarvis = false,
 }: ProtectedRouteProps) {
   const {
     session,
@@ -27,6 +29,7 @@ export function ProtectedRoute({
     podePessoal,
     podeDocumentacao,
     podeCofre,
+    podeJarvis,
     isCliente,
     isEquipe,
   } = useAuth();
@@ -79,6 +82,10 @@ export function ProtectedRoute({
   }
 
   if (requireCofre && !podeCofre) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  if (requireJarvis && !podeJarvis) {
     return <Navigate to="/dashboard" replace />;
   }
 
