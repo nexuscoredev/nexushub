@@ -23,6 +23,7 @@ interface PersonalAppGridProps {
   onOpenFinance: () => void;
   onOpenDrinks?: () => void;
   onOpenPcGuide?: () => void;
+  onOpenAdega?: () => void;
 }
 
 export function PersonalAppGrid({
@@ -31,6 +32,7 @@ export function PersonalAppGrid({
   onOpenFinance,
   onOpenDrinks,
   onOpenPcGuide,
+  onOpenAdega,
 }: PersonalAppGridProps) {
   const catalog = useMemo(() => catalogForUser(viniciusOnly), [viniciusOnly]);
 
@@ -82,6 +84,7 @@ export function PersonalAppGrid({
     if (action === 'finance') onOpenFinance();
     if (action === 'drinks') onOpenDrinks?.();
     if (action === 'pc-guide') onOpenPcGuide?.();
+    if (action === 'adega') onOpenAdega?.();
   };
 
   const removeFromHome = (id: string) => {

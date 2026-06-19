@@ -67,6 +67,15 @@
     padding-right: max(0.65rem, env(safe-area-inset-right));
   }
 
+  .financeTop {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .financeTop :global(header) {
+    flex: 1 1 100%;
+  }
+
   .backBtn {
     min-height: 44px;
     padding: 0.45rem 0.85rem;

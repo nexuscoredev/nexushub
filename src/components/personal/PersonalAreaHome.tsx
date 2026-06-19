@@ -24,9 +24,10 @@ interface PersonalAreaHomeProps {
   onOpenFinance: () => void;
   onOpenDrinks?: () => void;
   onOpenPcGuide?: () => void;
+  onOpenAdega?: () => void;
 }
 
-export function PersonalAreaHome({ onOpenFinance, onOpenDrinks, onOpenPcGuide }: PersonalAreaHomeProps) {
+export function PersonalAreaHome({ onOpenFinance, onOpenDrinks, onOpenPcGuide, onOpenAdega }: PersonalAreaHomeProps) {
   const { profile, user } = useAuth();
   const userId = user?.id;
   const email = profile?.email ?? user?.email;
@@ -83,6 +84,7 @@ export function PersonalAreaHome({ onOpenFinance, onOpenDrinks, onOpenPcGuide }:
         onOpenFinance={onOpenFinance}
         onOpenDrinks={onOpenDrinks}
         onOpenPcGuide={onOpenPcGuide}
+        onOpenAdega={onOpenAdega}
       />
 
       <section className={styles.card} aria-labelledby="humor-hoje">
