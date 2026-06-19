@@ -18,8 +18,8 @@ export function drinkThumbPath(slug: string): string {
   return `/img/personal/drinks/thumbs/${slug}.jpg`;
 }
 
-/** Banner compartilhado do site original (bar com coquetéis). */
-export const VINICIUS_DRINKS_BANNER_URL = drinkImagePath('banner');
+/** Banner principal da carta (arte com título integrado). */
+export const VINICIUS_DRINKS_BANNER_URL = '/img/personal/drinks/banner.png';
 
 export const VINICIUS_DRINKS_SITE_BASE = 'https://sites.google.com/view/drinksv/inicio';
 

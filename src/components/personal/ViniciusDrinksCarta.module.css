@@ -8,162 +8,34 @@
 }
 
 .banner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.bannerArtWrap {
   position: relative;
   overflow: hidden;
   border-radius: calc(var(--radius) + 2px);
   border: 1px solid rgba(196, 181, 253, 0.18);
-  min-height: 13.5rem;
-  isolation: isolate;
   box-shadow:
     0 24px 48px rgba(0, 0, 0, 0.38),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-.bannerAtmosphere {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 85% 70% at 12% 85%, rgba(245, 158, 11, 0.22), transparent 58%),
-    radial-gradient(ellipse 70% 55% at 88% 18%, rgba(139, 92, 246, 0.32), transparent 52%),
-    linear-gradient(135deg, #1a0a2e 0%, #0c0618 42%, #050508 100%);
-}
-
-.bannerOrbA,
-.bannerOrbB {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(40px);
-  pointer-events: none;
-}
-
-.bannerOrbA {
-  width: 9rem;
-  height: 9rem;
-  top: -2rem;
-  right: 8%;
-  background: rgba(167, 139, 250, 0.28);
-  animation: bannerDriftA 9s ease-in-out infinite alternate;
-}
-
-.bannerOrbB {
-  width: 7rem;
-  height: 7rem;
-  bottom: -1.5rem;
-  left: 35%;
-  background: rgba(251, 191, 36, 0.18);
-  animation: bannerDriftB 11s ease-in-out infinite alternate;
-}
-
-.bannerGrid {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 1rem 1.25rem;
-  padding: 1.15rem 1.25rem 1.25rem;
-  min-height: 13.5rem;
-}
-
-.bannerHero {
-  position: relative;
-  width: 7.5rem;
-  height: 7.5rem;
-  flex-shrink: 0;
-}
-
-.bannerHeroGlow {
-  position: absolute;
-  inset: 8%;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(251, 191, 36, 0.45) 0%, rgba(139, 92, 246, 0.12) 55%, transparent 72%);
-  filter: blur(8px);
-  animation: bannerPulse 4.5s ease-in-out infinite;
-}
-
-.bannerHeroRing {
-  position: absolute;
-  inset: -4%;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.12), transparent 55%);
-  box-shadow:
-    inset 0 0 0 1px rgba(196, 181, 253, 0.12),
-    0 12px 32px rgba(0, 0, 0, 0.45);
-}
-
-.bannerHeroImg {
-  position: relative;
-  z-index: 1;
+.bannerArt {
+  display: block;
   width: 100%;
-  height: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
   object-fit: cover;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
-  animation: bannerFloat 5s ease-in-out infinite;
-}
-
-.bannerCopy {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-width: 0;
-}
-
-.bannerEyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin: 0 0 0.45rem;
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #ddd6fe;
-}
-
-.bannerEyebrowDot {
-  width: 0.4rem;
-  height: 0.4rem;
-  border-radius: 50%;
-  background: #a78bfa;
-  box-shadow: 0 0 10px rgba(167, 139, 250, 0.85);
-  animation: bannerPulse 2.8s ease-in-out infinite;
-}
-
-.bannerTitle {
-  margin: 0;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(1.55rem, 4.5vw, 2rem);
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: 0.01em;
-  line-height: 1.12;
-  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
-}
-
-.bannerTitleAccent {
-  background: linear-gradient(105deg, #fde68a 0%, #fbbf24 45%, #c4b5fd 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.bannerLead {
-  margin: 0.55rem 0 0;
-  font-size: 0.84rem;
-  color: rgba(255, 255, 255, 0.76);
-  line-height: 1.55;
-  max-width: 26rem;
+  object-position: center;
 }
 
 .bannerMeta {
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem;
-  margin-top: 0.85rem;
 }
 
 .bannerPill {
@@ -172,8 +44,7 @@
   padding: 0.28rem 0.62rem;
   border-radius: 999px;
   border: 1px solid rgba(196, 181, 253, 0.28);
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.04);
   font-family: var(--font-mono);
   font-size: 0.62rem;
   font-weight: 600;
@@ -181,120 +52,9 @@
   color: rgba(255, 255, 255, 0.88);
 }
 
-.bannerShine {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 45%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, transparent 100%);
-  pointer-events: none;
-  z-index: 2;
-}
-
-.bannerGrain {
-  position: absolute;
-  inset: 0;
-  opacity: 0.04;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 3;
-}
-
-@keyframes bannerFloat {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-}
-
-@keyframes bannerPulse {
-  0%,
-  100% {
-    opacity: 0.85;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.04);
-  }
-}
-
-@keyframes bannerDriftA {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(-12px, 10px);
-  }
-}
-
-@keyframes bannerDriftB {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(10px, -8px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .bannerHeroImg,
-  .bannerHeroGlow,
-  .bannerEyebrowDot,
-  .bannerOrbA,
-  .bannerOrbB {
-    animation: none;
-  }
-}
-
-@media (min-width: 640px) {
-  .banner {
-    min-height: 15rem;
-  }
-
-  .bannerGrid {
-    gap: 1.25rem 1.75rem;
-    padding: 1.35rem 1.5rem 1.45rem;
-    min-height: 15rem;
-  }
-
-  .bannerHero {
-    width: 8.75rem;
-    height: 8.75rem;
-  }
-
-  .bannerLead {
-    font-size: 0.88rem;
-  }
-}
-
 @media (max-width: 479px) {
-  .bannerGrid {
-    grid-template-columns: 1fr;
-    text-align: center;
-    padding: 1.1rem 1rem 1.2rem;
-  }
-
-  .bannerHero {
-    width: 6.75rem;
-    height: 6.75rem;
-    margin-inline: auto;
-  }
-
-  .bannerEyebrow {
-    justify-content: center;
-  }
-
-  .bannerMeta {
-    justify-content: center;
-  }
-
-  .bannerLead {
-    margin-inline: auto;
+  .bannerArt {
+    aspect-ratio: 4 / 3;
   }
 }
 
@@ -476,6 +236,602 @@
   font-size: 0.78rem;
   font-style: italic;
   color: rgba(196, 181, 253, 0.85);
+}
+
+.recipeToolkit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.servingsPanel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 0.65rem;
+  border: 1px solid rgba(165, 180, 252, 0.22);
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.12) 0%,
+    rgba(15, 15, 20, 0.92) 55%
+  );
+}
+
+.servingsCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.servingsLabel {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.servingsHint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: rgba(196, 181, 253, 0.88);
+}
+
+.servingsControl {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.servingsBtn {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.servingsBtn:hover:not(:disabled) {
+  background: rgba(165, 180, 252, 0.18);
+  border-color: rgba(165, 180, 252, 0.35);
+}
+
+.servingsBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.servingsValue {
+  min-width: 2rem;
+  text-align: center;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.recipeBlockHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.recipeBadge {
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgba(196, 181, 253, 0.95);
+  border: 1px solid rgba(165, 180, 252, 0.28);
+  background: rgba(99, 102, 241, 0.12);
+}
+
+.ingredientsLead {
+  margin: 0;
+  font-size: 0.78rem;
+  color: rgba(226, 232, 240, 0.62);
+}
+
+.ingredientsList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ingredientItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 0.45rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: rgba(226, 232, 240, 0.88);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ingredientScaled {
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(165, 180, 252, 0.14);
+  color: #f1f5f9;
+}
+
+.ingredientFixed {
+  opacity: 0.82;
+}
+
+.ingredientDot {
+  width: 0.35rem;
+  height: 0.35rem;
+  margin-top: 0.42rem;
+  border-radius: 50%;
+  background: rgba(165, 180, 252, 0.75);
+  flex-shrink: 0;
+}
+
+.ingredientTag {
+  margin-left: auto;
+  padding: 0.1rem 0.35rem;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(226, 232, 240, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.stepsProgressLabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(196, 181, 253, 0.9);
+}
+
+.stepsProgressTrack {
+  height: 0.28rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.stepsProgressFill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #6366f1, #a78bfa);
+  transition: width 0.25s ease;
+}
+
+.stepsChecklist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.stepCheck {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.5rem 0.55rem;
+  border-radius: 0.45rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(226, 232, 240, 0.9);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.stepCheck:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(165, 180, 252, 0.2);
+}
+
+.stepCheckBox {
+  display: grid;
+  place-items: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.12rem;
+  border-radius: 0.3rem;
+  border: 1.5px solid rgba(165, 180, 252, 0.45);
+  background: rgba(0, 0, 0, 0.35);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #c4b5fd;
+  flex-shrink: 0;
+}
+
+.stepText {
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.stepDone .stepCheck {
+  background: rgba(34, 197, 94, 0.08);
+  border-color: rgba(34, 197, 94, 0.22);
+}
+
+.stepDone .stepCheckBox {
+  border-color: rgba(34, 197, 94, 0.65);
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+}
+
+.stepDone .stepText {
+  color: rgba(226, 232, 240, 0.55);
+  text-decoration: line-through;
+  text-decoration-color: rgba(226, 232, 240, 0.35);
+}
+
+.stepsComplete {
+  margin: 0.15rem 0 0;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.45rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  color: #86efac;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.22);
+}
+
+.stepsReset {
+  align-self: flex-start;
+  margin-top: 0.1rem;
+  padding: 0.35rem 0.55rem;
+  border: 0;
+  border-radius: 0.4rem;
+  background: transparent;
+  color: rgba(196, 181, 253, 0.85);
+  font-size: 0.74rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.stepsReset:hover {
+  color: #ddd6fe;
+}
+
+.cartaToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.cartaToolbarHint {
+  margin: 0;
+  font-size: 0.78rem;
+  color: rgba(226, 232, 240, 0.62);
+}
+
+.cartaToolbarActions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: auto;
+}
+
+.editModeBtn,
+.editModeBtnActive,
+.editToolbarBtn {
+  flex-shrink: 0;
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.editModeBtn {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(226, 232, 240, 0.9);
+}
+
+.editModeBtn:hover {
+  border-color: rgba(165, 180, 252, 0.35);
+  color: #fff;
+}
+
+.editModeBtnActive,
+.editToolbarBtn {
+  border: 1px solid rgba(165, 180, 252, 0.45);
+  background: rgba(99, 102, 241, 0.22);
+  color: #ede9fe;
+}
+
+.mediaEditWrap {
+  position: relative;
+  display: inline-block;
+}
+
+.mediaEditBtn {
+  position: absolute;
+  right: 0.35rem;
+  bottom: 0.35rem;
+  padding: 0.25rem 0.45rem;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.72);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cardEditing {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  border: 1px dashed rgba(165, 180, 252, 0.35);
+  background: rgba(99, 102, 241, 0.06);
+}
+
+.cardEditMedia {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.cardEditBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.cardEditBadge {
+  position: absolute;
+  right: 0.2rem;
+  bottom: 0.2rem;
+  width: 1.35rem;
+  height: 1.35rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.92);
+  color: #fff;
+  font-size: 0.72rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.cardPreviewBtn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.45rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(226, 232, 240, 0.75);
+  cursor: pointer;
+}
+
+.editorBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(4px);
+}
+
+.editorSheet {
+  width: min(100%, 32rem);
+  max-height: min(92vh, 44rem);
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.85rem 0.85rem 0.65rem 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #0a0a0c;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+}
+
+.editorHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem 0.65rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.editorTitle {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.editorSub {
+  margin: 0.2rem 0 0;
+  font-size: 0.72rem;
+  color: rgba(226, 232, 240, 0.55);
+}
+
+.editorClose {
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 0.45rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.editorBody {
+  flex: 1;
+  overflow: auto;
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.editorSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.editorLabel {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(196, 181, 253, 0.92);
+}
+
+.editorPhotoRow {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.editorPhotoPreview {
+  width: 5.5rem;
+  height: 5.5rem;
+  object-fit: contain;
+  object-position: center bottom;
+  border-radius: 0.55rem;
+  background: #050505;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.editorPhotoActions {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.editorBtn,
+.editorBtnPrimary,
+.editorBtnSecondary {
+  padding: 0.45rem 0.65rem;
+  border-radius: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.editorBtn {
+  align-self: flex-start;
+  border: 1px solid rgba(165, 180, 252, 0.35);
+  background: rgba(99, 102, 241, 0.15);
+  color: #ede9fe;
+}
+
+.editorBtn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.editorBtnSecondary {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(226, 232, 240, 0.88);
+}
+
+.editorBtnPrimary {
+  border: 1px solid rgba(165, 180, 252, 0.45);
+  background: rgba(99, 102, 241, 0.35);
+  color: #fff;
+}
+
+.editorUrlRow {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.editorInput,
+.editorTextarea {
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  border-radius: 0.45rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #f8fafc;
+  font: inherit;
+  font-size: 0.82rem;
+}
+
+.editorTextarea {
+  resize: vertical;
+  min-height: 4rem;
+  line-height: 1.45;
+}
+
+.editorFileInput {
+  display: none;
+}
+
+.editorFileHint {
+  margin: 0;
+  font-size: 0.68rem;
+  color: rgba(226, 232, 240, 0.55);
+}
+
+.editorResetLink {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(196, 181, 253, 0.85);
+  font-size: 0.72rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.editorError {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #fca5a5;
+}
+
+.editorFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .recipeFrameWrap {

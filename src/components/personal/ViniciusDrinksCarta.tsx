@@ -1,132 +1,280 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import { fileToDrinkImageUrl } from '../../lib/drinkCartaImage';
+import { VINICIUS_DRINKS, VINICIUS_DRINKS_BANNER_URL } from '../../lib/viniciusDrinksCarta';
 import {
-  VINICIUS_DRINKS,
-  drinkThumbPath,
-  findViniciusDrink,
-} from '../../lib/viniciusDrinksCarta';
+  clearDrinkOverrideField,
+  findResolvedDrink,
+  loadDrinkCartaStore,
+  resolveDrinks,
+  saveDrinkCartaStore,
+  updateDrinkOverride,
+  type DrinkCartaOverride,
+  type DrinkCartaStore,
+} from '../../lib/viniciusDrinksCartaStore';
+import { DrinkCartaEditor } from './DrinkCartaEditor';
+import { DrinkRecipeToolkit } from './DrinkRecipeToolkit';
 import styles from './ViniciusDrinksCarta.module.css';
 
 export function ViniciusDrinksCarta() {
+  const { user } = useAuth();
+  const userId = user?.id;
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const activeSlug = searchParams.get('drink');
-  const activeDrink = useMemo(() => findViniciusDrink(activeSlug), [activeSlug]);
+  const editing = searchParams.get('edit') === '1';
+
+  const [store, setStore] = useState<DrinkCartaStore>(() => loadDrinkCartaStore(userId));
+  const [editorSlug, setEditorSlug] = useState<string | null>(null);
+  const bannerFileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setStore(loadDrinkCartaStore(userId));
+  }, [userId]);
+
+  const drinks = useMemo(() => resolveDrinks(store), [store]);
+  const activeDrink = useMemo(
+    () => findResolvedDrink(activeSlug, store),
+    [activeSlug, store],
+  );
+  const editorDrink = useMemo(
+    () => (editorSlug ? findResolvedDrink(editorSlug, store) ?? null : null),
+    [editorSlug, store],
+  );
+
+  const setEditing = (next: boolean) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('drinks', '1');
+    if (next) params.set('edit', '1');
+    else params.delete('edit');
+    navigate(`/pessoal?${params.toString()}`, { replace: true });
+    if (!next) setEditorSlug(null);
+  };
 
   const openDrink = (slug: string) => {
-    navigate(`/pessoal?drinks=1&drink=${slug}`);
+    const params = new URLSearchParams(searchParams);
+    params.set('drinks', '1');
+    params.set('drink', slug);
+    navigate(`/pessoal?${params.toString()}`);
   };
 
   const backToList = () => {
-    navigate('/pessoal?drinks=1');
+    const params = new URLSearchParams(searchParams);
+    params.delete('drink');
+    navigate(`/pessoal?${params.toString()}`);
   };
+
+  const handleSaveDrink = (slug: string, patch: DrinkCartaOverride) => {
+    setStore((prev) => {
+      const next = updateDrinkOverride(prev, slug, patch);
+      if (userId) saveDrinkCartaStore(userId, next);
+      return next;
+    });
+  };
+
+  const handleResetField = (slug: string, field: keyof DrinkCartaOverride) => {
+    setStore((prev) => {
+      const next = clearDrinkOverrideField(prev, slug, field);
+      if (userId) saveDrinkCartaStore(userId, next);
+      return next;
+    });
+  };
+
+  const bannerImage = store.bannerImageUrl ?? VINICIUS_DRINKS_BANNER_URL;
 
   if (activeDrink) {
     return (
       <div className={styles.carta}>
-        <button type="button" className={styles.backLink} onClick={backToList}>
-          ← Carta
-        </button>
+        <div className={styles.cartaToolbar}>
+          <button type="button" className={styles.backLink} onClick={backToList}>
+            ← Carta
+          </button>
+          <div className={styles.cartaToolbarActions}>
+            <button
+              type="button"
+              className={editing ? styles.editModeBtnActive : styles.editModeBtn}
+              onClick={() => setEditing(!editing)}
+            >
+              {editing ? 'Concluído' : 'Editar'}
+            </button>
+            {editing ? (
+              <button
+                type="button"
+                className={styles.editToolbarBtn}
+                onClick={() => setEditorSlug(activeDrink.slug)}
+              >
+                Receita
+              </button>
+            ) : null}
+          </div>
+        </div>
 
         <article className={styles.detail}>
           <div className={styles.detailMedia}>
-            <img
-              src={activeDrink.imageUrl}
-              alt=""
-              className={styles.detailPhoto}
-              loading="lazy"
-              decoding="async"
-            />
+            <div className={editing ? styles.mediaEditWrap : undefined}>
+              <img
+                src={activeDrink.imageUrl}
+                alt=""
+                className={styles.detailPhoto}
+                loading="lazy"
+                decoding="async"
+              />
+              {editing ? (
+                <button
+                  type="button"
+                  className={styles.mediaEditBtn}
+                  onClick={() => setEditorSlug(activeDrink.slug)}
+                  aria-label="Alterar foto do drink"
+                >
+                  ✎ Foto
+                </button>
+              ) : null}
+            </div>
           </div>
 
           <div className={styles.detailBody}>
             <h2 className={styles.detailTitle}>{activeDrink.title}</h2>
             <p className={styles.detailTagline}>{activeDrink.tagline}</p>
 
-            {activeDrink.ingredients.length ? (
-              <div className={styles.recipeBlock}>
-                <h3 className={styles.recipeHeading}>Ingredientes</h3>
-                <ul className={styles.recipeList}>
-                  {activeDrink.ingredients.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-                {activeDrink.notes ? <p className={styles.recipeNote}>{activeDrink.notes}</p> : null}
-                {activeDrink.steps.length ? (
-                  <>
-                    <h3 className={styles.recipeHeading}>Passos</h3>
-                    <ol className={styles.recipeSteps}>
-                      {activeDrink.steps.map((step) => (
-                        <li key={step}>{step}</li>
-                      ))}
-                    </ol>
-                  </>
-                ) : null}
-              </div>
-            ) : null}
+            <DrinkRecipeToolkit key={activeDrink.slug} drink={activeDrink} />
           </div>
         </article>
+
+        <DrinkCartaEditor
+          open={editorSlug === activeDrink.slug}
+          drink={editorDrink}
+          onClose={() => setEditorSlug(null)}
+          onSave={handleSaveDrink}
+          onResetField={handleResetField}
+        />
       </div>
     );
   }
 
   return (
     <div className={styles.carta}>
+      <div className={styles.cartaToolbar}>
+        <p className={styles.cartaToolbarHint}>
+          {editing
+            ? 'Toque em ✎ para editar foto e receita de cada drink.'
+            : `${drinks.length} receitas na carta`}
+        </p>
+        <button
+          type="button"
+          className={editing ? styles.editModeBtnActive : styles.editModeBtn}
+          onClick={() => setEditing(!editing)}
+        >
+          {editing ? 'Concluído' : 'Editar carta'}
+        </button>
+      </div>
+
       <header className={styles.banner}>
-        <div className={styles.bannerAtmosphere} aria-hidden />
-        <div className={styles.bannerOrbA} aria-hidden />
-        <div className={styles.bannerOrbB} aria-hidden />
-        <div className={styles.bannerGrid}>
-          <div className={styles.bannerHero}>
-            <div className={styles.bannerHeroGlow} aria-hidden />
-            <div className={styles.bannerHeroRing} aria-hidden />
-            <img
-              src={drinkThumbPath('whisky-sour')}
-              alt=""
-              className={styles.bannerHeroImg}
-              loading="eager"
-              decoding="async"
-            />
-          </div>
-          <div className={styles.bannerCopy}>
-            <p className={styles.bannerEyebrow}>
-              <span className={styles.bannerEyebrowDot} aria-hidden />
-              Só seu · privado
-            </p>
-            <h2 className={styles.bannerTitle}>
-              Carta de <span className={styles.bannerTitleAccent}>drinks</span>
-            </h2>
-            <p className={styles.bannerLead}>
-              Suas receitas favoritas — clássicos, twists e clássicos da casa, do jeito que você montou.
-            </p>
-            <div className={styles.bannerMeta}>
-              <span className={styles.bannerPill}>{VINICIUS_DRINKS.length} receitas</span>
-              <span className={styles.bannerPill}>Bar digital</span>
-            </div>
-          </div>
+        <div className={editing ? `${styles.bannerArtWrap} ${styles.mediaEditWrap}` : styles.bannerArtWrap}>
+          <img
+            src={bannerImage}
+            alt="Carta de Drinks"
+            className={styles.bannerArt}
+            loading="eager"
+            decoding="async"
+          />
+          {editing ? (
+            <button
+              type="button"
+              className={styles.mediaEditBtn}
+              onClick={() => bannerFileRef.current?.click()}
+              aria-label="Alterar foto do banner"
+            >
+              ✎ Banner
+            </button>
+          ) : null}
         </div>
-        <div className={styles.bannerShine} aria-hidden />
-        <div className={styles.bannerGrain} aria-hidden />
+        <input
+          ref={bannerFileRef}
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/gif"
+          className={styles.editorFileInput}
+          onChange={async (e) => {
+            const file = e.target.files?.[0];
+            if (!file || !userId) return;
+            try {
+              const url = await fileToDrinkImageUrl(file);
+              setStore((prev) => {
+                const next = { ...prev, bannerImageUrl: url };
+                saveDrinkCartaStore(userId, next);
+                return next;
+              });
+            } catch {
+              /* ignore */
+            } finally {
+              e.target.value = '';
+            }
+          }}
+        />
+        <div className={styles.bannerMeta}>
+          <span className={styles.bannerPill}>{VINICIUS_DRINKS.length} receitas</span>
+          <span className={styles.bannerPill}>Bar digital</span>
+        </div>
       </header>
 
       <ul className={styles.list}>
-        {VINICIUS_DRINKS.map((drink) => (
+        {drinks.map((drink) => (
           <li key={drink.slug}>
-            <button type="button" className={styles.card} onClick={() => openDrink(drink.slug)}>
-              <span className={styles.cardMedia}>
-                <img src={drink.imageUrl} alt="" loading="lazy" decoding="async" />
-              </span>
-              <span className={styles.cardBody}>
-                <span className={styles.cardTitle}>{drink.title}</span>
-                <span className={styles.cardTagline}>{drink.tagline}</span>
-              </span>
-              <span className={styles.cardArrow} aria-hidden>
-                →
-              </span>
-            </button>
+            {editing ? (
+              <div className={`${styles.card} ${styles.cardEditing}`}>
+                <button
+                  type="button"
+                  className={styles.cardEditMedia}
+                  onClick={() => setEditorSlug(drink.slug)}
+                  aria-label={`Editar ${drink.title}`}
+                >
+                  <span className={styles.cardMedia}>
+                    <img src={drink.imageUrl} alt="" loading="lazy" decoding="async" />
+                  </span>
+                  <span className={styles.cardEditBadge}>✎</span>
+                </button>
+                <button
+                  type="button"
+                  className={styles.cardEditBody}
+                  onClick={() => setEditorSlug(drink.slug)}
+                >
+                  <span className={styles.cardTitle}>{drink.title}</span>
+                  <span className={styles.cardTagline}>{drink.tagline}</span>
+                </button>
+                <button
+                  type="button"
+                  className={styles.cardPreviewBtn}
+                  onClick={() => openDrink(drink.slug)}
+                  aria-label={`Ver ${drink.title}`}
+                >
+                  →
+                </button>
+              </div>
+            ) : (
+              <button type="button" className={styles.card} onClick={() => openDrink(drink.slug)}>
+                <span className={styles.cardMedia}>
+                  <img src={drink.imageUrl} alt="" loading="lazy" decoding="async" />
+                </span>
+                <span className={styles.cardBody}>
+                  <span className={styles.cardTitle}>{drink.title}</span>
+                  <span className={styles.cardTagline}>{drink.tagline}</span>
+                </span>
+                <span className={styles.cardArrow} aria-hidden>
+                  →
+                </span>
+              </button>
+            )}
           </li>
         ))}
       </ul>
+
+      <DrinkCartaEditor
+        open={Boolean(editorSlug)}
+        drink={editorDrink}
+        onClose={() => setEditorSlug(null)}
+        onSave={handleSaveDrink}
+        onResetField={handleResetField}
+      />
     </div>
   );
 }

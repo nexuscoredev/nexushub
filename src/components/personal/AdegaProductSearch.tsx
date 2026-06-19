@@ -92,7 +92,7 @@ export function AdegaProductSearch({ onSelect }: AdegaProductSearchProps) {
           onFocus={() => {
             if (results.length > 0 && query.trim().length >= MIN_QUERY) setOpen(true);
           }}
-          placeholder="Whisky, vinho, cerveja… (mín. 3 letras)"
+          placeholder="Royal Salute, Johnnie Walker, vinho… (mín. 3 letras)"
           autoComplete="off"
           aria-autocomplete="list"
           aria-controls={showList ? listId : undefined}
@@ -102,7 +102,7 @@ export function AdegaProductSearch({ onSelect }: AdegaProductSearchProps) {
         {loading ? <span className={styles.catalogSearchSpinner} aria-hidden /> : null}
       </div>
       <p className={styles.catalogSearchHint}>
-        Catálogo Open Food Facts · toque num resultado para preencher o formulário.
+        Catálogo Open Food Facts (global + Brasil) · toque num resultado para preencher o formulário.
       </p>
 
       {showList ? (
