@@ -21,8 +21,12 @@ function iconWrapClass(app: ResolvedPersonalApp): string {
   const { icon } = app;
   if (icon.type === 'piggy') return `${base} ${styles.iconWrapFinance}`;
   if (icon.type === 'the-news') return `${base} ${styles.iconWrapTheNews}`;
-  if (icon.type === 'drinks-carta') return `${base} ${styles.iconWrapDrinks}`;
-  if (icon.type === 'adega') return `${base} ${styles.iconWrapAdega}`;
+  if (icon.type === 'drinks-carta' || (icon.type === 'image' && app.id === 'drinks')) {
+    return `${base} ${styles.iconWrapDrinks}`;
+  }
+  if (icon.type === 'adega' || (icon.type === 'image' && app.id === 'adega')) {
+    return `${base} ${styles.iconWrapAdega}`;
+  }
   if (icon.type === 'pc-guide') return `${base} ${styles.iconWrapPcGuide}`;
   if (icon.type === 'letter') return `${base} ${styles.iconWrapLetter}`;
   if (icon.type === 'material' && icon.tone === 'green') return `${base} ${styles.iconWrapGreen}`;

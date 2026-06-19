@@ -13,6 +13,7 @@
     "test:login": "node scripts/test-login.mjs",
     "lint": "tsc --noEmit",
     "generate:brand": "node scripts/generate-brand-images.mjs",
+    "apps:icons": "node scripts/generate-personal-app-icons.mjs",
     "drinks:thumbs": "node scripts/crop-drink-thumbs.mjs",
     "db:migrations:status": "npx supabase migration list --linked",
     "db:migrations:repair": "node scripts/repair-migrations.mjs",

@@ -1,4 +1,5 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import type { AdegaSearchResult } from '../../lib/adegaSearch';
 import {
@@ -100,14 +101,31 @@ function applySearchResult(form: FormState, hit: AdegaSearchResult): FormState {
 export function ViniciusAdega() {
   const { user } = useAuth();
   const userId = user?.id;
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const editing = searchParams.get('edit') === '1';
 
   const [items, setItems] = useState<AdegaItem[]>(() => loadAdegaItems(userId));
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [viewingItem, setViewingItem] = useState<AdegaItem | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [formError, setFormError] = useState<string | null>(null);
+
+  const setEditMode = (next: boolean) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('adega', '1');
+    if (next) params.set('edit', '1');
+    else params.delete('edit');
+    navigate(`/pessoal?${params.toString()}`, { replace: true });
+    if (!next) {
+      setDialogOpen(false);
+      setEditingId(null);
+      setFormError(null);
+    }
+  };
 
   useEffect(() => {
     setItems(loadAdegaItems(userId));
@@ -141,10 +159,20 @@ export function ViniciusAdega() {
   };
 
   const openEdit = (item: AdegaItem) => {
+    setViewingItem(null);
     setEditingId(item.id);
     setForm(itemToForm(item));
     setFormError(null);
     setDialogOpen(true);
+  };
+
+  const openView = (item: AdegaItem) => {
+    setViewingItem(item);
+  };
+
+  const handleCardClick = (item: AdegaItem) => {
+    if (editing) openEdit(item);
+    else openView(item);
   };
 
   const closeDialog = () => {
@@ -210,8 +238,39 @@ export function ViniciusAdega() {
     setFormError(null);
   }, []);
 
+  useEffect(() => {
+    if (!viewingItem) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setViewingItem(null);
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [viewingItem]);
+
   return (
-    <div className={styles.adega}>
+    <div className={`${styles.adega} ${editing ? styles.adegaEditing : ''}`}>
+      <div className={styles.adegaToolbar}>
+        <p className={styles.adegaToolbarHint}>
+          {editing
+            ? 'Toque em um item para editar ou use + para adicionar.'
+            : stats.totalItems > 0
+              ? `${stats.totalItems} itens na coleção`
+              : 'Sua coleção de bebidas'}
+        </p>
+        <button
+          type="button"
+          className={editing ? styles.editModeBtnActive : styles.editModeBtn}
+          onClick={() => setEditMode(!editing)}
+        >
+          {editing ? 'Concluído' : 'Editar adega'}
+        </button>
+      </div>
+
       <header className={styles.banner}>
         <p className={styles.bannerEyebrow}>Só seu · coleção</p>
         <h2 className={styles.bannerTitle}>Minha adega</h2>
@@ -237,9 +296,11 @@ export function ViniciusAdega() {
           aria-label="Buscar na adega"
           enterKeyHint="search"
         />
-        <button type="button" className={`${styles.addBtn} ${styles.toolbarAddBtn}`} onClick={openCreate}>
-          + Adicionar
-        </button>
+        {editing ? (
+          <button type="button" className={`${styles.addBtn} ${styles.toolbarAddBtn}`} onClick={openCreate}>
+            + Adicionar
+          </button>
+        ) : null}
       </div>
 
       {stats.categories.length > 0 ? (
@@ -278,9 +339,13 @@ export function ViniciusAdega() {
               ? 'Comece adicionando um whisky, vinho ou qualquer bebida da sua coleção.'
               : 'Tente outro termo ou remova o filtro de categoria.'}
           </p>
-          {items.length === 0 ? (
+          {items.length === 0 && editing ? (
             <button type="button" className={styles.emptyBtn} onClick={openCreate}>
               Adicionar primeiro item
+            </button>
+          ) : items.length === 0 ? (
+            <button type="button" className={styles.emptyBtn} onClick={() => setEditMode(true)}>
+              Editar adega
             </button>
           ) : null}
         </div>
@@ -289,12 +354,12 @@ export function ViniciusAdega() {
           {filtered.map((item) => {
             const volume = formatVolume(item.volumeMl);
             return (
-              <li key={item.id} className={styles.card}>
+              <li key={item.id} className={`${styles.card} ${editing ? styles.cardEditing : ''}`}>
                 <button
                   type="button"
                   className={styles.cardTap}
-                  onClick={() => openEdit(item)}
-                  aria-label={`Editar ${item.name}`}
+                  onClick={() => handleCardClick(item)}
+                  aria-label={editing ? `Editar ${item.name}` : `Ver ${item.name}`}
                 >
                   <span className={styles.cardIcon} aria-hidden>
                     {item.imageUrl ? (
@@ -315,39 +380,137 @@ export function ViniciusAdega() {
                       {item.origin ? <span className={styles.tag}>{item.origin}</span> : null}
                       {item.opened ? <span className={`${styles.tag} ${styles.tagOpened}`}>Aberta</span> : null}
                     </div>
-                    {item.notes ? <p className={styles.cardNotes}>{item.notes}</p> : null}
+                    {!editing && item.notes ? <p className={styles.cardNotes}>{item.notes}</p> : null}
                   </div>
+                  {!editing ? (
+                    <span className={styles.cardArrow} aria-hidden>
+                      →
+                    </span>
+                  ) : null}
                 </button>
-                <div className={styles.cardActions}>
-                  <button
-                    type="button"
-                    className={styles.actionBtn}
-                    onClick={() => openEdit(item)}
-                  >
-                    Editar
-                  </button>
-                  <button
-                    type="button"
-                    className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
-                    onClick={() => handleDelete(item.id)}
-                  >
-                    Remover
-                  </button>
-                </div>
+                {editing ? (
+                  <div className={styles.cardActions}>
+                    <button
+                      type="button"
+                      className={styles.actionBtn}
+                      onClick={() => openEdit(item)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      type="button"
+                      className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      Remover
+                    </button>
+                  </div>
+                ) : null}
               </li>
             );
           })}
         </ul>
       )}
 
-      <button
-        type="button"
-        className={styles.fab}
-        onClick={openCreate}
-        aria-label="Adicionar item à adega"
-      >
-        +
-      </button>
+      {editing ? (
+        <button
+          type="button"
+          className={styles.fab}
+          onClick={openCreate}
+          aria-label="Adicionar item à adega"
+        >
+          +
+        </button>
+      ) : null}
+
+      {viewingItem ? (
+        <div className={styles.overlay} role="presentation" onClick={() => setViewingItem(null)}>
+          <div
+            className={styles.dialog}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="adega-view-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={styles.dialogHead}>
+              <div className={styles.dialogHandle} aria-hidden />
+              <div className={styles.dialogHeadRow}>
+                <h3 id="adega-view-title" className={styles.dialogTitle}>
+                  {viewingItem.name}
+                </h3>
+                <button
+                  type="button"
+                  className={styles.dialogClose}
+                  onClick={() => setViewingItem(null)}
+                  aria-label="Fechar"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            <div className={styles.viewBody}>
+              <div className={styles.viewHero}>
+                {viewingItem.imageUrl ? (
+                  <img
+                    src={viewingItem.imageUrl}
+                    alt=""
+                    className={styles.viewPhoto}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <span className={styles.viewEmoji} aria-hidden>
+                    {categoryEmoji(viewingItem.category)}
+                  </span>
+                )}
+              </div>
+              <dl className={styles.viewMeta}>
+                {viewingItem.brand ? (
+                  <>
+                    <dt>Marca</dt>
+                    <dd>{viewingItem.brand}</dd>
+                  </>
+                ) : null}
+                <dt>Categoria</dt>
+                <dd>{viewingItem.category}</dd>
+                <dt>Quantidade</dt>
+                <dd>{viewingItem.quantity}</dd>
+                {formatVolume(viewingItem.volumeMl) ? (
+                  <>
+                    <dt>Volume</dt>
+                    <dd>{formatVolume(viewingItem.volumeMl)}</dd>
+                  </>
+                ) : null}
+                {viewingItem.abv != null ? (
+                  <>
+                    <dt>Teor alcoólico</dt>
+                    <dd>{viewingItem.abv}% vol.</dd>
+                  </>
+                ) : null}
+                {viewingItem.origin ? (
+                  <>
+                    <dt>Origem</dt>
+                    <dd>{viewingItem.origin}</dd>
+                  </>
+                ) : null}
+                <dt>Status</dt>
+                <dd>{viewingItem.opened ? 'Garrafa aberta' : 'Fechada'}</dd>
+              </dl>
+              {viewingItem.notes ? (
+                <div className={styles.viewNotes}>
+                  <p className={styles.viewNotesLabel}>Notas</p>
+                  <p className={styles.viewNotesText}>{viewingItem.notes}</p>
+                </div>
+              ) : null}
+            </div>
+            <div className={styles.viewFoot}>
+              <button type="button" className={styles.saveBtn} onClick={() => setViewingItem(null)}>
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {dialogOpen ? (
         <div className={styles.overlay} role="presentation" onClick={closeDialog}>

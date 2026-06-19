@@ -58,8 +58,13 @@ export function parseImageIconUrl(raw: string): PersonalAppIcon | null {
 }
 
 export const PERSONAL_APP_ICON_MAX_BYTES = 2 * 1024 * 1024;
-export const PERSONAL_APP_ICON_MAX_PX = 256;
-const PERSONAL_APP_ICON_DATA_MAX_CHARS = 450_000;
+export const PERSONAL_APP_ICON_MAX_PX = 512;
+const PERSONAL_APP_ICON_DATA_MAX_CHARS = 900_000;
+
+export const PERSONAL_APP_ICON_PATHS = {
+  drinks: '/img/personal/apps/drinks-carta.png',
+  adega: '/img/personal/apps/adega.png',
+} as const;
 
 const ICON_FILE_EXTENSIONS = new Set(['ico', 'icon', 'png', 'jpg', 'jpeg', 'webp', 'gif', 'svg']);
 
@@ -97,23 +102,21 @@ function resizeImageDataUrl(dataUrl: string, maxPx: number): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
-      const scale = Math.min(1, maxPx / Math.max(img.width, img.height, 1));
-      const w = Math.max(1, Math.round(img.width * scale));
-      const h = Math.max(1, Math.round(img.height * scale));
+      const cropSize = Math.min(img.width, img.height);
+      const sx = Math.floor((img.width - cropSize) / 2);
+      const sy = Math.floor((img.height - cropSize) / 2);
+      const scale = Math.min(1, maxPx / cropSize);
+      const out = Math.max(1, Math.round(cropSize * scale));
       const canvas = document.createElement('canvas');
-      canvas.width = w;
-      canvas.height = h;
+      canvas.width = out;
+      canvas.height = out;
       const ctx = canvas.getContext('2d');
       if (!ctx) {
         reject(new Error('Canvas indisponível.'));
         return;
       }
-      ctx.drawImage(img, 0, 0, w, h);
-      let out = canvas.toDataURL('image/webp', 0.88);
-      if (!out.startsWith('data:image/webp')) {
-        out = canvas.toDataURL('image/png');
-      }
-      resolve(out);
+      ctx.drawImage(img, sx, sy, cropSize, cropSize, 0, 0, out, out);
+      resolve(canvas.toDataURL('image/png'));
     };
     img.onerror = () => reject(new Error('Imagem inválida.'));
     img.src = dataUrl;
@@ -193,6 +196,21 @@ export function isPersonalAppIcon(value: unknown): value is PersonalAppIcon {
 
 export function iconsEqual(a: PersonalAppIcon, b: PersonalAppIcon): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
+}
+
+/** Substitui ícones legados (banner panorâmico / data URL comprimido) por assets quadrados. */
+export function migrateLegacyIconOverride(
+  appId: string,
+  icon: PersonalAppIcon,
+): PersonalAppIcon {
+  if (icon.type !== 'image') return icon;
+
+  const src = icon.src.toLowerCase();
+  if (appId === 'drinks' && (src.includes('/drinks/banner') || src.includes('banner.png'))) {
+    return { type: 'image', src: PERSONAL_APP_ICON_PATHS.drinks };
+  }
+
+  return icon;
 }
 
 export function defaultIconForApp(

@@ -1,6 +1,7 @@
 import { TodoistIcon } from '../TodoistIcon';
 import { TheNewsMark } from './TheNewsMark';
-import { AdegaMark, DrinksCartaMark, PcGuideMark } from './PersonalAppMarks';
+import { PcGuideMark } from './PersonalAppMarks';
+import { PERSONAL_APP_ICON_PATHS } from '../../lib/personalAppIconOptions';
 import type { PersonalAppIcon as PersonalAppIconDef } from '../../lib/personalApps';
 import styles from './PersonalAppGrid.module.css';
 
@@ -32,11 +33,31 @@ export function PersonalAppIcon({ icon, label }: PersonalAppIconProps) {
     case 'the-news':
       return <TheNewsMark className={styles.theNewsIcon} />;
     case 'drinks-carta':
-      return <DrinksCartaMark className={styles.brandMarkIcon} />;
+      return (
+        <img
+          src={PERSONAL_APP_ICON_PATHS.drinks}
+          alt=""
+          className={styles.brandMarkImg}
+          width={512}
+          height={512}
+          loading="lazy"
+          decoding="async"
+        />
+      );
     case 'adega':
-      return <AdegaMark className={styles.brandMarkIcon} />;
+      return (
+        <img
+          src={PERSONAL_APP_ICON_PATHS.adega}
+          alt=""
+          className={styles.brandMarkImg}
+          width={512}
+          height={512}
+          loading="lazy"
+          decoding="async"
+        />
+      );
     case 'pc-guide':
-      return <PcGuideMark className={styles.brandMarkIcon} />;
+      return <PcGuideMark className={styles.brandMarkSvg} />;
     case 'todoist':
       return <TodoistIcon className={styles.todoistIcon} />;
     case 'image':
@@ -44,9 +65,9 @@ export function PersonalAppIcon({ icon, label }: PersonalAppIconProps) {
         <img
           src={icon.src}
           alt=""
-          className={styles.imageIcon}
-          width={52}
-          height={52}
+          className={styles.brandMarkImg}
+          width={512}
+          height={512}
           loading="lazy"
           decoding="async"
         />

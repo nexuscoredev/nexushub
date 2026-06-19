@@ -6,7 +6,7 @@ interface MarkProps {
 export function DrinksCartaMark({ className }: MarkProps) {
   const id = 'drinks-prem';
   return (
-    <svg className={className} viewBox="0 0 64 64" width={64} height={64} aria-hidden focusable="false">
+    <svg className={className} viewBox="0 0 64 64" aria-hidden focusable="false">
       <defs>
         <linearGradient id={`${id}-bg`} x1="8" y1="4" x2="56" y2="60">
           <stop offset="0%" stopColor="#4c1d95" />
@@ -97,7 +97,7 @@ export function DrinksCartaMark({ className }: MarkProps) {
 export function AdegaMark({ className }: MarkProps) {
   const id = 'adega-prem';
   return (
-    <svg className={className} viewBox="0 0 64 64" width={64} height={64} aria-hidden focusable="false">
+    <svg className={className} viewBox="0 0 64 64" aria-hidden focusable="false">
       <defs>
         <linearGradient id={`${id}-bg`} x1="10" y1="6" x2="54" y2="58">
           <stop offset="0%" stopColor="#450a0a" />
@@ -182,7 +182,7 @@ export function AdegaMark({ className }: MarkProps) {
 export function PcGuideMark({ className }: MarkProps) {
   const id = 'pc-prem';
   return (
-    <svg className={className} viewBox="0 0 64 64" width={64} height={64} aria-hidden focusable="false">
+    <svg className={className} viewBox="0 0 64 64" aria-hidden focusable="false">
       <defs>
         <linearGradient id={`${id}-bg`} x1="6" y1="8" x2="58" y2="56">
           <stop offset="0%" stopColor="#1e1b4b" />

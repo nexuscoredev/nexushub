@@ -1,3 +1,5 @@
+import { PERSONAL_APP_ICON_PATHS } from './personalAppIconOptions';
+
 export type PersonalAppIcon =
   | { type: 'image'; src: string }
   | { type: 'material'; name: string; tone?: 'cyan' | 'green' | 'violet' }
@@ -45,7 +47,7 @@ export const PERSONAL_APP_CATALOG: PersonalAppDefinition[] = [
     subtitle: 'Receitas',
     kind: 'internal',
     internalAction: 'drinks',
-    icon: { type: 'drinks-carta' },
+    icon: { type: 'image', src: PERSONAL_APP_ICON_PATHS.drinks },
     viniciusOnly: true,
   },
   {
@@ -63,7 +65,7 @@ export const PERSONAL_APP_CATALOG: PersonalAppDefinition[] = [
     subtitle: 'Coleção',
     kind: 'internal',
     internalAction: 'adega',
-    icon: { type: 'adega' },
+    icon: { type: 'image', src: PERSONAL_APP_ICON_PATHS.adega },
     viniciusOnly: true,
   },
   {
