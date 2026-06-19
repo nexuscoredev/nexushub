@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   VINICIUS_DRINKS,
-  VINICIUS_DRINKS_BANNER_URL,
+  drinkThumbPath,
   findViniciusDrink,
 } from '../../lib/viniciusDrinksCarta';
 import styles from './ViniciusDrinksCarta.module.css';
@@ -73,13 +73,40 @@ export function ViniciusDrinksCarta() {
   return (
     <div className={styles.carta}>
       <header className={styles.banner}>
-        <img src={VINICIUS_DRINKS_BANNER_URL} alt="" className={styles.bannerImg} loading="eager" decoding="async" />
-        <div className={styles.bannerOverlay} />
-        <div className={styles.bannerCopy}>
-          <p className={styles.bannerEyebrow}>Só seu · privado</p>
-          <h2 className={styles.bannerTitle}>Carta de drinks</h2>
-          <p className={styles.bannerLead}>Suas receitas favoritas — do jeito que você montou.</p>
+        <div className={styles.bannerAtmosphere} aria-hidden />
+        <div className={styles.bannerOrbA} aria-hidden />
+        <div className={styles.bannerOrbB} aria-hidden />
+        <div className={styles.bannerGrid}>
+          <div className={styles.bannerHero}>
+            <div className={styles.bannerHeroGlow} aria-hidden />
+            <div className={styles.bannerHeroRing} aria-hidden />
+            <img
+              src={drinkThumbPath('whisky-sour')}
+              alt=""
+              className={styles.bannerHeroImg}
+              loading="eager"
+              decoding="async"
+            />
+          </div>
+          <div className={styles.bannerCopy}>
+            <p className={styles.bannerEyebrow}>
+              <span className={styles.bannerEyebrowDot} aria-hidden />
+              Só seu · privado
+            </p>
+            <h2 className={styles.bannerTitle}>
+              Carta de <span className={styles.bannerTitleAccent}>drinks</span>
+            </h2>
+            <p className={styles.bannerLead}>
+              Suas receitas favoritas — clássicos, twists e clássicos da casa, do jeito que você montou.
+            </p>
+            <div className={styles.bannerMeta}>
+              <span className={styles.bannerPill}>{VINICIUS_DRINKS.length} receitas</span>
+              <span className={styles.bannerPill}>Bar digital</span>
+            </div>
+          </div>
         </div>
+        <div className={styles.bannerShine} aria-hidden />
+        <div className={styles.bannerGrain} aria-hidden />
       </header>
 
       <ul className={styles.list}>

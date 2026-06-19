@@ -10,60 +10,292 @@
 .banner {
   position: relative;
   overflow: hidden;
-  border-radius: var(--radius);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  min-height: 11rem;
+  border-radius: calc(var(--radius) + 2px);
+  border: 1px solid rgba(196, 181, 253, 0.18);
+  min-height: 13.5rem;
+  isolation: isolate;
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-.bannerImg {
-  width: 100%;
-  height: 100%;
-  min-height: 11rem;
-  object-fit: cover;
-  object-position: center;
-  display: block;
-}
-
-.bannerOverlay {
+.bannerAtmosphere {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.45) 55%, transparent 100%);
+  background:
+    radial-gradient(ellipse 85% 70% at 12% 85%, rgba(245, 158, 11, 0.22), transparent 58%),
+    radial-gradient(ellipse 70% 55% at 88% 18%, rgba(139, 92, 246, 0.32), transparent 52%),
+    linear-gradient(135deg, #1a0a2e 0%, #0c0618 42%, #050508 100%);
+}
+
+.bannerOrbA,
+.bannerOrbB {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.bannerOrbA {
+  width: 9rem;
+  height: 9rem;
+  top: -2rem;
+  right: 8%;
+  background: rgba(167, 139, 250, 0.28);
+  animation: bannerDriftA 9s ease-in-out infinite alternate;
+}
+
+.bannerOrbB {
+  width: 7rem;
+  height: 7rem;
+  bottom: -1.5rem;
+  left: 35%;
+  background: rgba(251, 191, 36, 0.18);
+  animation: bannerDriftB 11s ease-in-out infinite alternate;
+}
+
+.bannerGrid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 1rem 1.25rem;
+  padding: 1.15rem 1.25rem 1.25rem;
+  min-height: 13.5rem;
+}
+
+.bannerHero {
+  position: relative;
+  width: 7.5rem;
+  height: 7.5rem;
+  flex-shrink: 0;
+}
+
+.bannerHeroGlow {
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.45) 0%, rgba(139, 92, 246, 0.12) 55%, transparent 72%);
+  filter: blur(8px);
+  animation: bannerPulse 4.5s ease-in-out infinite;
+}
+
+.bannerHeroRing {
+  position: absolute;
+  inset: -4%;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.12), transparent 55%);
+  box-shadow:
+    inset 0 0 0 1px rgba(196, 181, 253, 0.12),
+    0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+.bannerHeroImg {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+  animation: bannerFloat 5s ease-in-out infinite;
 }
 
 .bannerCopy {
-  position: absolute;
-  inset: 0;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  padding: 1.15rem 1.2rem;
+  justify-content: center;
+  min-width: 0;
 }
 
 .bannerEyebrow {
-  margin: 0 0 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0.45rem;
   font-family: var(--font-mono);
   font-size: 0.62rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #c4b5fd;
+  color: #ddd6fe;
+}
+
+.bannerEyebrowDot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: #a78bfa;
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.85);
+  animation: bannerPulse 2.8s ease-in-out infinite;
 }
 
 .bannerTitle {
   margin: 0;
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 1.65rem;
+  font-size: clamp(1.55rem, 4.5vw, 2rem);
   font-weight: 700;
   color: #fff;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+  line-height: 1.12;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
+}
+
+.bannerTitleAccent {
+  background: linear-gradient(105deg, #fde68a 0%, #fbbf24 45%, #c4b5fd 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .bannerLead {
-  margin: 0.35rem 0 0;
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.72);
-  line-height: 1.45;
-  max-width: 22rem;
+  margin: 0.55rem 0 0;
+  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.76);
+  line-height: 1.55;
+  max-width: 26rem;
+}
+
+.bannerMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.85rem;
+}
+
+.bannerPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.28rem 0.62rem;
+  border-radius: 999px;
+  border: 1px solid rgba(196, 181, 253, 0.28);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.bannerShine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.bannerGrain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 3;
+}
+
+@keyframes bannerFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes bannerPulse {
+  0%,
+  100% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes bannerDriftA {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-12px, 10px);
+  }
+}
+
+@keyframes bannerDriftB {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(10px, -8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bannerHeroImg,
+  .bannerHeroGlow,
+  .bannerEyebrowDot,
+  .bannerOrbA,
+  .bannerOrbB {
+    animation: none;
+  }
+}
+
+@media (min-width: 640px) {
+  .banner {
+    min-height: 15rem;
+  }
+
+  .bannerGrid {
+    gap: 1.25rem 1.75rem;
+    padding: 1.35rem 1.5rem 1.45rem;
+    min-height: 15rem;
+  }
+
+  .bannerHero {
+    width: 8.75rem;
+    height: 8.75rem;
+  }
+
+  .bannerLead {
+    font-size: 0.88rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .bannerGrid {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding: 1.1rem 1rem 1.2rem;
+  }
+
+  .bannerHero {
+    width: 6.75rem;
+    height: 6.75rem;
+    margin-inline: auto;
+  }
+
+  .bannerEyebrow {
+    justify-content: center;
+  }
+
+  .bannerMeta {
+    justify-content: center;
+  }
+
+  .bannerLead {
+    margin-inline: auto;
+  }
 }
 
 .list {
