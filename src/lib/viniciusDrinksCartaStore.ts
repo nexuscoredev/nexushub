@@ -3,8 +3,14 @@ import {
   VINICIUS_DRINKS,
   type ViniciusDrink,
 } from './viniciusDrinksCarta';
+import {
+  fetchDrinkCartaStoreCloud,
+  isCloudNewer,
+  upsertDrinkCartaStoreCloud,
+} from './personalCloudSync';
 
 const STORAGE_PREFIX = 'nexus-pessoal-drinks-carta';
+const UPDATED_AT_SUFFIX = ':updated-at';
 
 export type DrinkCartaOverride = {
   imageUrl?: string;
@@ -24,8 +30,22 @@ function storageKey(userId: string): string {
   return `${STORAGE_PREFIX}:${userId}`;
 }
 
+function updatedAtKey(userId: string): string {
+  return `${STORAGE_PREFIX}${UPDATED_AT_SUFFIX}:${userId}`;
+}
+
+function readLocalUpdatedAt(userId: string): string | null {
+  if (typeof localStorage === 'undefined') return null;
+  return localStorage.getItem(updatedAtKey(userId));
+}
+
+function writeLocalUpdatedAt(userId: string, iso: string): void {
+  if (typeof localStorage === 'undefined') return;
+  localStorage.setItem(updatedAtKey(userId), iso);
+}
+
 function isValidImageUrl(value: string): boolean {
-  if (value.startsWith('data:image/')) return value.length <= 500_000;
+  if (value.startsWith('data:image/')) return value.length <= 900_000;
   try {
     const url = new URL(value);
     return url.protocol === 'http:' || url.protocol === 'https:';
@@ -100,11 +120,38 @@ export function loadDrinkCartaStore(userId: string | undefined): DrinkCartaStore
 
 export function saveDrinkCartaStore(userId: string, store: DrinkCartaStore): void {
   if (typeof localStorage === 'undefined') return;
+  const updatedAt = new Date().toISOString();
   try {
     localStorage.setItem(storageKey(userId), JSON.stringify(store));
+    writeLocalUpdatedAt(userId, updatedAt);
   } catch {
-    /* quota exceeded — evita quebrar a UI */
+    /* quota exceeded */
   }
+  void upsertDrinkCartaStoreCloud(userId, store).then((err) => {
+    if (err) console.warn('[drinks carta] sync:', err);
+  });
+}
+
+export async function syncDrinkCartaStoreFromCloud(
+  userId: string,
+): Promise<DrinkCartaStore | null> {
+  const cloud = await fetchDrinkCartaStoreCloud(userId);
+  if (!cloud) return null;
+
+  const migrated = migrateDrinkCartaStore(cloud.store);
+  if (!isCloudNewer(cloud.updatedAt, readLocalUpdatedAt(userId))) {
+    return null;
+  }
+
+  if (typeof localStorage !== 'undefined') {
+    try {
+      localStorage.setItem(storageKey(userId), JSON.stringify(migrated));
+      writeLocalUpdatedAt(userId, cloud.updatedAt);
+    } catch {
+      /* quota exceeded */
+    }
+  }
+  return migrated;
 }
 
 export function mergeDrink(base: ViniciusDrink, override?: DrinkCartaOverride): ViniciusDrink {

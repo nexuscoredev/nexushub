@@ -1,4 +1,6 @@
 import type { PersonalAppDefinition, PersonalAppIcon } from './personalApps';
+import { supabase } from './supabase';
+import { dataUrlToBlob, uploadPersonalMediaBlob } from './personalMediaStorage';
 
 /** Emojis rápidos para personalizar tiles */
 export const PERSONAL_APP_EMOJI_OPTIONS = [
@@ -123,8 +125,11 @@ function resizeImageDataUrl(dataUrl: string, maxPx: number): Promise<string> {
   });
 }
 
-/** Converte arquivo local (.ico, .png, etc.) em ícone persistível (data URL). */
-export async function fileToAppIconImage(file: File): Promise<PersonalAppIcon> {
+/** Converte arquivo local (.ico, .png, etc.) em ícone persistível na nuvem ou data URL offline. */
+export async function fileToAppIconImage(
+  file: File,
+  upload?: { userId: string; appId: string },
+): Promise<PersonalAppIcon> {
   if (!isAllowedIconFile(file)) {
     throw new Error('Formato não suportado. Use .ico, .icon, .png, .jpg, .webp ou .svg.');
   }
@@ -136,6 +141,16 @@ export async function fileToAppIconImage(file: File): Promise<PersonalAppIcon> {
   const dataUrl = await readFileAsDataUrl(file);
 
   if (ext === 'svg' || file.type === 'image/svg+xml') {
+    if (upload?.userId && supabase) {
+      const { blob, mime } = await dataUrlToBlob(dataUrl);
+      const url = await uploadPersonalMediaBlob(
+        upload.userId,
+        `app-icons/${upload.appId}.svg`,
+        blob,
+        mime,
+      );
+      return { type: 'image', src: url };
+    }
     if (dataUrl.length > PERSONAL_APP_ICON_DATA_MAX_CHARS) {
       throw new Error('SVG grande demais para salvar no navegador.');
     }
@@ -144,11 +159,31 @@ export async function fileToAppIconImage(file: File): Promise<PersonalAppIcon> {
 
   try {
     const resized = await resizeImageDataUrl(dataUrl, PERSONAL_APP_ICON_MAX_PX);
+    if (upload?.userId && supabase) {
+      const { blob } = await dataUrlToBlob(resized);
+      const url = await uploadPersonalMediaBlob(
+        upload.userId,
+        `app-icons/${upload.appId}.png`,
+        blob,
+        'image/png',
+      );
+      return { type: 'image', src: url };
+    }
     if (resized.length > PERSONAL_APP_ICON_DATA_MAX_CHARS) {
       throw new Error('Imagem grande demais após redimensionar.');
     }
     return { type: 'image', src: resized };
   } catch {
+    if (upload?.userId && supabase) {
+      const { blob, mime } = await dataUrlToBlob(dataUrl);
+      const url = await uploadPersonalMediaBlob(
+        upload.userId,
+        `app-icons/${upload.appId}.${ext === 'png' ? 'png' : 'jpg'}`,
+        blob,
+        mime,
+      );
+      return { type: 'image', src: url };
+    }
     if (dataUrl.length > PERSONAL_APP_ICON_DATA_MAX_CHARS) {
       throw new Error('Ícone grande demais. Tente um arquivo menor.');
     }
@@ -157,7 +192,10 @@ export async function fileToAppIconImage(file: File): Promise<PersonalAppIcon> {
 }
 
 export function imageIconSourceLabel(src: string): string | null {
-  if (!src.startsWith('data:image/')) return null;
+  if (!src.startsWith('data:image/')) {
+    if (src.includes('hub-personal-media')) return 'Imagem na nuvem';
+    return null;
+  }
   if (src.startsWith('data:image/svg')) return 'SVG local';
   if (src.startsWith('data:image/x-icon') || src.startsWith('data:image/vnd.microsoft.icon')) {
     return 'Ícone .ico local';

@@ -11,6 +11,7 @@ import {
   loadAdegaItems,
   normalizeAdegaInput,
   saveAdegaItems,
+  syncAdegaItemsFromCloud,
   type AdegaItem,
   type AdegaItemInput,
 } from '../../lib/viniciusAdega';
@@ -129,6 +130,13 @@ export function ViniciusAdega() {
 
   useEffect(() => {
     setItems(loadAdegaItems(userId));
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId) return;
+    void syncAdegaItemsFromCloud(userId).then((cloudItems) => {
+      if (cloudItems) setItems(cloudItems);
+    });
   }, [userId]);
 
   const persist = (next: AdegaItem[]) => {

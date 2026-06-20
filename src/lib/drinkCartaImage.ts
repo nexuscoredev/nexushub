@@ -1,10 +1,20 @@
+import { supabase } from './supabase';
+import { uploadPersonalMediaBlob } from './personalMediaStorage';
+
 export const DRINK_IMAGE_MAX_BYTES = 10 * 1024 * 1024;
-const DRINK_IMAGE_MAX_PX = 512;
-const DRINK_IMAGE_DATA_MAX_CHARS = 420_000;
+const DRINK_IMAGE_MAX_PX = 1024;
+const BANNER_IMAGE_MAX_PX = 1536;
+const DRINK_IMAGE_DATA_MAX_CHARS = 900_000;
 const DRINK_IMAGE_MAX_MB = DRINK_IMAGE_MAX_BYTES / (1024 * 1024);
 
 const IMAGE_EXTENSIONS = new Set(['png', 'jpg', 'jpeg', 'webp', 'gif']);
 const IMAGE_MIME = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif']);
+
+export type DrinkImageUploadTarget = {
+  userId: string;
+  kind: 'banner' | 'drink';
+  slug?: string;
+};
 
 function fileExtension(name: string): string {
   const dot = name.lastIndexOf('.');
@@ -20,29 +30,55 @@ function readFileAsDataUrl(file: File): Promise<string> {
   });
 }
 
-function resizeImageDataUrl(dataUrl: string, maxPx: number): Promise<string> {
+function canvasToJpegBlob(canvas: HTMLCanvasElement, quality: number): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => (blob ? resolve(blob) : reject(new Error('Falha ao comprimir imagem.'))),
+      'image/jpeg',
+      quality,
+    );
+  });
+}
+
+async function resizeImageFile(
+  file: File,
+  maxPx: number,
+): Promise<{ blob: Blob; dataUrl: string }> {
+  const dataUrl = await readFileAsDataUrl(file);
+
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
-      const scale = Math.min(1, maxPx / Math.max(img.width, img.height, 1));
-      const w = Math.max(1, Math.round(img.width * scale));
-      const h = Math.max(1, Math.round(img.height * scale));
-      const canvas = document.createElement('canvas');
-      canvas.width = w;
-      canvas.height = h;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        reject(new Error('Canvas indisponível.'));
-        return;
-      }
-      ctx.fillStyle = '#08080a';
-      ctx.fillRect(0, 0, w, h);
-      ctx.drawImage(img, 0, 0, w, h);
-      let out = canvas.toDataURL('image/jpeg', 0.86);
-      if (out.length > DRINK_IMAGE_DATA_MAX_CHARS) {
-        out = canvas.toDataURL('image/jpeg', 0.72);
-      }
-      resolve(out);
+      void (async () => {
+        const scale = Math.min(1, maxPx / Math.max(img.width, img.height, 1));
+        const w = Math.max(1, Math.round(img.width * scale));
+        const h = Math.max(1, Math.round(img.height * scale));
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Canvas indisponível.'));
+          return;
+        }
+        ctx.fillStyle = '#08080a';
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+
+        let quality = 0.88;
+        let blob = await canvasToJpegBlob(canvas, quality);
+        let out = canvas.toDataURL('image/jpeg', quality);
+        if (out.length > DRINK_IMAGE_DATA_MAX_CHARS) {
+          quality = 0.72;
+          blob = await canvasToJpegBlob(canvas, quality);
+          out = canvas.toDataURL('image/jpeg', quality);
+        }
+        if (out.length > DRINK_IMAGE_DATA_MAX_CHARS) {
+          reject(new Error('Imagem grande demais após redimensionar. Tente outra foto.'));
+          return;
+        }
+        resolve({ blob, dataUrl: out });
+      })().catch(reject);
     };
     img.onerror = () => reject(new Error('Imagem inválida.'));
     img.src = dataUrl;
@@ -68,7 +104,10 @@ export function parseDrinkImageUrl(raw: string): string | null {
   }
 }
 
-export async function fileToDrinkImageUrl(file: File): Promise<string> {
+export async function fileToDrinkImageUrl(
+  file: File,
+  upload?: DrinkImageUploadTarget,
+): Promise<string> {
   if (!isAllowedDrinkImageFile(file)) {
     throw new Error('Formato não suportado. Use .jpg, .png ou .webp.');
   }
@@ -76,15 +115,22 @@ export async function fileToDrinkImageUrl(file: File): Promise<string> {
     throw new Error(`Arquivo grande demais (máx. ${DRINK_IMAGE_MAX_MB} MB).`);
   }
 
-  const dataUrl = await readFileAsDataUrl(file);
-  const resized = await resizeImageDataUrl(dataUrl, DRINK_IMAGE_MAX_PX);
-  if (resized.length > DRINK_IMAGE_DATA_MAX_CHARS) {
-    throw new Error('Imagem grande demais após redimensionar. Tente outra foto.');
+  const maxPx = upload?.kind === 'banner' ? BANNER_IMAGE_MAX_PX : DRINK_IMAGE_MAX_PX;
+  const { blob, dataUrl } = await resizeImageFile(file, maxPx);
+
+  if (upload?.userId && supabase) {
+    const path =
+      upload.kind === 'banner'
+        ? 'drinks-carta/banner.jpg'
+        : `drinks-carta/${upload.slug ?? 'drink'}.jpg`;
+    return uploadPersonalMediaBlob(upload.userId, path, blob, 'image/jpeg');
   }
-  return resized;
+
+  return dataUrl;
 }
 
 export function drinkImageSourceLabel(src: string): string | null {
-  if (!src.startsWith('data:image/')) return null;
-  return 'Foto local';
+  if (src.startsWith('data:image/')) return 'Foto local';
+  if (src.includes('hub-personal-media')) return 'Foto na nuvem';
+  return null;
 }

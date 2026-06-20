@@ -5,8 +5,14 @@ import {
 } from './personalApps';
 import { isPersonalAppIcon, migrateLegacyIconOverride, shouldDropIconOverride } from './personalAppIconOptions';
 import type { PersonalAppIcon } from './personalApps';
+import {
+  fetchPersonalAppLayoutCloud,
+  isCloudNewer,
+  upsertPersonalAppLayoutCloud,
+} from './personalCloudSync';
 
 const STORAGE_PREFIX = 'nexus-pessoal-apps';
+const UPDATED_AT_SUFFIX = ':updated-at';
 
 export type PersonalAppLayout = {
   order: string[];
@@ -16,6 +22,20 @@ export type PersonalAppLayout = {
 
 function storageKey(userId: string): string {
   return `${STORAGE_PREFIX}:${userId}`;
+}
+
+function updatedAtKey(userId: string): string {
+  return `${STORAGE_PREFIX}${UPDATED_AT_SUFFIX}:${userId}`;
+}
+
+function readLocalUpdatedAt(userId: string): string | null {
+  if (typeof localStorage === 'undefined') return null;
+  return localStorage.getItem(updatedAtKey(userId));
+}
+
+function writeLocalUpdatedAt(userId: string, iso: string): void {
+  if (typeof localStorage === 'undefined') return;
+  localStorage.setItem(updatedAtKey(userId), iso);
 }
 
 function parseLayout(raw: string | null): PersonalAppLayout | null {
@@ -106,9 +126,44 @@ export function loadPersonalAppLayout(
 
 export function savePersonalAppLayout(userId: string, layout: PersonalAppLayout): void {
   if (typeof localStorage === 'undefined') return;
+  const updatedAt = new Date().toISOString();
   try {
     localStorage.setItem(storageKey(userId), JSON.stringify(layout));
+    writeLocalUpdatedAt(userId, updatedAt);
   } catch {
-    /* quota exceeded — evita quebrar a UI */
+    /* quota exceeded */
+  }
+  void upsertPersonalAppLayoutCloud(userId, layout).then((err) => {
+    if (err) console.warn('[personal apps] sync:', err);
+  });
+}
+
+export async function syncPersonalAppLayoutFromCloud(
+  userId: string,
+  viniciusOnly: boolean,
+): Promise<PersonalAppLayout | null> {
+  const cloud = await fetchPersonalAppLayoutCloud(userId);
+  if (!cloud) return null;
+
+  const normalized = normalizePersonalAppLayout(cloud.layout, viniciusOnly);
+  if (!isCloudNewer(cloud.updatedAt, readLocalUpdatedAt(userId))) {
+    return null;
+  }
+
+  savePersonalAppLayoutLocalOnly(userId, normalized, cloud.updatedAt);
+  return normalized;
+}
+
+function savePersonalAppLayoutLocalOnly(
+  userId: string,
+  layout: PersonalAppLayout,
+  updatedAt: string,
+): void {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem(storageKey(userId), JSON.stringify(layout));
+    writeLocalUpdatedAt(userId, updatedAt);
+  } catch {
+    /* quota exceeded */
   }
 }

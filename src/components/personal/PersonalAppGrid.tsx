@@ -10,6 +10,7 @@ import { defaultIconForApp, iconsEqual } from '../../lib/personalAppIconOptions'
 import {
   loadPersonalAppLayout,
   savePersonalAppLayout,
+  syncPersonalAppLayoutFromCloud,
   type PersonalAppLayout,
 } from '../../lib/personalAppLayout';
 import { PersonalAppIconPicker } from './PersonalAppIconPicker';
@@ -50,6 +51,13 @@ export function PersonalAppGrid({
     setEditing(false);
     setLibraryOpen(false);
     setIconPickerId(null);
+  }, [userId, viniciusOnly]);
+
+  useEffect(() => {
+    if (!userId) return;
+    void syncPersonalAppLayoutFromCloud(userId, viniciusOnly).then((cloudLayout) => {
+      if (cloudLayout) setLayout(cloudLayout);
+    });
   }, [userId, viniciusOnly]);
 
   const persist = useCallback(
@@ -254,6 +262,7 @@ export function PersonalAppGrid({
         open={iconPickerId != null}
         app={iconPickerApp}
         defaultIcon={iconPickerDefault}
+        userId={userId}
         onClose={() => setIconPickerId(null)}
         onSelect={(icon) => {
           if (iconPickerId) setAppIcon(iconPickerId, icon);

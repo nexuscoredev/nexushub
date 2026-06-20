@@ -16,6 +16,7 @@ import styles from './ViniciusDrinksCarta.module.css';
 interface DrinkCartaEditorProps {
   open: boolean;
   drink: ViniciusDrink | null;
+  userId?: string;
   onClose: () => void;
   onSave: (slug: string, patch: DrinkCartaOverride) => void;
   onResetField: (slug: string, field: keyof DrinkCartaOverride) => void;
@@ -24,6 +25,7 @@ interface DrinkCartaEditorProps {
 export function DrinkCartaEditor({
   open,
   drink,
+  userId,
   onClose,
   onSave,
   onResetField,
@@ -72,7 +74,10 @@ export function DrinkCartaEditor({
     setFileLoading(true);
     setError(null);
     try {
-      const url = await fileToDrinkImageUrl(file);
+      const url = await fileToDrinkImageUrl(
+        file,
+        userId && drink ? { userId, kind: 'drink', slug: drink.slug } : undefined,
+      );
       setImagePreview(url);
       setLocalFileName(file.name);
       setImageUrl('');

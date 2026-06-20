@@ -1,4 +1,11 @@
+import {
+  fetchAdegaItemsCloud,
+  isCloudNewer,
+  upsertAdegaItemsCloud,
+} from './personalCloudSync';
+
 const STORAGE_PREFIX = 'nexus-pessoal-adega';
+const UPDATED_AT_SUFFIX = ':updated-at';
 
 export const ADEGA_CATEGORY_PRESETS = [
   'Whisky',
@@ -50,6 +57,20 @@ function storageKey(userId: string): string {
   return `${STORAGE_PREFIX}:${userId}`;
 }
 
+function updatedAtKey(userId: string): string {
+  return `${STORAGE_PREFIX}${UPDATED_AT_SUFFIX}:${userId}`;
+}
+
+function readLocalUpdatedAt(userId: string): string | null {
+  if (typeof localStorage === 'undefined') return null;
+  return localStorage.getItem(updatedAtKey(userId));
+}
+
+function writeLocalUpdatedAt(userId: string, iso: string): void {
+  if (typeof localStorage === 'undefined') return;
+  localStorage.setItem(updatedAtKey(userId), iso);
+}
+
 function parseItems(raw: string | null): AdegaItem[] {
   if (!raw) return [];
   try {
@@ -97,7 +118,36 @@ export function loadAdegaItems(userId: string | undefined): AdegaItem[] {
 
 export function saveAdegaItems(userId: string, items: AdegaItem[]): void {
   if (typeof localStorage === 'undefined') return;
-  localStorage.setItem(storageKey(userId), JSON.stringify(items));
+  const updatedAt = new Date().toISOString();
+  try {
+    localStorage.setItem(storageKey(userId), JSON.stringify(items));
+    writeLocalUpdatedAt(userId, updatedAt);
+  } catch {
+    /* quota exceeded */
+  }
+  void upsertAdegaItemsCloud(userId, items).then((err) => {
+    if (err) console.warn('[adega] sync:', err);
+  });
+}
+
+export async function syncAdegaItemsFromCloud(userId: string): Promise<AdegaItem[] | null> {
+  const cloud = await fetchAdegaItemsCloud(userId);
+  if (!cloud) return null;
+
+  const items = cloud.items.filter(isValidItem);
+  if (!isCloudNewer(cloud.updatedAt, readLocalUpdatedAt(userId))) {
+    return null;
+  }
+
+  if (typeof localStorage !== 'undefined') {
+    try {
+      localStorage.setItem(storageKey(userId), JSON.stringify(items));
+      writeLocalUpdatedAt(userId, cloud.updatedAt);
+    } catch {
+      /* quota exceeded */
+    }
+  }
+  return items.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
 }
 
 export function createAdegaItemId(): string {

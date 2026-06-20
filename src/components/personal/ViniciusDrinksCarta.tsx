@@ -14,6 +14,7 @@ import {
   loadDrinkCartaStore,
   resolveDrinks,
   saveDrinkCartaStore,
+  syncDrinkCartaStoreFromCloud,
   updateDrinkOverride,
   type DrinkCartaOverride,
   type DrinkCartaStore,
@@ -36,6 +37,13 @@ export function ViniciusDrinksCarta() {
 
   useEffect(() => {
     setStore(loadDrinkCartaStore(userId));
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId) return;
+    void syncDrinkCartaStoreFromCloud(userId).then((cloudStore) => {
+      if (cloudStore) setStore(cloudStore);
+    });
   }, [userId]);
 
   const drinks = useMemo(() => resolveDrinks(store), [store]);
@@ -149,6 +157,7 @@ export function ViniciusDrinksCarta() {
         <DrinkCartaEditor
           open={editorSlug === activeDrink.slug}
           drink={editorDrink}
+          userId={userId}
           onClose={() => setEditorSlug(null)}
           onSave={handleSaveDrink}
           onResetField={handleResetField}
@@ -224,7 +233,7 @@ export function ViniciusDrinksCarta() {
             const file = e.target.files?.[0];
             if (!file || !userId) return;
             try {
-              const url = await fileToDrinkImageUrl(file);
+              const url = await fileToDrinkImageUrl(file, { userId, kind: 'banner' });
               setStore((prev) => {
                 const next = { ...prev, bannerImageUrl: url };
                 saveDrinkCartaStore(userId, next);
@@ -297,6 +306,7 @@ export function ViniciusDrinksCarta() {
       <DrinkCartaEditor
         open={Boolean(editorSlug)}
         drink={editorDrink}
+        userId={userId}
         onClose={() => setEditorSlug(null)}
         onSave={handleSaveDrink}
         onResetField={handleResetField}

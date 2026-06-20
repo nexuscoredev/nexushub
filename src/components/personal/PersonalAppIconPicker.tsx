@@ -17,6 +17,7 @@ interface PersonalAppIconPickerProps {
   open: boolean;
   app: ResolvedPersonalApp | null;
   defaultIcon: PersonalAppIcon | null;
+  userId?: string;
   onClose: () => void;
   onSelect: (icon: PersonalAppIcon) => void;
   onReset: () => void;
@@ -26,6 +27,7 @@ export function PersonalAppIconPicker({
   open,
   app,
   defaultIcon,
+  userId,
   onClose,
   onSelect,
   onReset,
@@ -89,7 +91,7 @@ export function PersonalAppIconPicker({
     setFileLoading(true);
     setError(null);
     try {
-      const icon = await fileToAppIconImage(file);
+      const icon = await fileToAppIconImage(file, userId && app ? { userId, appId: app.id } : undefined);
       setLocalFileName(file.name);
       setImageUrl('');
       onSelect(icon);
