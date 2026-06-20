@@ -12,7 +12,7 @@ const IMAGE_MIME = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif'
 
 export type DrinkImageUploadTarget = {
   userId: string;
-  kind: 'banner' | 'drink';
+  kind: 'banner' | 'drink' | 'adega';
   slug?: string;
 };
 
@@ -122,7 +122,9 @@ export async function fileToDrinkImageUrl(
     const path =
       upload.kind === 'banner'
         ? 'drinks-carta/banner.jpg'
-        : `drinks-carta/${upload.slug ?? 'drink'}.jpg`;
+        : upload.kind === 'adega'
+          ? `adega/${upload.slug ?? 'item'}.jpg`
+          : `drinks-carta/${upload.slug ?? 'drink'}.jpg`;
     return uploadPersonalMediaBlob(upload.userId, path, blob, 'image/jpeg');
   }
 

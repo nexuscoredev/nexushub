@@ -1,7 +1,7 @@
-import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import type { AdegaSearchResult } from '../../lib/adegaSearch';
+import { fileToDrinkImageUrl, parseDrinkImageUrl } from '../../lib/drinkCartaImage';
 import {
   ADEGA_CATEGORY_PRESETS,
   adegaStats,
@@ -15,7 +15,6 @@ import {
   type AdegaItem,
   type AdegaItemInput,
 } from '../../lib/viniciusAdega';
-import { AdegaProductSearch } from './AdegaProductSearch';
 import styles from './ViniciusAdega.module.css';
 
 type FormState = {
@@ -30,7 +29,6 @@ type FormState = {
   notes: string;
   opened: boolean;
   imageUrl: string;
-  barcode: string;
 };
 
 const EMPTY_FORM: FormState = {
@@ -45,7 +43,6 @@ const EMPTY_FORM: FormState = {
   notes: '',
   opened: false,
   imageUrl: '',
-  barcode: '',
 };
 
 function itemToForm(item: AdegaItem): FormState {
@@ -62,7 +59,6 @@ function itemToForm(item: AdegaItem): FormState {
     notes: item.notes ?? '',
     opened: Boolean(item.opened),
     imageUrl: item.imageUrl ?? '',
-    barcode: item.barcode ?? '',
   };
 }
 
@@ -79,24 +75,12 @@ function formToInput(form: FormState): AdegaItemInput {
     notes: form.notes || undefined,
     opened: form.opened,
     imageUrl: form.imageUrl || undefined,
-    barcode: form.barcode || undefined,
   };
 }
 
-function applySearchResult(form: FormState, hit: AdegaSearchResult): FormState {
-  const preset = ADEGA_CATEGORY_PRESETS.includes(hit.category as (typeof ADEGA_CATEGORY_PRESETS)[number]);
-  return {
-    ...form,
-    name: hit.name,
-    brand: hit.brand ?? '',
-    category: preset ? hit.category : 'Outro',
-    customCategory: preset ? form.customCategory : hit.category !== 'Outro' ? hit.category : form.customCategory,
-    volumeMl: hit.volumeMl != null ? String(hit.volumeMl) : form.volumeMl,
-    abv: hit.abv != null ? String(hit.abv) : form.abv,
-    origin: hit.origin ?? form.origin,
-    imageUrl: hit.imageUrl ?? '',
-    barcode: hit.barcode,
-  };
+function imageUrlFieldValue(imageUrl: string): string {
+  if (!imageUrl || imageUrl.startsWith('data:')) return '';
+  return imageUrl;
 }
 
 export function ViniciusAdega() {
@@ -114,6 +98,11 @@ export function ViniciusAdega() {
   const [viewingItem, setViewingItem] = useState<AdegaItem | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [formError, setFormError] = useState<string | null>(null);
+  const [draftItemId, setDraftItemId] = useState<string | null>(null);
+  const [imageUrlInput, setImageUrlInput] = useState('');
+  const [imageLoading, setImageLoading] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
 
   const setEditMode = (next: boolean) => {
     const params = new URLSearchParams(searchParams);
@@ -161,7 +150,10 @@ export function ViniciusAdega() {
 
   const openCreate = () => {
     setEditingId(null);
+    setDraftItemId(createAdegaItemId());
     setForm(EMPTY_FORM);
+    setImageUrlInput('');
+    setImageError(null);
     setFormError(null);
     setDialogOpen(true);
   };
@@ -169,7 +161,10 @@ export function ViniciusAdega() {
   const openEdit = (item: AdegaItem) => {
     setViewingItem(null);
     setEditingId(item.id);
+    setDraftItemId(null);
     setForm(itemToForm(item));
+    setImageUrlInput(imageUrlFieldValue(item.imageUrl ?? ''));
+    setImageError(null);
     setFormError(null);
     setDialogOpen(true);
   };
@@ -186,6 +181,9 @@ export function ViniciusAdega() {
   const closeDialog = () => {
     setDialogOpen(false);
     setEditingId(null);
+    setDraftItemId(null);
+    setImageUrlInput('');
+    setImageError(null);
     setFormError(null);
   };
 
@@ -225,7 +223,7 @@ export function ViniciusAdega() {
       persist([
         ...items,
         {
-          id: createAdegaItemId(),
+          id: draftItemId ?? createAdegaItemId(),
           ...normalized,
           createdAt: now,
           updatedAt: now,
@@ -241,10 +239,42 @@ export function ViniciusAdega() {
     persist(items.filter((item) => item.id !== id));
   };
 
-  const handleCatalogPick = useCallback((hit: AdegaSearchResult) => {
-    setForm((prev) => applySearchResult(prev, hit));
-    setFormError(null);
-  }, []);
+  const uploadItemId = editingId ?? draftItemId;
+
+  const handlePhotoFile = async (file: File | null) => {
+    if (!file) return;
+    setImageLoading(true);
+    setImageError(null);
+    try {
+      const url = await fileToDrinkImageUrl(
+        file,
+        userId && uploadItemId ? { userId, kind: 'adega', slug: uploadItemId } : undefined,
+      );
+      setForm((prev) => ({ ...prev, imageUrl: url }));
+      setImageUrlInput('');
+    } catch (err) {
+      setImageError(err instanceof Error ? err.message : 'Não foi possível usar esta foto.');
+    } finally {
+      setImageLoading(false);
+      if (photoInputRef.current) photoInputRef.current.value = '';
+    }
+  };
+
+  const applyImageUrl = () => {
+    const parsed = parseDrinkImageUrl(imageUrlInput);
+    if (!parsed) {
+      setImageError('URL de imagem inválida.');
+      return;
+    }
+    setForm((prev) => ({ ...prev, imageUrl: parsed }));
+    setImageError(null);
+  };
+
+  const clearPhoto = () => {
+    setForm((prev) => ({ ...prev, imageUrl: '' }));
+    setImageUrlInput('');
+    setImageError(null);
+  };
 
   useEffect(() => {
     if (!viewingItem) return;
@@ -547,20 +577,66 @@ export function ViniciusAdega() {
             </div>
             <form className={styles.form} onSubmit={handleSubmit}>
               <div className={styles.dialogBody}>
-              {!editingId ? <AdegaProductSearch onSelect={handleCatalogPick} /> : null}
-
-              {form.imageUrl ? (
-                <div className={styles.formPreview}>
-                  <img src={form.imageUrl} alt="" className={styles.formPreviewImg} loading="lazy" decoding="async" />
-                  <button
-                    type="button"
-                    className={styles.formPreviewClear}
-                    onClick={() => setForm((prev) => ({ ...prev, imageUrl: '', barcode: '' }))}
-                  >
-                    Remover foto
-                  </button>
+              <section className={styles.formPhoto}>
+                <p className={styles.label}>Foto</p>
+                <div className={styles.formPhotoRow}>
+                  {form.imageUrl ? (
+                    <img
+                      src={form.imageUrl}
+                      alt=""
+                      className={styles.formPhotoPreview}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <span className={styles.formPhotoFallback} aria-hidden>
+                      🍾
+                    </span>
+                  )}
+                  <div className={styles.formPhotoActions}>
+                    <input
+                      ref={photoInputRef}
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/gif"
+                      className={styles.formPhotoInput}
+                      onChange={(e) => {
+                        void handlePhotoFile(e.target.files?.[0] ?? null);
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className={styles.formPhotoBtn}
+                      disabled={imageLoading}
+                      onClick={() => photoInputRef.current?.click()}
+                    >
+                      {imageLoading ? 'Enviando…' : 'Escolher foto'}
+                    </button>
+                    <div className={styles.formPhotoUrlRow}>
+                      <input
+                        type="url"
+                        className={styles.input}
+                        value={imageUrlInput}
+                        onChange={(e) => {
+                          setImageUrlInput(e.target.value);
+                          setImageError(null);
+                        }}
+                        placeholder="https://…"
+                        inputMode="url"
+                      />
+                      <button type="button" className={styles.formPhotoApplyBtn} onClick={applyImageUrl}>
+                        Usar
+                      </button>
+                    </div>
+                    <p className={styles.formPhotoHint}>.jpg, .png ou .webp — até 10 MB</p>
+                    {form.imageUrl ? (
+                      <button type="button" className={styles.formPhotoClear} onClick={clearPhoto}>
+                        Remover foto
+                      </button>
+                    ) : null}
+                    {imageError ? <p className={styles.formError}>{imageError}</p> : null}
+                  </div>
                 </div>
-              ) : null}
+              </section>
 
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="adega-name">

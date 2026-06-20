@@ -19,6 +19,19 @@ import {
   type DrinkCartaOverride,
   type DrinkCartaStore,
 } from '../../lib/viniciusDrinksCartaStore';
+import {
+  loadAdegaItems,
+  syncAdegaItemsFromCloud,
+  type AdegaItem,
+} from '../../lib/viniciusAdega';
+import {
+  filterDrinksByAdega,
+  getDrinkSuggestions,
+  matchDrinkToAdega,
+  matchDrinksToAdega,
+} from '../../lib/drinkAdegaMatch';
+import { DrinkAdegaAvailability } from './DrinkAdegaAvailability';
+import { DrinkAdegaSuggestions } from './DrinkAdegaSuggestions';
 import { DrinkCartaEditor } from './DrinkCartaEditor';
 import { DrinkRecipeToolkit } from './DrinkRecipeToolkit';
 import styles from './ViniciusDrinksCarta.module.css';
@@ -32,6 +45,8 @@ export function ViniciusDrinksCarta() {
   const editing = searchParams.get('edit') === '1';
 
   const [store, setStore] = useState<DrinkCartaStore>(() => loadDrinkCartaStore(userId));
+  const [adegaItems, setAdegaItems] = useState<AdegaItem[]>(() => loadAdegaItems(userId));
+  const [adegaFilter, setAdegaFilter] = useState<'all' | 'ready'>('all');
   const [editorSlug, setEditorSlug] = useState<string | null>(null);
   const bannerFileRef = useRef<HTMLInputElement>(null);
 
@@ -46,7 +61,28 @@ export function ViniciusDrinksCarta() {
     });
   }, [userId]);
 
+  useEffect(() => {
+    setAdegaItems(loadAdegaItems(userId));
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId) return;
+    void syncAdegaItemsFromCloud(userId).then((cloudItems) => {
+      if (cloudItems) setAdegaItems(cloudItems);
+    });
+  }, [userId]);
+
   const drinks = useMemo(() => resolveDrinks(store), [store]);
+  const adegaMatches = useMemo(() => matchDrinksToAdega(drinks, adegaItems), [drinks, adegaItems]);
+  const readyDrinkCount = useMemo(
+    () => getDrinkSuggestions(drinks, adegaItems).ready.length,
+    [drinks, adegaItems],
+  );
+  const hasAdegaStock = adegaItems.some((item) => item.quantity > 0);
+  const visibleDrinks = useMemo(
+    () => (adegaFilter === 'ready' ? filterDrinksByAdega(drinks, adegaItems, 'ready') : drinks),
+    [adegaFilter, drinks, adegaItems],
+  );
   const activeDrink = useMemo(
     () => findResolvedDrink(activeSlug, store),
     [activeSlug, store],
@@ -54,6 +90,10 @@ export function ViniciusDrinksCarta() {
   const editorDrink = useMemo(
     () => (editorSlug ? findResolvedDrink(editorSlug, store) ?? null : null),
     [editorSlug, store],
+  );
+  const activeAdegaMatch = useMemo(
+    () => (activeDrink ? matchDrinkToAdega(activeDrink, adegaItems) : null),
+    [activeDrink, adegaItems],
   );
 
   const setEditing = (next: boolean) => {
@@ -150,6 +190,10 @@ export function ViniciusDrinksCarta() {
             <h2 className={styles.detailTitle}>{activeDrink.title}</h2>
             <p className={styles.detailTagline}>{activeDrink.tagline}</p>
 
+            {activeAdegaMatch && hasAdegaStock ? (
+              <DrinkAdegaAvailability match={activeAdegaMatch} />
+            ) : null}
+
             <DrinkRecipeToolkit key={activeDrink.slug} drink={activeDrink} />
           </div>
         </article>
@@ -172,7 +216,9 @@ export function ViniciusDrinksCarta() {
         <p className={styles.cartaToolbarHint}>
           {editing
             ? 'Toque em ✎ para editar foto e receita de cada drink.'
-            : `${drinks.length} receitas na carta`}
+            : adegaFilter === 'ready'
+              ? `${visibleDrinks.length} receitas com a sua adega`
+              : `${drinks.length} receitas na carta`}
         </p>
         <button
           type="button"
@@ -248,12 +294,69 @@ export function ViniciusDrinksCarta() {
         />
         <div className={styles.bannerMeta}>
           <span className={styles.bannerPill}>{VINICIUS_DRINKS.length} receitas</span>
+          {hasAdegaStock && readyDrinkCount > 0 ? (
+            <span className={styles.bannerPillReady}>{readyDrinkCount} com sua adega</span>
+          ) : null}
           <span className={styles.bannerPill}>Bar digital</span>
         </div>
       </header>
 
+      {!editing && hasAdegaStock ? (
+        <DrinkAdegaSuggestions
+          drinks={drinks}
+          adegaItems={adegaItems}
+          onOpenDrink={openDrink}
+          onShowAllReady={() => setAdegaFilter('ready')}
+        />
+      ) : !editing && !hasAdegaStock ? (
+        <p className={styles.adegaEmptyHint}>
+          Cadastre bebidas na{' '}
+          <button type="button" className={styles.adegaEmptyLink} onClick={() => navigate('/pessoal?adega=1')}>
+            Minha adega
+          </button>{' '}
+          para ver quais drinks você consegue fazer.
+        </p>
+      ) : null}
+
+      {!editing && hasAdegaStock ? (
+        <div className={styles.cartaSectionHead}>
+          <h3 className={styles.cartaSectionTitle}>
+            {adegaFilter === 'ready' ? 'Posso fazer com a adega' : 'Toda a carta'}
+          </h3>
+          <div className={styles.adegaFilterBar} role="group" aria-label="Filtrar por adega">
+            <button
+              type="button"
+              className={`${styles.adegaFilterBtn} ${adegaFilter === 'all' ? styles.adegaFilterBtnActive : ''}`}
+              onClick={() => setAdegaFilter('all')}
+            >
+              Todas
+            </button>
+            <button
+              type="button"
+              className={`${styles.adegaFilterBtn} ${adegaFilter === 'ready' ? styles.adegaFilterBtnActive : ''}`}
+              onClick={() => setAdegaFilter('ready')}
+            >
+              Posso fazer ({readyDrinkCount})
+            </button>
+          </div>
+        </div>
+      ) : null}
+
+      {adegaFilter === 'ready' && visibleDrinks.length === 0 ? (
+        <div className={styles.adegaEmptyState}>
+          <p className={styles.adegaEmptyStateTitle}>Nenhum drink completo por enquanto</p>
+          <p className={styles.adegaEmptyStateText}>
+            Adicione mais destilados na adega ou veja todas as receitas.
+          </p>
+          <button type="button" className={styles.adegaEmptyStateBtn} onClick={() => setAdegaFilter('all')}>
+            Ver todas as receitas
+          </button>
+        </div>
+      ) : (
       <ul className={styles.list}>
-        {drinks.map((drink) => (
+        {visibleDrinks.map((drink) => {
+          const match = adegaMatches.get(drink.slug);
+          return (
           <li key={drink.slug}>
             {editing ? (
               <div className={`${styles.card} ${styles.cardEditing}`}>
@@ -291,7 +394,15 @@ export function ViniciusDrinksCarta() {
                   <img src={drink.imageUrl} alt="" loading="lazy" decoding="async" />
                 </span>
                 <span className={styles.cardBody}>
-                  <span className={styles.cardTitle}>{drink.title}</span>
+                  <span className={styles.cardTitleRow}>
+                    <span className={styles.cardTitle}>{drink.title}</span>
+                    {!editing && match?.status === 'ready' ? (
+                      <span className={styles.cardAdegaBadge}>Adega</span>
+                    ) : null}
+                    {!editing && match?.status === 'partial' ? (
+                      <span className={styles.cardAdegaBadgePartial}>Quase</span>
+                    ) : null}
+                  </span>
                   <span className={styles.cardTagline}>{drink.tagline}</span>
                 </span>
                 <span className={styles.cardArrow} aria-hidden>
@@ -300,8 +411,10 @@ export function ViniciusDrinksCarta() {
               </button>
             )}
           </li>
-        ))}
+          );
+        })}
       </ul>
+      )}
 
       <DrinkCartaEditor
         open={Boolean(editorSlug)}
