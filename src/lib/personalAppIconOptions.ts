@@ -198,19 +198,21 @@ export function iconsEqual(a: PersonalAppIcon, b: PersonalAppIcon): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-/** Remove overrides antigos para usar os PNGs oficiais em alta resolução. */
+/** Remove apenas referências legadas incorretas; mantém uploads locais (data URL). */
 export function shouldDropIconOverride(appId: string, icon: PersonalAppIcon): boolean {
   if (icon.type !== 'image') return false;
 
   const src = icon.src.toLowerCase();
-  if (src.startsWith('data:')) return appId === 'drinks' || appId === 'adega';
+  if (src.startsWith('data:')) return false;
 
   if (appId === 'drinks') {
     if (src.includes('/drinks/banner') || src.includes('banner.png')) return true;
+    if (src.includes('/drinks/thumbs/')) return true;
     return src !== PERSONAL_APP_ICON_PATHS.drinks.toLowerCase();
   }
 
   if (appId === 'adega') {
+    if (src.includes('/drinks/banner') || src.includes('/drinks/thumbs/')) return true;
     return src !== PERSONAL_APP_ICON_PATHS.adega.toLowerCase();
   }
 

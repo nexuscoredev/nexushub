@@ -1,4 +1,5 @@
-const OFF_HOSTS = ['world.openfoodfacts.org', 'br.openfoodfacts.org'] as const;
+const SEARCH_A_LICIOUS_URL = 'https://search.openfoodfacts.org/search';
+const LEGACY_OFF_HOST = 'br.openfoodfacts.org';
 const OFF_USER_AGENT = 'NEXUS-Hub/1.0 (Adega pessoal; https://nexussystems.dev)';
 const PAGE_SIZE = 32;
 const MAX_RESULTS = 12;
@@ -18,7 +19,7 @@ export type AdegaSearchHit = {
 type OffProduct = {
   code?: string;
   product_name?: string;
-  brands?: string;
+  brands?: string | string[];
   quantity?: string;
   product_quantity?: number;
   product_quantity_unit?: string;
@@ -167,7 +168,7 @@ function isLikelyAlcoholicProduct(product: OffProduct, query: string): boolean {
   if (isLikelyAlcoholicTags(tags)) return true;
 
   const name = product.product_name ?? '';
-  const brand = product.brands ?? '';
+  const brand = normalizeBrands(product.brands) ?? '';
   const text = `${name} ${brand}`;
 
   if (inferCategoryFromText(text) !== 'Outro') return true;
@@ -178,8 +179,17 @@ function isLikelyAlcoholicProduct(product: OffProduct, query: string): boolean {
   return queryMatchesProduct(text, query);
 }
 
-function parseBrand(raw: string | undefined): string | undefined {
-  const brand = raw?.split(',')[0]?.trim();
+function normalizeBrands(raw: string | string[] | undefined): string | undefined {
+  if (!raw) return undefined;
+  if (Array.isArray(raw)) {
+    const joined = raw.map((part) => part.trim()).filter(Boolean).join(', ');
+    return joined || undefined;
+  }
+  return raw.trim() || undefined;
+}
+
+function parseBrand(raw: string | string[] | undefined): string | undefined {
+  const brand = normalizeBrands(raw)?.split(',')[0]?.trim();
   if (!brand || brand.length < 2) return undefined;
   if (!/[a-zA-ZÀ-ÿ0-9]/.test(brand)) return undefined;
   return brand;
@@ -283,7 +293,36 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function fetchOffProducts(host: string, query: string, signal: AbortSignal): Promise<OffProduct[]> {
+async function fetchSearchALiciousProducts(query: string, signal: AbortSignal): Promise<OffProduct[]> {
+  const params = new URLSearchParams({
+    q: query,
+    page_size: String(PAGE_SIZE),
+    fields: OFF_FIELDS,
+    langs: 'pt,en',
+  });
+
+  const response = await fetch(`${SEARCH_A_LICIOUS_URL}?${params.toString()}`, {
+    headers: {
+      'User-Agent': OFF_USER_AGENT,
+      Accept: 'application/json',
+    },
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Catálogo respondeu ${response.status}`);
+  }
+
+  const contentType = response.headers.get('content-type') ?? '';
+  if (!contentType.includes('json')) {
+    throw new Error('Catálogo temporariamente indisponível. Tente em instantes.');
+  }
+
+  const data = (await response.json()) as { hits?: OffProduct[] };
+  return data.hits ?? [];
+}
+
+async function fetchLegacyOffProducts(host: string, query: string, signal: AbortSignal): Promise<OffProduct[]> {
   const params = new URLSearchParams({
     search_terms: query,
     search_simple: '1',
@@ -343,12 +382,19 @@ export async function searchOpenFoodFacts(query: string): Promise<AdegaSearchHit
   const timeout = setTimeout(() => controller.abort(), 12_000);
 
   try {
-    let products = await fetchOffProducts(OFF_HOSTS[0], q, controller.signal);
+    let products: OffProduct[];
+    try {
+      products = await fetchSearchALiciousProducts(q, controller.signal);
+    } catch (primaryError) {
+      products = await fetchLegacyOffProducts(LEGACY_OFF_HOST, q, controller.signal);
+      if (products.length === 0 && primaryError instanceof Error) throw primaryError;
+    }
+
     let hits = mapProducts(products, q);
 
     if (hits.length < BR_FALLBACK_MIN) {
       await sleep(350);
-      const brProducts = await fetchOffProducts(OFF_HOSTS[1], q, controller.signal);
+      const brProducts = await fetchLegacyOffProducts(LEGACY_OFF_HOST, q, controller.signal);
       hits = [...hits, ...mapProducts(brProducts, q)];
     }
 

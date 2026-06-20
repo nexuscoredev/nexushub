@@ -1,7 +1,6 @@
 import {
   drinkThumbPath,
   VINICIUS_DRINKS,
-  VINICIUS_DRINKS_BANNER_URL,
   type ViniciusDrink,
 } from './viniciusDrinksCarta';
 
@@ -55,10 +54,10 @@ function isValidOverride(value: unknown): value is DrinkCartaOverride {
 
 function shouldDropBannerOverride(url: string): boolean {
   const lower = url.toLowerCase();
-  if (lower.startsWith('data:image/')) return true;
   if (lower.includes('/drinks/thumbs/')) return true;
-  const official = VINICIUS_DRINKS_BANNER_URL.split('?')[0].toLowerCase();
-  if (lower.includes('/drinks/banner') && !lower.startsWith(official)) return true;
+  if (lower.includes('/drinks/banner') && !lower.includes('/img/personal/drinks/banner.png')) {
+    return true;
+  }
   return false;
 }
 
@@ -101,7 +100,11 @@ export function loadDrinkCartaStore(userId: string | undefined): DrinkCartaStore
 
 export function saveDrinkCartaStore(userId: string, store: DrinkCartaStore): void {
   if (typeof localStorage === 'undefined') return;
-  localStorage.setItem(storageKey(userId), JSON.stringify(store));
+  try {
+    localStorage.setItem(storageKey(userId), JSON.stringify(store));
+  } catch {
+    /* quota exceeded — evita quebrar a UI */
+  }
 }
 
 export function mergeDrink(base: ViniciusDrink, override?: DrinkCartaOverride): ViniciusDrink {

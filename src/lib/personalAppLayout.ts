@@ -106,5 +106,9 @@ export function loadPersonalAppLayout(
 
 export function savePersonalAppLayout(userId: string, layout: PersonalAppLayout): void {
   if (typeof localStorage === 'undefined') return;
-  localStorage.setItem(storageKey(userId), JSON.stringify(layout));
+  try {
+    localStorage.setItem(storageKey(userId), JSON.stringify(layout));
+  } catch {
+    /* quota exceeded — evita quebrar a UI */
+  }
 }

@@ -43,7 +43,7 @@ export function AdegaProductSearch({ onSelect }: AdegaProductSearchProps) {
           const message = err instanceof Error ? err.message : 'Não foi possível buscar.';
           setError(message);
           setResults([]);
-          setOpen(false);
+          setOpen(true);
         })
         .finally(() => {
           if (!controller.signal.aborted) setLoading(false);
