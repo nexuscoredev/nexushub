@@ -78,11 +78,11 @@
 
 .card {
   display: grid;
-  grid-template-columns: 5.5rem 1fr auto;
+  grid-template-columns: 7.75rem 1fr auto;
   align-items: center;
-  gap: 0.85rem;
+  gap: 1rem;
   width: 100%;
-  padding: 0.75rem 0.85rem;
+  padding: 0.85rem 0.95rem;
   border-radius: var(--radius);
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: linear-gradient(135deg, rgba(12, 12, 14, 0.95), rgba(20, 20, 24, 0.88));
@@ -103,9 +103,9 @@
 
 .cardMedia {
   display: block;
-  width: 5.5rem;
-  height: 5.5rem;
-  border-radius: 0.55rem;
+  width: 7.75rem;
+  height: 7.75rem;
+  border-radius: 0.65rem;
   overflow: hidden;
   background: #0a0a0a;
   flex-shrink: 0;
@@ -178,9 +178,9 @@
 }
 
 .detailPhoto {
-  width: min(100%, 14rem);
+  width: min(100%, 18rem);
   height: auto;
-  border-radius: 0.65rem;
+  border-radius: 0.75rem;
   object-fit: contain;
   object-position: center bottom;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
@@ -745,8 +745,8 @@
 }
 
 .editorPhotoPreview {
-  width: 5.5rem;
-  height: 5.5rem;
+  width: 7.75rem;
+  height: 7.75rem;
   object-fit: contain;
   object-position: center bottom;
   border-radius: 0.55rem;
@@ -875,10 +875,10 @@
 @media (min-width: 768px) {
   .detail {
     display: grid;
-    grid-template-columns: minmax(10rem, 12rem) 1fr;
+    grid-template-columns: minmax(14rem, 18rem) 1fr;
     align-items: start;
-    gap: 1.25rem;
-    padding: 1.15rem;
+    gap: 1.5rem;
+    padding: 1.25rem;
   }
 
   .detailMedia {
@@ -897,13 +897,13 @@
 
 @media (max-width: 479px) {
   .card {
-    grid-template-columns: 4.5rem 1fr auto;
-    gap: 0.65rem;
-    padding: 0.65rem;
+    grid-template-columns: 6.25rem 1fr auto;
+    gap: 0.75rem;
+    padding: 0.7rem;
   }
 
   .cardMedia {
-    width: 4.5rem;
-    height: 4.5rem;
+    width: 6.25rem;
+    height: 6.25rem;
   }
 }
