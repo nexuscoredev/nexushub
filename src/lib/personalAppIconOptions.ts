@@ -198,7 +198,26 @@ export function iconsEqual(a: PersonalAppIcon, b: PersonalAppIcon): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-/** Substitui ícones legados (banner panorâmico / data URL comprimido) por assets quadrados. */
+/** Remove overrides antigos para usar os PNGs oficiais em alta resolução. */
+export function shouldDropIconOverride(appId: string, icon: PersonalAppIcon): boolean {
+  if (icon.type !== 'image') return false;
+
+  const src = icon.src.toLowerCase();
+  if (src.startsWith('data:')) return appId === 'drinks' || appId === 'adega';
+
+  if (appId === 'drinks') {
+    if (src.includes('/drinks/banner') || src.includes('banner.png')) return true;
+    return src !== PERSONAL_APP_ICON_PATHS.drinks.toLowerCase();
+  }
+
+  if (appId === 'adega') {
+    return src !== PERSONAL_APP_ICON_PATHS.adega.toLowerCase();
+  }
+
+  return false;
+}
+
+/** Substitui ícones legados (banner panorâmico) pelos assets quadrados oficiais. */
 export function migrateLegacyIconOverride(
   appId: string,
   icon: PersonalAppIcon,
@@ -208,6 +227,9 @@ export function migrateLegacyIconOverride(
   const src = icon.src.toLowerCase();
   if (appId === 'drinks' && (src.includes('/drinks/banner') || src.includes('banner.png'))) {
     return { type: 'image', src: PERSONAL_APP_ICON_PATHS.drinks };
+  }
+  if (appId === 'adega' && src.includes('/drinks/banner')) {
+    return { type: 'image', src: PERSONAL_APP_ICON_PATHS.adega };
   }
 
   return icon;

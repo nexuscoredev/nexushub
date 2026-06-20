@@ -3,7 +3,7 @@ import {
   defaultAppOrder,
   type PersonalCustomApp,
 } from './personalApps';
-import { isPersonalAppIcon, migrateLegacyIconOverride } from './personalAppIconOptions';
+import { isPersonalAppIcon, migrateLegacyIconOverride, shouldDropIconOverride } from './personalAppIconOptions';
 import type { PersonalAppIcon } from './personalApps';
 
 const STORAGE_PREFIX = 'nexus-pessoal-apps';
@@ -81,9 +81,9 @@ export function normalizePersonalAppLayout(
   const allowedIds = new Set([...allowedCatalogIds, ...customIds]);
   const iconOverrides: Record<string, PersonalAppIcon> = {};
   for (const [id, icon] of Object.entries(layout?.iconOverrides ?? {})) {
-    if (allowedIds.has(id) && isPersonalAppIcon(icon)) {
-      iconOverrides[id] = migrateLegacyIconOverride(id, icon);
-    }
+    if (!allowedIds.has(id) || !isPersonalAppIcon(icon)) continue;
+    if (shouldDropIconOverride(id, icon)) continue;
+    iconOverrides[id] = migrateLegacyIconOverride(id, icon);
   }
 
   if (order.length === 0) {
