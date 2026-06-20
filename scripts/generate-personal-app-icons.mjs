@@ -47,10 +47,8 @@ await writeSquareIcon('adega.png', path.join(sourceDir, 'adega-icon.png'));
 
 const bannerSrc = path.join(sourceDir, 'drinks-carta-banner.png');
 const bannerOut = path.join(root, 'public/img/personal/drinks/banner.png');
-await sharp(bannerSrc)
-  .resize(1536, 864, { fit: 'cover', position: 'centre', kernel: sharp.kernel.lanczos3 })
-  .png(PNG_OPTIONS)
-  .toFile(bannerOut);
-console.log('✓ banner.png (1536x864) → public/img/personal/drinks/');
+const bannerMeta = await sharp(bannerSrc).metadata();
+await sharp(bannerSrc).png(PNG_OPTIONS).toFile(bannerOut);
+console.log(`✓ banner.png (${bannerMeta.width}x${bannerMeta.height}) → public/img/personal/drinks/`);
 
 console.log('Ícones gerados em public/img/personal/apps/');

@@ -1,6 +1,7 @@
 import {
   drinkThumbPath,
   VINICIUS_DRINKS,
+  VINICIUS_DRINKS_BANNER_URL,
   type ViniciusDrink,
 } from './viniciusDrinksCarta';
 
@@ -52,6 +53,22 @@ function isValidOverride(value: unknown): value is DrinkCartaOverride {
   return true;
 }
 
+function shouldDropBannerOverride(url: string): boolean {
+  const lower = url.toLowerCase();
+  if (lower.startsWith('data:image/')) return true;
+  if (lower.includes('/drinks/thumbs/')) return true;
+  const official = VINICIUS_DRINKS_BANNER_URL.split('?')[0].toLowerCase();
+  if (lower.includes('/drinks/banner') && !lower.startsWith(official)) return true;
+  return false;
+}
+
+function migrateDrinkCartaStore(store: DrinkCartaStore): DrinkCartaStore {
+  if (store.bannerImageUrl && shouldDropBannerOverride(store.bannerImageUrl)) {
+    return { ...store, bannerImageUrl: undefined };
+  }
+  return store;
+}
+
 function parseStore(raw: string | null): DrinkCartaStore {
   if (!raw) return { overrides: {} };
   try {
@@ -74,7 +91,12 @@ function parseStore(raw: string | null): DrinkCartaStore {
 
 export function loadDrinkCartaStore(userId: string | undefined): DrinkCartaStore {
   if (!userId || typeof localStorage === 'undefined') return { overrides: {} };
-  return parseStore(localStorage.getItem(storageKey(userId)));
+  const store = parseStore(localStorage.getItem(storageKey(userId)));
+  const migrated = migrateDrinkCartaStore(store);
+  if (migrated !== store) {
+    saveDrinkCartaStore(userId, migrated);
+  }
+  return migrated;
 }
 
 export function saveDrinkCartaStore(userId: string, store: DrinkCartaStore): void {

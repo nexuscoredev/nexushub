@@ -2,7 +2,12 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { fileToDrinkImageUrl } from '../../lib/drinkCartaImage';
-import { VINICIUS_DRINKS, VINICIUS_DRINKS_BANNER_URL } from '../../lib/viniciusDrinksCarta';
+import {
+  VINICIUS_DRINKS,
+  VINICIUS_DRINKS_BANNER_HEIGHT,
+  VINICIUS_DRINKS_BANNER_URL,
+  VINICIUS_DRINKS_BANNER_WIDTH,
+} from '../../lib/viniciusDrinksCarta';
 import {
   clearDrinkOverrideField,
   findResolvedDrink,
@@ -170,23 +175,44 @@ export function ViniciusDrinksCarta() {
       </div>
 
       <header className={styles.banner}>
-        <div className={editing ? `${styles.bannerArtWrap} ${styles.mediaEditWrap}` : styles.bannerArtWrap}>
+        <div className={styles.bannerArtWrap}>
           <img
             src={bannerImage}
             alt="Carta de Drinks"
             className={styles.bannerArt}
+            width={VINICIUS_DRINKS_BANNER_WIDTH}
+            height={VINICIUS_DRINKS_BANNER_HEIGHT}
             loading="eager"
             decoding="async"
+            fetchPriority="high"
           />
           {editing ? (
-            <button
-              type="button"
-              className={styles.mediaEditBtn}
-              onClick={() => bannerFileRef.current?.click()}
-              aria-label="Alterar foto do banner"
-            >
-              ✎ Banner
-            </button>
+            <div className={styles.bannerEditActions}>
+              <button
+                type="button"
+                className={styles.mediaEditBtn}
+                onClick={() => bannerFileRef.current?.click()}
+                aria-label="Alterar foto do banner"
+              >
+                ✎ Banner
+              </button>
+              {store.bannerImageUrl ? (
+                <button
+                  type="button"
+                  className={styles.mediaResetBtn}
+                  onClick={() => {
+                    if (!userId) return;
+                    setStore((prev) => {
+                      const next = { ...prev, bannerImageUrl: undefined };
+                      saveDrinkCartaStore(userId, next);
+                      return next;
+                    });
+                  }}
+                >
+                  Restaurar padrão
+                </button>
+              ) : null}
+            </div>
           ) : null}
         </div>
         <input

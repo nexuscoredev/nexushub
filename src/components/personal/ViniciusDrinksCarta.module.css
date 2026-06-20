@@ -15,6 +15,8 @@
 
 .bannerArtWrap {
   position: relative;
+  display: block;
+  width: 100%;
   overflow: hidden;
   border-radius: calc(var(--radius) + 2px);
   border: 1px solid rgba(196, 181, 253, 0.18);
@@ -23,13 +25,26 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
+.bannerEditActions {
+  position: absolute;
+  right: 0.45rem;
+  bottom: 0.45rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  justify-content: flex-end;
+}
+
+.bannerEditActions .mediaEditBtn,
+.bannerEditActions .mediaResetBtn {
+  position: static;
+}
+
 .bannerArt {
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  object-position: center;
+  vertical-align: top;
 }
 
 .bannerMeta {
@@ -50,12 +65,6 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   color: rgba(255, 255, 255, 0.88);
-}
-
-@media (max-width: 479px) {
-  .bannerArt {
-    aspect-ratio: 4 / 3;
-  }
 }
 
 .list {
@@ -578,6 +587,17 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: rgba(0, 0, 0, 0.72);
   color: #fff;
+  font-size: 0.68rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mediaResetBtn {
+  padding: 0.25rem 0.45rem;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(252, 211, 77, 0.35);
+  background: rgba(0, 0, 0, 0.72);
+  color: #fde68a;
   font-size: 0.68rem;
   font-weight: 600;
   cursor: pointer;

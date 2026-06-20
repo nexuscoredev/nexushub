@@ -19,7 +19,9 @@ export function drinkThumbPath(slug: string): string {
 }
 
 /** Banner principal da carta (arte com título integrado). */
-export const VINICIUS_DRINKS_BANNER_URL = '/img/personal/drinks/banner.png';
+export const VINICIUS_DRINKS_BANNER_WIDTH = 1024;
+export const VINICIUS_DRINKS_BANNER_HEIGHT = 576;
+export const VINICIUS_DRINKS_BANNER_URL = '/img/personal/drinks/banner.png?v=2';
 
 export const VINICIUS_DRINKS_SITE_BASE = 'https://sites.google.com/view/drinksv/inicio';
 
