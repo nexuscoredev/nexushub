@@ -1,6 +1,7 @@
-const DRINK_IMAGE_MAX_BYTES = 2 * 1024 * 1024;
+export const DRINK_IMAGE_MAX_BYTES = 10 * 1024 * 1024;
 const DRINK_IMAGE_MAX_PX = 512;
 const DRINK_IMAGE_DATA_MAX_CHARS = 420_000;
+const DRINK_IMAGE_MAX_MB = DRINK_IMAGE_MAX_BYTES / (1024 * 1024);
 
 const IMAGE_EXTENSIONS = new Set(['png', 'jpg', 'jpeg', 'webp', 'gif']);
 const IMAGE_MIME = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif']);
@@ -72,7 +73,7 @@ export async function fileToDrinkImageUrl(file: File): Promise<string> {
     throw new Error('Formato não suportado. Use .jpg, .png ou .webp.');
   }
   if (file.size > DRINK_IMAGE_MAX_BYTES) {
-    throw new Error('Arquivo grande demais (máx. 2 MB).');
+    throw new Error(`Arquivo grande demais (máx. ${DRINK_IMAGE_MAX_MB} MB).`);
   }
 
   const dataUrl = await readFileAsDataUrl(file);
