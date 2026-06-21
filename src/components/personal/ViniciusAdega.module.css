@@ -481,12 +481,16 @@
 
 .viewFoot {
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
   padding: 0.75rem max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom))
     max(1rem, env(safe-area-inset-left));
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   background: rgba(0, 0, 0, 0.28);
 }
 
+.viewFoot .googleSearchBtn,
 .viewFoot .saveBtn {
   width: 100%;
 }
@@ -1015,6 +1019,161 @@
 
 .formPhotoClear:hover {
   color: #fde68a;
+}
+
+.googleSearchRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.googleSearchBtn {
+  align-self: flex-start;
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  background: rgba(59, 130, 246, 0.12);
+  color: #bfdbfe;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.googleSearchBtn:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(96, 165, 250, 0.5);
+}
+
+.googleSearchBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.googleSearchHint {
+  margin: 0;
+  font-size: 0.68rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.imagePicker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.85rem 0.9rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(96, 165, 250, 0.22);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(0, 0, 0, 0.22));
+}
+
+.imagePickerHead {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.imagePickerTitle {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #bfdbfe;
+}
+
+.imagePickerHint {
+  margin: 0;
+  font-size: 0.68rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.52);
+}
+
+.imagePickerActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.imagePickerBtn,
+.imagePickerBtnSecondary {
+  padding: 0.42rem 0.7rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.imagePickerBtn {
+  border: 1px solid rgba(96, 165, 250, 0.45);
+  background: rgba(59, 130, 246, 0.18);
+  color: #dbeafe;
+}
+
+.imagePickerBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.imagePickerBtnSecondary {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(226, 232, 240, 0.88);
+}
+
+.imagePickerBtnSecondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.imagePickerGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(4.75rem, 1fr));
+  gap: 0.45rem;
+}
+
+.imagePickerThumb {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 0;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.imagePickerThumb:hover:not(:disabled) {
+  border-color: rgba(96, 165, 250, 0.45);
+}
+
+.imagePickerThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.imagePickerThumbLoading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+.imagePickerAttribution {
+  margin: 0;
+  font-size: 0.62rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.42);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -2,6 +2,8 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { fileToDrinkImageUrl, parseDrinkImageUrl } from '../../lib/drinkCartaImage';
+import { adegaItemGoogleQuery, openGoogleSearch } from '../../lib/googleSearch';
+import { AdegaImagePicker } from './AdegaImagePicker';
 import {
   ADEGA_CATEGORY_PRESETS,
   adegaStats,
@@ -147,6 +149,16 @@ export function ViniciusAdega() {
       return haystack.includes(q);
     });
   }, [items, search, categoryFilter]);
+
+  const formGoogleQuery = useMemo(
+    () =>
+      adegaItemGoogleQuery({
+        name: form.name,
+        brand: form.brand,
+        category: form.category === 'Outro' ? form.customCategory : form.category,
+      }),
+    [form.name, form.brand, form.category, form.customCategory],
+  );
 
   const openCreate = () => {
     setEditingId(null);
@@ -542,6 +554,21 @@ export function ViniciusAdega() {
               ) : null}
             </div>
             <div className={styles.viewFoot}>
+              <button
+                type="button"
+                className={styles.googleSearchBtn}
+                onClick={() =>
+                  openGoogleSearch(
+                    adegaItemGoogleQuery({
+                      name: viewingItem.name,
+                      brand: viewingItem.brand,
+                      category: viewingItem.category,
+                    }),
+                  )
+                }
+              >
+                Buscar no Google
+              </button>
               <button type="button" className={styles.saveBtn} onClick={() => setViewingItem(null)}>
                 Fechar
               </button>
@@ -698,6 +725,17 @@ export function ViniciusAdega() {
                   placeholder="Opcional"
                 />
               </div>
+
+              <AdegaImagePicker
+                query={formGoogleQuery}
+                userId={userId}
+                itemId={uploadItemId}
+                onImageUrl={(url) => {
+                  setForm((prev) => ({ ...prev, imageUrl: url }));
+                  setImageUrlInput('');
+                  setImageError(null);
+                }}
+              />
 
               <div className={styles.row2}>
                 <div className={styles.field}>
