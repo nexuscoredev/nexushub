@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { ADEGA_CATEGORY_PRESETS } from './viniciusAdega';
 
 export type AdegaSearchResult = {
   barcode: string;
@@ -43,4 +44,38 @@ export async function searchAdegaProducts(query: string, signal?: AbortSignal): 
 
   const data = (await res.json()) as AdegaSearchResponse;
   return data.results ?? [];
+}
+
+export function adegaProductSearchQuery(parts: { name?: string; brand?: string }): string {
+  return [parts.brand, parts.name]
+    .map((part) => part?.trim())
+    .filter(Boolean)
+    .join(' ');
+}
+
+export type AdegaSearchFormPatch = {
+  name: string;
+  category: string;
+  customCategory: string;
+  brand: string;
+  volumeMl: string;
+  abv: string;
+  origin: string;
+  imageUrl: string;
+  barcode: string;
+};
+
+export function mapAdegaSearchResultToForm(result: AdegaSearchResult): AdegaSearchFormPatch {
+  const preset = ADEGA_CATEGORY_PRESETS.includes(result.category as (typeof ADEGA_CATEGORY_PRESETS)[number]);
+  return {
+    name: result.name,
+    category: preset ? result.category : 'Outro',
+    customCategory: preset ? '' : result.category,
+    brand: result.brand ?? '',
+    volumeMl: result.volumeMl != null ? String(result.volumeMl) : '',
+    abv: result.abv != null ? String(result.abv) : '',
+    origin: result.origin ?? '',
+    imageUrl: result.imageUrl ?? '',
+    barcode: result.barcode,
+  };
 }

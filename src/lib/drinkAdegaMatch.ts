@@ -19,10 +19,16 @@ const SPIRIT_RULES: SpiritRule[] = [
   { id: 'sake', label: 'Saquê', categories: ['Outro'], patterns: [/saqu[eê]/i] },
   { id: 'cerveja', label: 'Cerveja', categories: ['Cerveja'], patterns: [/cerveja|pilsen/i] },
   {
+    id: 'lillet',
+    label: 'Lillet',
+    categories: ['Vinho', 'Licor'],
+    patterns: [/lillet/i],
+  },
+  {
     id: 'vermouth',
     label: 'Vermute',
     categories: ['Vinho', 'Licor'],
-    patterns: [/vermouth|vermute|lillet/i],
+    patterns: [/vermouth|vermute/i],
   },
   {
     id: 'licor',
@@ -32,10 +38,14 @@ const SPIRIT_RULES: SpiritRule[] = [
   },
 ];
 
+export type SpiritVariant = 'dry' | 'sweet' | 'lillet' | 'bianco';
+
 export type DrinkRequirementGroup = {
   label: string;
   ruleIds: string[];
   searchTerms: string[];
+  /** Variante específica pedida na receita (ex.: Extra Dry ≠ Lillet). */
+  variant?: SpiritVariant;
 };
 
 export type DrinkAdegaMatchStatus = 'ready' | 'partial' | 'missing';
@@ -99,6 +109,55 @@ function findRulesForIngredient(ingredient: string): SpiritRule[] {
 
   const normalized = normalizeText(ingredient);
   return SPIRIT_RULES.filter((rule) => rule.patterns.some((pattern) => pattern.test(normalized)));
+}
+
+function extractSpiritVariant(ingredient: string): SpiritVariant | undefined {
+  const normalized = normalizeText(ingredient);
+  if (/lillet/.test(normalized)) return 'lillet';
+  if (/extra\s*dry|extraseco|vermouth\s*dry|vermute\s*seco|\bdry\s*vermouth/.test(normalized)) {
+    return 'dry';
+  }
+  if (/rosso|sweet|vermelho|rouge|dulce|vermute\s*doce|vermouth\s*sweet/.test(normalized)) {
+    return 'sweet';
+  }
+  if (/\bbianco\b|\bblanc\b/.test(normalized) && !/lillet/.test(normalized)) return 'bianco';
+  return undefined;
+}
+
+function pickPrimaryRule(ingredient: string, rules: SpiritRule[]): SpiritRule {
+  const variant = extractSpiritVariant(ingredient);
+  if (variant === 'lillet') {
+    const lillet = rules.find((rule) => rule.id === 'lillet');
+    if (lillet) return lillet;
+  }
+
+  const order = SPIRIT_RULES.map((rule) => rule.id);
+  return [...rules].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id))[0];
+}
+
+function itemMatchesSpiritVariant(haystack: string, variant: SpiritVariant): boolean {
+  const normalized = normalizeText(haystack);
+
+  switch (variant) {
+    case 'lillet':
+      return /lillet/.test(normalized);
+    case 'dry':
+      if (/lillet|rosso|sweet|vermelho|rouge|dulce|antica\s*formula|\bbianco\b/.test(normalized)) {
+        return false;
+      }
+      return (
+        /extra\s*dry|extraseco|\bdry\b|seco|noilly|dolin\s*dry|martini\s*extra\s*dry/.test(normalized) ||
+        (/vermouth|vermute/.test(normalized) &&
+          !/lillet|rosso|sweet|vermelho|rouge|bianco|blanc/.test(normalized))
+      );
+    case 'sweet':
+      if (/lillet|extra\s*dry|extraseco|\bdry\b/.test(normalized)) return false;
+      return /rosso|sweet|vermelho|rouge|dulce|carpano|antica\s*formula/.test(normalized);
+    case 'bianco':
+      return /\bbianco\b|\bblanc\b/.test(normalized) && !/lillet/.test(normalized);
+    default:
+      return true;
+  }
 }
 
 function ingredientDisplayLabel(ingredient: string): string {
@@ -169,6 +228,9 @@ export function extractDrinkRequirementGroups(drink: ViniciusDrink): DrinkRequir
     const isOrGroup = slashOptions.length > 1 && rules.length > 1;
 
     if (rules.length) {
+      const primaryRule = pickPrimaryRule(ingredient, rules);
+      const displayLabel = ingredientDisplayLabel(ingredient);
+      const variant = extractSpiritVariant(ingredient);
       const group: DrinkRequirementGroup = isOrGroup
         ? {
             label: rules.map((rule) => rule.label).join(' ou '),
@@ -176,9 +238,13 @@ export function extractDrinkRequirementGroups(drink: ViniciusDrink): DrinkRequir
             searchTerms: buildSearchTerms(ingredient, rules.map((rule) => rule.label).join(' ')),
           }
         : {
-            label: rules[0].label,
-            ruleIds: [rules[0].id],
-            searchTerms: buildSearchTerms(ingredient, rules[0].label),
+            label:
+              variant || displayLabel.length > primaryRule.label.length
+                ? displayLabel
+                : primaryRule.label,
+            ruleIds: [primaryRule.id],
+            searchTerms: buildSearchTerms(ingredient, displayLabel),
+            variant,
           };
 
       const key = requirementKey(group);
@@ -222,7 +288,7 @@ function itemMatchesRule(item: AdegaItem, rule: SpiritRule): boolean {
     return patternMatch;
   }
 
-  if (rule.id === 'licor' || rule.id === 'vermouth') {
+  if (rule.id === 'licor' || rule.id === 'vermouth' || rule.id === 'lillet') {
     return patternMatch || (categoryMatch && rule.patterns.some((pattern) => pattern.test(haystack)));
   }
 
@@ -233,12 +299,17 @@ function itemMatchesRule(item: AdegaItem, rule: SpiritRule): boolean {
 function itemMatchesGroup(item: AdegaItem, group: DrinkRequirementGroup): boolean {
   if (item.quantity <= 0) return false;
 
+  const haystack = itemHaystack(item);
+
+  if (group.variant && !itemMatchesSpiritVariant(haystack, group.variant)) {
+    return false;
+  }
+
   for (const ruleId of group.ruleIds) {
     const rule = SPIRIT_RULES.find((entry) => entry.id === ruleId);
     if (rule && itemMatchesRule(item, rule)) return true;
   }
 
-  const haystack = itemHaystack(item);
   return group.searchTerms.some((term) => haystack.includes(term));
 }
 

@@ -11,11 +11,13 @@ import {
   listToLines,
   type DrinkCartaOverride,
 } from '../../lib/viniciusDrinksCartaStore';
+import { DrinkThumb } from './DrinkThumb';
 import styles from './ViniciusDrinksCarta.module.css';
 
 interface DrinkCartaEditorProps {
   open: boolean;
   drink: ViniciusDrink | null;
+  defaultImageUrl?: string;
   userId?: string;
   onClose: () => void;
   onSave: (slug: string, patch: DrinkCartaOverride) => void;
@@ -25,6 +27,7 @@ interface DrinkCartaEditorProps {
 export function DrinkCartaEditor({
   open,
   drink,
+  defaultImageUrl,
   userId,
   onClose,
   onSave,
@@ -44,6 +47,7 @@ export function DrinkCartaEditor({
 
   useEffect(() => {
     if (!open || !drink) return;
+    const canonicalImage = defaultImageUrl ?? defaultDrinkImageUrl(drink.slug);
     setTitle(drink.title);
     setTagline(drink.tagline);
     setIngredientsText(listToLines(drink.ingredients));
@@ -53,7 +57,7 @@ export function DrinkCartaEditor({
     if (drink.imageUrl.startsWith('data:')) {
       setImageUrl('');
       setLocalFileName(drinkImageSourceLabel(drink.imageUrl));
-    } else if (drink.imageUrl !== defaultDrinkImageUrl(drink.slug)) {
+    } else if (drink.imageUrl !== canonicalImage) {
       setImageUrl(drink.imageUrl);
       setLocalFileName(null);
     } else {
@@ -62,11 +66,12 @@ export function DrinkCartaEditor({
     }
     setError(null);
     setFileLoading(false);
-  }, [open, drink]);
+  }, [defaultImageUrl, drink, open]);
 
   if (!open || !drink) return null;
 
-  const defaultImage = defaultDrinkImageUrl(drink.slug);
+  const canonicalImage = defaultImageUrl ?? defaultDrinkImageUrl(drink.slug);
+  const defaultImage = canonicalImage;
   const hasCustomImage = drink.imageUrl !== defaultImage;
 
   const handleFileChange = async (file: File | null) => {
@@ -133,71 +138,15 @@ export function DrinkCartaEditor({
         onClick={(e) => e.stopPropagation()}
       >
         <header className={styles.editorHeader}>
-          <div>
-            <h3 id="drink-editor-title" className={styles.editorTitle}>
-              Editar {drink.title}
-            </h3>
-            <p className={styles.editorSub}>Alterações ficam salvas só neste navegador.</p>
-          </div>
+          <h3 id="drink-editor-title" className={styles.editorTitle}>
+            Editar {drink.title}
+          </h3>
           <button type="button" className={styles.editorClose} onClick={onClose} aria-label="Fechar">
             ×
           </button>
         </header>
 
         <div className={styles.editorBody}>
-          <section className={styles.editorSection}>
-            <h4 className={styles.editorLabel}>Foto do drink</h4>
-            <div className={styles.editorPhotoRow}>
-              <img src={imagePreview} alt="" className={styles.editorPhotoPreview} />
-              <div className={styles.editorPhotoActions}>
-                <button
-                  type="button"
-                  className={styles.editorBtn}
-                  disabled={fileLoading}
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  {fileLoading ? 'Processando…' : 'Enviar foto'}
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/png,image/jpeg,image/webp,image/gif"
-                  className={styles.editorFileInput}
-                  onChange={(e) => void handleFileChange(e.target.files?.[0] ?? null)}
-                />
-                {localFileName ? (
-                  <p className={styles.editorFileHint}>{localFileName}</p>
-                ) : null}
-                <div className={styles.editorUrlRow}>
-                  <input
-                    type="url"
-                    className={styles.editorInput}
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                    placeholder="Ou cole uma URL de imagem"
-                  />
-                  <button type="button" className={styles.editorBtnSecondary} onClick={applyImageUrl}>
-                    Usar URL
-                  </button>
-                </div>
-                {hasCustomImage ? (
-                  <button
-                    type="button"
-                    className={styles.editorResetLink}
-                    onClick={() => {
-                      onResetField(drink.slug, 'imageUrl');
-                      setImagePreview(defaultImage);
-                      setImageUrl('');
-                      setLocalFileName(null);
-                    }}
-                  >
-                    Restaurar foto original
-                  </button>
-                ) : null}
-              </div>
-            </div>
-          </section>
-
           <section className={styles.editorSection}>
             <label className={styles.editorLabel} htmlFor="drink-edit-title">
               Nome
@@ -212,7 +161,7 @@ export function DrinkCartaEditor({
 
           <section className={styles.editorSection}>
             <label className={styles.editorLabel} htmlFor="drink-edit-tagline">
-              Descrição curta
+              Descrição
             </label>
             <textarea
               id="drink-edit-tagline"
@@ -224,16 +173,71 @@ export function DrinkCartaEditor({
           </section>
 
           <section className={styles.editorSection}>
+            <div className={styles.editorPhotoRow}>
+              <DrinkThumb src={imagePreview} alt="" className={styles.editorPhotoPreview} />
+              <div className={styles.editorPhotoActions}>
+                <div className={styles.editorPhotoBtnRow}>
+                  <button
+                    type="button"
+                    className={styles.editorBtn}
+                    disabled={fileLoading}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    {fileLoading ? '…' : 'Foto'}
+                  </button>
+                  {hasCustomImage ? (
+                    <button
+                      type="button"
+                      className={styles.editorResetLink}
+                      onClick={() => {
+                        onResetField(drink.slug, 'imageUrl');
+                        setImagePreview(defaultImage);
+                        setImageUrl('');
+                        setLocalFileName(null);
+                      }}
+                    >
+                      Original
+                    </button>
+                  ) : null}
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/gif"
+                  className={styles.editorFileInput}
+                  onChange={(e) => void handleFileChange(e.target.files?.[0] ?? null)}
+                />
+                {localFileName ? <p className={styles.editorFileHint}>{localFileName}</p> : null}
+                <details className={styles.editorDetails}>
+                  <summary>URL da foto</summary>
+                  <div className={styles.editorUrlRow}>
+                    <input
+                      type="url"
+                      className={styles.editorInput}
+                      value={imageUrl}
+                      onChange={(e) => setImageUrl(e.target.value)}
+                      placeholder="https://…"
+                    />
+                    <button type="button" className={styles.editorBtnSecondary} onClick={applyImageUrl}>
+                      Usar
+                    </button>
+                  </div>
+                </details>
+              </div>
+            </div>
+          </section>
+
+          <section className={styles.editorSection}>
             <label className={styles.editorLabel} htmlFor="drink-edit-ingredients">
               Ingredientes
             </label>
             <textarea
               id="drink-edit-ingredients"
               className={styles.editorTextarea}
-              rows={5}
+              rows={4}
               value={ingredientsText}
               onChange={(e) => setIngredientsText(e.target.value)}
-              placeholder="Um ingrediente por linha"
+              placeholder="Um por linha"
             />
           </section>
 
@@ -244,17 +248,15 @@ export function DrinkCartaEditor({
             <textarea
               id="drink-edit-steps"
               className={styles.editorTextarea}
-              rows={5}
+              rows={4}
               value={stepsText}
               onChange={(e) => setStepsText(e.target.value)}
-              placeholder="Um passo por linha"
+              placeholder="Um por linha"
             />
           </section>
 
-          <section className={styles.editorSection}>
-            <label className={styles.editorLabel} htmlFor="drink-edit-notes">
-              Observações
-            </label>
+          <details className={styles.editorDetails}>
+            <summary>Observações</summary>
             <textarea
               id="drink-edit-notes"
               className={styles.editorTextarea}
@@ -262,7 +264,7 @@ export function DrinkCartaEditor({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
             />
-          </section>
+          </details>
 
           {error ? <p className={styles.editorError}>{error}</p> : null}
         </div>

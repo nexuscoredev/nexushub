@@ -39,6 +39,33 @@ export const ADEGA_INGREDIENT_CATEGORY_PRESETS = [
 
 export const ADEGA_INGREDIENT_UNIT_PRESETS = ['un.', 'g', 'ml', 'pacote', 'fatia'] as const;
 
+export const ADEGA_INGREDIENT_ICON_PRESETS = [
+  '🍋',
+  '🍊',
+  '🍈',
+  '🍍',
+  '🍎',
+  '🍇',
+  '🍒',
+  '🫐',
+  '🌿',
+  '🌱',
+  '🌶️',
+  '🧂',
+  '🍯',
+  '🧃',
+  '🥤',
+  '🧊',
+  '💧',
+  '🥒',
+  '🧄',
+  '🧅',
+  '🫒',
+  '☕',
+  '🫖',
+  '🍶',
+] as const;
+
 export type AdegaItemKind = 'beverage' | 'ingredient';
 
 export type AdegaItem = {
@@ -55,6 +82,7 @@ export type AdegaItem = {
   notes?: string;
   opened?: boolean;
   imageUrl?: string;
+  iconEmoji?: string;
   barcode?: string;
   createdAt: string;
   updatedAt: string;
@@ -73,6 +101,7 @@ export type AdegaItemInput = {
   notes?: string;
   opened?: boolean;
   imageUrl?: string;
+  iconEmoji?: string;
   barcode?: string;
 };
 
@@ -130,6 +159,8 @@ function isValidItem(value: unknown): value is AdegaItem {
     typeof item.updatedAt === 'string' &&
     (item.imageUrl == null || (typeof item.imageUrl === 'string' && isValidImageUrl(item.imageUrl))) &&
     (item.barcode == null || (typeof item.barcode === 'string' && item.barcode.trim().length > 0)) &&
+    (item.iconEmoji == null ||
+      (typeof item.iconEmoji === 'string' && item.iconEmoji.trim().length > 0)) &&
     (item.kind == null || item.kind === 'beverage' || item.kind === 'ingredient') &&
     (item.unit == null || (typeof item.unit === 'string' && item.unit.trim().length > 0))
   );
@@ -242,7 +273,21 @@ export function normalizeIngredientInput(input: AdegaItemInput): AdegaItemInput 
     unit: input.unit?.trim() || 'un.',
     notes: input.notes?.trim() || undefined,
     imageUrl: input.imageUrl?.trim() && isValidImageUrl(input.imageUrl.trim()) ? input.imageUrl.trim() : undefined,
+    iconEmoji: input.iconEmoji?.trim() || undefined,
   };
+}
+
+export function resolveIngredientCategory(category: string, customCategory: string): string {
+  return category === 'Outro' ? customCategory.trim() : category;
+}
+
+export function resolveAdegaItemDisplayIcon(item: AdegaItem): string {
+  if (item.iconEmoji?.trim()) return item.iconEmoji.trim();
+  return categoryEmoji(item.category);
+}
+
+export function hasAdegaItemPhoto(item: AdegaItem): boolean {
+  return Boolean(item.imageUrl);
 }
 
 export function categoryEmoji(category: string): string {

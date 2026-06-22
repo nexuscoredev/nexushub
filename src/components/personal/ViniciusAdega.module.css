@@ -1077,9 +1077,9 @@
   -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  padding: 0.85rem max(1rem, env(safe-area-inset-right)) 0.75rem
-    max(1rem, env(safe-area-inset-left));
+  gap: 0.55rem;
+  padding: 0.7rem max(0.85rem, env(safe-area-inset-right)) 0.65rem
+    max(0.85rem, env(safe-area-inset-left));
   scrollbar-gutter: stable;
   scrollbar-width: thin;
   scrollbar-color: rgba(252, 211, 77, 0.55) rgba(255, 255, 255, 0.1);
@@ -1155,7 +1155,7 @@
 }
 
 .textarea {
-  min-height: 4.5rem;
+  min-height: 3.5rem;
   resize: vertical;
 }
 
@@ -1590,6 +1590,229 @@
   color: #fde68a;
 }
 
+.formAssist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.6rem 0.65rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.formAssistRow {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+}
+
+.formAssistPreview {
+  width: 4.25rem;
+  height: 4.25rem;
+  border-radius: 0.55rem;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.formAssistPreviewFallback {
+  display: grid;
+  place-items: center;
+  width: 4.25rem;
+  height: 4.25rem;
+  border-radius: 0.55rem;
+  flex-shrink: 0;
+  font-size: 1.6rem;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.formAssistTools {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.formAssistBtnRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.formAssistBtn,
+.formAssistBtnPrimary,
+.formAssistBtnGhost {
+  padding: 0.38rem 0.55rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.formAssistBtnPrimary {
+  border: 1px solid rgba(34, 197, 94, 0.45);
+  background: rgba(34, 197, 94, 0.16);
+  color: #dcfce7;
+}
+
+.formAssistBtn {
+  border: 1px solid rgba(252, 211, 77, 0.35);
+  background: rgba(252, 211, 77, 0.1);
+  color: #fde68a;
+}
+
+.formAssistBtnGhost {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.formAssistBtnPrimary:hover:not(:disabled),
+.formAssistBtn:hover:not(:disabled),
+.formAssistBtnGhost:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.formAssistBtnPrimary:disabled,
+.formAssistBtn:disabled,
+.formAssistBtnGhost:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.formAssistDetails {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.formAssistDetails summary {
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+
+.formAssistDetails summary::-webkit-details-marker {
+  display: none;
+}
+
+.formAssistDetails[open] summary {
+  margin-bottom: 0.35rem;
+}
+
+.formAssistProductList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-height: 7rem;
+  overflow-y: auto;
+}
+
+.formAssistProductItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
+  width: 100%;
+  padding: 0.38rem 0.5rem;
+  border-radius: 0.45rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.22);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.formAssistProductItemActive {
+  border-color: rgba(34, 197, 94, 0.4);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.formAssistProductName {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #f8fafc;
+  line-height: 1.3;
+}
+
+.formAssistProductMeta {
+  font-size: 0.64rem;
+  color: rgba(255, 255, 255, 0.52);
+}
+
+.formAssistImageGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(3.25rem, 1fr));
+  gap: 0.35rem;
+}
+
+.ingredientMediaToggle {
+  display: inline-flex;
+  gap: 0.3rem;
+  padding: 0.2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.ingredientMediaToggleBtn {
+  padding: 0.32rem 0.65rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ingredientMediaToggleBtnActive {
+  background: rgba(252, 211, 77, 0.18);
+  color: #fde68a;
+}
+
+.ingredientIconHint {
+  margin: 0;
+  font-size: 0.68rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.52);
+}
+
+.iconPickerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(2rem, 1fr));
+  gap: 0.3rem;
+}
+
+.iconPickerBtn {
+  display: grid;
+  place-items: center;
+  min-height: 2rem;
+  padding: 0.2rem;
+  border-radius: 0.45rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.22);
+  font-size: 1.05rem;
+  cursor: pointer;
+}
+
+.iconPickerBtn:hover {
+  border-color: rgba(252, 211, 77, 0.35);
+}
+
+.iconPickerBtnActive {
+  border-color: rgba(252, 211, 77, 0.5);
+  background: rgba(252, 211, 77, 0.12);
+}
+
 .googleSearchRow {
   display: flex;
   flex-direction: column;
@@ -1739,6 +1962,161 @@
 }
 
 .imagePickerAttribution {
+  margin: 0;
+  font-size: 0.62rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.productLookup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.85rem 0.9rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(34, 197, 94, 0.28);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(0, 0, 0, 0.22));
+}
+
+.productLookupHead {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.productLookupTitle {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #bbf7d0;
+}
+
+.productLookupHint {
+  margin: 0;
+  font-size: 0.68rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.52);
+}
+
+.productLookupActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.productLookupBtn {
+  padding: 0.48rem 0.8rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(34, 197, 94, 0.45);
+  background: rgba(34, 197, 94, 0.16);
+  color: #dcfce7;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.productLookupBtn:hover:not(:disabled) {
+  background: rgba(34, 197, 94, 0.24);
+  border-color: rgba(74, 222, 128, 0.55);
+}
+
+.productLookupBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.productLookupSuccess {
+  margin: 0;
+  font-size: 0.72rem;
+  color: #86efac;
+}
+
+.productLookupList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 14rem;
+  overflow-y: auto;
+}
+
+.productLookupItem {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.45rem 0.55rem;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.28);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.productLookupItem:hover:not(:disabled) {
+  border-color: rgba(34, 197, 94, 0.35);
+}
+
+.productLookupItemActive {
+  border-color: rgba(34, 197, 94, 0.45);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.productLookupItem:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.productLookupThumb {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.4rem;
+  object-fit: contain;
+  background: #fff;
+}
+
+.productLookupThumbFallback {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.4rem;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 1.1rem;
+}
+
+.productLookupBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.productLookupName {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #f8fafc;
+  line-height: 1.3;
+}
+
+.productLookupMeta {
+  font-size: 0.66rem;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.productLookupUse {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #86efac;
+  flex-shrink: 0;
+}
+
+.productLookupAttribution {
   margin: 0;
   font-size: 0.62rem;
   line-height: 1.4;

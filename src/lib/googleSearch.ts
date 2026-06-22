@@ -22,6 +22,11 @@ export function adegaItemGoogleQuery(parts: {
     .join(' ');
 }
 
+export function adegaIngredientImageQuery(parts: { name?: string; category?: string }): string {
+  const category = parts.category === 'Outro' ? undefined : parts.category;
+  return [parts.name, category].map((part) => part?.trim()).filter(Boolean).join(' ');
+}
+
 export function openGoogleSearch(query: string): void {
   const url = googleSearchUrl(query);
   window.open(url, '_blank', 'noopener,noreferrer');

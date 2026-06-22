@@ -1,16 +1,50 @@
 import { matchDrinkToAdega, type DrinkAdegaMatch } from './drinkAdegaMatch';
-import type { ViniciusDrink } from './viniciusDrinksCarta';
+import {
+  DRINK_FALLBACK_THUMB,
+  drinkThumbPath,
+  isCatalogDrinkSlug,
+  type ViniciusDrink,
+} from './viniciusDrinksCarta';
 import type { AdegaItem } from './viniciusAdega';
 
-export const DRINK_SUGGESTION_PLACEHOLDER_THUMB = '/img/personal/drinks/thumbs/daiquiri.jpg';
+/** Thumb existente no repo para cada sugestão (evita URL /thumbs/{slug}.jpg inexistente). */
+const SUGGESTION_THUMB_BY_SLUG: Record<string, string> = {
+  caipirinha: 'caipitudo',
+  'gin-tonic': 'dry-martini',
+  'old-fashioned': 'whisky-sour',
+  manhattan: 'dry-martini',
+  'rum-cola': 'cuba-libre',
+  'tequila-sunrise': 'cozumel',
+  'gin-fizz': 'mojito',
+  'whiskey-smash': 'whisky-sour',
+  paloma: 'margarita',
+  'tom-collins': 'mojito',
+  'aperol-spritz': 'negroni',
+  'french-75': 'dry-martini',
+};
+
+export function suggestionDrinkThumbPath(slug: string): string {
+  const mapped = SUGGESTION_THUMB_BY_SLUG[slug];
+  return mapped ? drinkThumbPath(mapped) : DRINK_FALLBACK_THUMB;
+}
+
+function suggestionDrink(entry: Omit<ViniciusDrink, 'imageUrl'>): ViniciusDrink {
+  return { ...entry, imageUrl: suggestionDrinkThumbPath(entry.slug) };
+}
+
+/** Corrige drinks custom salvos com thumb inexistente (/thumbs/{slug}.jpg). */
+export function repairCustomDrinkImage(drink: ViniciusDrink): ViniciusDrink {
+  if (isCatalogDrinkSlug(drink.slug)) return drink;
+  if (drink.imageUrl !== drinkThumbPath(drink.slug)) return drink;
+  return { ...drink, imageUrl: suggestionDrinkThumbPath(drink.slug) };
+}
 
 /** Receitas clássicas que ainda não estão na carta padrão. */
 export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
-  {
+  suggestionDrink({
     slug: 'caipirinha',
     title: 'Caipirinha',
     tagline: 'Cachaça, limão e açúcar — o clássico brasileiro batido na mão.',
-    imageUrl: DRINK_SUGGESTION_PLACEHOLDER_THUMB,
     ingredients: ['1 limão cortado em pedaços', '2 colheres de açúcar', '60ml de Cachaça', 'Gelo'],
     steps: [
       'Macere o limão com o açúcar no copo;',
@@ -18,12 +52,11 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
       'Misture bem e sirva.',
     ],
     notes: 'Drink misturado (não batido na coqueteleira)!',
-  },
-  {
+  }),
+  suggestionDrink({
     slug: 'gin-tonic',
     title: 'Gin Tonic',
     tagline: 'Gin, tônica e limão — seco, refrescante e direto ao ponto.',
-    imageUrl: DRINK_SUGGESTION_PLACEHOLDER_THUMB,
     ingredients: ['50ml de Gin', '150ml de Refrigerante tônica', 'Gelo', '1 rodela de limão'],
     steps: [
       'Gele o copo;',
@@ -32,12 +65,11 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
       'Decore com limão.',
     ],
     notes: 'Drink misturado (não batido)!',
-  },
-  {
+  }),
+  suggestionDrink({
     slug: 'old-fashioned',
     title: 'Old Fashioned',
     tagline: 'Whisky, açúcar e bitter — clássico americano na rocha.',
-    imageUrl: DRINK_SUGGESTION_PLACEHOLDER_THUMB,
     ingredients: [
       '60ml de Whisky',
       '1 colher de açúcar ou 1/2 dose de xarope de açúcar',
@@ -50,12 +82,11 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
       'Mexa delicadamente e sirva.',
     ],
     notes: 'Drink misturado (não batido)!',
-  },
-  {
+  }),
+  suggestionDrink({
     slug: 'manhattan',
     title: 'Manhattan',
     tagline: 'Whisky, vermute e bitter — elegante e aromático.',
-    imageUrl: DRINK_SUGGESTION_PLACEHOLDER_THUMB,
     ingredients: ['50ml de Whisky', '25ml de Vermute', '2 dashes de bitter', 'Gelo'],
     steps: [
       'Misture whisky, vermute e bitter com gelo;',
@@ -63,12 +94,11 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
       'Decore com cereja ou casca de limão.',
     ],
     notes: 'Drink misturado (não batido)!',
-  },
-  {
+  }),
+  suggestionDrink({
     slug: 'rum-cola',
     title: 'Rum Cola',
     tagline: 'Rum, cola e limão — simples e sempre funciona.',
-    imageUrl: DRINK_SUGGESTION_PLACEHOLDER_THUMB,
     ingredients: ['50ml de Rum', '150ml de Coca Cola', 'Gelo', 'Suco de 1/2 limão'],
     steps: [
       'Gele o copo;',
@@ -77,12 +107,11 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
       'Misture suavemente.',
     ],
     notes: 'Drink misturado (não batido)!',
-  },
-  {
+  }),
+  suggestionDrink({
     slug: 'tequila-sunrise',
     title: 'Tequila Sunrise',
     tagline: 'Tequila, suco de laranja e grenadine — visual de pôr do sol.',
-    imageUrl: DRINK_SUGGESTION_PLACEHOLDER_THUMB,
     ingredients: [
       '50ml de Tequila',
       '120ml de Suco de laranja',
@@ -95,12 +124,11 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
       'Sirva sem misturar demais.',
     ],
     notes: 'Drink montado (não batido)!',
-  },
-  {
+  }),
+  suggestionDrink({
     slug: 'gin-fizz',
     title: 'Gin Fizz',
     tagline: 'Gin, limão, xarope e soda — leve e cítrico.',
-    imageUrl: DRINK_SUGGESTION_PLACEHOLDER_THUMB,
     ingredients: [
       '50ml de Gin',
       'Suco de 1 limão',
@@ -114,12 +142,11 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
       'Sirva imediatamente.',
     ],
     notes: 'Drink batido ou misturado!',
-  },
-  {
+  }),
+  suggestionDrink({
     slug: 'whiskey-smash',
     title: 'Whiskey Smash',
     tagline: 'Whisky, limão e hortelã — aromático e refrescante.',
-    imageUrl: DRINK_SUGGESTION_PLACEHOLDER_THUMB,
     ingredients: [
       '60ml de Whisky',
       '1/2 limão cortado',
@@ -133,12 +160,11 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
       'Misture e sirva.',
     ],
     notes: 'Drink misturado (não batido)!',
-  },
-  {
+  }),
+  suggestionDrink({
     slug: 'paloma',
     title: 'Paloma',
     tagline: 'Tequila, grapefruit soda e limão — mexicano e cítrico.',
-    imageUrl: DRINK_SUGGESTION_PLACEHOLDER_THUMB,
     ingredients: [
       '50ml de Tequila',
       '150ml de Refrigerante de grapefruit ou soda cítrica',
@@ -153,12 +179,11 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
       'Misture suavemente.',
     ],
     notes: 'Drink misturado (não batido)!',
-  },
-  {
+  }),
+  suggestionDrink({
     slug: 'tom-collins',
     title: 'Tom Collins',
     tagline: 'Gin, limão, xarope e soda — alto, gelado e clássico.',
-    imageUrl: DRINK_SUGGESTION_PLACEHOLDER_THUMB,
     ingredients: [
       '50ml de Gin',
       'Suco de 1 limão',
@@ -172,12 +197,11 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
       'Decore com limão e cereja.',
     ],
     notes: 'Drink misturado (não batido)!',
-  },
-  {
+  }),
+  suggestionDrink({
     slug: 'aperol-spritz',
     title: 'Aperol Spritz',
     tagline: 'Aperol, espumante e soda — leve e laranja.',
-    imageUrl: DRINK_SUGGESTION_PLACEHOLDER_THUMB,
     ingredients: [
       '60ml de Aperol ou bitter de laranja',
       '90ml de Vinho espumante',
@@ -191,12 +215,11 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
       'Misture suavemente e decore com laranja.',
     ],
     notes: 'Drink montado (não batido)!',
-  },
-  {
+  }),
+  suggestionDrink({
     slug: 'french-75',
     title: 'French 75',
     tagline: 'Gin, limão, xarope e espumante — festivo e elegante.',
-    imageUrl: DRINK_SUGGESTION_PLACEHOLDER_THUMB,
     ingredients: [
       '30ml de Gin',
       '15ml de Suco de limão',
@@ -209,7 +232,7 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
       'Complete com espumante.',
     ],
     notes: 'Drink batido e depois completado com espumante!',
-  },
+  }),
 ];
 
 export type NewDrinkSuggestion = {

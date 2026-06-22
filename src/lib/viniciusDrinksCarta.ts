@@ -18,6 +18,8 @@ export function drinkThumbPath(slug: string): string {
   return `/img/personal/drinks/thumbs/${slug}.jpg`;
 }
 
+export const DRINK_FALLBACK_THUMB = drinkThumbPath('daiquiri');
+
 /** Banner principal da carta (arte com título integrado). */
 export const VINICIUS_DRINKS_BANNER_WIDTH = 1024;
 export const VINICIUS_DRINKS_BANNER_HEIGHT = 576;
@@ -334,6 +336,12 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     notes: 'Drink misturado (não batido)!',
   },
 ];
+
+const CATALOG_DRINK_SLUGS = new Set(VINICIUS_DRINKS.map((drink) => drink.slug));
+
+export function isCatalogDrinkSlug(slug: string): boolean {
+  return CATALOG_DRINK_SLUGS.has(slug);
+}
 
 export function drinkSitePath(slug: string): string {
   const map: Record<string, string> = {

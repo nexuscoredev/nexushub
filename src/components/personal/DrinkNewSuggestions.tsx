@@ -5,6 +5,7 @@ import type { ViniciusDrink } from '../../lib/viniciusDrinksCarta';
 import { listCartaSlugs } from '../../lib/viniciusDrinksCartaStore';
 import type { DrinkCartaStore } from '../../lib/viniciusDrinksCartaStore';
 import type { AdegaItem } from '../../lib/viniciusAdega';
+import { DrinkThumb } from './DrinkThumb';
 import styles from './ViniciusDrinksCarta.module.css';
 
 interface DrinkNewSuggestionsProps {
@@ -102,7 +103,7 @@ export function DrinkNewSuggestions({
               {suggestions.map(({ drink, match }) => (
                 <li key={drink.slug} className={styles.newDrinksItem}>
                   <div className={styles.newDrinksCard}>
-                    <img src={drink.imageUrl} alt="" className={styles.newDrinksPhoto} loading="lazy" />
+                    <DrinkThumb src={drink.imageUrl} alt="" className={styles.newDrinksPhoto} />
                     <div className={styles.newDrinksCardBody}>
                       <div className={styles.newDrinksCardTop}>
                         <h4 className={styles.newDrinksCardTitle}>{drink.title}</h4>

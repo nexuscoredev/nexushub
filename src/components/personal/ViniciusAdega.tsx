@@ -3,7 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { fileToDrinkImageUrl, parseDrinkImageUrl } from '../../lib/drinkCartaImage';
 import { adegaItemGoogleQuery, openGoogleSearch } from '../../lib/googleSearch';
-import { AdegaImagePicker } from './AdegaImagePicker';
+import { AdegaBeverageMediaPanel } from './AdegaBeverageMediaPanel';
+import { AdegaIngredientMediaPanel, type IngredientMediaMode } from './AdegaIngredientMediaPanel';
 import { AdegaItemCards } from './AdegaItemCards';
 import {
   ADEGA_CATEGORY_PRESETS,
@@ -16,10 +17,12 @@ import {
   filterAdegaIngredients,
   formatIngredientQuantity,
   formatVolume,
+  hasAdegaItemPhoto,
   isAdegaIngredient,
   loadAdegaItems,
   normalizeAdegaInput,
   normalizeIngredientInput,
+  resolveAdegaItemDisplayIcon,
   saveAdegaItems,
   syncAdegaItemsFromCloud,
   VINICIUS_ADEGA_BANNER_HEIGHT,
@@ -46,6 +49,9 @@ type FormState = {
   notes: string;
   opened: boolean;
   imageUrl: string;
+  barcode: string;
+  iconEmoji: string;
+  ingredientMediaMode: IngredientMediaMode;
 };
 
 const EMPTY_BEVERAGE_FORM: FormState = {
@@ -61,6 +67,9 @@ const EMPTY_BEVERAGE_FORM: FormState = {
   notes: '',
   opened: false,
   imageUrl: '',
+  barcode: '',
+  iconEmoji: '🍋',
+  ingredientMediaMode: 'icon',
 };
 
 const EMPTY_INGREDIENT_FORM: FormState = {
@@ -76,6 +85,9 @@ const EMPTY_INGREDIENT_FORM: FormState = {
   notes: '',
   opened: false,
   imageUrl: '',
+  barcode: '',
+  iconEmoji: categoryEmoji(ADEGA_INGREDIENT_CATEGORY_PRESETS[0]),
+  ingredientMediaMode: 'icon',
 };
 
 function emptyForm(kind: FormKind): FormState {
@@ -100,6 +112,9 @@ function itemToForm(item: AdegaItem): FormState {
       notes: item.notes ?? '',
       opened: false,
       imageUrl: item.imageUrl ?? '',
+      barcode: '',
+      iconEmoji: item.iconEmoji ?? categoryEmoji(item.category),
+      ingredientMediaMode: item.imageUrl ? 'photo' : 'icon',
     };
   }
 
@@ -117,12 +132,17 @@ function itemToForm(item: AdegaItem): FormState {
     notes: item.notes ?? '',
     opened: Boolean(item.opened),
     imageUrl: item.imageUrl ?? '',
+    barcode: item.barcode ?? '',
+    iconEmoji: '🍋',
+    ingredientMediaMode: 'icon',
   };
 }
 
 function formToInput(form: FormState, kind: FormKind): AdegaItemInput {
   const category = form.category === 'Outro' ? form.customCategory : form.category;
   if (kind === 'ingredient') {
+    const iconEmoji = form.iconEmoji.trim() || categoryEmoji(category);
+    const usePhoto = form.ingredientMediaMode === 'photo' && Boolean(form.imageUrl);
     return {
       kind: 'ingredient',
       name: form.name,
@@ -130,7 +150,8 @@ function formToInput(form: FormState, kind: FormKind): AdegaItemInput {
       quantity: Number(form.quantity),
       unit: form.unit,
       notes: form.notes || undefined,
-      imageUrl: form.imageUrl || undefined,
+      imageUrl: usePhoto ? form.imageUrl : undefined,
+      iconEmoji: usePhoto ? undefined : iconEmoji,
     };
   }
   return {
@@ -144,6 +165,7 @@ function formToInput(form: FormState, kind: FormKind): AdegaItemInput {
     notes: form.notes || undefined,
     opened: form.opened,
     imageUrl: form.imageUrl || undefined,
+    barcode: form.barcode || undefined,
   };
 }
 
@@ -232,16 +254,6 @@ export function ViniciusAdega() {
       return haystack.includes(q);
     });
   }, [ingredients, search]);
-
-  const formGoogleQuery = useMemo(
-    () =>
-      adegaItemGoogleQuery({
-        name: form.name,
-        brand: form.brand,
-        category: form.category === 'Outro' ? form.customCategory : form.category,
-      }),
-    [form.name, form.brand, form.category, form.customCategory],
-  );
 
   const openCreate = (kind: FormKind = 'beverage') => {
     setFormKind(kind);
@@ -353,7 +365,11 @@ export function ViniciusAdega() {
         file,
         userId && uploadItemId ? { userId, kind: 'adega', slug: uploadItemId } : undefined,
       );
-      setForm((prev) => ({ ...prev, imageUrl: url }));
+      setForm((prev) => ({
+        ...prev,
+        imageUrl: url,
+        ingredientMediaMode: prev.ingredientMediaMode === 'icon' ? 'photo' : prev.ingredientMediaMode,
+      }));
       setImageUrlInput('');
     } catch (err) {
       setImageError(err instanceof Error ? err.message : 'Não foi possível usar esta foto.');
@@ -369,12 +385,28 @@ export function ViniciusAdega() {
       setImageError('URL de imagem inválida.');
       return;
     }
-    setForm((prev) => ({ ...prev, imageUrl: parsed }));
+    setForm((prev) => ({
+      ...prev,
+      imageUrl: parsed,
+      ingredientMediaMode:
+        formKind === 'ingredient' && prev.ingredientMediaMode === 'icon' ? 'photo' : prev.ingredientMediaMode,
+    }));
     setImageError(null);
   };
 
   const clearPhoto = () => {
     setForm((prev) => ({ ...prev, imageUrl: '' }));
+    setImageUrlInput('');
+    setImageError(null);
+  };
+
+  const applyAdegaImageUrl = (url: string) => {
+    setForm((prev) => ({
+      ...prev,
+      imageUrl: url,
+      ingredientMediaMode:
+        formKind === 'ingredient' && prev.ingredientMediaMode === 'icon' ? 'photo' : prev.ingredientMediaMode,
+    }));
     setImageUrlInput('');
     setImageError(null);
   };
@@ -546,7 +578,7 @@ export function ViniciusAdega() {
           }
           emptyAction={
             ingredients.length === 0 && editing
-              ? { label: 'Adicionar ingrediente', onClick: () => openCreate('ingredient') }
+              ? { label: 'Adicionar à despensa', onClick: () => openCreate('ingredient') }
               : ingredients.length === 0
                 ? { label: 'Editar adega', onClick: () => setEditMode(true) }
                 : undefined
@@ -586,7 +618,7 @@ export function ViniciusAdega() {
               ×
             </button>
             <div className={styles.viewHeroPremium}>
-              {viewingItem.imageUrl ? (
+              {hasAdegaItemPhoto(viewingItem) ? (
                 <img
                   src={viewingItem.imageUrl}
                   alt=""
@@ -596,7 +628,7 @@ export function ViniciusAdega() {
                 />
               ) : (
                 <span className={styles.viewEmojiPremium} aria-hidden>
-                  {categoryEmoji(viewingItem.category)}
+                  {resolveAdegaItemDisplayIcon(viewingItem)}
                 </span>
               )}
               <div className={styles.viewHeroScrim} aria-hidden />
@@ -698,10 +730,10 @@ export function ViniciusAdega() {
                 <h3 id="adega-form-title" className={styles.dialogTitle}>
                   {editingId
                     ? formKind === 'ingredient'
-                      ? 'Editar ingrediente'
-                      : 'Editar item'
+                      ? 'Editar item da despensa'
+                      : 'Editar bebida'
                     : formKind === 'ingredient'
-                      ? 'Adicionar ingrediente'
+                      ? 'Adicionar à despensa'
                       : 'Adicionar bebida'}
                 </h3>
                 <button
@@ -716,67 +748,6 @@ export function ViniciusAdega() {
             </div>
             <form className={styles.form} onSubmit={handleSubmit}>
               <div className={styles.dialogBody}>
-              <section className={styles.formPhoto}>
-                <p className={styles.label}>Foto</p>
-                <div className={styles.formPhotoRow}>
-                  {form.imageUrl ? (
-                    <img
-                      src={form.imageUrl}
-                      alt=""
-                      className={styles.formPhotoPreview}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : (
-                    <span className={styles.formPhotoFallback} aria-hidden>
-                      {formKind === 'ingredient' ? '🍋' : '🍾'}
-                    </span>
-                  )}
-                  <div className={styles.formPhotoActions}>
-                    <input
-                      ref={photoInputRef}
-                      type="file"
-                      accept="image/png,image/jpeg,image/webp,image/gif"
-                      className={styles.formPhotoInput}
-                      onChange={(e) => {
-                        void handlePhotoFile(e.target.files?.[0] ?? null);
-                      }}
-                    />
-                    <button
-                      type="button"
-                      className={styles.formPhotoBtn}
-                      disabled={imageLoading}
-                      onClick={() => photoInputRef.current?.click()}
-                    >
-                      {imageLoading ? 'Enviando…' : 'Escolher foto'}
-                    </button>
-                    <div className={styles.formPhotoUrlRow}>
-                      <input
-                        type="url"
-                        className={styles.input}
-                        value={imageUrlInput}
-                        onChange={(e) => {
-                          setImageUrlInput(e.target.value);
-                          setImageError(null);
-                        }}
-                        placeholder="https://…"
-                        inputMode="url"
-                      />
-                      <button type="button" className={styles.formPhotoApplyBtn} onClick={applyImageUrl}>
-                        Usar
-                      </button>
-                    </div>
-                    <p className={styles.formPhotoHint}>.jpg, .png ou .webp — até 10 MB</p>
-                    {form.imageUrl ? (
-                      <button type="button" className={styles.formPhotoClear} onClick={clearPhoto}>
-                        Remover foto
-                      </button>
-                    ) : null}
-                    {imageError ? <p className={styles.formError}>{imageError}</p> : null}
-                  </div>
-                </div>
-              </section>
-
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="adega-name">
                   Nome
@@ -794,6 +765,83 @@ export function ViniciusAdega() {
                   required
                 />
               </div>
+
+              {formKind === 'beverage' ? (
+                <div className={styles.field}>
+                  <label className={styles.label} htmlFor="adega-brand">
+                    Marca
+                  </label>
+                  <input
+                    id="adega-brand"
+                    className={styles.input}
+                    value={form.brand}
+                    onChange={(e) => setForm((prev) => ({ ...prev, brand: e.target.value }))}
+                    placeholder="Opcional"
+                  />
+                </div>
+              ) : null}
+
+              {formKind === 'beverage' ? (
+                <AdegaBeverageMediaPanel
+                  name={form.name}
+                  brand={form.brand}
+                  category={form.category}
+                  customCategory={form.customCategory}
+                  imageUrl={form.imageUrl}
+                  userId={userId}
+                  itemId={uploadItemId}
+                  imageLoading={imageLoading}
+                  imageError={imageError}
+                  imageUrlInput={imageUrlInput}
+                  photoInputRef={photoInputRef}
+                  onImageUrlInputChange={(value) => {
+                    setImageUrlInput(value);
+                    setImageError(null);
+                  }}
+                  onApplyImageUrl={applyImageUrl}
+                  onClearPhoto={clearPhoto}
+                  onPhotoFile={handlePhotoFile}
+                  onApplyProduct={(patch) => {
+                    setForm((prev) => ({ ...prev, ...patch }));
+                    if (patch.imageUrl) {
+                      setImageUrlInput(imageUrlFieldValue(patch.imageUrl));
+                      setImageError(null);
+                    }
+                    setFormError(null);
+                  }}
+                  onImageUrl={applyAdegaImageUrl}
+                />
+              ) : (
+                <AdegaIngredientMediaPanel
+                  name={form.name}
+                  mediaMode={form.ingredientMediaMode}
+                  iconEmoji={form.iconEmoji}
+                  category={form.category}
+                  customCategory={form.customCategory}
+                  imageUrl={form.imageUrl}
+                  userId={userId}
+                  itemId={uploadItemId}
+                  imageLoading={imageLoading}
+                  imageError={imageError}
+                  imageUrlInput={imageUrlInput}
+                  photoInputRef={photoInputRef}
+                  onMediaModeChange={(mode) => {
+                    setForm((prev) => ({ ...prev, ingredientMediaMode: mode }));
+                    setImageError(null);
+                  }}
+                  onIconEmojiChange={(emoji) => {
+                    setForm((prev) => ({ ...prev, iconEmoji: emoji, ingredientMediaMode: 'icon' }));
+                  }}
+                  onImageUrlInputChange={(value) => {
+                    setImageUrlInput(value);
+                    setImageError(null);
+                  }}
+                  onApplyImageUrl={applyImageUrl}
+                  onClearPhoto={clearPhoto}
+                  onPhotoFile={handlePhotoFile}
+                  onImageUrl={applyAdegaImageUrl}
+                />
+              )}
 
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="adega-category">
@@ -831,34 +879,6 @@ export function ViniciusAdega() {
                     required
                   />
                 </div>
-              ) : null}
-
-              {formKind === 'beverage' ? (
-                <div className={styles.field}>
-                  <label className={styles.label} htmlFor="adega-brand">
-                    Marca / destilaria
-                  </label>
-                  <input
-                    id="adega-brand"
-                    className={styles.input}
-                    value={form.brand}
-                    onChange={(e) => setForm((prev) => ({ ...prev, brand: e.target.value }))}
-                    placeholder="Opcional"
-                  />
-                </div>
-              ) : null}
-
-              {formKind === 'beverage' ? (
-                <AdegaImagePicker
-                  query={formGoogleQuery}
-                  userId={userId}
-                  itemId={uploadItemId}
-                  onImageUrl={(url) => {
-                    setForm((prev) => ({ ...prev, imageUrl: url }));
-                    setImageUrlInput('');
-                    setImageError(null);
-                  }}
-                />
               ) : null}
 
               <div className={styles.row2}>

@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { formatMissingIngredients, getDrinkSuggestions } from '../../lib/drinkAdegaMatch';
 import type { ViniciusDrink } from '../../lib/viniciusDrinksCarta';
 import type { AdegaItem } from '../../lib/viniciusAdega';
+import { DrinkThumb } from './DrinkThumb';
 import styles from './ViniciusDrinksCarta.module.css';
 
 const ALMOST_LIMIT = 4;
@@ -28,7 +29,7 @@ function SuggestionCard({
     <li className={styles.suggestItem}>
       <button type="button" className={styles.suggestCard} onClick={onOpen}>
         <span className={styles.suggestMedia}>
-          <img src={drink.imageUrl} alt="" loading="lazy" decoding="async" />
+          <DrinkThumb src={drink.imageUrl} alt="" className={styles.suggestMediaImg} />
         </span>
         <span className={styles.suggestBody}>
           <span className={styles.suggestTitleRow}>

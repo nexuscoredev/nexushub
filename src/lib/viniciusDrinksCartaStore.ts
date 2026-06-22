@@ -1,8 +1,8 @@
 import {
-  drinkThumbPath,
   VINICIUS_DRINKS,
   type ViniciusDrink,
 } from './viniciusDrinksCarta';
+import { repairCustomDrinkImage, suggestionDrinkThumbPath } from './drinkCartaSuggestions';
 import {
   fetchDrinkCartaStoreCloud,
   isCloudNewer,
@@ -105,10 +105,20 @@ function shouldDropBannerOverride(url: string): boolean {
 }
 
 function migrateDrinkCartaStore(store: DrinkCartaStore): DrinkCartaStore {
+  let next = store;
   if (store.bannerImageUrl && shouldDropBannerOverride(store.bannerImageUrl)) {
-    return { ...store, bannerImageUrl: undefined };
+    next = { ...next, bannerImageUrl: undefined };
   }
-  return store;
+  if (store.customDrinks?.length) {
+    const customDrinks = store.customDrinks.map(repairCustomDrinkImage);
+    const changed = customDrinks.some(
+      (drink, index) => drink.imageUrl !== store.customDrinks![index].imageUrl,
+    );
+    if (changed) {
+      next = { ...next, customDrinks };
+    }
+  }
+  return next;
 }
 
 function parseStore(raw: string | null): DrinkCartaStore {
@@ -126,7 +136,7 @@ function parseStore(raw: string | null): DrinkCartaStore {
         ? data.bannerImageUrl
         : undefined;
     const customDrinks = Array.isArray(data.customDrinks)
-      ? data.customDrinks.filter(isValidDrink)
+      ? data.customDrinks.filter(isValidDrink).map(repairCustomDrinkImage)
       : undefined;
     return { overrides, bannerImageUrl, customDrinks };
   } catch {
@@ -235,8 +245,12 @@ export function addCustomDrinks(store: DrinkCartaStore, drinks: ViniciusDrink[])
   return next;
 }
 
-export function defaultDrinkImageUrl(slug: string): string {
-  return drinkThumbPath(slug);
+export function defaultDrinkImageUrl(slug: string, store?: DrinkCartaStore): string {
+  const catalog = VINICIUS_DRINKS.find((drink) => drink.slug === slug);
+  if (catalog) return catalog.imageUrl;
+  const custom = store?.customDrinks?.find((drink) => drink.slug === slug);
+  if (custom) return custom.imageUrl;
+  return suggestionDrinkThumbPath(slug);
 }
 
 export function hasDrinkOverride(store: DrinkCartaStore, slug: string): boolean {

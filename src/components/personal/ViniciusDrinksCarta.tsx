@@ -12,6 +12,7 @@ import {
   addCustomDrink,
   addCustomDrinks,
   clearDrinkOverrideField,
+  defaultDrinkImageUrl,
   findResolvedDrink,
   loadDrinkCartaStore,
   resolveDrinks,
@@ -35,9 +36,10 @@ import {
   matchDrinksToAdega,
 } from '../../lib/drinkAdegaMatch';
 import { DrinkAdegaAvailability } from './DrinkAdegaAvailability';
-import { DrinkNewSuggestions } from './DrinkNewSuggestions';
+import { DrinkThumb } from './DrinkThumb';
 import { DrinkAdegaSuggestions } from './DrinkAdegaSuggestions';
 import { DrinkCartaEditor } from './DrinkCartaEditor';
+import { DrinkNewSuggestions } from './DrinkNewSuggestions';
 import { DrinkRecipeToolkit } from './DrinkRecipeToolkit';
 import styles from './ViniciusDrinksCarta.module.css';
 
@@ -188,12 +190,10 @@ export function ViniciusDrinksCarta() {
         <article className={styles.detail}>
           <div className={styles.detailMedia}>
             <div className={editing ? styles.mediaEditWrap : undefined}>
-              <img
+              <DrinkThumb
                 src={activeDrink.imageUrl}
                 alt=""
                 className={styles.detailPhoto}
-                loading="lazy"
-                decoding="async"
               />
               {editing ? (
                 <button
@@ -223,6 +223,7 @@ export function ViniciusDrinksCarta() {
         <DrinkCartaEditor
           open={editorSlug === activeDrink.slug}
           drink={editorDrink}
+          defaultImageUrl={defaultDrinkImageUrl(activeDrink.slug, store)}
           userId={userId}
           onClose={() => setEditorSlug(null)}
           onSave={handleSaveDrink}
@@ -401,7 +402,7 @@ export function ViniciusDrinksCarta() {
                   aria-label={`Editar ${drink.title}`}
                 >
                   <span className={styles.cardMedia}>
-                    <img src={drink.imageUrl} alt="" loading="lazy" decoding="async" />
+                    <DrinkThumb src={drink.imageUrl} alt="" className={styles.cardMediaImg} />
                   </span>
                   <span className={styles.cardEditBadge}>✎</span>
                 </button>
@@ -425,7 +426,7 @@ export function ViniciusDrinksCarta() {
             ) : (
               <button type="button" className={styles.card} onClick={() => openDrink(drink.slug)}>
                 <span className={styles.cardMedia}>
-                  <img src={drink.imageUrl} alt="" loading="lazy" decoding="async" />
+                  <DrinkThumb src={drink.imageUrl} alt="" className={styles.cardMediaImg} />
                 </span>
                 <span className={styles.cardBody}>
                   <span className={styles.cardTitleRow}>
@@ -463,6 +464,7 @@ export function ViniciusDrinksCarta() {
       <DrinkCartaEditor
         open={Boolean(editorSlug)}
         drink={editorDrink}
+        defaultImageUrl={editorSlug ? defaultDrinkImageUrl(editorSlug, store) : undefined}
         userId={userId}
         onClose={() => setEditorSlug(null)}
         onSave={handleSaveDrink}

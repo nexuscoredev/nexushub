@@ -2,7 +2,9 @@ import {
   categoryEmoji,
   formatIngredientQuantity,
   formatVolume,
+  hasAdegaItemPhoto,
   isAdegaIngredient,
+  resolveAdegaItemDisplayIcon,
   type AdegaItem,
 } from '../../lib/viniciusAdega';
 import styles from './ViniciusAdega.module.css';
@@ -67,10 +69,10 @@ export function AdegaItemCards({
             >
               <span className={styles.cardIcon} aria-hidden>
                 <span className={styles.cardIconInner}>
-                  {item.imageUrl ? (
+                  {hasAdegaItemPhoto(item) ? (
                     <img src={item.imageUrl} alt="" className={styles.cardPhoto} loading="lazy" decoding="async" />
                   ) : (
-                    categoryEmoji(item.category)
+                    resolveAdegaItemDisplayIcon(item)
                   )}
                 </span>
               </span>
