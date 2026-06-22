@@ -55,6 +55,31 @@ function normalizeText(value: string): string {
     .toLowerCase();
 }
 
+/** Split "Gin/Vodka" alternatives without breaking fractions like "1/2". */
+function splitSlashAlternatives(text: string): string[] {
+  const parts: string[] = [];
+  let current = '';
+
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i];
+    if (char === '/' && i > 0 && i < text.length - 1) {
+      const prev = text[i - 1];
+      const next = text[i + 1];
+      if (/\d/.test(prev) && /\d/.test(next)) {
+        current += char;
+        continue;
+      }
+      if (current.trim()) parts.push(current.trim());
+      current = '';
+      continue;
+    }
+    current += char;
+  }
+
+  if (current.trim()) parts.push(current.trim());
+  return parts.length > 0 ? parts : [text];
+}
+
 function findRulesForToken(token: string): SpiritRule[] {
   const normalized = normalizeText(token);
   return SPIRIT_RULES.filter((rule) =>
@@ -63,8 +88,7 @@ function findRulesForToken(token: string): SpiritRule[] {
 }
 
 function findRulesForIngredient(ingredient: string): SpiritRule[] {
-  const slashOptions = ingredient
-    .split('/')
+  const slashOptions = splitSlashAlternatives(ingredient)
     .map((part) => part.replace(/.*\bde\b\s+/i, '').trim())
     .filter(Boolean);
 
@@ -83,8 +107,7 @@ function ingredientDisplayLabel(ingredient: string): string {
   text = text.replace(/[;,.\s]+$/, '');
 
   if (text.includes('/')) {
-    const parts = text
-      .split('/')
+    const parts = splitSlashAlternatives(text)
       .map((part) => part.replace(/.*\bde\b\s+/i, '').trim())
       .filter(Boolean);
     text = parts[0] ?? text;
@@ -99,6 +122,7 @@ function ingredientDisplayLabel(ingredient: string): string {
     )
     .replace(/^(?:uma|um)\s+(?:fatia|lata|garrafa)\s+(?:de\s+)?/i, '')
     .replace(/^de\s+/i, '')
+    .replace(/\s+ou\s+(?:\d+(?:\/\d+)?|meio(?:\s+\w+)?)\s*$/i, '')
     .trim();
 
   if (!text) return ingredient.trim().slice(0, 48);
@@ -120,7 +144,7 @@ function buildSearchTerms(ingredient: string, label: string): string[] {
   const deMatch = ingredient.match(/\bde\s+(.+?)(?:[;,.\s(]|$)/i);
   if (deMatch) add(deMatch[1]);
 
-  for (const token of ingredient.split(/[/,;]/)) {
+  for (const token of splitSlashAlternatives(ingredient).concat(ingredient.split(/[,;]/))) {
     const cleaned = token.replace(/.*\bde\b\s+/i, '').trim();
     if (cleaned.length >= 3) add(cleaned);
   }
@@ -141,7 +165,7 @@ export function extractDrinkRequirementGroups(drink: ViniciusDrink): DrinkRequir
     if (isFixedIngredient(ingredient)) continue;
 
     const rules = findRulesForIngredient(ingredient);
-    const slashOptions = ingredient.split('/').filter((part) => part.trim().length > 0);
+    const slashOptions = splitSlashAlternatives(ingredient).filter((part) => part.trim().length > 0);
     const isOrGroup = slashOptions.length > 1 && rules.length > 1;
 
     if (rules.length) {

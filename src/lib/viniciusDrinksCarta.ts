@@ -40,7 +40,7 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     title: 'Whisky Cola',
     tagline: 'Whisky, Coca-Cola, Gelo e Limão',
     imageUrl: drinkThumbPath('whisky-cola'),
-    ingredients: ['1 limão ou 1/2', '1 dose de Whisky', '1 Coca Cola'],
+    ingredients: ['1 limão ou meio limão', '1 dose de Whisky', '1 Coca Cola'],
     steps: ['Esprema o limão;', 'Acrescente o Whisky;', 'Acrescente a Coca-Cola;'],
     notes: 'De preferência sem coqueteleira. Drink misturado (não batido)!',
   },
