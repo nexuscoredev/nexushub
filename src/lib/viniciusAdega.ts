@@ -26,12 +26,29 @@ export const ADEGA_CATEGORY_PRESETS = [
   'Outro',
 ] as const;
 
+export const ADEGA_INGREDIENT_CATEGORY_PRESETS = [
+  'Fruta',
+  'Erva',
+  'Especiaria',
+  'Xarope / mel',
+  'Suco / purê',
+  'Refrigerante / mixer',
+  'Gelo / água',
+  'Outro',
+] as const;
+
+export const ADEGA_INGREDIENT_UNIT_PRESETS = ['un.', 'g', 'ml', 'pacote', 'fatia'] as const;
+
+export type AdegaItemKind = 'beverage' | 'ingredient';
+
 export type AdegaItem = {
   id: string;
+  kind?: AdegaItemKind;
   name: string;
   category: string;
   brand?: string;
   quantity: number;
+  unit?: string;
   volumeMl?: number;
   abv?: number;
   origin?: string;
@@ -44,10 +61,12 @@ export type AdegaItem = {
 };
 
 export type AdegaItemInput = {
+  kind?: AdegaItemKind;
   name: string;
   category: string;
   brand?: string;
   quantity: number;
+  unit?: string;
   volumeMl?: number;
   abv?: number;
   origin?: string;
@@ -110,8 +129,26 @@ function isValidItem(value: unknown): value is AdegaItem {
     typeof item.createdAt === 'string' &&
     typeof item.updatedAt === 'string' &&
     (item.imageUrl == null || (typeof item.imageUrl === 'string' && isValidImageUrl(item.imageUrl))) &&
-    (item.barcode == null || (typeof item.barcode === 'string' && item.barcode.trim().length > 0))
+    (item.barcode == null || (typeof item.barcode === 'string' && item.barcode.trim().length > 0)) &&
+    (item.kind == null || item.kind === 'beverage' || item.kind === 'ingredient') &&
+    (item.unit == null || (typeof item.unit === 'string' && item.unit.trim().length > 0))
   );
+}
+
+export function isAdegaIngredient(item: AdegaItem): boolean {
+  return item.kind === 'ingredient';
+}
+
+export function isAdegaBeverage(item: AdegaItem): boolean {
+  return item.kind !== 'ingredient';
+}
+
+export function filterAdegaBeverages(items: AdegaItem[]): AdegaItem[] {
+  return items.filter(isAdegaBeverage);
+}
+
+export function filterAdegaIngredients(items: AdegaItem[]): AdegaItem[] {
+  return items.filter(isAdegaIngredient);
 }
 
 export function loadAdegaItems(userId: string | undefined): AdegaItem[] {
@@ -174,10 +211,12 @@ export function normalizeAdegaInput(input: AdegaItemInput): AdegaItemInput | nul
       : undefined;
 
   return {
+    kind: input.kind === 'ingredient' ? 'ingredient' : undefined,
     name,
     category,
     brand: input.brand?.trim() || undefined,
     quantity: quantity || 1,
+    unit: input.unit?.trim() || undefined,
     volumeMl,
     abv,
     origin: input.origin?.trim() || undefined,
@@ -188,8 +227,33 @@ export function normalizeAdegaInput(input: AdegaItemInput): AdegaItemInput | nul
   };
 }
 
+export function normalizeIngredientInput(input: AdegaItemInput): AdegaItemInput | null {
+  const name = input.name.trim();
+  const category = input.category.trim();
+  if (!name || !category) return null;
+
+  const quantity = Math.max(0, Math.round(input.quantity || 0));
+
+  return {
+    kind: 'ingredient',
+    name,
+    category,
+    quantity: quantity || 1,
+    unit: input.unit?.trim() || 'un.',
+    notes: input.notes?.trim() || undefined,
+    imageUrl: input.imageUrl?.trim() && isValidImageUrl(input.imageUrl.trim()) ? input.imageUrl.trim() : undefined,
+  };
+}
+
 export function categoryEmoji(category: string): string {
   const key = category.toLowerCase();
+  if (key.includes('fruta')) return '🍋';
+  if (key.includes('erva')) return '🌿';
+  if (key.includes('especiaria')) return '🌶️';
+  if (key.includes('xarope') || key.includes('mel')) return '🍯';
+  if (key.includes('suco') || key.includes('pur')) return '🧃';
+  if (key.includes('refrigerante') || key.includes('mixer')) return '🥤';
+  if (key.includes('gelo') || key.includes('água') || key.includes('agua')) return '🧊';
   if (key.includes('whisky') || key.includes('whiskey')) return '🥃';
   if (key.includes('espumante') || key.includes('champagne')) return '🍾';
   if (key.includes('vinho')) return '🍷';
@@ -210,20 +274,34 @@ export function formatVolume(ml?: number): string | null {
   return `${ml} ml`;
 }
 
+export function formatIngredientQuantity(quantity: number, unit?: string): string {
+  const label = unit?.trim() || 'un.';
+  return `${quantity} ${label}`;
+}
+
 export function adegaStats(items: AdegaItem[]): {
   totalItems: number;
   totalBottles: number;
   categories: string[];
+  totalIngredients: number;
 } {
   const categories = new Set<string>();
   let totalBottles = 0;
+  let totalItems = 0;
+  let totalIngredients = 0;
   for (const item of items) {
+    if (isAdegaIngredient(item)) {
+      totalIngredients += 1;
+      continue;
+    }
+    totalItems += 1;
     categories.add(item.category);
     totalBottles += item.quantity;
   }
   return {
-    totalItems: items.length,
+    totalItems,
     totalBottles,
     categories: [...categories].sort((a, b) => a.localeCompare(b, 'pt-BR')),
+    totalIngredients,
   };
 }

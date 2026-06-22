@@ -250,6 +250,97 @@
   padding-bottom: 0.35rem;
 }
 
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.sectionIngredients {
+  padding-top: 0.35rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.25;
+}
+
+.sectionLead {
+  margin: 0.25rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.sectionAddBtn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.35rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(134, 239, 172, 0.35);
+  background: linear-gradient(145deg, rgba(134, 239, 172, 0.16), rgba(22, 101, 52, 0.22));
+  color: #bbf7d0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.sectionIngredients .sectionTitle {
+  color: #ecfccb;
+}
+
+.listCompact {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.65rem;
+}
+
+.cardCompact .cardTap {
+  grid-template-columns: 4.25rem 1fr auto;
+  gap: 0.75rem;
+  padding: 0.75rem 0.85rem;
+}
+
+.cardCompact .cardIcon {
+  width: 4.25rem;
+  height: 4.25rem;
+}
+
+.cardCompact .cardTitle {
+  font-size: 0.98rem;
+}
+
+.cardCompact.cardEditing {
+  grid-template-columns: 4.75rem 1fr;
+  padding: 0.8rem 0.85rem;
+}
+
+.cardCompact.cardEditing .cardIcon {
+  width: 4.75rem;
+  height: 4.75rem;
+}
+
+.emptyCompact {
+  padding: 1.75rem 1rem;
+}
+
 .card {
   display: flex;
   flex-direction: column;
@@ -1130,6 +1221,10 @@
 
   .cardTitle {
     font-size: 1.05rem;
+  }
+
+  .listCompact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .actionBtn {

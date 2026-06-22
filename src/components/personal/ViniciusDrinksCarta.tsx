@@ -21,6 +21,7 @@ import {
 } from '../../lib/viniciusDrinksCartaStore';
 import {
   loadAdegaItems,
+  filterAdegaBeverages,
   syncAdegaItemsFromCloud,
   type AdegaItem,
 } from '../../lib/viniciusAdega';
@@ -45,7 +46,7 @@ export function ViniciusDrinksCarta() {
   const editing = searchParams.get('edit') === '1';
 
   const [store, setStore] = useState<DrinkCartaStore>(() => loadDrinkCartaStore(userId));
-  const [adegaItems, setAdegaItems] = useState<AdegaItem[]>(() => loadAdegaItems(userId));
+  const [adegaItems, setAdegaItems] = useState<AdegaItem[]>(() => filterAdegaBeverages(loadAdegaItems(userId)));
   const [adegaFilter, setAdegaFilter] = useState<'all' | 'ready'>('all');
   const [editorSlug, setEditorSlug] = useState<string | null>(null);
   const bannerFileRef = useRef<HTMLInputElement>(null);
@@ -62,13 +63,13 @@ export function ViniciusDrinksCarta() {
   }, [userId]);
 
   useEffect(() => {
-    setAdegaItems(loadAdegaItems(userId));
+    setAdegaItems(filterAdegaBeverages(loadAdegaItems(userId)));
   }, [userId]);
 
   useEffect(() => {
     if (!userId) return;
     void syncAdegaItemsFromCloud(userId).then((cloudItems) => {
-      if (cloudItems) setAdegaItems(cloudItems);
+      if (cloudItems) setAdegaItems(filterAdegaBeverages(cloudItems));
     });
   }, [userId]);
 

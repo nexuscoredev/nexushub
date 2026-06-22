@@ -4,14 +4,22 @@ import { useAuth } from '../../contexts/AuthContext';
 import { fileToDrinkImageUrl, parseDrinkImageUrl } from '../../lib/drinkCartaImage';
 import { adegaItemGoogleQuery, openGoogleSearch } from '../../lib/googleSearch';
 import { AdegaImagePicker } from './AdegaImagePicker';
+import { AdegaItemCards } from './AdegaItemCards';
 import {
   ADEGA_CATEGORY_PRESETS,
+  ADEGA_INGREDIENT_CATEGORY_PRESETS,
+  ADEGA_INGREDIENT_UNIT_PRESETS,
   adegaStats,
   categoryEmoji,
   createAdegaItemId,
+  filterAdegaBeverages,
+  filterAdegaIngredients,
+  formatIngredientQuantity,
   formatVolume,
+  isAdegaIngredient,
   loadAdegaItems,
   normalizeAdegaInput,
+  normalizeIngredientInput,
   saveAdegaItems,
   syncAdegaItemsFromCloud,
   VINICIUS_ADEGA_BANNER_HEIGHT,
@@ -19,8 +27,11 @@ import {
   VINICIUS_ADEGA_BANNER_WIDTH,
   type AdegaItem,
   type AdegaItemInput,
+  type AdegaItemKind,
 } from '../../lib/viniciusAdega';
 import styles from './ViniciusAdega.module.css';
+
+type FormKind = AdegaItemKind;
 
 type FormState = {
   name: string;
@@ -28,6 +39,7 @@ type FormState = {
   customCategory: string;
   brand: string;
   quantity: string;
+  unit: string;
   volumeMl: string;
   abv: string;
   origin: string;
@@ -36,12 +48,13 @@ type FormState = {
   imageUrl: string;
 };
 
-const EMPTY_FORM: FormState = {
+const EMPTY_BEVERAGE_FORM: FormState = {
   name: '',
   category: ADEGA_CATEGORY_PRESETS[0],
   customCategory: '',
   brand: '',
   quantity: '1',
+  unit: 'un.',
   volumeMl: '750',
   abv: '',
   origin: '',
@@ -50,7 +63,46 @@ const EMPTY_FORM: FormState = {
   imageUrl: '',
 };
 
+const EMPTY_INGREDIENT_FORM: FormState = {
+  name: '',
+  category: ADEGA_INGREDIENT_CATEGORY_PRESETS[0],
+  customCategory: '',
+  brand: '',
+  quantity: '1',
+  unit: ADEGA_INGREDIENT_UNIT_PRESETS[0],
+  volumeMl: '',
+  abv: '',
+  origin: '',
+  notes: '',
+  opened: false,
+  imageUrl: '',
+};
+
+function emptyForm(kind: FormKind): FormState {
+  return kind === 'ingredient' ? { ...EMPTY_INGREDIENT_FORM } : { ...EMPTY_BEVERAGE_FORM };
+}
+
 function itemToForm(item: AdegaItem): FormState {
+  if (isAdegaIngredient(item)) {
+    const preset = ADEGA_INGREDIENT_CATEGORY_PRESETS.includes(
+      item.category as (typeof ADEGA_INGREDIENT_CATEGORY_PRESETS)[number],
+    );
+    return {
+      name: item.name,
+      category: preset ? item.category : 'Outro',
+      customCategory: preset ? '' : item.category,
+      brand: '',
+      quantity: String(item.quantity),
+      unit: item.unit ?? ADEGA_INGREDIENT_UNIT_PRESETS[0],
+      volumeMl: '',
+      abv: '',
+      origin: '',
+      notes: item.notes ?? '',
+      opened: false,
+      imageUrl: item.imageUrl ?? '',
+    };
+  }
+
   const preset = ADEGA_CATEGORY_PRESETS.includes(item.category as (typeof ADEGA_CATEGORY_PRESETS)[number]);
   return {
     name: item.name,
@@ -58,6 +110,7 @@ function itemToForm(item: AdegaItem): FormState {
     customCategory: preset ? '' : item.category,
     brand: item.brand ?? '',
     quantity: String(item.quantity),
+    unit: 'un.',
     volumeMl: item.volumeMl != null ? String(item.volumeMl) : '',
     abv: item.abv != null ? String(item.abv) : '',
     origin: item.origin ?? '',
@@ -67,8 +120,19 @@ function itemToForm(item: AdegaItem): FormState {
   };
 }
 
-function formToInput(form: FormState): AdegaItemInput {
+function formToInput(form: FormState, kind: FormKind): AdegaItemInput {
   const category = form.category === 'Outro' ? form.customCategory : form.category;
+  if (kind === 'ingredient') {
+    return {
+      kind: 'ingredient',
+      name: form.name,
+      category,
+      quantity: Number(form.quantity),
+      unit: form.unit,
+      notes: form.notes || undefined,
+      imageUrl: form.imageUrl || undefined,
+    };
+  }
   return {
     name: form.name,
     category,
@@ -101,7 +165,8 @@ export function ViniciusAdega() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [viewingItem, setViewingItem] = useState<AdegaItem | null>(null);
-  const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [formKind, setFormKind] = useState<FormKind>('beverage');
+  const [form, setForm] = useState<FormState>(EMPTY_BEVERAGE_FORM);
   const [formError, setFormError] = useState<string | null>(null);
   const [draftItemId, setDraftItemId] = useState<string | null>(null);
   const [imageUrlInput, setImageUrlInput] = useState('');
@@ -140,9 +205,12 @@ export function ViniciusAdega() {
 
   const stats = useMemo(() => adegaStats(items), [items]);
 
-  const filtered = useMemo(() => {
+  const beverages = useMemo(() => filterAdegaBeverages(items), [items]);
+  const ingredients = useMemo(() => filterAdegaIngredients(items), [items]);
+
+  const filteredBeverages = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return items.filter((item) => {
+    return beverages.filter((item) => {
       if (categoryFilter && item.category !== categoryFilter) return false;
       if (!q) return true;
       const haystack = [item.name, item.category, item.brand, item.origin, item.notes]
@@ -151,7 +219,19 @@ export function ViniciusAdega() {
         .toLowerCase();
       return haystack.includes(q);
     });
-  }, [items, search, categoryFilter]);
+  }, [beverages, search, categoryFilter]);
+
+  const filteredIngredients = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return ingredients.filter((item) => {
+      if (!q) return true;
+      const haystack = [item.name, item.category, item.notes, item.unit]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return haystack.includes(q);
+    });
+  }, [ingredients, search]);
 
   const formGoogleQuery = useMemo(
     () =>
@@ -163,10 +243,11 @@ export function ViniciusAdega() {
     [form.name, form.brand, form.category, form.customCategory],
   );
 
-  const openCreate = () => {
+  const openCreate = (kind: FormKind = 'beverage') => {
+    setFormKind(kind);
     setEditingId(null);
     setDraftItemId(createAdegaItemId());
-    setForm(EMPTY_FORM);
+    setForm(emptyForm(kind));
     setImageUrlInput('');
     setImageError(null);
     setFormError(null);
@@ -175,6 +256,7 @@ export function ViniciusAdega() {
 
   const openEdit = (item: AdegaItem) => {
     setViewingItem(null);
+    setFormKind(isAdegaIngredient(item) ? 'ingredient' : 'beverage');
     setEditingId(item.id);
     setDraftItemId(null);
     setForm(itemToForm(item));
@@ -218,20 +300,25 @@ export function ViniciusAdega() {
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    const normalized = normalizeAdegaInput(formToInput(form));
+    const normalized =
+      formKind === 'ingredient'
+        ? normalizeIngredientInput(formToInput(form, 'ingredient'))
+        : normalizeAdegaInput(formToInput(form, 'beverage'));
     if (!normalized) {
-      setFormError('Informe nome e categoria.');
+      setFormError(formKind === 'ingredient' ? 'Informe nome e tipo.' : 'Informe nome e categoria.');
       return;
     }
 
     const now = new Date().toISOString();
+    const payload =
+      formKind === 'ingredient'
+        ? { ...normalized, kind: 'ingredient' as const }
+        : normalized;
 
     if (editingId) {
       persist(
         items.map((item) =>
-          item.id === editingId
-            ? { ...item, ...normalized, updatedAt: now }
-            : item,
+          item.id === editingId ? { ...item, ...payload, updatedAt: now } : item,
         ),
       );
     } else {
@@ -239,7 +326,7 @@ export function ViniciusAdega() {
         ...items,
         {
           id: draftItemId ?? createAdegaItemId(),
-          ...normalized,
+          ...payload,
           createdAt: now,
           updatedAt: now,
         },
@@ -249,8 +336,9 @@ export function ViniciusAdega() {
     closeDialog();
   };
 
-  const handleDelete = (id: string) => {
-    if (!window.confirm('Remover este item da adega?')) return;
+  const handleDelete = (id: string, kind: FormKind = 'beverage') => {
+    const label = kind === 'ingredient' ? 'ingrediente' : 'item';
+    if (!window.confirm(`Remover este ${label} da adega?`)) return;
     persist(items.filter((item) => item.id !== id));
   };
 
@@ -354,7 +442,7 @@ export function ViniciusAdega() {
           <input
             type="search"
             className={styles.search}
-            placeholder="Buscar na coleção…"
+            placeholder="Buscar bebidas e ingredientes…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             aria-label="Buscar na adega"
@@ -362,8 +450,8 @@ export function ViniciusAdega() {
           />
         </label>
         {editing ? (
-          <button type="button" className={`${styles.addBtn} ${styles.toolbarAddBtn}`} onClick={openCreate}>
-            + Adicionar
+          <button type="button" className={`${styles.addBtn} ${styles.toolbarAddBtn}`} onClick={() => openCreate('beverage')}>
+            + Bebida
           </button>
         ) : null}
       </div>
@@ -394,107 +482,87 @@ export function ViniciusAdega() {
         </div>
       ) : null}
 
-      {filtered.length === 0 ? (
-        <div className={styles.empty}>
-          <span className={styles.emptyIcon} aria-hidden>
-            🍾
-          </span>
-          <p className={styles.emptyTitle}>
-            {items.length === 0 ? 'Adega vazia' : 'Nenhum item encontrado'}
-          </p>
-          <p className={styles.emptyText}>
-            {items.length === 0
+      <section className={styles.section} aria-labelledby="adega-beverages-title">
+        <div className={styles.sectionHead}>
+          <div>
+            <h3 id="adega-beverages-title" className={styles.sectionTitle}>
+              Bebidas
+            </h3>
+            <p className={styles.sectionLead}>Garrafas, latas e destilados da sua coleção.</p>
+          </div>
+        </div>
+
+        <AdegaItemCards
+          items={filteredBeverages}
+          editing={editing}
+          emptyIcon="🍾"
+          emptyTitle={beverages.length === 0 ? 'Nenhuma bebida ainda' : 'Nenhuma bebida encontrada'}
+          emptyText={
+            beverages.length === 0
               ? 'Comece adicionando um whisky, vinho ou qualquer bebida da sua coleção.'
-              : 'Tente outro termo ou remova o filtro de categoria.'}
-          </p>
-          {items.length === 0 && editing ? (
-            <button type="button" className={styles.emptyBtn} onClick={openCreate}>
-              Adicionar primeiro item
-            </button>
-          ) : items.length === 0 ? (
-            <button type="button" className={styles.emptyBtn} onClick={() => setEditMode(true)}>
-              Editar adega
+              : 'Tente outro termo ou remova o filtro de categoria.'
+          }
+          emptyAction={
+            beverages.length === 0 && editing
+              ? { label: 'Adicionar bebida', onClick: () => openCreate('beverage') }
+              : beverages.length === 0
+                ? { label: 'Editar adega', onClick: () => setEditMode(true) }
+                : undefined
+          }
+          onCardClick={handleCardClick}
+          onEdit={openEdit}
+          onDelete={(id) => handleDelete(id, 'beverage')}
+        />
+      </section>
+
+      <section className={`${styles.section} ${styles.sectionIngredients}`} aria-labelledby="adega-ingredients-title">
+        <div className={styles.sectionHead}>
+          <div>
+            <h3 id="adega-ingredients-title" className={styles.sectionTitle}>
+              Ingredientes
+            </h3>
+            <p className={styles.sectionLead}>
+              Limão, hortelã, xaropes e tudo que você usa nos drinks.
+              {stats.totalIngredients > 0 ? ` · ${stats.totalIngredients} itens` : ''}
+            </p>
+          </div>
+          {editing ? (
+            <button type="button" className={styles.sectionAddBtn} onClick={() => openCreate('ingredient')}>
+              + Ingrediente
             </button>
           ) : null}
         </div>
-      ) : (
-        <ul className={styles.list}>
-          {filtered.map((item) => {
-            const volume = formatVolume(item.volumeMl);
-            return (
-              <li key={item.id} className={`${styles.card} ${editing ? styles.cardEditing : ''}`}>
-                <button
-                  type="button"
-                  className={styles.cardTap}
-                  onClick={() => handleCardClick(item)}
-                  aria-label={editing ? `Editar ${item.name}` : `Ver ${item.name}`}
-                >
-                  <span className={styles.cardIcon} aria-hidden>
-                    <span className={styles.cardIconInner}>
-                      {item.imageUrl ? (
-                        <img src={item.imageUrl} alt="" className={styles.cardPhoto} loading="lazy" decoding="async" />
-                      ) : (
-                        categoryEmoji(item.category)
-                      )}
-                    </span>
-                  </span>
-                  <div className={styles.cardBody}>
-                    <span className={styles.cardCategory}>
-                      <span aria-hidden>{categoryEmoji(item.category)}</span>
-                      {item.category}
-                    </span>
-                    <h3 className={styles.cardTitle}>{item.name}</h3>
-                    {item.brand || item.quantity > 1 ? (
-                      <p className={styles.cardMeta}>
-                        {[item.brand, item.quantity > 1 ? `${item.quantity} un.` : null]
-                          .filter(Boolean)
-                          .join(' · ')}
-                      </p>
-                    ) : null}
-                    <div className={styles.cardTags}>
-                      {volume ? <span className={styles.tag}>{volume}</span> : null}
-                      {item.abv != null ? <span className={styles.tag}>{item.abv}% vol.</span> : null}
-                      {item.origin ? <span className={styles.tag}>{item.origin}</span> : null}
-                      {item.opened ? <span className={`${styles.tag} ${styles.tagOpened}`}>Aberta</span> : null}
-                    </div>
-                    {!editing && item.notes ? <p className={styles.cardNotes}>{item.notes}</p> : null}
-                  </div>
-                  {!editing ? (
-                    <span className={styles.cardChevron} aria-hidden>
-                      →
-                    </span>
-                  ) : null}
-                </button>
-                {editing ? (
-                  <div className={styles.cardActions}>
-                    <button
-                      type="button"
-                      className={styles.actionBtn}
-                      onClick={() => openEdit(item)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      type="button"
-                      className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      Remover
-                    </button>
-                  </div>
-                ) : null}
-              </li>
-            );
-          })}
-        </ul>
-      )}
+
+        <AdegaItemCards
+          items={filteredIngredients}
+          editing={editing}
+          compact
+          emptyIcon="🍋"
+          emptyTitle={ingredients.length === 0 ? 'Despensa vazia' : 'Nenhum ingrediente encontrado'}
+          emptyText={
+            ingredients.length === 0
+              ? 'Cadastre frutas, ervas, mixers e outros itens que você tem em casa.'
+              : 'Tente outro termo na busca.'
+          }
+          emptyAction={
+            ingredients.length === 0 && editing
+              ? { label: 'Adicionar ingrediente', onClick: () => openCreate('ingredient') }
+              : ingredients.length === 0
+                ? { label: 'Editar adega', onClick: () => setEditMode(true) }
+                : undefined
+          }
+          onCardClick={handleCardClick}
+          onEdit={openEdit}
+          onDelete={(id) => handleDelete(id, 'ingredient')}
+        />
+      </section>
 
       {editing ? (
         <button
           type="button"
           className={styles.fab}
-          onClick={openCreate}
-          aria-label="Adicionar item à adega"
+          onClick={() => openCreate('beverage')}
+          aria-label="Adicionar bebida à adega"
         >
           +
         </button>
@@ -547,30 +615,36 @@ export function ViniciusAdega() {
               <dl className={styles.viewSpecGrid}>
                 <div className={styles.viewSpecItem}>
                   <dt>Quantidade</dt>
-                  <dd>{viewingItem.quantity}</dd>
+                  <dd>
+                    {isAdegaIngredient(viewingItem)
+                      ? formatIngredientQuantity(viewingItem.quantity, viewingItem.unit)
+                      : viewingItem.quantity}
+                  </dd>
                 </div>
-                {formatVolume(viewingItem.volumeMl) ? (
+                {!isAdegaIngredient(viewingItem) && formatVolume(viewingItem.volumeMl) ? (
                   <div className={styles.viewSpecItem}>
                     <dt>Volume</dt>
                     <dd>{formatVolume(viewingItem.volumeMl)}</dd>
                   </div>
                 ) : null}
-                {viewingItem.abv != null ? (
+                {!isAdegaIngredient(viewingItem) && viewingItem.abv != null ? (
                   <div className={styles.viewSpecItem}>
                     <dt>Teor alcoólico</dt>
                     <dd>{viewingItem.abv}% vol.</dd>
                   </div>
                 ) : null}
-                {viewingItem.origin ? (
+                {!isAdegaIngredient(viewingItem) && viewingItem.origin ? (
                   <div className={styles.viewSpecItem}>
                     <dt>Origem</dt>
                     <dd>{viewingItem.origin}</dd>
                   </div>
                 ) : null}
-                <div className={styles.viewSpecItem}>
-                  <dt>Status</dt>
-                  <dd>{viewingItem.opened ? 'Garrafa aberta' : 'Fechada'}</dd>
-                </div>
+                {!isAdegaIngredient(viewingItem) ? (
+                  <div className={styles.viewSpecItem}>
+                    <dt>Status</dt>
+                    <dd>{viewingItem.opened ? 'Garrafa aberta' : 'Fechada'}</dd>
+                  </div>
+                ) : null}
               </dl>
               {viewingItem.notes ? (
                 <div className={styles.viewNotes}>
@@ -616,7 +690,13 @@ export function ViniciusAdega() {
               <div className={styles.dialogHandle} aria-hidden />
               <div className={styles.dialogHeadRow}>
                 <h3 id="adega-form-title" className={styles.dialogTitle}>
-                  {editingId ? 'Editar item' : 'Adicionar item'}
+                  {editingId
+                    ? formKind === 'ingredient'
+                      ? 'Editar ingrediente'
+                      : 'Editar item'
+                    : formKind === 'ingredient'
+                      ? 'Adicionar ingrediente'
+                      : 'Adicionar bebida'}
                 </h3>
                 <button
                   type="button"
@@ -643,7 +723,7 @@ export function ViniciusAdega() {
                     />
                   ) : (
                     <span className={styles.formPhotoFallback} aria-hidden>
-                      🍾
+                      {formKind === 'ingredient' ? '🍋' : '🍾'}
                     </span>
                   )}
                   <div className={styles.formPhotoActions}>
@@ -700,14 +780,18 @@ export function ViniciusAdega() {
                   className={styles.input}
                   value={form.name}
                   onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
-                  placeholder="Ex.: Lagavulin 16, Malbec Reserva…"
+                  placeholder={
+                    formKind === 'ingredient'
+                      ? 'Ex.: Limão, Hortelã, Xarope de gengibre…'
+                      : 'Ex.: Lagavulin 16, Malbec Reserva…'
+                  }
                   required
                 />
               </div>
 
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="adega-category">
-                  Categoria
+                  {formKind === 'ingredient' ? 'Tipo' : 'Categoria'}
                 </label>
                 <select
                   id="adega-category"
@@ -715,53 +799,61 @@ export function ViniciusAdega() {
                   value={form.category}
                   onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
                 >
-                  {ADEGA_CATEGORY_PRESETS.map((category) => (
-                    <option key={category} value={category}>
-                      {categoryEmoji(category)} {category}
-                    </option>
-                  ))}
+                  {(formKind === 'ingredient' ? ADEGA_INGREDIENT_CATEGORY_PRESETS : ADEGA_CATEGORY_PRESETS).map(
+                    (category) => (
+                      <option key={category} value={category}>
+                        {categoryEmoji(category)} {category}
+                      </option>
+                    ),
+                  )}
                 </select>
               </div>
 
               {form.category === 'Outro' ? (
                 <div className={styles.field}>
                   <label className={styles.label} htmlFor="adega-custom-category">
-                    Categoria personalizada
+                    {formKind === 'ingredient' ? 'Tipo personalizado' : 'Categoria personalizada'}
                   </label>
                   <input
                     id="adega-custom-category"
                     className={styles.input}
                     value={form.customCategory}
                     onChange={(e) => setForm((prev) => ({ ...prev, customCategory: e.target.value }))}
-                    placeholder="Ex.: Sake, Vermute, Energético…"
+                    placeholder={
+                      formKind === 'ingredient' ? 'Ex.: Bitter, Sal, Açúcar…' : 'Ex.: Sake, Vermute, Energético…'
+                    }
                     required
                   />
                 </div>
               ) : null}
 
-              <div className={styles.field}>
-                <label className={styles.label} htmlFor="adega-brand">
-                  Marca / destilaria
-                </label>
-                <input
-                  id="adega-brand"
-                  className={styles.input}
-                  value={form.brand}
-                  onChange={(e) => setForm((prev) => ({ ...prev, brand: e.target.value }))}
-                  placeholder="Opcional"
-                />
-              </div>
+              {formKind === 'beverage' ? (
+                <div className={styles.field}>
+                  <label className={styles.label} htmlFor="adega-brand">
+                    Marca / destilaria
+                  </label>
+                  <input
+                    id="adega-brand"
+                    className={styles.input}
+                    value={form.brand}
+                    onChange={(e) => setForm((prev) => ({ ...prev, brand: e.target.value }))}
+                    placeholder="Opcional"
+                  />
+                </div>
+              ) : null}
 
-              <AdegaImagePicker
-                query={formGoogleQuery}
-                userId={userId}
-                itemId={uploadItemId}
-                onImageUrl={(url) => {
-                  setForm((prev) => ({ ...prev, imageUrl: url }));
-                  setImageUrlInput('');
-                  setImageError(null);
-                }}
-              />
+              {formKind === 'beverage' ? (
+                <AdegaImagePicker
+                  query={formGoogleQuery}
+                  userId={userId}
+                  itemId={uploadItemId}
+                  onImageUrl={(url) => {
+                    setForm((prev) => ({ ...prev, imageUrl: url }));
+                    setImageUrlInput('');
+                    setImageError(null);
+                  }}
+                />
+              ) : null}
 
               <div className={styles.row2}>
                 <div className={styles.field}>
@@ -779,53 +871,75 @@ export function ViniciusAdega() {
                     required
                   />
                 </div>
-                <div className={styles.field}>
-                  <label className={styles.label} htmlFor="adega-volume">
-                    Volume (ml)
-                  </label>
-                  <input
-                    id="adega-volume"
-                    type="number"
-                    min={0}
-                    step={1}
-                    className={styles.input}
-                    value={form.volumeMl}
-                    onChange={(e) => setForm((prev) => ({ ...prev, volumeMl: e.target.value }))}
-                    placeholder="750"
-                  />
-                </div>
+                {formKind === 'ingredient' ? (
+                  <div className={styles.field}>
+                    <label className={styles.label} htmlFor="adega-unit">
+                      Unidade
+                    </label>
+                    <select
+                      id="adega-unit"
+                      className={styles.select}
+                      value={form.unit}
+                      onChange={(e) => setForm((prev) => ({ ...prev, unit: e.target.value }))}
+                    >
+                      {ADEGA_INGREDIENT_UNIT_PRESETS.map((unit) => (
+                        <option key={unit} value={unit}>
+                          {unit}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  <div className={styles.field}>
+                    <label className={styles.label} htmlFor="adega-volume">
+                      Volume (ml)
+                    </label>
+                    <input
+                      id="adega-volume"
+                      type="number"
+                      min={0}
+                      step={1}
+                      className={styles.input}
+                      value={form.volumeMl}
+                      onChange={(e) => setForm((prev) => ({ ...prev, volumeMl: e.target.value }))}
+                      placeholder="750"
+                    />
+                  </div>
+                )}
               </div>
 
-              <div className={styles.row2}>
-                <div className={styles.field}>
-                  <label className={styles.label} htmlFor="adega-abv">
-                    Teor alcoólico (%)
-                  </label>
-                  <input
-                    id="adega-abv"
-                    type="number"
-                    min={0}
-                    max={100}
-                    step={0.1}
-                    className={styles.input}
-                    value={form.abv}
-                    onChange={(e) => setForm((prev) => ({ ...prev, abv: e.target.value }))}
-                    placeholder="40"
-                  />
+              {formKind === 'beverage' ? (
+                <div className={styles.row2}>
+                  <div className={styles.field}>
+                    <label className={styles.label} htmlFor="adega-abv">
+                      Teor alcoólico (%)
+                    </label>
+                    <input
+                      id="adega-abv"
+                      type="number"
+                      min={0}
+                      max={100}
+                      step={0.1}
+                      className={styles.input}
+                      value={form.abv}
+                      onChange={(e) => setForm((prev) => ({ ...prev, abv: e.target.value }))}
+                      placeholder="40"
+                    />
+                  </div>
+                  <div className={styles.field}>
+                    <label className={styles.label} htmlFor="adega-origin">
+                      Origem
+                    </label>
+                    <input
+                      id="adega-origin"
+                      className={styles.input}
+                      value={form.origin}
+                      onChange={(e) => setForm((prev) => ({ ...prev, origin: e.target.value }))}
+                      placeholder="Escócia, Chile…"
+                    />
+                  </div>
                 </div>
-                <div className={styles.field}>
-                  <label className={styles.label} htmlFor="adega-origin">
-                    Origem
-                  </label>
-                  <input
-                    id="adega-origin"
-                    className={styles.input}
-                    value={form.origin}
-                    onChange={(e) => setForm((prev) => ({ ...prev, origin: e.target.value }))}
-                    placeholder="Escócia, Chile…"
-                  />
-                </div>
-              </div>
+              ) : null}
 
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="adega-notes">
@@ -836,18 +950,24 @@ export function ViniciusAdega() {
                   className={styles.textarea}
                   value={form.notes}
                   onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))}
-                  placeholder="Onde comprou, harmonização, presente…"
+                  placeholder={
+                    formKind === 'ingredient'
+                      ? 'Validade, onde guarda, substitutos…'
+                      : 'Onde comprou, harmonização, presente…'
+                  }
                 />
               </div>
 
-              <label className={styles.checkRow}>
-                <input
-                  type="checkbox"
-                  checked={form.opened}
-                  onChange={(e) => setForm((prev) => ({ ...prev, opened: e.target.checked }))}
-                />
-                Garrafa já aberta
-              </label>
+              {formKind === 'beverage' ? (
+                <label className={styles.checkRow}>
+                  <input
+                    type="checkbox"
+                    checked={form.opened}
+                    onChange={(e) => setForm((prev) => ({ ...prev, opened: e.target.checked }))}
+                  />
+                  Garrafa já aberta
+                </label>
+              ) : null}
 
               {formError ? <p className={styles.formError}>{formError}</p> : null}
               </div>
