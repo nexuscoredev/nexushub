@@ -3,6 +3,7 @@ import type { PersonalAppIcon } from './personalApps';
 import { persistRemoteImageRef } from './personalMediaStorage';
 import { supabase, supabaseErrorMessage } from './supabase';
 import type { AdegaItem } from './viniciusAdega';
+import type { ViniciusDrink } from './viniciusDrinksCarta';
 import type { DrinkCartaStore } from './viniciusDrinksCartaStore';
 
 type CloudRow = {
@@ -87,6 +88,7 @@ export async function fetchDrinkCartaStoreCloud(
     store: {
       overrides: store.overrides ?? {},
       bannerImageUrl: store.bannerImageUrl,
+      customDrinks: Array.isArray(store.customDrinks) ? store.customDrinks : undefined,
     },
     updatedAt: data.updated_at,
   };
@@ -112,7 +114,16 @@ export async function hydrateDrinkCartaStoreForCloud(
     bannerImageUrl = await persistRemoteImageRef(userId, bannerImageUrl, 'drinks-carta/banner');
   }
 
-  return { overrides, bannerImageUrl };
+  const customDrinks: ViniciusDrink[] = [];
+  for (const drink of store.customDrinks ?? []) {
+    let imageUrl = drink.imageUrl;
+    if (imageUrl.startsWith('data:image/')) {
+      imageUrl = await persistRemoteImageRef(userId, imageUrl, `drinks-carta/${drink.slug}`);
+    }
+    customDrinks.push({ ...drink, imageUrl });
+  }
+
+  return { overrides, bannerImageUrl, customDrinks: customDrinks.length ? customDrinks : undefined };
 }
 
 export async function upsertDrinkCartaStoreCloud(

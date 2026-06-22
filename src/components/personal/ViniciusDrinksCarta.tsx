@@ -9,6 +9,8 @@ import {
   VINICIUS_DRINKS_BANNER_WIDTH,
 } from '../../lib/viniciusDrinksCarta';
 import {
+  addCustomDrink,
+  addCustomDrinks,
   clearDrinkOverrideField,
   findResolvedDrink,
   loadDrinkCartaStore,
@@ -19,6 +21,7 @@ import {
   type DrinkCartaOverride,
   type DrinkCartaStore,
 } from '../../lib/viniciusDrinksCartaStore';
+import type { ViniciusDrink } from '../../lib/viniciusDrinksCarta';
 import {
   loadAdegaItems,
   syncAdegaItemsFromCloud,
@@ -32,6 +35,7 @@ import {
   matchDrinksToAdega,
 } from '../../lib/drinkAdegaMatch';
 import { DrinkAdegaAvailability } from './DrinkAdegaAvailability';
+import { DrinkNewSuggestions } from './DrinkNewSuggestions';
 import { DrinkAdegaSuggestions } from './DrinkAdegaSuggestions';
 import { DrinkCartaEditor } from './DrinkCartaEditor';
 import { DrinkRecipeToolkit } from './DrinkRecipeToolkit';
@@ -49,6 +53,7 @@ export function ViniciusDrinksCarta() {
   const [adegaItems, setAdegaItems] = useState<AdegaItem[]>(() => loadAdegaItems(userId));
   const [adegaFilter, setAdegaFilter] = useState<'all' | 'ready'>('all');
   const [editorSlug, setEditorSlug] = useState<string | null>(null);
+  const [newDrinksOpen, setNewDrinksOpen] = useState(false);
   const bannerFileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -130,6 +135,22 @@ export function ViniciusDrinksCarta() {
   const handleResetField = (slug: string, field: keyof DrinkCartaOverride) => {
     setStore((prev) => {
       const next = clearDrinkOverrideField(prev, slug, field);
+      if (userId) saveDrinkCartaStore(userId, next);
+      return next;
+    });
+  };
+
+  const handleAddSuggestedDrink = (drink: ViniciusDrink) => {
+    setStore((prev) => {
+      const next = addCustomDrink(prev, drink);
+      if (userId) saveDrinkCartaStore(userId, next);
+      return next;
+    });
+  };
+
+  const handleAddSuggestedDrinks = (drinks: ViniciusDrink[]) => {
+    setStore((prev) => {
+      const next = addCustomDrinks(prev, drinks);
       if (userId) saveDrinkCartaStore(userId, next);
       return next;
     });
@@ -221,13 +242,24 @@ export function ViniciusDrinksCarta() {
               ? `${visibleDrinks.length} receitas com a sua adega`
               : `${drinks.length} receitas na carta`}
         </p>
-        <button
-          type="button"
-          className={editing ? styles.editModeBtnActive : styles.editModeBtn}
-          onClick={() => setEditing(!editing)}
-        >
-          {editing ? 'Concluído' : 'Editar carta'}
-        </button>
+        <div className={styles.cartaToolbarActions}>
+          {!editing ? (
+            <button
+              type="button"
+              className={styles.newDrinksBtn}
+              onClick={() => setNewDrinksOpen(true)}
+            >
+              ✨ Novos drinks
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className={editing ? styles.editModeBtnActive : styles.editModeBtn}
+            onClick={() => setEditing(!editing)}
+          >
+            {editing ? 'Concluído' : 'Editar carta'}
+          </button>
+        </div>
       </div>
 
       <header className={styles.banner}>
@@ -435,6 +467,15 @@ export function ViniciusDrinksCarta() {
         onClose={() => setEditorSlug(null)}
         onSave={handleSaveDrink}
         onResetField={handleResetField}
+      />
+
+      <DrinkNewSuggestions
+        open={newDrinksOpen}
+        store={store}
+        adegaItems={adegaItems}
+        onClose={() => setNewDrinksOpen(false)}
+        onAdd={handleAddSuggestedDrink}
+        onAddMany={handleAddSuggestedDrinks}
       />
     </div>
   );

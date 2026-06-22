@@ -23,6 +23,7 @@ export type DrinkCartaOverride = {
 
 export type DrinkCartaStore = {
   overrides: Record<string, DrinkCartaOverride>;
+  customDrinks?: ViniciusDrink[];
   bannerImageUrl?: string;
 };
 
@@ -46,12 +47,34 @@ function writeLocalUpdatedAt(userId: string, iso: string): void {
 
 function isValidImageUrl(value: string): boolean {
   if (value.startsWith('data:image/')) return value.length <= 900_000;
+  if (value.startsWith('/')) return value.length > 1;
   try {
     const url = new URL(value);
     return url.protocol === 'http:' || url.protocol === 'https:';
   } catch {
     return false;
   }
+}
+
+function isValidDrink(value: unknown): value is ViniciusDrink {
+  if (!value || typeof value !== 'object') return false;
+  const drink = value as Partial<ViniciusDrink>;
+  return (
+    typeof drink.slug === 'string' &&
+    drink.slug.trim().length > 0 &&
+    typeof drink.title === 'string' &&
+    drink.title.trim().length > 0 &&
+    typeof drink.tagline === 'string' &&
+    typeof drink.imageUrl === 'string' &&
+    isValidImageUrl(drink.imageUrl) &&
+    Array.isArray(drink.ingredients) &&
+    drink.ingredients.length > 0 &&
+    drink.ingredients.every((item) => typeof item === 'string' && item.trim().length > 0) &&
+    Array.isArray(drink.steps) &&
+    drink.steps.length > 0 &&
+    drink.steps.every((item) => typeof item === 'string' && item.trim().length > 0) &&
+    (drink.notes == null || typeof drink.notes === 'string')
+  );
 }
 
 function isValidOverride(value: unknown): value is DrinkCartaOverride {
@@ -102,7 +125,10 @@ function parseStore(raw: string | null): DrinkCartaStore {
       typeof data.bannerImageUrl === 'string' && isValidImageUrl(data.bannerImageUrl)
         ? data.bannerImageUrl
         : undefined;
-    return { overrides, bannerImageUrl };
+    const customDrinks = Array.isArray(data.customDrinks)
+      ? data.customDrinks.filter(isValidDrink)
+      : undefined;
+    return { overrides, bannerImageUrl, customDrinks };
   } catch {
     return { overrides: {} };
   }
@@ -168,7 +194,9 @@ export function mergeDrink(base: ViniciusDrink, override?: DrinkCartaOverride): 
 }
 
 export function resolveDrinks(store: DrinkCartaStore, catalog = VINICIUS_DRINKS): ViniciusDrink[] {
-  return catalog.map((drink) => mergeDrink(drink, store.overrides[drink.slug]));
+  const base = catalog.map((drink) => mergeDrink(drink, store.overrides[drink.slug]));
+  const custom = (store.customDrinks ?? []).map((drink) => mergeDrink(drink, store.overrides[drink.slug]));
+  return [...base, ...custom];
 }
 
 export function findResolvedDrink(
@@ -178,8 +206,33 @@ export function findResolvedDrink(
 ): ViniciusDrink | undefined {
   if (!slug) return undefined;
   const base = catalog.find((d) => d.slug === slug);
-  if (!base) return undefined;
-  return mergeDrink(base, store.overrides[slug]);
+  const custom = store.customDrinks?.find((d) => d.slug === slug);
+  const drink = base ?? custom;
+  if (!drink) return undefined;
+  return mergeDrink(drink, store.overrides[slug]);
+}
+
+export function listCartaSlugs(store: DrinkCartaStore, catalog = VINICIUS_DRINKS): Set<string> {
+  const slugs = new Set(catalog.map((drink) => drink.slug));
+  for (const drink of store.customDrinks ?? []) slugs.add(drink.slug);
+  return slugs;
+}
+
+export function addCustomDrink(store: DrinkCartaStore, drink: ViniciusDrink): DrinkCartaStore {
+  if (!isValidDrink(drink)) return store;
+  if (listCartaSlugs(store).has(drink.slug)) return store;
+  return {
+    ...store,
+    customDrinks: [...(store.customDrinks ?? []), drink],
+  };
+}
+
+export function addCustomDrinks(store: DrinkCartaStore, drinks: ViniciusDrink[]): DrinkCartaStore {
+  let next = store;
+  for (const drink of drinks) {
+    next = addCustomDrink(next, drink);
+  }
+  return next;
 }
 
 export function defaultDrinkImageUrl(slug: string): string {
