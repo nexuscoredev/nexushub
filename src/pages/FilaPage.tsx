@@ -344,6 +344,8 @@ export function FilaPage() {
   const [renamingTitle, setRenamingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState('');
   const [descriptionDraft, setDescriptionDraft] = useState('');
+  const [subtaskDraft, setSubtaskDraft] = useState('');
+  const [subtaskSubmitting, setSubtaskSubmitting] = useState(false);
 
   const [createOpen, setCreateOpen] = useState(false);
   const [assigneeOptions, setAssigneeOptions] = useState<AssigneeOption[]>(
@@ -556,6 +558,7 @@ export function FilaPage() {
     setSelectedTask(null);
     setRenamingTitle(false);
     setDescriptionDraft('');
+    setSubtaskDraft('');
     setComments([]);
   }, []);
 
@@ -643,7 +646,9 @@ export function FilaPage() {
       await todoistApi.deleteTask(selectedTask.id);
       setSelectedTask(null);
       setComments([]);
-      setTasks((prev) => prev.filter((t) => t.id !== selectedTask.id));
+      setTasks((prev) =>
+        prev.filter((t) => t.id !== selectedTask.id && t.parent_id !== selectedTask.id),
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao excluir');
     }
@@ -657,6 +662,30 @@ export function FilaPage() {
       await loadComments(selectedTask.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao comentar');
+    }
+  };
+
+  const addSubtask = async () => {
+    if (!selectedTask || !subtaskDraft.trim()) return;
+    try {
+      setError(null);
+      setSubtaskSubmitting(true);
+      const created = await todoistApi.createTask({
+        content: subtaskDraft.trim(),
+        project_id: selectedTask.project_id,
+        parent_id: selectedTask.id,
+      });
+      setTasks((prev) => [...prev, created]);
+      setSubtaskDraft('');
+      setCollapsedTasks((prev) => {
+        const next = new Set(prev);
+        next.delete(selectedTask.id);
+        return next;
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao criar subtarefa');
+    } finally {
+      setSubtaskSubmitting(false);
     }
   };
 
@@ -729,6 +758,11 @@ export function FilaPage() {
   }, [onlyMyTasks, myHub, selectedTask, assigneeOptions, closeDetail]);
   const pendingParents = useMemo(() => getParentIdsWithChildren(pending), [pending]);
   const doneParents = useMemo(() => getParentIdsWithChildren(done), [done]);
+
+  const selectedSubtasks = useMemo(() => {
+    if (!selectedTask) return [];
+    return tasks.filter((t) => t.parent_id === selectedTask.id);
+  }, [tasks, selectedTask]);
   const sortCompare = useMemo(
     () => getFilaTaskCompare(taskSort, sectionMap),
     [taskSort, sectionMap],
@@ -1186,6 +1220,50 @@ export function FilaPage() {
                       </div>
                     </div>
                   )}
+                </div>
+
+                <div className={styles.subtasks}>
+                  <h3 className={styles.subtasksTitle}>Subtarefas</h3>
+                  {selectedSubtasks.length > 0 ? (
+                    <ul className={styles.subtaskList}>
+                      {selectedSubtasks.map((subtask) => (
+                        <li key={subtask.id}>
+                          <button
+                            type="button"
+                            className={`${styles.subtaskItem} ${subtask.is_completed ? styles.subtaskItemDone : ''}`}
+                            onClick={() => void selectTask(subtask)}
+                          >
+                            <TodoistTaskContent content={subtask.content} />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className={styles.subtasksEmpty}>Nenhuma subtarefa ainda.</p>
+                  )}
+                  <div className={styles.subtaskAddRow}>
+                    <input
+                      className={styles.subtaskInput}
+                      placeholder="Nova subtarefa…"
+                      value={subtaskDraft}
+                      disabled={subtaskSubmitting}
+                      onChange={(e) => setSubtaskDraft(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          void addSubtask();
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className="btn-primary"
+                      disabled={subtaskSubmitting || !subtaskDraft.trim()}
+                      onClick={() => void addSubtask()}
+                    >
+                      {subtaskSubmitting ? '…' : 'Adicionar'}
+                    </button>
+                  </div>
                 </div>
 
                 <div className={styles.detailActions}>

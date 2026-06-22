@@ -969,6 +969,78 @@
   margin-top: 0.25rem;
 }
 
+.subtasks {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.subtasksTitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.subtasksEmpty {
+  margin: 0 0 0.75rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.subtaskList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.subtaskItem {
+  width: 100%;
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--glass);
+  color: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.subtaskItem:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.subtaskItemDone {
+  opacity: 0.55;
+}
+
+.subtaskAddRow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.subtaskInput {
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem 0.65rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.2);
+  color: inherit;
+  font-size: 0.85rem;
+}
+
+.subtaskInput:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
 .manageSection {
   margin-bottom: 1rem;
 }
