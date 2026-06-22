@@ -51,64 +51,34 @@
 }
 
 .banner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.bannerArtWrap {
   position: relative;
+  display: block;
+  width: 100%;
   overflow: hidden;
   border-radius: calc(var(--radius) + 2px);
-  border: 1px solid rgba(252, 211, 77, 0.16);
-  padding: 1.5rem 1.25rem 1.35rem;
-  background:
-    radial-gradient(ellipse 90% 130% at 100% -10%, rgba(180, 83, 9, 0.42), transparent 58%),
-    radial-gradient(ellipse 60% 80% at 0% 100%, rgba(120, 53, 15, 0.28), transparent 55%),
-    linear-gradient(145deg, rgba(10, 10, 12, 0.98), rgba(28, 20, 14, 0.94));
+  border: 1px solid rgba(212, 175, 55, 0.28);
   box-shadow:
-    0 24px 48px rgba(0, 0, 0, 0.38),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    0 24px 48px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-.banner::after {
-  content: '';
-  position: absolute;
-  inset: auto -20% -45% auto;
-  width: 12rem;
-  height: 12rem;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(252, 211, 77, 0.14), transparent 68%);
-  pointer-events: none;
+.bannerArt {
+  display: block;
+  width: 100%;
+  height: auto;
+  vertical-align: top;
 }
 
-.bannerEyebrow {
-  margin: 0 0 0.25rem;
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #fcd34d;
-}
-
-.bannerTitle {
-  margin: 0;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 1.85rem;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: 0.01em;
-  line-height: 1.15;
-}
-
-.bannerLead {
-  margin: 0.35rem 0 0;
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.72);
-  line-height: 1.45;
-  max-width: 24rem;
-}
-
-.stats {
+.bannerMeta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.55rem;
-  margin-top: 0.85rem;
+  gap: 0.45rem;
 }
 
 .stat {
@@ -1287,13 +1257,6 @@
     min-height: 2.75rem;
   }
 
-  .banner {
-    padding: 1.1rem 1rem;
-  }
-
-  .bannerTitle {
-    font-size: 1.45rem;
-  }
 }
 
 @media (max-width: 639px) and (min-width: 400px) {

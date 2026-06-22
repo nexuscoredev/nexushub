@@ -14,6 +14,9 @@ import {
   normalizeAdegaInput,
   saveAdegaItems,
   syncAdegaItemsFromCloud,
+  VINICIUS_ADEGA_BANNER_HEIGHT,
+  VINICIUS_ADEGA_BANNER_URL,
+  VINICIUS_ADEGA_BANNER_WIDTH,
   type AdegaItem,
   type AdegaItemInput,
 } from '../../lib/viniciusAdega';
@@ -322,13 +325,20 @@ export function ViniciusAdega() {
       </div>
 
       <header className={styles.banner}>
-        <p className={styles.bannerEyebrow}>Só seu · coleção</p>
-        <h2 className={styles.bannerTitle}>Minha adega</h2>
-        <p className={styles.bannerLead}>
-          Whisky, vinhos, cervejas e qualquer bebida — tudo num lugar só.
-        </p>
+        <div className={styles.bannerArtWrap}>
+          <img
+            src={VINICIUS_ADEGA_BANNER_URL}
+            alt="Adega — estoque particular de bebidas"
+            className={styles.bannerArt}
+            width={VINICIUS_ADEGA_BANNER_WIDTH}
+            height={VINICIUS_ADEGA_BANNER_HEIGHT}
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+          />
+        </div>
         {stats.totalItems > 0 ? (
-          <div className={styles.stats}>
+          <div className={styles.bannerMeta}>
             <span className={styles.stat}>{stats.totalItems} itens</span>
             <span className={styles.stat}>{stats.totalBottles} garrafas</span>
             <span className={styles.stat}>{stats.categories.length} categorias</span>

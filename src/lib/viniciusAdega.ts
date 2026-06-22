@@ -7,6 +7,10 @@ import {
 const STORAGE_PREFIX = 'nexus-pessoal-adega';
 const UPDATED_AT_SUFFIX = ':updated-at';
 
+export const VINICIUS_ADEGA_BANNER_WIDTH = 1024;
+export const VINICIUS_ADEGA_BANNER_HEIGHT = 576;
+export const VINICIUS_ADEGA_BANNER_URL = '/img/personal/adega/banner.png?v=1';
+
 export const ADEGA_CATEGORY_PRESETS = [
   'Whisky',
   'Vinho',
