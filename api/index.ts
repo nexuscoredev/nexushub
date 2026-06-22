@@ -21,13 +21,19 @@ import handleTodoistTasksQuick from './_lib/routes/todoist/tasksQuick.js';
 
 type RouteHandler = (req: VercelRequest, res: VercelResponse) => Promise<unknown>;
 
+/** Vite (non-Next) on Vercel: catch-all files only match one segment; path comes via rewrite ?path= */
 function routeSegments(req: VercelRequest): string[] {
-  const raw = req.query.route;
-  if (raw) return Array.isArray(raw) ? raw : [raw];
+  const fromRewrite = req.query.path;
+  if (typeof fromRewrite === 'string' && fromRewrite.trim()) {
+    return fromRewrite.split('/').filter(Boolean);
+  }
+  if (Array.isArray(fromRewrite)) {
+    return fromRewrite.join('/').split('/').filter(Boolean);
+  }
 
-  const path = (req.url ?? '').split('?')[0] ?? '';
-  const match = path.match(/^\/api\/(.+)$/);
-  if (match) return match[1].split('/').filter(Boolean);
+  const pathname = (req.url ?? '').split('?')[0] ?? '';
+  const match = pathname.match(/^\/api\/(.+)$/);
+  if (match && match[1] !== 'index') return match[1].split('/').filter(Boolean);
 
   return [];
 }
