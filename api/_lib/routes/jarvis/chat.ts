@@ -8,8 +8,8 @@ import {
   CursorRunTimeoutError,
   isCursorConfigured,
   waitForJarvisRun,
-} from '../_lib/cursorAgent.js';
-import { verifyJarvisUser } from '../_lib/jarvisAuth.js';
+} from '../../cursorAgent.js';
+import { verifyJarvisUser } from '../../jarvisAuth.js';
 
 interface ChatMessage {
   role: 'user' | 'assistant';

@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { verifyHubUser } from '../_lib/hubAuth.js';
-import { searchAdegaImages } from '../_lib/adegaImageSearch.js';
+import { verifyHubUser } from '../../hubAuth.js';
+import { searchOpenFoodFacts } from '../../openFoodFacts.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET') {
@@ -13,23 +13,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const q = typeof req.query.q === 'string' ? req.query.q.trim() : '';
-  if (q.length < 2) {
-    return res.status(400).json({ error: 'Informe pelo menos 2 caracteres.' });
+  if (q.length < 3) {
+    return res.status(400).json({ error: 'Informe pelo menos 3 caracteres.' });
   }
   if (q.length > 80) {
     return res.status(400).json({ error: 'Busca longa demais.' });
   }
 
   try {
-    const results = await searchAdegaImages(q, 10);
-    const googleConfigured = Boolean(process.env.GOOGLE_CSE_API_KEY && process.env.GOOGLE_CSE_ID);
+    const results = await searchOpenFoodFacts(q);
     return res.status(200).json({
       results,
-      googleConfigured,
-      attribution: googleConfigured ? 'Google · Wikimedia Commons' : 'Wikimedia Commons',
+      attribution: 'Open Food Facts',
     });
   } catch (e) {
-    const message = e instanceof Error ? e.message : 'Falha na busca de imagens';
+    const message = e instanceof Error ? e.message : 'Falha na busca';
     return res.status(502).json({ error: message });
   }
 }

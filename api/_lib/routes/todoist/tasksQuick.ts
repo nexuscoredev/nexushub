@@ -5,7 +5,7 @@ import {
   todoistFetchCollaborators,
   todoistQuickAddTask,
   type TodoistCollaborator,
-} from '../../_lib/todoist.js';
+} from '../../todoist.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {

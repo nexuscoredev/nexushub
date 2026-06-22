@@ -8,8 +8,8 @@ import {
   CursorRunTimeoutError,
   isCursorConfigured,
   waitForJarvisRun,
-} from '../_lib/cursorAgent.js';
-import { verifyJarvisUser } from '../_lib/jarvisAuth.js';
+} from '../../cursorAgent.js';
+import { verifyJarvisUser } from '../../jarvisAuth.js';
 
 const SYSTEM_PROMPT = `Você é JARVIS, assistente de engenharia da Nexus integrado ao NEXUS Hub.
 Personalidade: técnico, objetivo, elegante e levemente irônico. Sempre em português brasileiro.

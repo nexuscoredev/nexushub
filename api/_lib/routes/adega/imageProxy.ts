@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { verifyHubUser } from '../_lib/hubAuth.js';
+import { verifyHubUser } from '../../hubAuth.js';
 
 const MAX_BYTES = 10 * 1024 * 1024;
 const FETCH_TIMEOUT_MS = 12_000;

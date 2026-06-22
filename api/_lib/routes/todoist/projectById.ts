@@ -8,7 +8,7 @@ import {
   todoistGetProject,
   todoistUnarchiveProject,
   todoistUpdateProject,
-} from '../../_lib/todoist.js';
+} from '../../todoist.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const projectId = req.query.projectId as string | undefined;

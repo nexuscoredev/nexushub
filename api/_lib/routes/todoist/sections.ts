@@ -3,7 +3,7 @@ import {
   getTodoistToken,
   todoistCreateSection,
   todoistFetchSections,
-} from '../_lib/todoist.js';
+} from '../../todoist.js';
 
 function queryString(value: string | string[] | undefined): string | undefined {
   if (typeof value === 'string' && value.trim()) return value.trim();

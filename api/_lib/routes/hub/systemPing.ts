@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { verifyHubUser } from '../_lib/hubAuth.js';
+import { verifyHubUser } from '../../hubAuth.js';
 
 function isAllowedUrl(raw: string): URL | null {
   try {

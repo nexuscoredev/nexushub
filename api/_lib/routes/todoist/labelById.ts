@@ -4,7 +4,7 @@ import {
   todoistDeleteLabel,
   todoistGetLabel,
   todoistUpdateLabel,
-} from '../../_lib/todoist.js';
+} from '../../todoist.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const labelId = req.query.labelId as string | undefined;

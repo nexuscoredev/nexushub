@@ -4,7 +4,7 @@ import {
   todoistDeleteComment,
   todoistGetComment,
   todoistUpdateComment,
-} from '../../_lib/todoist.js';
+} from '../../todoist.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const commentId = req.query.commentId as string | undefined;

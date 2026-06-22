@@ -4,7 +4,7 @@ import {
   todoistDeleteSection,
   todoistGetSection,
   todoistUpdateSection,
-} from '../../_lib/todoist.js';
+} from '../../todoist.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const sectionId = req.query.sectionId as string | undefined;

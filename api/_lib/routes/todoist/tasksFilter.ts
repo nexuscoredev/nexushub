@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getTodoistToken, todoistFilterTasks } from '../../_lib/todoist.js';
+import { getTodoistToken, todoistFilterTasks } from '../../todoist.js';
 
 function queryString(value: string | string[] | undefined): string | undefined {
   if (typeof value === 'string' && value.trim()) return value.trim();
