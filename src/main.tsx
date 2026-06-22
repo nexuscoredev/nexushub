@@ -4,6 +4,7 @@ import App from './App';
 import { registerServiceWorker } from './lib/registerServiceWorker';
 import { initSiteTheme } from './lib/siteTheme';
 import './index.css';
+import './styles/native-select.css';
 import './styles/responsive.css';
 import './styles/nexusClientShell.css';
 

@@ -28,16 +28,14 @@ const SPIRIT_RULES: SpiritRule[] = [
     id: 'licor',
     label: 'Licor',
     categories: ['Licor'],
-    patterns: [/cointreau|triple sec|cura[cç]au|curacao|licor/i],
+    patterns: [/cointreau|triple sec|cura[cç]au|curacao|licor|bitter|campari|aperol/i],
   },
 ];
-
-const PANTRY_RE =
-  /coca[\s-]?cola|refrigerante|ginger beer|\bsoda\b|suco de tomate|molho ingl|tabasco|suco de limão|simplesmente|polpa|talos?|virada para cima|macere|açúcar|acucar|xarope|fruta|maracuj|colher|pitada|dash|gotas?|fatia de lim|lim[aã]o|limões|limoes|gelo|^sal\b|decor|casquinha|rodela|azeitona|complete com|despeje|misture|bata|agite|coe|gela|caneca|taça|coqueteleira|preferencialmente|escolha|gosto|aproximadamente/i;
 
 export type DrinkRequirementGroup = {
   label: string;
   ruleIds: string[];
+  searchTerms: string[];
 };
 
 export type DrinkAdegaMatchStatus = 'ready' | 'partial' | 'missing';
@@ -55,13 +53,6 @@ function normalizeText(value: string): string {
     .normalize('NFD')
     .replace(/\p{M}/gu, '')
     .toLowerCase();
-}
-
-function isPantryIngredient(text: string): boolean {
-  const trimmed = text.trim();
-  if (!trimmed) return true;
-  if (isFixedIngredient(trimmed)) return true;
-  return PANTRY_RE.test(trimmed);
 }
 
 function findRulesForToken(token: string): SpiritRule[] {
@@ -86,31 +77,104 @@ function findRulesForIngredient(ingredient: string): SpiritRule[] {
   return SPIRIT_RULES.filter((rule) => rule.patterns.some((pattern) => pattern.test(normalized)));
 }
 
+function ingredientDisplayLabel(ingredient: string): string {
+  let text = ingredient.trim();
+  text = text.replace(/\([^)]*\)/g, '').trim();
+  text = text.replace(/[;,.\s]+$/, '');
+
+  if (text.includes('/')) {
+    const parts = text
+      .split('/')
+      .map((part) => part.replace(/.*\bde\b\s+/i, '').trim())
+      .filter(Boolean);
+    text = parts[0] ?? text;
+  }
+
+  text = text
+    .replace(/^(\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*/i, '')
+    .replace(/^(?:suco de\s+)?(\d+\/\d+\s+|\d+\s+ou\s+\d+\/?\s*)/i, '')
+    .replace(
+      /^(\d+(?:[.,]\d+)?)\s*(?:ml|cl|doses?|colher(?:es)?|gotas?|pitadas?|lata|garrafa|un\.?|g|kg|l)?\s*(?:de\s+)?/i,
+      '',
+    )
+    .replace(/^(?:uma|um)\s+(?:fatia|lata|garrafa)\s+(?:de\s+)?/i, '')
+    .replace(/^de\s+/i, '')
+    .trim();
+
+  if (!text) return ingredient.trim().slice(0, 48);
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function buildSearchTerms(ingredient: string, label: string): string[] {
+  const terms = new Set<string>();
+  const add = (value: string) => {
+    const normalized = normalizeText(value.trim());
+    if (normalized.length >= 2) terms.add(normalized);
+  };
+
+  add(label);
+  for (const word of label.split(/\s+/)) {
+    if (word.length >= 3) add(word);
+  }
+
+  const deMatch = ingredient.match(/\bde\s+(.+?)(?:[;,.\s(]|$)/i);
+  if (deMatch) add(deMatch[1]);
+
+  for (const token of ingredient.split(/[/,;]/)) {
+    const cleaned = token.replace(/.*\bde\b\s+/i, '').trim();
+    if (cleaned.length >= 3) add(cleaned);
+  }
+
+  return [...terms];
+}
+
+function requirementKey(group: DrinkRequirementGroup): string {
+  if (group.ruleIds.length) return group.ruleIds.slice().sort().join('|');
+  return normalizeText(group.label);
+}
+
 export function extractDrinkRequirementGroups(drink: ViniciusDrink): DrinkRequirementGroup[] {
   const groups: DrinkRequirementGroup[] = [];
+  const seen = new Set<string>();
 
   for (const ingredient of drink.ingredients) {
-    if (isPantryIngredient(ingredient)) continue;
+    if (isFixedIngredient(ingredient)) continue;
 
     const rules = findRulesForIngredient(ingredient);
-    if (!rules.length) continue;
-
     const slashOptions = ingredient.split('/').filter((part) => part.trim().length > 0);
     const isOrGroup = slashOptions.length > 1 && rules.length > 1;
 
-    if (isOrGroup) {
-      groups.push({
-        label: rules.map((rule) => rule.label).join(' ou '),
-        ruleIds: rules.map((rule) => rule.id),
-      });
+    if (rules.length) {
+      const group: DrinkRequirementGroup = isOrGroup
+        ? {
+            label: rules.map((rule) => rule.label).join(' ou '),
+            ruleIds: rules.map((rule) => rule.id),
+            searchTerms: buildSearchTerms(ingredient, rules.map((rule) => rule.label).join(' ')),
+          }
+        : {
+            label: rules[0].label,
+            ruleIds: [rules[0].id],
+            searchTerms: buildSearchTerms(ingredient, rules[0].label),
+          };
+
+      const key = requirementKey(group);
+      if (!seen.has(key)) {
+        seen.add(key);
+        groups.push(group);
+      }
       continue;
     }
 
-    for (const rule of rules) {
-      if (!groups.some((group) => group.ruleIds.includes(rule.id))) {
-        groups.push({ label: rule.label, ruleIds: [rule.id] });
-      }
-    }
+    const label = ingredientDisplayLabel(ingredient);
+    const group: DrinkRequirementGroup = {
+      label,
+      ruleIds: [],
+      searchTerms: buildSearchTerms(ingredient, label),
+    };
+    const key = requirementKey(group);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    groups.push(group);
   }
 
   return groups;
@@ -142,14 +206,20 @@ function itemMatchesRule(item: AdegaItem, rule: SpiritRule): boolean {
   return patternMatch;
 }
 
-function findItemForGroup(items: AdegaItem[], group: DrinkRequirementGroup): AdegaItem | null {
+function itemMatchesGroup(item: AdegaItem, group: DrinkRequirementGroup): boolean {
+  if (item.quantity <= 0) return false;
+
   for (const ruleId of group.ruleIds) {
     const rule = SPIRIT_RULES.find((entry) => entry.id === ruleId);
-    if (!rule) continue;
-    const hit = items.find((item) => itemMatchesRule(item, rule));
-    if (hit) return hit;
+    if (rule && itemMatchesRule(item, rule)) return true;
   }
-  return null;
+
+  const haystack = itemHaystack(item);
+  return group.searchTerms.some((term) => haystack.includes(term));
+}
+
+function findItemForGroup(items: AdegaItem[], group: DrinkRequirementGroup): AdegaItem | null {
+  return items.find((item) => itemMatchesGroup(item, group)) ?? null;
 }
 
 export function matchDrinkToAdega(drink: ViniciusDrink, adegaItems: AdegaItem[]): DrinkAdegaMatch {
@@ -169,7 +239,7 @@ export function matchDrinkToAdega(drink: ViniciusDrink, adegaItems: AdegaItem[])
 
   let status: DrinkAdegaMatchStatus = 'missing';
   if (groups.length === 0) {
-    status = 'partial';
+    status = 'ready';
   } else if (missingLabels.length === 0) {
     status = 'ready';
   } else if (matches.length > 0) {
@@ -237,4 +307,10 @@ export function getDrinkSuggestions(
   ready.sort((a, b) => a.drink.title.localeCompare(b.drink.title, 'pt-BR'));
 
   return { ready, almost };
+}
+
+export function formatMissingIngredients(match: DrinkAdegaMatch): string {
+  if (match.missingLabels.length === 0) return '';
+  if (match.missingLabels.length === 1) return match.missingLabels[0];
+  return match.missingLabels.join(', ');
 }

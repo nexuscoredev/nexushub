@@ -1132,10 +1132,26 @@
   width: 100%;
   padding: 0.55rem 0.7rem;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.28);
-  color: var(--text);
+  border: 1px solid rgba(252, 211, 77, 0.2);
+  background-color: #141418;
+  color: #fff;
   font-size: 0.85rem;
+  color-scheme: dark;
+}
+
+.select {
+  padding-right: 2.35rem;
+  font-weight: 500;
+}
+
+.select option {
+  background-color: #161618;
+  color: #fafafa;
+}
+
+.select option:checked {
+  background-color: #422006;
+  color: #fde68a;
 }
 
 .textarea {
@@ -1146,8 +1162,10 @@
 .input:focus,
 .select:focus,
 .textarea:focus {
-  outline: 2px solid rgba(252, 211, 77, 0.35);
+  outline: 2px solid rgba(252, 211, 77, 0.45);
   outline-offset: 1px;
+  border-color: rgba(252, 211, 77, 0.35);
+  box-shadow: 0 0 0 3px rgba(252, 211, 77, 0.12);
 }
 
 .row2 {

@@ -38,8 +38,15 @@ export function DrinkAdegaAvailability({ match, compact = false }: DrinkAdegaAva
   return (
     <section className={styles.adegaMatchPanel} aria-label="Status na adega">
       <p className={styles.adegaMatchTitle}>
-        {match.status === 'partial' ? 'Falta algo na adega' : 'Ingredientes em falta na adega'}
+        {match.status === 'partial'
+          ? `Falta ${match.missingLabels.length} ${match.missingLabels.length === 1 ? 'item' : 'itens'} na adega`
+          : 'Ingredientes em falta na adega'}
       </p>
+      {match.missingLabels.length > 0 ? (
+        <p className={styles.adegaMatchMissingSummary}>
+          Falta: {match.missingLabels.join(', ')}
+        </p>
+      ) : null}
       <ul className={styles.adegaMatchList}>
         {match.matches.map((entry) => (
           <li key={`ok-${entry.groupLabel}`} className={styles.adegaMatchItemReady}>

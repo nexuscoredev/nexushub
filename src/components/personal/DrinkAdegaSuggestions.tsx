@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { getDrinkSuggestions } from '../../lib/drinkAdegaMatch';
+import { formatMissingIngredients, getDrinkSuggestions } from '../../lib/drinkAdegaMatch';
 import type { ViniciusDrink } from '../../lib/viniciusDrinksCarta';
 import type { AdegaItem } from '../../lib/viniciusAdega';
 import styles from './ViniciusDrinksCarta.module.css';
@@ -38,7 +38,7 @@ function SuggestionCard({
                 status === 'ready' ? styles.suggestBadgeReady : styles.suggestBadgeAlmost
               }
             >
-              {status === 'ready' ? 'Adega' : 'Quase'}
+              {status === 'ready' ? 'Adega' : 'Falta'}
             </span>
           </span>
           <span className={styles.suggestDetail}>{detail}</span>
@@ -67,8 +67,8 @@ export function DrinkAdegaSuggestions({
         <div className={styles.suggestionsHead}>
           <h3 className={styles.suggestionsTitle}>Sugestões da adega</h3>
           <p className={styles.suggestionsLead}>
-            Nenhum drink bate com os destilados cadastrados. Adicione whisky, vodka, gin ou outros
-            na adega para ver sugestões aqui.
+            Nenhum drink completo com o estoque da adega. Cadastre bebidas e ingredientes (limão,
+            xaropes, mixers…) para ver sugestões aqui.
           </p>
         </div>
       </section>
@@ -121,7 +121,11 @@ export function DrinkAdegaSuggestions({
                 key={drink.slug}
                 drink={drink}
                 status="almost"
-                detail={`Falta ${match.missingLabels.join(', ')}`}
+                detail={
+                  match.missingLabels.length > 0
+                    ? `Falta: ${formatMissingIngredients(match)}`
+                    : 'Ingredientes em falta'
+                }
                 onOpen={() => onOpenDrink(drink.slug)}
               />
             ))}

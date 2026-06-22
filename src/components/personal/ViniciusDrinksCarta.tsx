@@ -21,12 +21,12 @@ import {
 } from '../../lib/viniciusDrinksCartaStore';
 import {
   loadAdegaItems,
-  filterAdegaBeverages,
   syncAdegaItemsFromCloud,
   type AdegaItem,
 } from '../../lib/viniciusAdega';
 import {
   filterDrinksByAdega,
+  formatMissingIngredients,
   getDrinkSuggestions,
   matchDrinkToAdega,
   matchDrinksToAdega,
@@ -46,7 +46,7 @@ export function ViniciusDrinksCarta() {
   const editing = searchParams.get('edit') === '1';
 
   const [store, setStore] = useState<DrinkCartaStore>(() => loadDrinkCartaStore(userId));
-  const [adegaItems, setAdegaItems] = useState<AdegaItem[]>(() => filterAdegaBeverages(loadAdegaItems(userId)));
+  const [adegaItems, setAdegaItems] = useState<AdegaItem[]>(() => loadAdegaItems(userId));
   const [adegaFilter, setAdegaFilter] = useState<'all' | 'ready'>('all');
   const [editorSlug, setEditorSlug] = useState<string | null>(null);
   const bannerFileRef = useRef<HTMLInputElement>(null);
@@ -63,13 +63,13 @@ export function ViniciusDrinksCarta() {
   }, [userId]);
 
   useEffect(() => {
-    setAdegaItems(filterAdegaBeverages(loadAdegaItems(userId)));
+    setAdegaItems(loadAdegaItems(userId));
   }, [userId]);
 
   useEffect(() => {
     if (!userId) return;
     void syncAdegaItemsFromCloud(userId).then((cloudItems) => {
-      if (cloudItems) setAdegaItems(filterAdegaBeverages(cloudItems));
+      if (cloudItems) setAdegaItems(cloudItems);
     });
   }, [userId]);
 
@@ -347,7 +347,8 @@ export function ViniciusDrinksCarta() {
         <div className={styles.adegaEmptyState}>
           <p className={styles.adegaEmptyStateTitle}>Nenhum drink completo por enquanto</p>
           <p className={styles.adegaEmptyStateText}>
-            Adicione mais destilados na adega ou veja todas as receitas.
+            Só aparecem drinks com todos os ingredientes na adega (bebidas e despensa). Confira o
+            que falta em cada receita ou cadastre mais itens.
           </p>
           <button type="button" className={styles.adegaEmptyStateBtn} onClick={() => setAdegaFilter('all')}>
             Ver todas as receitas
@@ -400,11 +401,21 @@ export function ViniciusDrinksCarta() {
                     {!editing && match?.status === 'ready' ? (
                       <span className={styles.cardAdegaBadge}>Adega</span>
                     ) : null}
-                    {!editing && match?.status === 'partial' ? (
-                      <span className={styles.cardAdegaBadgePartial}>Quase</span>
+                    {!editing && match && match.status !== 'ready' && match.missingLabels.length > 0 ? (
+                      <span
+                        className={styles.cardAdegaBadgePartial}
+                        title={`Falta: ${formatMissingIngredients(match)}`}
+                      >
+                        Falta
+                      </span>
                     ) : null}
                   </span>
                   <span className={styles.cardTagline}>{drink.tagline}</span>
+                  {!editing && match && match.missingLabels.length > 0 ? (
+                    <span className={styles.cardAdegaMissing}>
+                      Falta: {formatMissingIngredients(match)}
+                    </span>
+                  ) : null}
                 </span>
                 <span className={styles.cardArrow} aria-hidden>
                   →
