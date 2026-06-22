@@ -23,8 +23,13 @@ type RouteHandler = (req: VercelRequest, res: VercelResponse) => Promise<unknown
 
 function routeSegments(req: VercelRequest): string[] {
   const raw = req.query.route;
-  if (!raw) return [];
-  return Array.isArray(raw) ? raw : [raw];
+  if (raw) return Array.isArray(raw) ? raw : [raw];
+
+  const path = (req.url ?? '').split('?')[0] ?? '';
+  const match = path.match(/^\/api\/(.+)$/);
+  if (match) return match[1].split('/').filter(Boolean);
+
+  return [];
 }
 
 function withParam(

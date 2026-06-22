@@ -29,7 +29,18 @@ function translateTodoistError(message: string): string {
 }
 
 async function parseJson<T>(res: Response): Promise<T & { error?: string; configured?: boolean }> {
-  const body = (await res.json()) as T & { error?: string; configured?: boolean };
+  const text = await res.text();
+  let body: T & { error?: string; configured?: boolean };
+  try {
+    body = JSON.parse(text) as T & { error?: string; configured?: boolean };
+  } catch {
+    const hint = text.trim().slice(0, 80);
+    throw new Error(
+      hint.startsWith('The page') || hint.startsWith('<!')
+        ? 'API indisponível no servidor. Recarregue a página ou tente de novo em instantes.'
+        : `Resposta inválida do servidor (${res.status}).`,
+    );
+  }
   if (!res.ok) {
     const raw = body.error ?? `Erro HTTP ${res.status}`;
     throw new Error(translateTodoistError(raw));
