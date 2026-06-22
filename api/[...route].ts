@@ -28,7 +28,6 @@ function routeSegments(req: VercelRequest): string[] {
 }
 
 function withParam(
-  req: VercelRequest,
   key: string,
   value: string,
   handler: RouteHandler,
@@ -47,27 +46,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (second === 'tasks') {
       if (third === 'quick') return handleTodoistTasksQuick(req, res);
       if (third === 'filter') return handleTodoistTasksFilter(req, res);
-      if (third) return withParam(req, 'taskId', third, handleTodoistTaskById)(req, res);
+      if (third) return withParam('taskId', third, handleTodoistTaskById)(req, res);
       return handleTodoistTasks(req, res);
     }
 
     if (second === 'projects') {
-      if (third) return withParam(req, 'projectId', third, handleTodoistProjectById)(req, res);
+      if (third) return withParam('projectId', third, handleTodoistProjectById)(req, res);
       return handleTodoistProjects(req, res);
     }
 
     if (second === 'sections') {
-      if (third) return withParam(req, 'sectionId', third, handleTodoistSectionById)(req, res);
+      if (third) return withParam('sectionId', third, handleTodoistSectionById)(req, res);
       return handleTodoistSections(req, res);
     }
 
     if (second === 'labels') {
-      if (third) return withParam(req, 'labelId', third, handleTodoistLabelById)(req, res);
+      if (third) return withParam('labelId', third, handleTodoistLabelById)(req, res);
       return handleTodoistLabels(req, res);
     }
 
     if (second === 'comments') {
-      if (third) return withParam(req, 'commentId', third, handleTodoistCommentById)(req, res);
+      if (third) return withParam('commentId', third, handleTodoistCommentById)(req, res);
       return handleTodoistComments(req, res);
     }
   }
