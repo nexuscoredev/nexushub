@@ -4,6 +4,7 @@ import {
   mapTodoistTask,
   todoistFetchCollaborators,
   todoistQuickAddTask,
+  type TodoistCollaborator,
 } from '../../_lib/todoist.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -34,7 +35,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       section_id: body.section_id?.trim(),
     });
 
-    let collaborators = [];
+    let collaborators: TodoistCollaborator[] = [];
     if (raw.project_id) {
       try {
         collaborators = await todoistFetchCollaborators(raw.project_id);
