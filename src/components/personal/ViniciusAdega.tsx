@@ -642,7 +642,13 @@ export function ViniciusAdega() {
                 {!isAdegaIngredient(viewingItem) ? (
                   <div className={styles.viewSpecItem}>
                     <dt>Status</dt>
-                    <dd>{viewingItem.opened ? 'Garrafa aberta' : 'Fechada'}</dd>
+                    <dd
+                      className={
+                        viewingItem.opened ? styles.viewSpecValueOpened : styles.viewSpecValueClosed
+                      }
+                    >
+                      {viewingItem.opened ? 'Garrafa aberta' : 'Fechada'}
+                    </dd>
                   </div>
                 ) : null}
               </dl>
