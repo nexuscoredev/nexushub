@@ -337,15 +337,20 @@ export function ViniciusAdega() {
       </header>
 
       <div className={styles.toolbar}>
-        <input
-          type="search"
-          className={styles.search}
-          placeholder="Buscar…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          aria-label="Buscar na adega"
-          enterKeyHint="search"
-        />
+        <label className={styles.searchWrap}>
+          <span className={styles.searchIcon} aria-hidden>
+            ⌕
+          </span>
+          <input
+            type="search"
+            className={styles.search}
+            placeholder="Buscar na coleção…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            aria-label="Buscar na adega"
+            enterKeyHint="search"
+          />
+        </label>
         {editing ? (
           <button type="button" className={`${styles.addBtn} ${styles.toolbarAddBtn}`} onClick={openCreate}>
             + Adicionar
@@ -381,6 +386,9 @@ export function ViniciusAdega() {
 
       {filtered.length === 0 ? (
         <div className={styles.empty}>
+          <span className={styles.emptyIcon} aria-hidden>
+            🍾
+          </span>
           <p className={styles.emptyTitle}>
             {items.length === 0 ? 'Adega vazia' : 'Nenhum item encontrado'}
           </p>
@@ -412,18 +420,27 @@ export function ViniciusAdega() {
                   aria-label={editing ? `Editar ${item.name}` : `Ver ${item.name}`}
                 >
                   <span className={styles.cardIcon} aria-hidden>
-                    {item.imageUrl ? (
-                      <img src={item.imageUrl} alt="" className={styles.cardPhoto} loading="lazy" decoding="async" />
-                    ) : (
-                      categoryEmoji(item.category)
-                    )}
+                    <span className={styles.cardIconInner}>
+                      {item.imageUrl ? (
+                        <img src={item.imageUrl} alt="" className={styles.cardPhoto} loading="lazy" decoding="async" />
+                      ) : (
+                        categoryEmoji(item.category)
+                      )}
+                    </span>
                   </span>
                   <div className={styles.cardBody}>
+                    <span className={styles.cardCategory}>
+                      <span aria-hidden>{categoryEmoji(item.category)}</span>
+                      {item.category}
+                    </span>
                     <h3 className={styles.cardTitle}>{item.name}</h3>
-                    <p className={styles.cardMeta}>
-                      {[item.brand, item.category].filter(Boolean).join(' · ')}
-                      {item.quantity > 1 ? ` · ${item.quantity} un.` : null}
-                    </p>
+                    {item.brand || item.quantity > 1 ? (
+                      <p className={styles.cardMeta}>
+                        {[item.brand, item.quantity > 1 ? `${item.quantity} un.` : null]
+                          .filter(Boolean)
+                          .join(' · ')}
+                      </p>
+                    ) : null}
                     <div className={styles.cardTags}>
                       {volume ? <span className={styles.tag}>{volume}</span> : null}
                       {item.abv != null ? <span className={styles.tag}>{item.abv}% vol.</span> : null}
@@ -433,7 +450,7 @@ export function ViniciusAdega() {
                     {!editing && item.notes ? <p className={styles.cardNotes}>{item.notes}</p> : null}
                   </div>
                   {!editing ? (
-                    <span className={styles.cardArrow} aria-hidden>
+                    <span className={styles.cardChevron} aria-hidden>
                       →
                     </span>
                   ) : null}
@@ -476,75 +493,74 @@ export function ViniciusAdega() {
       {viewingItem ? (
         <div className={styles.overlay} role="presentation" onClick={() => setViewingItem(null)}>
           <div
-            className={styles.dialog}
+            className={`${styles.dialog} ${styles.dialogView}`}
             role="dialog"
             aria-modal="true"
             aria-labelledby="adega-view-title"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className={styles.dialogHead}>
-              <div className={styles.dialogHandle} aria-hidden />
-              <div className={styles.dialogHeadRow}>
-                <h3 id="adega-view-title" className={styles.dialogTitle}>
+            <button
+              type="button"
+              className={styles.viewCloseFloating}
+              onClick={() => setViewingItem(null)}
+              aria-label="Fechar"
+            >
+              ×
+            </button>
+            <div className={styles.viewHeroPremium}>
+              {viewingItem.imageUrl ? (
+                <img
+                  src={viewingItem.imageUrl}
+                  alt=""
+                  className={styles.viewPhotoPremium}
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <span className={styles.viewEmojiPremium} aria-hidden>
+                  {categoryEmoji(viewingItem.category)}
+                </span>
+              )}
+              <div className={styles.viewHeroScrim} aria-hidden />
+              <div className={styles.viewHeroCaption}>
+                <span className={styles.viewCategoryPill}>
+                  <span aria-hidden>{categoryEmoji(viewingItem.category)}</span>
+                  {viewingItem.category}
+                </span>
+                <h3 id="adega-view-title" className={styles.viewHeroTitle}>
                   {viewingItem.name}
                 </h3>
-                <button
-                  type="button"
-                  className={styles.dialogClose}
-                  onClick={() => setViewingItem(null)}
-                  aria-label="Fechar"
-                >
-                  ×
-                </button>
+                {viewingItem.brand ? <p className={styles.viewHeroBrand}>{viewingItem.brand}</p> : null}
               </div>
             </div>
             <div className={styles.viewBody}>
-              <div className={styles.viewHero}>
-                {viewingItem.imageUrl ? (
-                  <img
-                    src={viewingItem.imageUrl}
-                    alt=""
-                    className={styles.viewPhoto}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                ) : (
-                  <span className={styles.viewEmoji} aria-hidden>
-                    {categoryEmoji(viewingItem.category)}
-                  </span>
-                )}
-              </div>
-              <dl className={styles.viewMeta}>
-                {viewingItem.brand ? (
-                  <>
-                    <dt>Marca</dt>
-                    <dd>{viewingItem.brand}</dd>
-                  </>
-                ) : null}
-                <dt>Categoria</dt>
-                <dd>{viewingItem.category}</dd>
-                <dt>Quantidade</dt>
-                <dd>{viewingItem.quantity}</dd>
+              <dl className={styles.viewSpecGrid}>
+                <div className={styles.viewSpecItem}>
+                  <dt>Quantidade</dt>
+                  <dd>{viewingItem.quantity}</dd>
+                </div>
                 {formatVolume(viewingItem.volumeMl) ? (
-                  <>
+                  <div className={styles.viewSpecItem}>
                     <dt>Volume</dt>
                     <dd>{formatVolume(viewingItem.volumeMl)}</dd>
-                  </>
+                  </div>
                 ) : null}
                 {viewingItem.abv != null ? (
-                  <>
+                  <div className={styles.viewSpecItem}>
                     <dt>Teor alcoólico</dt>
                     <dd>{viewingItem.abv}% vol.</dd>
-                  </>
+                  </div>
                 ) : null}
                 {viewingItem.origin ? (
-                  <>
+                  <div className={styles.viewSpecItem}>
                     <dt>Origem</dt>
                     <dd>{viewingItem.origin}</dd>
-                  </>
+                  </div>
                 ) : null}
-                <dt>Status</dt>
-                <dd>{viewingItem.opened ? 'Garrafa aberta' : 'Fechada'}</dd>
+                <div className={styles.viewSpecItem}>
+                  <dt>Status</dt>
+                  <dd>{viewingItem.opened ? 'Garrafa aberta' : 'Fechada'}</dd>
+                </div>
               </dl>
               {viewingItem.notes ? (
                 <div className={styles.viewNotes}>
