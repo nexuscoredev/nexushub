@@ -811,24 +811,33 @@ export function ViniciusAdega() {
               ) : null}
             </div>
             <div className={styles.viewFoot}>
-              <button
-                type="button"
-                className={styles.googleSearchBtn}
-                onClick={() =>
-                  openGoogleSearch(
-                    adegaItemGoogleQuery({
-                      name: viewingItem.name,
-                      brand: viewingItem.brand,
-                      category: viewingItem.category,
-                    }),
-                  )
-                }
-              >
-                Buscar no Google
-              </button>
-              <button type="button" className={styles.saveBtn} onClick={() => setViewingItem(null)}>
-                Fechar
-              </button>
+              <div className={styles.viewFootActions}>
+                <button
+                  type="button"
+                  className={styles.viewFootSecondary}
+                  onClick={() =>
+                    openGoogleSearch(
+                      adegaItemGoogleQuery({
+                        name: viewingItem.name,
+                        brand: viewingItem.brand,
+                        category: viewingItem.category,
+                      }),
+                    )
+                  }
+                >
+                  <span className={styles.viewFootIcon} aria-hidden>
+                    ⌕
+                  </span>
+                  Google
+                </button>
+                <button
+                  type="button"
+                  className={styles.viewFootPrimary}
+                  onClick={() => setViewingItem(null)}
+                >
+                  Fechar
+                </button>
+              </div>
             </div>
           </div>
         </div>
