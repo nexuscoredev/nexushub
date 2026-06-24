@@ -1,4 +1,5 @@
 import type { CoffeeCapsuleSystem } from './viniciusCoffeeStock';
+import { capsuleSystemIcon } from './viniciusCoffeeStock';
 
 export type CoffeeBrewMethod = 'capsula' | 'filtro' | 'prensa' | 'espresso-manual' | 'outro';
 
@@ -24,9 +25,7 @@ export function coffeeThumbPath(slug: string): string {
 }
 
 function systemThumb(system: CoffeeCapsuleSystem): string {
-  return system === 'dolce-gusto'
-    ? '/img/personal/coffee/systems/dolce-gusto.svg'
-    : '/img/personal/coffee/systems/tres-coracoes.svg';
+  return capsuleSystemIcon(system) ?? '/img/personal/coffee/systems/dolce-gusto.svg';
 }
 
 export const VINICIUS_COFFEE_RECIPES: ViniciusCoffeeRecipe[] = [

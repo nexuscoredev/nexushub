@@ -38,6 +38,7 @@ import {
   normalizeCoffeeStockInput,
   saveCoffeeStock,
   syncCoffeeStockFromCloud,
+  type CoffeeCapsuleSystem,
   type CoffeeStockInput,
   type CoffeeStockItem,
 } from '../../lib/viniciusCoffeeStock';
@@ -467,7 +468,7 @@ export function ViniciusCoffee() {
         <>
           <div className={styles.stockHead}>
             <p className={styles.stockLead}>
-              Cápsulas Dolce Gusto, Três Corações, grãos e equipamentos.
+              Cápsulas Dolce Gusto, Três Corações, Nespresso, grãos e equipamentos.
             </p>
             {editing ? (
               <button type="button" className={styles.addBtn} onClick={openStockCreate}>
@@ -745,7 +746,7 @@ function CoffeeNewRecipeDialog({
 }) {
   const [title, setTitle] = useState('');
   const [tagline, setTagline] = useState('');
-  const [system, setSystem] = useState<'dolce-gusto' | 'tres-coracoes' | ''>('dolce-gusto');
+  const [system, setSystem] = useState<CoffeeCapsuleSystem | ''>('dolce-gusto');
   const [ingredients, setIngredients] = useState('');
   const [steps, setSteps] = useState('');
 
@@ -787,6 +788,7 @@ function CoffeeNewRecipeDialog({
             <option value="">Nenhum / outro método</option>
             <option value="dolce-gusto">Dolce Gusto</option>
             <option value="tres-coracoes">Três Corações</option>
+            <option value="nespresso">Nespresso</option>
           </select>
         </label>
         <label className={styles.field}>

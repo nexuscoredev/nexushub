@@ -1,5 +1,11 @@
 import type { ViniciusCoffeeRecipe } from './viniciusCoffeeCarta';
-import type { CoffeeStockItem } from './viniciusCoffeeStock';
+import type { CoffeeStockItem, CoffeeCapsuleSystem } from './viniciusCoffeeStock';
+
+const CAPSULE_STOCK_LABELS: Record<CoffeeCapsuleSystem, string> = {
+  'dolce-gusto': 'Cápsula Dolce Gusto',
+  'tres-coracoes': 'Cápsula Três Corações',
+  nespresso: 'Cápsula Nespresso',
+};
 
 export type CoffeeStockMatchStatus = 'ready' | 'partial' | 'missing';
 
@@ -43,8 +49,7 @@ export function matchCoffeeRecipeToStock(
 
   if (recipe.method === 'capsula' && recipe.capsuleSystem) {
     const hit = hasStockCapsule(available, recipe.capsuleSystem);
-    const label =
-      recipe.capsuleSystem === 'dolce-gusto' ? 'Cápsula Dolce Gusto' : 'Cápsula Três Corações';
+    const label = CAPSULE_STOCK_LABELS[recipe.capsuleSystem];
     if (hit) matches.push({ label, itemName: hit.name });
     else missingLabels.push(label);
   } else if (recipe.method === 'filtro' || recipe.method === 'prensa') {

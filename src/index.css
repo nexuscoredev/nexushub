@@ -67,6 +67,16 @@
   --pf-border: rgba(30, 73, 214, 0.16);
   --pf-border-strong: rgba(30, 73, 214, 0.32);
   --pf-glow: var(--accent-glow);
+
+  /* Squircle (superellipse) — fallback quando corner-shape não existe */
+  --squircle-k: 1.2;
+  --squircle-fallback: 0.892;
+}
+
+@supports (corner-shape: superellipse(1)) {
+  :root {
+    --squircle-fallback: 1;
+  }
 }
 
 [data-theme='light'] {

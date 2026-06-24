@@ -18,6 +18,11 @@ export const COFFEE_CAPSULE_CATALOGS: Record<CoffeeCapsuleSystem, CoffeeCapsuleC
     catalogUrl: 'https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/',
     site: 'cafe3coracoes.com.br',
   },
+  nespresso: {
+    label: 'Nespresso',
+    catalogUrl: 'https://www.nespresso.com/br/pt/order/capsules/original',
+    site: 'nespresso.com',
+  },
 };
 
 export function resolveCoffeeCapsuleSystem(category: string): CoffeeCapsuleSystem | undefined {

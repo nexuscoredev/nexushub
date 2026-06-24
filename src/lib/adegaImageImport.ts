@@ -23,7 +23,7 @@ async function authToken(): Promise<string | null> {
 export async function searchAdegaImagesApi(
   query: string,
   signal?: AbortSignal,
-  options?: { capsuleSystem?: 'dolce-gusto' | 'tres-coracoes' },
+  options?: { capsuleSystem?: 'dolce-gusto' | 'tres-coracoes' | 'nespresso' },
 ): Promise<ImageSearchResponse> {
   const q = query.trim();
   if (q.length < 2) {

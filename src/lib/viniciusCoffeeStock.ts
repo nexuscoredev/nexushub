@@ -7,7 +7,7 @@ import {
 const STORAGE_PREFIX = 'nexus-pessoal-coffee-stock';
 const UPDATED_AT_SUFFIX = ':updated-at';
 
-export type CoffeeCapsuleSystem = 'dolce-gusto' | 'tres-coracoes';
+export type CoffeeCapsuleSystem = 'dolce-gusto' | 'tres-coracoes' | 'nespresso';
 
 export const COFFEE_CAPSULE_SYSTEMS: {
   id: CoffeeCapsuleSystem;
@@ -20,11 +20,17 @@ export const COFFEE_CAPSULE_SYSTEMS: {
     label: 'Três Corações',
     icon: '/img/personal/coffee/systems/tres-coracoes.svg',
   },
+  {
+    id: 'nespresso',
+    label: 'Nespresso',
+    icon: '/img/personal/coffee/systems/nespresso.svg',
+  },
 ];
 
 export const COFFEE_STOCK_CATEGORY_PRESETS = [
   'Cápsula Dolce Gusto',
   'Cápsula Três Corações',
+  'Cápsula Nespresso',
   'Grão',
   'Moído',
   'Solúvel',
@@ -103,7 +109,8 @@ function isValidItem(value: unknown): value is CoffeeStockItem {
     (item.imageUrl == null || (typeof item.imageUrl === 'string' && isValidImageUrl(item.imageUrl))) &&
     (item.capsuleSystem == null ||
       item.capsuleSystem === 'dolce-gusto' ||
-      item.capsuleSystem === 'tres-coracoes')
+      item.capsuleSystem === 'tres-coracoes' ||
+      item.capsuleSystem === 'nespresso')
   );
 }
 
@@ -157,6 +164,7 @@ export function createCoffeeStockId(): string {
 export function categoryToCapsuleSystem(category: string): CoffeeCapsuleSystem | undefined {
   const key = category.toLowerCase();
   if (key.includes('dolce')) return 'dolce-gusto';
+  if (key.includes('nespresso')) return 'nespresso';
   if (key.includes('três') || key.includes('tres') || key.includes('corac')) return 'tres-coracoes';
   return undefined;
 }
@@ -189,6 +197,7 @@ export function normalizeCoffeeStockInput(input: CoffeeStockInput): CoffeeStockI
 export function categoryEmoji(category: string): string {
   const key = category.toLowerCase();
   if (key.includes('dolce')) return '☕';
+  if (key.includes('nespresso')) return '◼';
   if (key.includes('três') || key.includes('tres')) return '❤️';
   if (key.includes('grão') || key.includes('grao')) return '🫘';
   if (key.includes('moído') || key.includes('moido')) return '🟤';

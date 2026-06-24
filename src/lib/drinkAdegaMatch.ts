@@ -90,6 +90,25 @@ function splitSlashAlternatives(text: string): string[] {
   return parts.length > 0 ? parts : [text];
 }
 
+function splitOrAlternatives(text: string): string[] {
+  const parts = text.split(/\s+ou\s+/i).map((part) => part.trim()).filter(Boolean);
+  if (parts.length <= 1) return [text];
+  if (/^\d/.test(parts[0]!) && parts.slice(1).every((part) => /^\d/.test(part))) {
+    return [text];
+  }
+  return parts;
+}
+
+function stripPreparationClause(text: string): string {
+  return text
+    .replace(
+      /,\s*(?:bem\s+)?(?:gelad[oa]s?|fri[oa]s?|em\s+temperatura\s+ambiente|à\s+temperatura\s+ambiente|com\s+gelo|sem\s+gelo|para\s+decorar|para\s+servir).*$/i,
+      '',
+    )
+    .replace(/[;,.\s]+$/, '')
+    .trim();
+}
+
 function findRulesForToken(token: string): SpiritRule[] {
   const normalized = normalizeText(token);
   return SPIRIT_RULES.filter((rule) =>
@@ -98,6 +117,12 @@ function findRulesForToken(token: string): SpiritRule[] {
 }
 
 function findRulesForIngredient(ingredient: string): SpiritRule[] {
+  const orOptions = splitOrAlternatives(ingredient);
+  if (orOptions.length > 1) {
+    const rules = orOptions.flatMap((option) => findRulesForToken(option));
+    return [...new Map(rules.map((rule) => [rule.id, rule])).values()];
+  }
+
   const slashOptions = splitSlashAlternatives(ingredient)
     .map((part) => part.replace(/.*\bde\b\s+/i, '').trim())
     .filter(Boolean);
@@ -163,7 +188,12 @@ function itemMatchesSpiritVariant(haystack: string, variant: SpiritVariant): boo
 function ingredientDisplayLabel(ingredient: string): string {
   let text = ingredient.trim();
   text = text.replace(/\([^)]*\)/g, '').trim();
-  text = text.replace(/[;,.\s]+$/, '');
+  text = stripPreparationClause(text);
+
+  const orParts = splitOrAlternatives(text);
+  if (orParts.length > 1) {
+    text = orParts.map((part) => stripPreparationClause(part)).find(Boolean) ?? text;
+  }
 
   if (text.includes('/')) {
     const parts = splitSlashAlternatives(text)
@@ -173,6 +203,7 @@ function ingredientDisplayLabel(ingredient: string): string {
   }
 
   text = text
+    .replace(/^ou\s+/i, '')
     // "60ml de", "1 dose de" — unidade obrigatória (evita cortar só o número em "60ml")
     .replace(
       /^(\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*(?:ml|cl|doses?|colher(?:es)?|gotas?|pitadas?|lata(?:s)?|garrafa(?:s)?|un\.?|g|kg|\bl\b)\s*(?:de\s+)?/i,
@@ -185,6 +216,8 @@ function ingredientDisplayLabel(ingredient: string): string {
     .replace(/^de\s+/i, '')
     .replace(/\s+ou\s+(?:\d+(?:\/\d+)?|meio(?:\s+\w+)?)\s*$/i, '')
     .trim();
+
+  text = stripPreparationClause(text);
 
   if (!text) return ingredient.trim().slice(0, 48);
   return text.charAt(0).toUpperCase() + text.slice(1);
@@ -205,7 +238,9 @@ function buildSearchTerms(ingredient: string, label: string): string[] {
   const deMatch = ingredient.match(/\bde\s+(.+?)(?:[;,.\s(]|$)/i);
   if (deMatch) add(deMatch[1]);
 
-  for (const token of splitSlashAlternatives(ingredient).concat(ingredient.split(/[,;]/))) {
+  for (const token of splitSlashAlternatives(ingredient)
+    .concat(splitOrAlternatives(ingredient))
+    .concat(ingredient.split(/[,;]/))) {
     const cleaned = token.replace(/.*\bde\b\s+/i, '').trim();
     if (cleaned.length >= 3) add(cleaned);
   }
@@ -233,7 +268,9 @@ export function extractDrinkRequirementGroups(drink: ViniciusDrink): DrinkRequir
 
     const rules = findRulesForIngredient(ingredient);
     const slashOptions = splitSlashAlternatives(ingredient).filter((part) => part.trim().length > 0);
-    const isOrGroup = slashOptions.length > 1 && rules.length > 1;
+    const orOptions = splitOrAlternatives(ingredient).filter((part) => part.trim().length > 0);
+    const isOrGroup =
+      (slashOptions.length > 1 && rules.length > 1) || (orOptions.length > 1 && rules.length > 1);
 
     if (rules.length) {
       const primaryRule = pickPrimaryRule(ingredient, rules);
@@ -247,9 +284,11 @@ export function extractDrinkRequirementGroups(drink: ViniciusDrink): DrinkRequir
           }
         : {
             label:
-              variant || displayLabel.length > primaryRule.label.length
+              primaryRule.id === 'cerveja' && /cerveja/i.test(displayLabel)
                 ? displayLabel
-                : primaryRule.label,
+                : variant || displayLabel.length > primaryRule.label.length
+                  ? displayLabel
+                  : primaryRule.label,
             ruleIds: [primaryRule.id],
             searchTerms: buildSearchTerms(ingredient, displayLabel),
             variant,
@@ -364,6 +403,11 @@ function itemMatchesGenericGroup(item: AdegaItem, group: DrinkRequirementGroup):
   if (/coca[\s-]*cola/.test(label) && /coca/.test(name) && /cola/.test(name)) return true;
 
   if (/ginger\s*beer/.test(label) && /ginger/.test(name)) return true;
+
+  if (/cerveja/.test(label) && /cerveja|pilsen|lager|puro\s*malte/.test(name)) {
+    if (/clar[ao]/.test(label) && /escur[ao]|pret[ao]|stout|porter|black/.test(name)) return false;
+    return true;
+  }
 
   if (/agua\s*com\s*gas/.test(label)) {
     if (/tonica|t[oô]nica/.test(name) && !/gas|gaseificada|soda/.test(name)) return false;
