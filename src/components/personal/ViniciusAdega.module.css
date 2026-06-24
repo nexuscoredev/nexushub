@@ -142,15 +142,21 @@
 }
 
 .adegaNav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   padding: 0.5rem 0.55rem 0.55rem;
+  margin-bottom: 0.15rem;
   border-radius: var(--squircle-radius-bar);
   corner-shape: superellipse(var(--squircle-k));
   border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.055);
+  background: rgba(10, 10, 12, 0.92);
   box-shadow: var(--squircle-inset);
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
 }
 
 .filtersWrap {
@@ -159,17 +165,11 @@
 
 .filters {
   display: flex;
-  flex-wrap: nowrap;
-  gap: 0.4rem;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  padding: 0.15rem 0.05rem 0.05rem;
-}
-
-.filters::-webkit-scrollbar {
-  display: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.4rem;
+  overflow: visible;
+  padding: 0.1rem 0 0;
 }
 
 .filterLabel {
@@ -180,9 +180,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  flex-shrink: 0;
-  min-height: 2.5rem;
-  padding: 0.45rem 0.75rem;
+  flex: 0 1 auto;
+  min-height: 2.35rem;
+  padding: 0.4rem 0.68rem;
   border-radius: var(--squircle-radius-chip);
   corner-shape: superellipse(var(--squircle-k));
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1473,13 +1473,10 @@
     padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
   }
 
-  .toolbar {
-    position: sticky;
+  .adegaNav {
     top: 0;
-    z-index: 2;
-    margin-inline: 0;
-    padding: 0.35rem 0 0.55rem;
-    background: linear-gradient(180deg, rgba(12, 12, 14, 0.98) 75%, transparent);
+    margin-inline: max(-0.15rem, calc(-1 * env(safe-area-inset-left, 0px)));
+    padding-inline: max(0.55rem, env(safe-area-inset-left, 0px));
   }
 
   .toolbarAddBtn {
@@ -1544,20 +1541,6 @@
 
   .adegaEditing .cardActions {
     display: grid;
-  }
-
-  .filterLabel {
-    display: none;
-  }
-
-  .filterBtn {
-    min-width: 2.75rem;
-    justify-content: center;
-    padding-inline: 0.65rem;
-  }
-
-  .filterBtn:first-child .filterLabel {
-    display: inline;
   }
 
   .row2 {
@@ -1661,17 +1644,6 @@
   .viewSpecValueClosed {
     font-size: 0.74rem;
     padding: 0.16rem 0.45rem;
-  }
-}
-
-@media (max-width: 639px) and (min-width: 400px) {
-  .filterLabel {
-    display: inline;
-  }
-
-  .filterBtn {
-    min-width: auto;
-    justify-content: flex-start;
   }
 }
 
