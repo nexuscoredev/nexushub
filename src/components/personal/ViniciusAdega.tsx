@@ -18,6 +18,8 @@ import { AdegaItemPersonalMetaPanel } from './AdegaItemPersonalMetaPanel';
 import { AdegaBeverageMediaPanel } from './AdegaBeverageMediaPanel';
 import { AdegaIngredientMediaPanel, type IngredientMediaMode } from './AdegaIngredientMediaPanel';
 import { AdegaItemCards } from './AdegaItemCards';
+import { AdegaViewMenu } from './AdegaViewMenu';
+import { loadAdegaViewMode, saveAdegaViewMode, type AdegaViewMode } from '../../lib/adegaView';
 import {
   ADEGA_CATEGORY_PRESETS,
   ADEGA_INGREDIENT_CATEGORY_PRESETS,
@@ -197,6 +199,7 @@ export function ViniciusAdega() {
   const [items, setItems] = useState<AdegaItem[]>(() => loadAdegaItems(userId));
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<AdegaViewMode>(() => loadAdegaViewMode(userId));
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [viewingItem, setViewingItem] = useState<AdegaItem | null>(null);
@@ -227,6 +230,15 @@ export function ViniciusAdega() {
   useEffect(() => {
     setItems(loadAdegaItems(userId));
   }, [userId]);
+
+  useEffect(() => {
+    setViewMode(loadAdegaViewMode(userId));
+  }, [userId]);
+
+  const handleViewModeChange = (mode: AdegaViewMode) => {
+    setViewMode(mode);
+    if (userId) saveAdegaViewMode(userId, mode);
+  };
 
   useEffect(() => {
     if (!userId) return;
@@ -541,53 +553,58 @@ export function ViniciusAdega() {
         ) : null}
       </header>
 
-      <div className={styles.toolbar}>
-        <label className={styles.searchWrap}>
-          <span className={styles.searchIcon} aria-hidden>
-            ⌕
-          </span>
-          <input
-            type="search"
-            className={styles.search}
-            placeholder="Buscar bebidas e ingredientes…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            aria-label="Buscar na adega"
-            enterKeyHint="search"
-          />
-        </label>
-        {editing ? (
-          <button type="button" className={`${styles.addBtn} ${styles.toolbarAddBtn}`} onClick={() => openCreate('beverage')}>
-            + Bebida
-          </button>
-        ) : null}
-      </div>
-
-      {stats.categories.length > 0 ? (
-        <div className={styles.filtersWrap}>
-          <div className={styles.filters} role="group" aria-label="Filtrar por categoria">
-            <button
-              type="button"
-              className={`${styles.filterBtn} ${categoryFilter == null ? styles.filterBtnActive : ''}`}
-              onClick={() => setCategoryFilter(null)}
-            >
-              Todas
+      <nav className={styles.adegaNav} aria-label="Busca e filtros da adega">
+        <div className={styles.toolbar}>
+          <label className={styles.searchWrap}>
+            <span className={styles.searchIcon} aria-hidden>
+              ⌕
+            </span>
+            <input
+              type="search"
+              className={styles.search}
+              placeholder="Buscar bebidas e ingredientes…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              aria-label="Buscar na adega"
+              enterKeyHint="search"
+            />
+          </label>
+          {!editing ? (
+            <AdegaViewMenu viewMode={viewMode} onViewModeChange={handleViewModeChange} />
+          ) : null}
+          {editing ? (
+            <button type="button" className={`${styles.addBtn} ${styles.toolbarAddBtn}`} onClick={() => openCreate('beverage')}>
+              + Bebida
             </button>
-            {stats.categories.map((category) => (
-              <button
-                key={category}
-                type="button"
-                className={`${styles.filterBtn} ${categoryFilter === category ? styles.filterBtnActive : ''}`}
-                onClick={() => setCategoryFilter(category)}
-                title={category}
-              >
-                <span aria-hidden>{categoryEmoji(category)}</span>
-                <span className={styles.filterLabel}>{category}</span>
-              </button>
-            ))}
-          </div>
+          ) : null}
         </div>
-      ) : null}
+
+        {stats.categories.length > 0 ? (
+          <div className={styles.filtersWrap}>
+            <div className={styles.filters} role="group" aria-label="Filtrar por categoria">
+              <button
+                type="button"
+                className={`${styles.filterBtn} ${categoryFilter == null ? styles.filterBtnActive : ''}`}
+                onClick={() => setCategoryFilter(null)}
+              >
+                Todas
+              </button>
+              {stats.categories.map((category) => (
+                <button
+                  key={category}
+                  type="button"
+                  className={`${styles.filterBtn} ${categoryFilter === category ? styles.filterBtnActive : ''}`}
+                  onClick={() => setCategoryFilter(category)}
+                  title={category}
+                >
+                  <span aria-hidden>{categoryEmoji(category)}</span>
+                  <span className={styles.filterLabel}>{category}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </nav>
 
       <section className={styles.section} aria-labelledby="adega-beverages-title">
         <div className={styles.sectionHead}>
@@ -602,6 +619,7 @@ export function ViniciusAdega() {
         <AdegaItemCards
           items={filteredBeverages}
           editing={editing}
+          viewMode={viewMode}
           drinkCountByItemId={drinkCountByItemId}
           emptyIcon="🍾"
           emptyTitle={beverages.length === 0 ? 'Nenhuma bebida ainda' : 'Nenhuma bebida encontrada'}
@@ -645,7 +663,7 @@ export function ViniciusAdega() {
         <AdegaItemCards
           items={filteredIngredients}
           editing={editing}
-          compact
+          viewMode={viewMode}
           drinkCountByItemId={drinkCountByItemId}
           emptyIcon="🍋"
           emptyTitle={ingredients.length === 0 ? 'Despensa vazia' : 'Nenhum ingrediente encontrado'}
