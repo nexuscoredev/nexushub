@@ -27,7 +27,7 @@ const SPIRIT_RULES: SpiritRule[] = [
   {
     id: 'vermouth',
     label: 'Vermute',
-    categories: ['Vinho', 'Licor'],
+    categories: ['Vinho', 'Licor', 'Vermouth'],
     patterns: [/vermouth|vermute/i],
   },
   {
@@ -175,7 +175,7 @@ function ingredientDisplayLabel(ingredient: string): string {
   text = text
     // "60ml de", "1 dose de" — unidade obrigatória (evita cortar só o número em "60ml")
     .replace(
-      /^(\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*(?:ml|cl|doses?|colher(?:es)?|gotas?|pitadas?|lata(?:s)?|garrafa(?:s)?|un\.?|g|kg|l)\s*(?:de\s+)?/i,
+      /^(\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*(?:ml|cl|doses?|colher(?:es)?|gotas?|pitadas?|lata(?:s)?|garrafa(?:s)?|un\.?|g|kg|\bl\b)\s*(?:de\s+)?/i,
       '',
     )
     .replace(/^(?:suco de\s+)?(\d+\/\d+\s+|\d+\s+ou\s+\d+\/?\s*)/i, '')
@@ -282,26 +282,146 @@ function itemHaystack(item: AdegaItem): string {
   return normalizeText(`${item.name} ${item.brand ?? ''} ${item.category}`);
 }
 
+function itemNameBrandHaystack(item: AdegaItem): string {
+  return normalizeText(`${item.name} ${item.brand ?? ''}`);
+}
+
+function licorSubtypeMatches(groupLabel: string, item: AdegaItem): boolean {
+  const label = normalizeText(groupLabel);
+  const name = itemNameBrandHaystack(item);
+
+  if (/campari/.test(label)) return /campari/.test(name);
+  if (/cointreau/.test(label)) return /cointreau/.test(name);
+  if (/triple\s*sec/.test(label)) return /triple\s*sec|cointreau/.test(name) && !/blue|cura[cç]au|curacao/.test(name);
+  if (/cura[cç]au|curacao|blue/.test(label)) return /cura[cç]au|curacao|blue/.test(name);
+  if (/aperol/.test(label)) return /aperol/.test(name);
+  if (/\bbitter\b/.test(label)) return /bitter|campari|aperol/.test(name);
+
+  return true;
+}
+
+function compactAlnum(value: string): string {
+  return normalizeText(value).replace(/[\s\-_/]/g, '');
+}
+
+function labelsShareLimeFamily(label: string, name: string): boolean {
+  const limeRe = /lim[aã]o|limoes/;
+  return limeRe.test(label) && limeRe.test(name);
+}
+
+const PANTRY_CATEGORY_RE =
+  /fruta|erva|especiaria|xarope|mel|suco|pur[eê]|refrigerante|mixer|gelo|[aá]gua/i;
+
+function isPantryItem(item: AdegaItem): boolean {
+  return item.kind === 'ingredient' || PANTRY_CATEGORY_RE.test(item.category);
+}
+
+function isSpiritBeverage(item: AdegaItem): boolean {
+  return item.kind !== 'ingredient';
+}
+
 function itemMatchesRule(item: AdegaItem, rule: SpiritRule): boolean {
-  if (item.quantity <= 0) return false;
+  if (item.quantity <= 0 || !isSpiritBeverage(item)) return false;
 
   const haystack = itemHaystack(item);
+  const nameBrand = itemNameBrandHaystack(item);
   const categoryMatch = rule.categories.some(
     (category) => normalizeText(item.category) === normalizeText(category),
   );
 
-  const patternMatch = rule.patterns.some((pattern) => pattern.test(haystack));
+  const namePatternMatch = rule.patterns.some((pattern) => pattern.test(nameBrand));
+  const haystackPatternMatch = rule.patterns.some((pattern) => pattern.test(haystack));
 
   if (rule.id === 'sake') {
-    return patternMatch;
+    return namePatternMatch || haystackPatternMatch;
   }
 
-  if (rule.id === 'licor' || rule.id === 'vermouth' || rule.id === 'lillet') {
-    return patternMatch || (categoryMatch && rule.patterns.some((pattern) => pattern.test(haystack)));
+  // Licor: só nome/marca — categoria "Licor" sozinha gerava falso Campari/Cointreau.
+  if (rule.id === 'licor') {
+    return namePatternMatch;
+  }
+
+  if (rule.id === 'vermouth' || rule.id === 'lillet') {
+    return namePatternMatch || haystackPatternMatch;
   }
 
   if (categoryMatch) return true;
-  return patternMatch;
+  return namePatternMatch || haystackPatternMatch;
+}
+
+function itemMatchesGenericGroup(item: AdegaItem, group: DrinkRequirementGroup): boolean {
+  if (item.quantity <= 0 || !isPantryItem(item)) return false;
+
+  const name = normalizeText(item.name);
+  const label = normalizeText(group.label);
+  const nameCompact = compactAlnum(item.name);
+  const labelCompact = compactAlnum(group.label);
+
+  if (labelCompact.length >= 5 && nameCompact.includes(labelCompact)) return true;
+
+  if (labelsShareLimeFamily(label, name) && !/refrigerante/.test(label)) return true;
+
+  if (/coca[\s-]*cola/.test(label) && /coca/.test(name) && /cola/.test(name)) return true;
+
+  if (/ginger\s*beer/.test(label) && /ginger/.test(name)) return true;
+
+  if (/agua\s*com\s*gas/.test(label)) {
+    if (/tonica|t[oô]nica/.test(name) && !/gas|gaseificada|soda/.test(name)) return false;
+    return /agua\s*com\s*gas|agua\s*gaseificada|soda\s*water|club\s*soda/.test(name);
+  }
+
+  if (/refrigerante/.test(label) && /lim[aã]o/.test(label)) {
+    return /refrigerante|soda|sprite|7up|schweppes/.test(name) && /lim[aã]o|limao/.test(name);
+  }
+
+  const skipTerms = new Set([
+    'com',
+    'para',
+    'de',
+    'das',
+    'dos',
+    'inteiro',
+    'thaiti',
+    'siciliano',
+    'fatia',
+    'folhas',
+    'suco',
+  ]);
+  const significantTerms = group.searchTerms.filter(
+    (term) => term.length >= 5 && !skipTerms.has(term),
+  );
+  if (significantTerms.length > 0) {
+    return significantTerms.some((term) => haystackIncludesTerm(name, term));
+  }
+
+  const mediumTerms = group.searchTerms.filter((term) => term.length >= 4 && !skipTerms.has(term));
+  return mediumTerms.length > 0 && mediumTerms.every((term) => haystackIncludesTerm(name, term));
+}
+
+function scoreItemForGroup(item: AdegaItem, group: DrinkRequirementGroup): number {
+  if (!itemMatchesGroup(item, group)) return -1;
+
+  const name = itemNameBrandHaystack(item);
+  const label = normalizeText(group.label);
+  let score = 0;
+
+  if (compactAlnum(group.label).length >= 5 && compactAlnum(item.name).includes(compactAlnum(group.label))) {
+    score += 100;
+  }
+
+  if (label.length >= 4 && name.includes(label)) score += 80;
+
+  if (group.ruleIds.includes('licor')) {
+    if (/cura[cç]au|curacao|blue/.test(label) && /cura[cç]au|curacao|blue/.test(name)) score += 60;
+    if (/campari/.test(label) && /campari/.test(name)) score += 60;
+    if (/cointreau/.test(label) && /cointreau/.test(name)) score += 60;
+    if (/triple/.test(label) && /triple|cointreau/.test(name) && !/blue|cura[cç]au|curacao/.test(name)) score += 60;
+    if (/aperol/.test(label) && /aperol/.test(name)) score += 60;
+  }
+
+  if (group.variant) score += 10;
+
+  return score;
 }
 
 function itemMatchesGroup(item: AdegaItem, group: DrinkRequirementGroup): boolean {
@@ -309,20 +429,39 @@ function itemMatchesGroup(item: AdegaItem, group: DrinkRequirementGroup): boolea
 
   const haystack = itemHaystack(item);
 
-  if (group.variant && !itemMatchesSpiritVariant(haystack, group.variant)) {
+  if (group.ruleIds.length > 0) {
+    if (!isSpiritBeverage(item)) return false;
+
+    if (group.variant && !itemMatchesSpiritVariant(haystack, group.variant)) {
+      return false;
+    }
+
+    for (const ruleId of group.ruleIds) {
+      const rule = SPIRIT_RULES.find((entry) => entry.id === ruleId);
+      if (!rule || !itemMatchesRule(item, rule)) continue;
+      if (rule.id === 'licor' && !licorSubtypeMatches(group.label, item)) continue;
+      return true;
+    }
+
     return false;
   }
 
-  for (const ruleId of group.ruleIds) {
-    const rule = SPIRIT_RULES.find((entry) => entry.id === ruleId);
-    if (rule && itemMatchesRule(item, rule)) return true;
-  }
-
-  return group.searchTerms.some((term) => haystackIncludesTerm(haystack, term));
+  return itemMatchesGenericGroup(item, group);
 }
 
 function findItemForGroup(items: AdegaItem[], group: DrinkRequirementGroup): AdegaItem | null {
-  return items.find((item) => itemMatchesGroup(item, group)) ?? null;
+  let best: AdegaItem | null = null;
+  let bestScore = -1;
+
+  for (const item of items) {
+    const score = scoreItemForGroup(item, group);
+    if (score > bestScore) {
+      bestScore = score;
+      best = item;
+    }
+  }
+
+  return best;
 }
 
 /** Itens na adega da mesma família, mas que não satisfazem a variante exata pedida na receita. */
