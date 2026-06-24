@@ -105,12 +105,11 @@
   gap: 0.55rem;
   padding: 0 0.85rem;
   min-height: 2.85rem;
-  --squircle-r: 2.25rem;
-  border-radius: calc(var(--squircle-r) * var(--squircle-fallback));
+  border-radius: var(--squircle-radius-chip);
   corner-shape: superellipse(var(--squircle-k));
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.04);
-  box-shadow: inset 0 -3px 4px rgba(0, 0, 0, 0.22);
+  box-shadow: var(--squircle-inset);
   transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
@@ -143,16 +142,15 @@
 }
 
 .adegaNav {
-  --squircle-r: 3.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
-  padding: 0.45rem;
-  border-radius: calc(var(--squircle-r) * var(--squircle-fallback));
+  gap: 0.5rem;
+  padding: 0.5rem 0.55rem 0.55rem;
+  border-radius: var(--squircle-radius-bar);
   corner-shape: superellipse(var(--squircle-k));
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
-  box-shadow: inset 0 -3px 4px rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow: var(--squircle-inset);
 }
 
 .filtersWrap {
@@ -167,7 +165,7 @@
   overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  padding: 0 0.15rem 0.15rem;
+  padding: 0.15rem 0.05rem 0.05rem;
 }
 
 .filters::-webkit-scrollbar {
@@ -185,8 +183,7 @@
   flex-shrink: 0;
   min-height: 2.5rem;
   padding: 0.45rem 0.75rem;
-  --squircle-r: 2.5rem;
-  border-radius: calc(var(--squircle-r) * var(--squircle-fallback));
+  border-radius: var(--squircle-radius-chip);
   corner-shape: superellipse(var(--squircle-k));
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.04);
@@ -195,7 +192,7 @@
   font-weight: 500;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  box-shadow: inset 0 -3px 4px rgba(0, 0, 0, 0.28);
+  box-shadow: var(--squircle-inset);
   transition:
     background 0.15s ease,
     border-color 0.15s ease,
@@ -465,7 +462,7 @@
 .cardPhoto {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
   display: block;
 }
@@ -2586,8 +2583,8 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 0.55rem;
-  padding: 0.65rem;
+  gap: 0;
+  padding: 0;
 }
 
 .cardView_tiles .cardIcon {
@@ -2599,6 +2596,14 @@
 .cardView_tiles .cardIconInner {
   width: 100%;
   height: 100%;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: #0a0a0a;
+}
+
+.cardView_tiles .cardBody {
+  padding: 0.55rem 0.65rem 0.65rem;
 }
 
 .cardView_tiles .cardTitle {
@@ -2637,8 +2642,8 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 0.45rem;
-  padding: 0.55rem 0.45rem;
+  gap: 0;
+  padding: 0;
 }
 
 .cardView_icons-xl .cardIcon,
@@ -2653,6 +2658,35 @@
   width: 100%;
   height: auto;
   aspect-ratio: 1 / 1;
+}
+
+.cardView_icons-xl .cardIconInner,
+.cardView_icons-lg .cardIconInner,
+.cardView_icons-md .cardIconInner,
+.cardView_icons-sm .cardIconInner {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: #0a0a0a;
+}
+
+.cardView_icons-xl .cardBody,
+.cardView_icons-lg .cardBody,
+.cardView_icons-md .cardBody,
+.cardView_icons-sm .cardBody {
+  align-items: center;
+  width: 100%;
+  padding: 0.45rem 0.5rem 0.55rem;
+}
+
+.cardView_tiles,
+.cardView_icons-xl,
+.cardView_icons-lg,
+.cardView_icons-md,
+.cardView_icons-sm {
+  overflow: hidden;
 }
 
 .cardView_icons-xl .cardTitle {
@@ -2682,11 +2716,11 @@
   display: none;
 }
 
-.cardView_icons-xl .cardBody,
-.cardView_icons-lg .cardBody,
-.cardView_icons-md .cardBody,
-.cardView_icons-sm .cardBody {
-  align-items: center;
+.cardView_icons-xl .cardTitleRow,
+.cardView_icons-lg .cardTitleRow,
+.cardView_icons-md .cardTitleRow,
+.cardView_icons-sm .cardTitleRow {
+  justify-content: center;
 }
 
 .listView_list {
@@ -2704,6 +2738,14 @@
 .cardView_list .cardIcon {
   width: 2.75rem;
   height: 2.75rem;
+}
+
+.cardView_list .cardIconInner {
+  border-radius: 0.45rem;
+}
+
+.cardView_list .cardPhoto {
+  object-fit: cover;
 }
 
 .cardView_list .cardCategory,

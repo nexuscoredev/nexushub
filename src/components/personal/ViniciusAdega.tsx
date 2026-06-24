@@ -420,17 +420,6 @@ export function ViniciusAdega() {
     persist(items.filter((item) => item.id !== id));
   };
 
-  const handleToggleStock = (item: AdegaItem) => {
-    const now = new Date().toISOString();
-    persist(
-      items.map((entry) =>
-        entry.id === item.id
-          ? { ...entry, quantity: entry.quantity > 0 ? 0 : 1, updatedAt: now }
-          : entry,
-      ),
-    );
-  };
-
   const openCartaDrink = (slug: string) => {
     setViewingItem(null);
     navigate(`/pessoal?drinks=1&drink=${encodeURIComponent(slug)}`);
@@ -638,7 +627,6 @@ export function ViniciusAdega() {
           onCardClick={handleCardClick}
           onEdit={openEdit}
           onDelete={(id) => handleDelete(id, 'beverage')}
-          onToggleStock={!editing ? handleToggleStock : undefined}
         />
       </section>
 
@@ -682,7 +670,6 @@ export function ViniciusAdega() {
           onCardClick={handleCardClick}
           onEdit={openEdit}
           onDelete={(id) => handleDelete(id, 'ingredient')}
-          onToggleStock={!editing ? handleToggleStock : undefined}
         />
       </section>
 

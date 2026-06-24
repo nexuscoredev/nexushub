@@ -68,14 +68,18 @@
   --pf-border-strong: rgba(30, 73, 214, 0.32);
   --pf-glow: var(--accent-glow);
 
-  /* Squircle (superellipse) — fallback quando corner-shape não existe */
+  /* Squircle (superellipse) — Framer-style */
   --squircle-k: 1.2;
-  --squircle-fallback: 0.892;
+  /* Fallback visível (retângulo arredondado, não pill) */
+  --squircle-radius-chip: 0.875rem;
+  --squircle-radius-bar: 1.35rem;
+  --squircle-inset: inset 0 -3px 4px rgba(0, 0, 0, 0.28);
 }
 
 @supports (corner-shape: superellipse(1)) {
   :root {
-    --squircle-fallback: 1;
+    --squircle-radius-chip: 2.5rem;
+    --squircle-radius-bar: 2.75rem;
   }
 }
 

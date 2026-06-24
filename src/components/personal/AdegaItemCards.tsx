@@ -22,7 +22,6 @@ type AdegaItemCardsProps = {
   onCardClick: (item: AdegaItem) => void;
   onEdit: (item: AdegaItem) => void;
   onDelete: (id: string) => void;
-  onToggleStock?: (item: AdegaItem) => void;
 };
 
 function ItemThumb({ item }: { item: AdegaItem }) {
@@ -53,7 +52,6 @@ function AdegaItemCard({
   onCardClick,
   onEdit,
   onDelete,
-  onToggleStock,
 }: {
   item: AdegaItem;
   editing: boolean;
@@ -62,7 +60,6 @@ function AdegaItemCard({
   onCardClick: (item: AdegaItem) => void;
   onEdit: (item: AdegaItem) => void;
   onDelete: (id: string) => void;
-  onToggleStock?: (item: AdegaItem) => void;
 }) {
   const isIngredient = isAdegaIngredient(item);
   const volume = formatVolume(item.volumeMl);
@@ -127,19 +124,6 @@ function AdegaItemCard({
           </span>
         ) : null}
       </button>
-      {!editing && onToggleStock ? (
-        <button
-          type="button"
-          className={styles.stockToggleBtn}
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleStock(item);
-          }}
-          aria-label={outOfStock ? `Repor estoque de ${item.name}` : `Marcar ${item.name} como sem estoque`}
-        >
-          {outOfStock ? 'Repor' : 'Sem estoque'}
-        </button>
-      ) : null}
       {editing ? (
         <div className={styles.cardActions}>
           <button type="button" className={styles.actionBtn} onClick={() => onEdit(item)}>
@@ -170,7 +154,6 @@ export function AdegaItemCards({
   onCardClick,
   onEdit,
   onDelete,
-  onToggleStock,
 }: AdegaItemCardsProps) {
   if (items.length === 0) {
     return (
@@ -257,7 +240,6 @@ export function AdegaItemCards({
           onCardClick={onCardClick}
           onEdit={onEdit}
           onDelete={onDelete}
-          onToggleStock={onToggleStock}
         />
       ))}
     </ul>
