@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -42,6 +42,7 @@ import {
   type CoffeeStockItem,
 } from '../../lib/viniciusCoffeeStock';
 import { DrinkThumb } from './DrinkThumb';
+import { CoffeeStockPhotoTools } from './CoffeeStockPhotoTools';
 import styles from './ViniciusCoffee.module.css';
 
 type CoffeeTab = 'carta' | 'estoque';
@@ -54,6 +55,8 @@ type StockFormState = {
   intensity: string;
   quantity: string;
   notes: string;
+  imageUrl: string;
+  imageUrlInput: string;
 };
 
 const EMPTY_STOCK_FORM: StockFormState = {
@@ -64,6 +67,8 @@ const EMPTY_STOCK_FORM: StockFormState = {
   intensity: '',
   quantity: '10',
   notes: '',
+  imageUrl: '',
+  imageUrlInput: '',
 };
 
 export function ViniciusCoffee() {
@@ -86,6 +91,8 @@ export function ViniciusCoffee() {
   const [stockForm, setStockForm] = useState<StockFormState>(EMPTY_STOCK_FORM);
   const [recipeEditorOpen, setRecipeEditorOpen] = useState(false);
   const [newRecipeOpen, setNewRecipeOpen] = useState(false);
+  const stockPhotoInputRef = useRef<HTMLInputElement>(null);
+  const draftStockIdRef = useRef(createCoffeeStockId());
 
   useEffect(() => {
     setStore(loadCoffeeCartaStore(userId));
@@ -180,6 +187,7 @@ export function ViniciusCoffee() {
   };
 
   const openStockCreate = () => {
+    draftStockIdRef.current = createCoffeeStockId();
     setEditingStockId(null);
     setStockForm(EMPTY_STOCK_FORM);
     setStockDialogOpen(true);
@@ -198,6 +206,8 @@ export function ViniciusCoffee() {
       intensity: item.intensity != null ? String(item.intensity) : '',
       quantity: String(item.quantity),
       notes: item.notes ?? '',
+      imageUrl: item.imageUrl ?? '',
+      imageUrlInput: item.imageUrl ?? '',
     });
     setStockDialogOpen(true);
   };
@@ -215,6 +225,7 @@ export function ViniciusCoffee() {
       quantity: Number(stockForm.quantity),
       notes: stockForm.notes || undefined,
       capsuleSystem: categoryToCapsuleSystem(category),
+      imageUrl: stockForm.imageUrl || undefined,
     };
     const normalized = normalizeCoffeeStockInput(input);
     if (!normalized) return;
@@ -236,7 +247,7 @@ export function ViniciusCoffee() {
       persistStock([
         ...stock,
         {
-          id: createCoffeeStockId(),
+          id: draftStockIdRef.current,
           ...normalized,
           createdAt: now,
           updatedAt: now,
@@ -494,7 +505,11 @@ export function ViniciusCoffee() {
                     onClick={() => (editing ? openStockEdit(item) : undefined)}
                   >
                     <span className={styles.stockEmoji} aria-hidden>
-                      {item.iconEmoji ?? categoryEmoji(item.category)}
+                      {item.imageUrl ? (
+                        <img src={item.imageUrl} alt="" className={styles.stockThumb} />
+                      ) : (
+                        item.iconEmoji ?? categoryEmoji(item.category)
+                      )}
                     </span>
                     <span className={styles.stockInfo}>
                       <span className={styles.stockName}>{item.name}</span>
@@ -609,6 +624,28 @@ export function ViniciusCoffee() {
                 onChange={(e) => setStockForm((f) => ({ ...f, notes: e.target.value }))}
               />
             </label>
+
+            <CoffeeStockPhotoTools
+              name={stockForm.name}
+              brand={stockForm.brand}
+              category={stockForm.category}
+              customCategory={stockForm.customCategory}
+              imageUrl={stockForm.imageUrl}
+              imageUrlInput={stockForm.imageUrlInput}
+              userId={userId}
+              itemId={editingStockId ?? draftStockIdRef.current}
+              photoInputRef={stockPhotoInputRef}
+              onImageUrlInputChange={(value) =>
+                setStockForm((f) => ({ ...f, imageUrlInput: value }))
+              }
+              onImageUrl={(url) =>
+                setStockForm((f) => ({ ...f, imageUrl: url, imageUrlInput: url }))
+              }
+              onClearPhoto={() =>
+                setStockForm((f) => ({ ...f, imageUrl: '', imageUrlInput: '' }))
+              }
+            />
+
             <div className={styles.dialogActions}>
               <button type="button" className={styles.cancelBtn} onClick={() => setStockDialogOpen(false)}>
                 Cancelar

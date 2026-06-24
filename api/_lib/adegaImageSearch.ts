@@ -64,15 +64,22 @@ export async function searchWikimediaImages(
 export async function searchGoogleCseImages(
   query: string,
   limit = 8,
+  options?: { site?: string; querySuffix?: string },
 ): Promise<ImageSearchHit[]> {
   const apiKey = process.env.GOOGLE_CSE_API_KEY;
   const cx = process.env.GOOGLE_CSE_ID;
   if (!apiKey || !cx) return [];
 
+  const trimmed = query.trim();
+  const suffix = options?.querySuffix ?? 'garrafa bebida';
+  const q = options?.site
+    ? `${trimmed} site:${options.site}`
+    : `${trimmed} ${suffix}`;
+
   const url = new URL('https://www.googleapis.com/customsearch/v1');
   url.searchParams.set('key', apiKey);
   url.searchParams.set('cx', cx);
-  url.searchParams.set('q', `${query.trim()} garrafa bebida`);
+  url.searchParams.set('q', q);
   url.searchParams.set('searchType', 'image');
   url.searchParams.set('num', String(Math.min(limit, 10)));
   url.searchParams.set('safe', 'active');
@@ -100,7 +107,56 @@ export async function searchGoogleCseImages(
     }));
 }
 
-export async function searchAdegaImages(query: string, limit = 8): Promise<ImageSearchHit[]> {
+import {
+  coffeeCapsuleBrandHint,
+  coffeeCapsuleSite,
+  parseCoffeeCapsuleSystem,
+  type CoffeeCapsuleSystem,
+} from './coffeeCapsuleImageSearch.js';
+
+export async function searchCoffeeCapsuleImages(
+  query: string,
+  capsuleSystem: CoffeeCapsuleSystem,
+  limit = 10,
+): Promise<ImageSearchHit[]> {
+  const site = coffeeCapsuleSite(capsuleSystem);
+  const brand = coffeeCapsuleBrandHint(capsuleSystem);
+
+  const official = await searchGoogleCseImages(query, limit, {
+    site,
+    querySuffix: 'cápsula',
+  });
+
+  const seen = new Set(official.map((hit) => hit.imageUrl));
+  if (official.length >= Math.min(limit, 6)) {
+    return official.slice(0, limit);
+  }
+
+  const broader = await searchGoogleCseImages(`${query} ${brand} cápsula`, limit, {
+    querySuffix: '',
+  });
+
+  const merged = [...official];
+  for (const hit of broader) {
+    if (seen.has(hit.imageUrl)) continue;
+    seen.add(hit.imageUrl);
+    merged.push(hit);
+    if (merged.length >= limit) break;
+  }
+
+  return merged;
+}
+
+export async function searchAdegaImages(
+  query: string,
+  limit = 8,
+  options?: { capsuleSystem?: CoffeeCapsuleSystem | null },
+): Promise<ImageSearchHit[]> {
+  if (options?.capsuleSystem) {
+    const capsuleHits = await searchCoffeeCapsuleImages(query, options.capsuleSystem, limit);
+    if (capsuleHits.length > 0) return capsuleHits;
+  }
+
   const [wikimedia, google] = await Promise.all([
     searchWikimediaImages(query, limit),
     searchGoogleCseImages(query, limit),

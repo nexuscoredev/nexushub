@@ -23,6 +23,7 @@ async function authToken(): Promise<string | null> {
 export async function searchAdegaImagesApi(
   query: string,
   signal?: AbortSignal,
+  options?: { capsuleSystem?: 'dolce-gusto' | 'tres-coracoes' },
 ): Promise<ImageSearchResponse> {
   const q = query.trim();
   if (q.length < 2) {
@@ -35,6 +36,7 @@ export async function searchAdegaImagesApi(
   }
 
   const params = new URLSearchParams({ q });
+  if (options?.capsuleSystem) params.set('capsuleSystem', options.capsuleSystem);
   const res = await fetch(`/api/adega/image-search?${params.toString()}`, {
     headers: { Authorization: `Bearer ${token}` },
     signal,
@@ -61,6 +63,7 @@ export async function importAdegaImageFromRemoteUrl(
   imageUrl: string,
   userId: string,
   itemId: string,
+  storageFolder: 'adega' | 'coffee' = 'adega',
 ): Promise<string> {
   const token = await authToken();
   if (!token) {
@@ -84,9 +87,11 @@ export async function importAdegaImageFromRemoteUrl(
   const data = (await res.json()) as { mime: string; base64: string };
   const blob = base64ToBlob(data.base64, data.mime);
   const ext = data.mime === 'image/png' ? 'png' : data.mime === 'image/webp' ? 'webp' : 'jpg';
+  const relativePath =
+    storageFolder === 'coffee' ? `coffee/stock/${itemId}.${ext}` : `adega/${itemId}.${ext}`;
 
   if (userId && supabase) {
-    return uploadPersonalMediaBlob(userId, `adega/${itemId}.${ext}`, blob, data.mime);
+    return uploadPersonalMediaBlob(userId, relativePath, blob, data.mime);
   }
 
   return new Promise((resolve, reject) => {

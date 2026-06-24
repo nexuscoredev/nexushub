@@ -39,16 +39,22 @@ import {
 } from '../../lib/viniciusAdega';
 import {
   filterDrinksByAdega,
-  formatMissingIngredients,
   getDrinkSuggestions,
   matchDrinkToAdega,
   matchDrinksToAdega,
 } from '../../lib/drinkAdegaMatch';
 import { suggestDrinkSubstitutions } from '../../lib/drinkSubstitutions';
+import {
+  loadDrinkCartaViewMode,
+  saveDrinkCartaViewMode,
+  type DrinkCartaViewMode,
+} from '../../lib/drinkCartaView';
 import { DrinkAdegaAvailability } from './DrinkAdegaAvailability';
 import { DrinkThumb } from './DrinkThumb';
 import { DrinkAdegaSuggestions } from './DrinkAdegaSuggestions';
 import { DrinkCartaDiscoverBar, type DiscoverFilters } from './DrinkCartaDiscoverBar';
+import { DrinkCartaList } from './DrinkCartaList';
+import { DrinkCartaViewMenu } from './DrinkCartaViewMenu';
 import { DrinkCartaEditor } from './DrinkCartaEditor';
 import { DrinkGuidedPrep } from './DrinkGuidedPrep';
 import { DrinkNewSuggestions } from './DrinkNewSuggestions';
@@ -83,6 +89,7 @@ export function ViniciusDrinksCarta() {
   const [editorSlug, setEditorSlug] = useState<string | null>(null);
   const [newDrinksOpen, setNewDrinksOpen] = useState(false);
   const [guidedPrepOpen, setGuidedPrepOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<DrinkCartaViewMode>(() => loadDrinkCartaViewMode(userId));
   const bannerFileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -99,6 +106,15 @@ export function ViniciusDrinksCarta() {
   useEffect(() => {
     setAdegaItems(loadAdegaItems(userId));
   }, [userId]);
+
+  useEffect(() => {
+    setViewMode(loadDrinkCartaViewMode(userId));
+  }, [userId]);
+
+  const handleViewModeChange = (mode: DrinkCartaViewMode) => {
+    setViewMode(mode);
+    if (userId) saveDrinkCartaViewMode(userId, mode);
+  };
 
   useEffect(() => {
     if (!userId) return;
@@ -491,6 +507,12 @@ export function ViniciusDrinksCarta() {
         </div>
       ) : null}
 
+      {!editing ? (
+        <div className={styles.cartaViewToolbar}>
+          <DrinkCartaViewMenu viewMode={viewMode} onViewModeChange={handleViewModeChange} />
+        </div>
+      ) : null}
+
       {filters.adegaMode !== 'all' && visibleDrinks.length === 0 ? (
         <div className={styles.adegaEmptyState}>
           <p className={styles.adegaEmptyStateTitle}>
@@ -512,94 +534,16 @@ export function ViniciusDrinksCarta() {
           </button>
         </div>
       ) : (
-      <ul className={styles.list}>
-        {visibleDrinks.map((drink) => {
-          const match = adegaMatches.get(drink.slug);
-          const drinkIsFavorite = favoriteSlugs.has(drink.slug);
-          const drinkMeta = getDrinkMeta(store, drink.slug);
-          return (
-          <li key={drink.slug}>
-            {editing ? (
-              <div className={`${styles.card} ${styles.cardEditing}`}>
-                <button
-                  type="button"
-                  className={styles.cardEditMedia}
-                  onClick={() => setEditorSlug(drink.slug)}
-                  aria-label={`Editar ${drink.title}`}
-                >
-                  <span className={styles.cardMedia}>
-                    <DrinkThumb src={drink.imageUrl} alt="" className={styles.cardMediaImg} />
-                  </span>
-                  <span className={styles.cardEditBadge}>✎</span>
-                </button>
-                <button
-                  type="button"
-                  className={styles.cardEditBody}
-                  onClick={() => setEditorSlug(drink.slug)}
-                >
-                  <span className={styles.cardTitle}>{drink.title}</span>
-                  <span className={styles.cardTagline}>{drink.tagline}</span>
-                </button>
-                <button
-                  type="button"
-                  className={styles.cardPreviewBtn}
-                  onClick={() => openDrink(drink.slug)}
-                  aria-label={`Ver ${drink.title}`}
-                >
-                  →
-                </button>
-              </div>
-            ) : (
-              <button type="button" className={styles.card} onClick={() => openDrink(drink.slug)}>
-                <span className={styles.cardMedia}>
-                  <DrinkThumb src={drink.imageUrl} alt="" className={styles.cardMediaImg} />
-                </span>
-                <span className={styles.cardBody}>
-                  <span className={styles.cardTitleRow}>
-                    <span className={styles.cardTitle}>{drink.title}</span>
-                    {drinkIsFavorite ? (
-                      <span className={styles.favoriteBtnActive} aria-hidden>
-                        ★
-                      </span>
-                    ) : null}
-                    {drinkMeta.tried ? (
-                      <span className={styles.cardTriedBadge} title="Já provei">
-                        ✓
-                      </span>
-                    ) : null}
-                    {drinkMeta.rating ? (
-                      <span className={styles.cardRatingBadge} title={`Nota ${drinkMeta.rating}`}>
-                        ★{drinkMeta.rating}
-                      </span>
-                    ) : null}
-                    {match?.status === 'ready' ? (
-                      <span className={styles.cardAdegaBadge}>Adega</span>
-                    ) : null}
-                    {match && match.status !== 'ready' && match.missingLabels.length > 0 ? (
-                      <span
-                        className={styles.cardAdegaBadgePartial}
-                        title={`Falta: ${formatMissingIngredients(match)}`}
-                      >
-                        Falta
-                      </span>
-                    ) : null}
-                  </span>
-                  <span className={styles.cardTagline}>{drink.tagline}</span>
-                  {match && match.missingLabels.length > 0 ? (
-                    <span className={styles.cardAdegaMissing}>
-                      Falta: {formatMissingIngredients(match)}
-                    </span>
-                  ) : null}
-                </span>
-                <span className={styles.cardArrow} aria-hidden>
-                  →
-                </span>
-              </button>
-            )}
-          </li>
-          );
-        })}
-      </ul>
+        <DrinkCartaList
+          drinks={visibleDrinks}
+          store={store}
+          viewMode={viewMode}
+          editing={editing}
+          adegaMatches={adegaMatches}
+          favoriteSlugs={favoriteSlugs}
+          onOpenDrink={openDrink}
+          onEditDrink={setEditorSlug}
+        />
       )}
 
       <DrinkCartaEditor

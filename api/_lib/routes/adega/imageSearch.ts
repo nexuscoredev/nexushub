@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { verifyHubUser } from '../../hubAuth.js';
 import { searchAdegaImages } from '../../adegaImageSearch.js';
+import { parseCoffeeCapsuleSystem } from '../../coffeeCapsuleImageSearch.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET') {
@@ -13,6 +14,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const q = typeof req.query.q === 'string' ? req.query.q.trim() : '';
+  const capsuleSystem = parseCoffeeCapsuleSystem(
+    typeof req.query.capsuleSystem === 'string' ? req.query.capsuleSystem : undefined,
+  );
   if (q.length < 2) {
     return res.status(400).json({ error: 'Informe pelo menos 2 caracteres.' });
   }
@@ -21,7 +25,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const results = await searchAdegaImages(q, 10);
+    const results = await searchAdegaImages(q, 10, { capsuleSystem });
     const googleConfigured = Boolean(process.env.GOOGLE_CSE_API_KEY && process.env.GOOGLE_CSE_ID);
     return res.status(200).json({
       results,
