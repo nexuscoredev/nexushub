@@ -167,6 +167,11 @@ export function ViniciusDrinksCarta() {
     [activeDrink, adegaItems],
   );
 
+  useEffect(() => {
+    if (!activeSlug) return;
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [activeSlug]);
+
   const setEditing = (next: boolean) => {
     const params = new URLSearchParams(searchParams);
     params.set('drinks', '1');

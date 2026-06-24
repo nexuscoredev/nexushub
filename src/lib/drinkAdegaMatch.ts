@@ -213,6 +213,12 @@ function buildSearchTerms(ingredient: string, label: string): string[] {
   return [...terms];
 }
 
+function haystackIncludesTerm(haystack: string, term: string): boolean {
+  if (!term) return false;
+  const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`\\b${escaped}\\b`, 'i').test(haystack);
+}
+
 function requirementKey(group: DrinkRequirementGroup): string {
   if (group.ruleIds.length) return group.ruleIds.slice().sort().join('|');
   return normalizeText(group.label);
@@ -312,7 +318,7 @@ function itemMatchesGroup(item: AdegaItem, group: DrinkRequirementGroup): boolea
     if (rule && itemMatchesRule(item, rule)) return true;
   }
 
-  return group.searchTerms.some((term) => haystack.includes(term));
+  return group.searchTerms.some((term) => haystackIncludesTerm(haystack, term));
 }
 
 function findItemForGroup(items: AdegaItem[], group: DrinkRequirementGroup): AdegaItem | null {

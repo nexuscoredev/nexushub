@@ -696,6 +696,7 @@ export function ViniciusAdega() {
             >
               ×
             </button>
+            <div className={styles.viewSheetHandle} aria-hidden />
             <div className={styles.viewHeroPremium}>
               {hasAdegaItemPhoto(viewingItem) ? (
                 <img
@@ -722,8 +723,9 @@ export function ViniciusAdega() {
                 {viewingItem.brand ? <p className={styles.viewHeroBrand}>{viewingItem.brand}</p> : null}
               </div>
             </div>
-            <div className={styles.viewBody}>
-              <dl className={styles.viewSpecGrid}>
+            <div className={styles.viewScrollPane}>
+              <section className={styles.viewSectionCard} aria-label="Detalhes do item">
+                <dl className={styles.viewSpecGrid}>
                 <div className={styles.viewSpecItem}>
                   <dt>Quantidade</dt>
                   <dd>
@@ -763,11 +765,12 @@ export function ViniciusAdega() {
                   </div>
                 ) : null}
               </dl>
+              </section>
               {viewingItem.notes ? (
-                <div className={styles.viewNotes}>
+                <section className={styles.viewSectionCard}>
                   <p className={styles.viewNotesLabel}>Notas</p>
                   <p className={styles.viewNotesText}>{viewingItem.notes}</p>
-                </div>
+                </section>
               ) : null}
               {!editing ? (
                 <AdegaItemPersonalMetaPanel
@@ -781,16 +784,16 @@ export function ViniciusAdega() {
                 />
               ) : null}
               {viewingUnlock && viewingUnlock.drinksReady > 0 ? (
-                <div className={styles.viewUnlockSection}>
+                <section className={`${styles.viewSectionCard} ${styles.viewUnlockSection}`}>
                   <p className={styles.viewNotesLabel}>
                     Se repor este item, desbloqueia {viewingUnlock.drinksReady}{' '}
                     {viewingUnlock.drinksReady === 1 ? 'drink' : 'drinks'}
                   </p>
                   <p className={styles.viewUnlockList}>{viewingUnlock.drinkTitles.join(', ')}</p>
-                </div>
+                </section>
               ) : null}
               {viewingDrinks.length > 0 ? (
-                <div className={styles.viewDrinksSection}>
+                <section className={`${styles.viewSectionCard} ${styles.viewDrinksSection}`}>
                   <p className={styles.viewNotesLabel}>
                     Drinks na carta ({viewingDrinks.length})
                   </p>
@@ -807,7 +810,7 @@ export function ViniciusAdega() {
                       </li>
                     ))}
                   </ul>
-                </div>
+                </section>
               ) : null}
             </div>
             <div className={styles.viewFoot}>

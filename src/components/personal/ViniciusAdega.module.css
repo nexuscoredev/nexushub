@@ -790,7 +790,10 @@
 /* —— Premium item view —— */
 .dialogView {
   position: relative;
-  max-height: min(94vh, 44rem);
+  display: flex;
+  flex-direction: column;
+  height: min(94dvh, 44rem);
+  max-height: min(94dvh, 44rem);
   border: 1px solid rgba(252, 211, 77, 0.22);
   background:
     radial-gradient(ellipse 80% 50% at 50% 0%, rgba(180, 83, 9, 0.18), transparent 55%),
@@ -798,6 +801,15 @@
   box-shadow:
     0 -16px 48px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.viewSheetHandle {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 0.28rem;
+  margin: 0.55rem auto 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
 }
 
 .viewCloseFloating {
@@ -832,8 +844,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 14rem;
-  max-height: 22rem;
+  min-height: 10rem;
+  max-height: 13rem;
   overflow: hidden;
   background:
     radial-gradient(ellipse 90% 80% at 50% 20%, rgba(252, 211, 77, 0.1), transparent 60%),
@@ -843,11 +855,12 @@
 .viewPhotoPremium {
   width: 100%;
   height: 100%;
-  min-height: 14rem;
-  max-height: 22rem;
+  min-height: 10rem;
+  max-height: 13rem;
   object-fit: contain;
   object-position: center;
   display: block;
+  background: rgba(0, 0, 0, 0.35);
 }
 
 .viewEmojiPremium {
@@ -900,12 +913,58 @@
 .viewHeroTitle {
   margin: 0;
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 1.55rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: #fff;
   line-height: 1.2;
   letter-spacing: 0.01em;
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
+}
+
+.viewScrollPane {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.75rem max(0.85rem, env(safe-area-inset-right)) 0.65rem
+    max(0.85rem, env(safe-area-inset-left));
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(252, 211, 77, 0.55) rgba(255, 255, 255, 0.06);
+}
+
+.viewScrollPane::-webkit-scrollbar {
+  width: 8px;
+}
+
+.viewScrollPane::-webkit-scrollbar-track {
+  margin: 0.2rem 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.viewScrollPane::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(252, 211, 77, 0.5);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  min-height: 2.5rem;
+}
+
+.viewScrollPane::-webkit-scrollbar-thumb:hover {
+  background: rgba(252, 211, 77, 0.75);
+}
+
+.viewSectionCard {
+  flex-shrink: 0;
+  padding: 0.8rem 0.85rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(252, 211, 77, 0.12);
+  background: rgba(255, 255, 255, 0.035);
 }
 
 .viewHeroBrand {
@@ -950,37 +1009,37 @@
 
 .viewSpecGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.7rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
   margin: 0;
 }
 
 .viewSpecItem {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  padding: 0.65rem 0.75rem;
-  border-radius: 0.65rem;
-  border: 1px solid rgba(252, 211, 77, 0.16);
-  background: rgba(255, 255, 255, 0.04);
+  gap: 0.18rem;
+  padding: 0.5rem 0.55rem;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .viewSpecItem dt {
   margin: 0;
   font-family: var(--font-mono);
-  font-size: 0.64rem;
+  font-size: 0.58rem;
   font-weight: 700;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #fde68a;
+  color: rgba(253, 230, 138, 0.82);
 }
 
 .viewSpecItem dd {
   margin: 0;
-  font-size: 0.98rem;
+  font-size: 0.86rem;
   font-weight: 700;
   color: #fff;
-  line-height: 1.35;
+  line-height: 1.3;
 }
 
 .viewSpecValueOpened {
@@ -1007,15 +1066,9 @@
   font-weight: 600;
 }
 
-.dialogView .viewNotes {
-  padding: 0.9rem 1rem;
-  border-radius: 0.75rem;
-  border: 1px solid rgba(252, 211, 77, 0.16);
-  background: rgba(0, 0, 0, 0.22);
-}
-
 .dialogView .viewNotesLabel {
   color: #fde68a;
+  margin-bottom: 0.45rem;
 }
 
 .dialogView .viewNotesText {
@@ -1023,8 +1076,11 @@
 }
 
 .dialogView .viewFoot {
+  flex-shrink: 0;
   background: rgba(10, 10, 12, 0.98);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.55rem max(0.85rem, env(safe-area-inset-right)) max(0.7rem, env(safe-area-inset-bottom))
+    max(0.85rem, env(safe-area-inset-left));
 }
 
 .overlay {
@@ -1289,14 +1345,24 @@
 
   .dialogView {
     width: min(100%, 32rem);
-    max-height: min(92vh, 44rem);
+    height: min(92dvh, 44rem);
+    max-height: min(92dvh, 44rem);
     border-radius: calc(var(--radius) + 4px);
   }
 
+  .viewSheetHandle {
+    display: none;
+  }
+
   .viewHeroPremium {
-    min-height: 16rem;
-    max-height: 24rem;
+    min-height: 11rem;
+    max-height: 14rem;
     border-radius: calc(var(--radius) + 4px) calc(var(--radius) + 4px) 0 0;
+  }
+
+  .viewPhotoPremium {
+    min-height: 11rem;
+    max-height: 14rem;
   }
 
   .viewHeroTitle {
@@ -1494,29 +1560,91 @@
   }
 
   .viewHeroPremium {
-    min-height: 11rem;
-    max-height: 15rem;
+    display: grid;
+    grid-template-columns: 5.25rem 1fr;
+    grid-template-areas: 'thumb meta';
+    align-items: center;
+    gap: 0.65rem 0.85rem;
+    min-height: unset;
+    max-height: unset;
+    padding: 0.7rem 0.85rem 0.55rem;
+    background: linear-gradient(180deg, rgba(24, 20, 18, 0.98), rgba(12, 12, 14, 0.98));
   }
 
   .viewPhotoPremium {
-    min-height: 11rem;
-    max-height: 15rem;
+    grid-area: thumb;
+    width: 5.25rem;
+    height: 5.25rem;
+    min-height: 0;
+    max-height: 5.25rem;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .viewEmojiPremium {
+    grid-area: thumb;
+    display: grid;
+    place-items: center;
+    width: 5.25rem;
+    height: 5.25rem;
+    font-size: 2.35rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.35);
+  }
+
+  .viewHeroScrim {
+    display: none;
   }
 
   .viewHeroCaption {
-    padding: 1.75rem 1rem 0.95rem;
+    position: static;
+    grid-area: meta;
+    padding: 0;
+    gap: 0.28rem;
   }
 
   .viewHeroTitle {
-    font-size: 1.2rem;
+    font-size: 1.08rem;
+    text-shadow: none;
   }
 
-  .dialogView .viewBody {
-    padding: 0.95rem 0.45rem 0.75rem 0.85rem;
+  .viewHeroBrand {
+    font-size: 0.8rem;
+  }
+
+  .viewCloseFloating {
+    top: 0.5rem;
+    right: 0.55rem;
+    width: 2.15rem;
+    height: 2.15rem;
+    font-size: 1.25rem;
+  }
+
+  .dialogView {
+    height: 96dvh;
+    max-height: 96dvh;
+    border-radius: 1.15rem 1.15rem 0 0;
+  }
+
+  .viewScrollPane {
+    padding: 0.65rem 0.75rem 0.55rem;
+    gap: 0.55rem;
+  }
+
+  .viewSectionCard {
+    padding: 0.7rem 0.75rem;
   }
 
   .viewSpecGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .viewSpecValueOpened,
+  .viewSpecValueClosed {
+    font-size: 0.74rem;
+    padding: 0.16rem 0.45rem;
   }
 }
 
@@ -1745,24 +1873,39 @@
   margin-bottom: 0.35rem;
 }
 
+.formAssistProductPicker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-top: 0.15rem;
+}
+
+.formAssistPickerHint {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: rgba(253, 230, 138, 0.82);
+}
+
 .formAssistProductList {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
-  max-height: 7rem;
+  gap: 0.35rem;
+  max-height: 11rem;
   overflow-y: auto;
 }
 
 .formAssistProductItem {
   display: flex;
-  flex-direction: column;
-  gap: 0.08rem;
+  align-items: center;
+  gap: 0.55rem;
   width: 100%;
-  padding: 0.38rem 0.5rem;
-  border-radius: 0.45rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 0.55rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(0, 0, 0, 0.22);
   color: inherit;
@@ -1770,9 +1913,76 @@
   cursor: pointer;
 }
 
+.formAssistProductItemSelected {
+  border-color: rgba(252, 211, 77, 0.45);
+  background: rgba(252, 211, 77, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(252, 211, 77, 0.12);
+}
+
+.formAssistProductItemApplied {
+  border-color: rgba(34, 197, 94, 0.35);
+}
+
 .formAssistProductItemActive {
   border-color: rgba(34, 197, 94, 0.4);
   background: rgba(34, 197, 94, 0.1);
+}
+
+.formAssistProductThumb,
+.formAssistProductThumbFallback {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.4rem;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.formAssistProductThumbFallback {
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+}
+
+.formAssistProductCopy {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
+}
+
+.formAssistProductCheck {
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  color: #86efac;
+  font-weight: 700;
+}
+
+.formAssistConfirmRow {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.formAssistConfirmBtn {
+  padding: 0.42rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(252, 211, 77, 0.38);
+  background: rgba(252, 211, 77, 0.16);
+  color: #fde68a;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.formAssistConfirmBtn:hover:not(:disabled) {
+  background: rgba(252, 211, 77, 0.24);
+}
+
+.formAssistConfirmBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .formAssistProductName {
@@ -2200,7 +2410,7 @@
 }
 
 .viewDrinksSection {
-  margin-top: 0.75rem;
+  margin-top: 0;
 }
 
 .viewDrinksList {
@@ -2257,24 +2467,23 @@
 }
 
 .personalMetaPanel {
-  margin-top: 0.75rem;
-  padding-top: 0.65rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 0;
 }
 
 .ratingRow {
   display: flex;
-  gap: 0.15rem;
-  margin: 0.35rem 0 0.55rem;
+  gap: 0.25rem;
+  margin: 0.15rem 0 0.65rem;
 }
 
 .ratingStar {
   border: 0;
   background: transparent;
   color: rgba(255, 255, 255, 0.28);
-  font-size: 1.1rem;
+  font-size: 1.35rem;
   cursor: pointer;
-  padding: 0.1rem;
+  padding: 0.15rem;
+  line-height: 1;
 }
 
 .ratingStarActive {
@@ -2320,11 +2529,10 @@
 }
 
 .viewUnlockSection {
-  margin-top: 0.75rem;
-  padding: 0.65rem 0.75rem;
-  border-radius: 0.55rem;
-  border: 1px solid rgba(251, 191, 36, 0.25);
-  background: rgba(251, 191, 36, 0.08);
+  margin-top: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
 }
 
 .viewUnlockList {
@@ -2332,6 +2540,10 @@
   font-size: 0.76rem;
   line-height: 1.45;
   color: rgba(253, 230, 138, 0.92);
+}
+
+.viewDrinksSection {
+  margin-top: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

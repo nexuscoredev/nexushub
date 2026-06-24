@@ -26,7 +26,7 @@ export function AdegaItemPersonalMetaPanel({ item, onChange }: AdegaItemPersonal
   };
 
   return (
-    <section className={styles.personalMetaPanel} aria-label="Sua experiência com este item">
+    <section className={styles.viewSectionCard} aria-label="Sua experiência com este item">
       <p className={styles.viewNotesLabel}>Sua avaliação</p>
 
       <div className={styles.ratingRow}>

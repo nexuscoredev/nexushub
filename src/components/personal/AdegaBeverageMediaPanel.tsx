@@ -66,8 +66,14 @@ export function AdegaBeverageMediaPanel({
   const [importingId, setImportingId] = useState<string | null>(null);
   const [productResults, setProductResults] = useState<AdegaSearchResult[]>([]);
   const [panelError, setPanelError] = useState<string | null>(null);
+  const [selectedBarcode, setSelectedBarcode] = useState<string | null>(null);
   const [appliedBarcode, setAppliedBarcode] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  const selectedProduct = useMemo(
+    () => productResults.find((result) => result.barcode === selectedBarcode) ?? null,
+    [productResults, selectedBarcode],
+  );
 
   const productQuery = useMemo(() => adegaProductSearchQuery({ name, brand }), [name, brand]);
   const imageQuery = useMemo(
@@ -123,6 +129,7 @@ export function AdegaBeverageMediaPanel({
     setPanelError(null);
     setProductResults([]);
     setAppliedBarcode(null);
+    setSelectedBarcode(null);
 
     try {
       const hits = await searchAdegaProducts(q, controller.signal);
@@ -131,17 +138,24 @@ export function AdegaBeverageMediaPanel({
         setPanelError('Nenhum produto no catálogo.');
         return;
       }
-      await applyProduct(hits[0]);
+      setSelectedBarcode(hits[0].barcode);
     } catch (err) {
       if (controller.signal.aborted) return;
       setPanelError(err instanceof Error ? err.message : 'Falha na busca de produto.');
     } finally {
       if (!controller.signal.aborted) setProductLoading(false);
     }
-  }, [applyProduct, productQuery]);
+  }, [productQuery]);
+
+  const confirmSelectedProduct = useCallback(() => {
+    if (!selectedProduct) return;
+    void applyProduct(selectedProduct);
+  }, [applyProduct, selectedProduct]);
 
   const productBusy = productLoading || Boolean(importingId);
-  const showProductAlts = productResults.length > 1;
+  const showProductPicker = productResults.length > 0;
+  const canConfirm =
+    Boolean(selectedProduct) && selectedBarcode !== appliedBarcode && !productBusy;
 
   return (
     <section className={styles.formAssist}>
@@ -182,26 +196,68 @@ export function AdegaBeverageMediaPanel({
         />
       </div>
 
-      {showProductAlts ? (
-        <ul className={styles.formAssistProductList}>
-          {productResults.map((result) => (
-            <li key={result.barcode}>
-              <button
-                type="button"
-                className={`${styles.formAssistProductItem} ${
-                  appliedBarcode === result.barcode ? styles.formAssistProductItemActive : ''
-                }`}
-                disabled={productBusy}
-                onClick={() => void applyProduct(result)}
-              >
-                <span className={styles.formAssistProductName}>{result.name}</span>
-                {productMeta(result) ? (
-                  <span className={styles.formAssistProductMeta}>{productMeta(result)}</span>
-                ) : null}
-              </button>
-            </li>
-          ))}
-        </ul>
+      {showProductPicker ? (
+        <div className={styles.formAssistProductPicker}>
+          <p className={styles.formAssistPickerHint}>
+            {productResults.length === 1
+              ? 'Confirme se é este produto'
+              : `${productResults.length} opções — escolha e confirme`}
+          </p>
+          <ul className={styles.formAssistProductList}>
+            {productResults.map((result) => {
+              const isSelected = selectedBarcode === result.barcode;
+              const isApplied = appliedBarcode === result.barcode;
+              return (
+                <li key={result.barcode}>
+                  <button
+                    type="button"
+                    className={`${styles.formAssistProductItem} ${
+                      isSelected ? styles.formAssistProductItemSelected : ''
+                    } ${isApplied ? styles.formAssistProductItemApplied : ''}`}
+                    disabled={productBusy}
+                    onClick={() => setSelectedBarcode(result.barcode)}
+                    aria-pressed={isSelected}
+                  >
+                    {result.imageUrl ? (
+                      <img
+                        src={result.imageUrl}
+                        alt=""
+                        className={styles.formAssistProductThumb}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <span className={styles.formAssistProductThumbFallback} aria-hidden>
+                        🍾
+                      </span>
+                    )}
+                    <span className={styles.formAssistProductCopy}>
+                      <span className={styles.formAssistProductName}>{result.name}</span>
+                      {productMeta(result) ? (
+                        <span className={styles.formAssistProductMeta}>{productMeta(result)}</span>
+                      ) : null}
+                    </span>
+                    {isApplied ? (
+                      <span className={styles.formAssistProductCheck} aria-hidden>
+                        ✓
+                      </span>
+                    ) : null}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          <div className={styles.formAssistConfirmRow}>
+            <button
+              type="button"
+              className={styles.formAssistConfirmBtn}
+              disabled={!canConfirm}
+              onClick={confirmSelectedProduct}
+            >
+              {importingId ? 'Aplicando…' : 'Confirmar produto'}
+            </button>
+          </div>
+        </div>
       ) : null}
 
       {panelError ? <p className={styles.formError}>{panelError}</p> : null}

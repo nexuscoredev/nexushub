@@ -1,5 +1,5 @@
 const FIXED_INGREDIENT_RE =
-  /a gosto|para decor|casquinha|rodela de limão|azeitona\b|^gelo[;,.\s]*$|^sal[;,.\s]*$/i;
+  /a gosto|para decor|casquinha|rodela de limão|azeitona\b|^gelo[;,.\s]*$|^sal[;,.\s]*$|\b(pitadas?\s+de\s+)?sal\b/i;
 
 /** Marca trechos já escalados para não multiplicar duas vezes (ex.: 1/2 dose → 1, não 2). */
 const SCALED_MARK = '\uE000';
