@@ -110,7 +110,6 @@ export async function searchGoogleCseImages(
 import {
   coffeeCapsuleBrandHint,
   coffeeCapsuleSite,
-  parseCoffeeCapsuleSystem,
   type CoffeeCapsuleSystem,
 } from './coffeeCapsuleImageSearch.js';
 
