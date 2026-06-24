@@ -6,6 +6,7 @@ import { PersonalFinancePanel } from '../components/personal/PersonalFinancePane
 import { ViniciusDrinksCarta } from '../components/personal/ViniciusDrinksCarta';
 import { ViniciusPcGuide } from '../components/personal/ViniciusPcGuide';
 import { ViniciusAdega } from '../components/personal/ViniciusAdega';
+import { ViniciusCoffee } from '../components/personal/ViniciusCoffee';
 import { useAuth } from '../contexts/AuthContext';
 import { resolveFinanceMonthKey } from '../lib/personalFinanceMonth';
 import { isViniciusOnly } from '../lib/viniciusPersonalFinance';
@@ -19,16 +20,17 @@ export function PessoalPage() {
   const drinks = searchParams.get('drinks') === '1';
   const pcGuide = searchParams.get('pc-guide') === '1';
   const adega = searchParams.get('adega') === '1';
+  const coffee = searchParams.get('coffee') === '1';
 
   const firstName = profile?.nome?.trim().split(/\s+/)[0] ?? 'você';
   const email = profile?.email ?? user?.email;
   const viniciusOnly = isViniciusOnly(email);
 
   useEffect(() => {
-    if ((drinks || pcGuide || adega) && !viniciusOnly) {
+    if ((drinks || pcGuide || adega || coffee) && !viniciusOnly) {
       navigate('/pessoal', { replace: true });
     }
-  }, [drinks, pcGuide, adega, viniciusOnly, navigate]);
+  }, [drinks, pcGuide, adega, coffee, viniciusOnly, navigate]);
 
   const openFinance = () => {
     const mes = resolveFinanceMonthKey(searchParams.get('mes'));
@@ -45,6 +47,10 @@ export function PessoalPage() {
 
   const openAdega = () => {
     navigate('/pessoal?adega=1');
+  };
+
+  const openCoffee = () => {
+    navigate('/pessoal?coffee=1');
   };
 
   const backHome = () => {
@@ -75,6 +81,20 @@ export function PessoalPage() {
           </button>
         </div>
         <ViniciusPcGuide />
+      </div>
+    );
+  }
+
+  if (coffee && viniciusOnly) {
+    return (
+      <div className={`${styles.page} ${styles.drinksPage}`}>
+        <div className={styles.financeTop}>
+          <PageHeader compact title="Café" subtitle={`${firstName} · cápsulas e carta`} />
+          <button type="button" className={styles.backBtn} onClick={backHome}>
+            ← Cantinho
+          </button>
+        </div>
+        <ViniciusCoffee />
       </div>
     );
   }
@@ -122,6 +142,7 @@ export function PessoalPage() {
             onOpenDrinks={viniciusOnly ? openDrinks : undefined}
             onOpenPcGuide={viniciusOnly ? openPcGuide : undefined}
             onOpenAdega={viniciusOnly ? openAdega : undefined}
+            onOpenCoffee={viniciusOnly ? openCoffee : undefined}
           />
         </div>
       )}

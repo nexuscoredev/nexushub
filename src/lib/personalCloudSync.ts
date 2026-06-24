@@ -3,6 +3,8 @@ import type { PersonalAppIcon } from './personalApps';
 import { persistRemoteImageRef } from './personalMediaStorage';
 import { supabase, supabaseErrorMessage } from './supabase';
 import type { AdegaItem } from './viniciusAdega';
+import type { CoffeeCartaStore } from './viniciusCoffeeCartaStore';
+import type { CoffeeStockItem } from './viniciusCoffeeStock';
 import type { ViniciusDrink } from './viniciusDrinksCarta';
 import type { DrinkCartaStore } from './viniciusDrinksCartaStore';
 
@@ -177,6 +179,78 @@ export async function upsertAdegaItemsCloud(
       items,
       updated_at: updatedAt,
     },
+    { onConflict: 'user_id' },
+  );
+
+  return error ? supabaseErrorMessage(error) : null;
+}
+
+export async function fetchCoffeeStockCloud(
+  userId: string,
+): Promise<{ items: CoffeeStockItem[]; updatedAt: string } | null> {
+  if (!supabase) return null;
+
+  const { data, error } = await supabase
+    .from('hub_personal_coffee_stock')
+    .select('items, updated_at')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (error || !data?.items) return null;
+  if (!Array.isArray(data.items)) return null;
+
+  return { items: data.items as CoffeeStockItem[], updatedAt: data.updated_at };
+}
+
+export async function upsertCoffeeStockCloud(
+  userId: string,
+  items: CoffeeStockItem[],
+): Promise<string | null> {
+  if (!supabase) return 'Supabase não configurado';
+
+  const updatedAt = new Date().toISOString();
+  const { error } = await supabase.from('hub_personal_coffee_stock').upsert(
+    { user_id: userId, items, updated_at: updatedAt },
+    { onConflict: 'user_id' },
+  );
+
+  return error ? supabaseErrorMessage(error) : null;
+}
+
+export async function fetchCoffeeCartaStoreCloud(
+  userId: string,
+): Promise<{ store: CoffeeCartaStore; updatedAt: string } | null> {
+  if (!supabase) return null;
+
+  const { data, error } = await supabase
+    .from('hub_personal_coffee_carta')
+    .select('data, updated_at')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (error || !data?.data) return null;
+  const store = data.data as CoffeeCartaStore;
+  if (!store || typeof store !== 'object') return null;
+
+  return {
+    store: {
+      overrides: store.overrides ?? {},
+      bannerImageUrl: store.bannerImageUrl,
+      customRecipes: Array.isArray(store.customRecipes) ? store.customRecipes : undefined,
+    },
+    updatedAt: data.updated_at,
+  };
+}
+
+export async function upsertCoffeeCartaStoreCloud(
+  userId: string,
+  store: CoffeeCartaStore,
+): Promise<string | null> {
+  if (!supabase) return 'Supabase não configurado';
+
+  const updatedAt = new Date().toISOString();
+  const { error } = await supabase.from('hub_personal_coffee_carta').upsert(
+    { user_id: userId, data: store, updated_at: updatedAt },
     { onConflict: 'user_id' },
   );
 

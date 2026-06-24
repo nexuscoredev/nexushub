@@ -66,6 +66,7 @@ const PERSONAL_APP_ICON_DATA_MAX_CHARS = 900_000;
 export const PERSONAL_APP_ICON_PATHS = {
   drinks: '/img/personal/apps/drinks-carta.png',
   adega: '/img/personal/apps/adega.png',
+  coffee: '/img/personal/apps/coffee.png',
 } as const;
 
 const ICON_FILE_EXTENSIONS = new Set(['ico', 'icon', 'png', 'jpg', 'jpeg', 'webp', 'gif', 'svg']);
@@ -252,6 +253,10 @@ export function shouldDropIconOverride(appId: string, icon: PersonalAppIcon): bo
   if (appId === 'adega') {
     if (src.includes('/drinks/banner') || src.includes('/drinks/thumbs/')) return true;
     return src !== PERSONAL_APP_ICON_PATHS.adega.toLowerCase();
+  }
+
+  if (appId === 'coffee') {
+    return src !== PERSONAL_APP_ICON_PATHS.coffee.toLowerCase();
   }
 
   return false;

@@ -7,12 +7,13 @@ export type PersonalAppIcon =
   | { type: 'the-news' }
   | { type: 'drinks-carta' }
   | { type: 'adega' }
+  | { type: 'coffee' }
   | { type: 'pc-guide' }
   | { type: 'emoji'; value: string }
   | { type: 'piggy' }
   | { type: 'letter'; value: string };
 
-export type PersonalInternalAction = 'finance' | 'drinks' | 'pc-guide' | 'adega';
+export type PersonalInternalAction = 'finance' | 'drinks' | 'pc-guide' | 'adega' | 'coffee';
 
 export type PersonalAppDefinition = {
   id: string;
@@ -66,6 +67,15 @@ export const PERSONAL_APP_CATALOG: PersonalAppDefinition[] = [
     kind: 'internal',
     internalAction: 'adega',
     icon: { type: 'image', src: PERSONAL_APP_ICON_PATHS.adega },
+    viniciusOnly: true,
+  },
+  {
+    id: 'coffee',
+    label: 'Café',
+    subtitle: 'Cápsulas e carta',
+    kind: 'internal',
+    internalAction: 'coffee',
+    icon: { type: 'image', src: PERSONAL_APP_ICON_PATHS.coffee },
     viniciusOnly: true,
   },
   {
