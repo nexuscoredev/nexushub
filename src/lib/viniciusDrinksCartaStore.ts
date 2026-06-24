@@ -19,12 +19,24 @@ export type DrinkCartaOverride = {
   ingredients?: string[];
   steps?: string[];
   notes?: string;
+  garnish?: string[];
+  variations?: string[];
+};
+
+export type DrinkPersonalMeta = {
+  rating?: 1 | 2 | 3 | 4 | 5;
+  tried?: boolean;
+  wantToTry?: boolean;
+  tastingNote?: string;
 };
 
 export type DrinkCartaStore = {
   overrides: Record<string, DrinkCartaOverride>;
   customDrinks?: ViniciusDrink[];
   bannerImageUrl?: string;
+  favorites?: string[];
+  hiddenSlugs?: string[];
+  drinkMeta?: Record<string, DrinkPersonalMeta>;
 };
 
 function storageKey(userId: string): string {
@@ -73,7 +85,13 @@ function isValidDrink(value: unknown): value is ViniciusDrink {
     Array.isArray(drink.steps) &&
     drink.steps.length > 0 &&
     drink.steps.every((item) => typeof item === 'string' && item.trim().length > 0) &&
-    (drink.notes == null || typeof drink.notes === 'string')
+    (drink.notes == null || typeof drink.notes === 'string') &&
+    (drink.garnish == null ||
+      (Array.isArray(drink.garnish) &&
+        drink.garnish.every((item) => typeof item === 'string' && item.trim().length > 0))) &&
+    (drink.variations == null ||
+      (Array.isArray(drink.variations) &&
+        drink.variations.every((item) => typeof item === 'string' && item.trim().length > 0)))
   );
 }
 
@@ -90,6 +108,18 @@ function isValidOverride(value: unknown): value is DrinkCartaOverride {
     return false;
   }
   if (o.steps != null && (!Array.isArray(o.steps) || !o.steps.every((s) => typeof s === 'string'))) {
+    return false;
+  }
+  if (
+    o.garnish != null &&
+    (!Array.isArray(o.garnish) || !o.garnish.every((g) => typeof g === 'string'))
+  ) {
+    return false;
+  }
+  if (
+    o.variations != null &&
+    (!Array.isArray(o.variations) || !o.variations.every((v) => typeof v === 'string'))
+  ) {
     return false;
   }
   return true;
@@ -121,6 +151,36 @@ function migrateDrinkCartaStore(store: DrinkCartaStore): DrinkCartaStore {
   return next;
 }
 
+function isValidDrinkMeta(value: unknown): value is DrinkPersonalMeta {
+  if (!value || typeof value !== 'object') return false;
+  const meta = value as DrinkPersonalMeta;
+  if (
+    meta.rating != null &&
+    (!Number.isInteger(meta.rating) || meta.rating < 1 || meta.rating > 5)
+  ) {
+    return false;
+  }
+  if (meta.tried != null && typeof meta.tried !== 'boolean') return false;
+  if (meta.wantToTry != null && typeof meta.wantToTry !== 'boolean') return false;
+  if (meta.tastingNote != null && typeof meta.tastingNote !== 'string') return false;
+  return true;
+}
+
+function parseDrinkMeta(value: unknown): Record<string, DrinkPersonalMeta> | undefined {
+  if (!value || typeof value !== 'object') return undefined;
+  const result: Record<string, DrinkPersonalMeta> = {};
+  for (const [slug, meta] of Object.entries(value as Record<string, unknown>)) {
+    if (slug.trim() && isValidDrinkMeta(meta)) result[slug] = meta;
+  }
+  return Object.keys(result).length ? result : undefined;
+}
+
+function parseSlugList(value: unknown): string[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const slugs = value.filter((item): item is string => typeof item === 'string' && item.trim().length > 0);
+  return slugs.length ? slugs : undefined;
+}
+
 function parseStore(raw: string | null): DrinkCartaStore {
   if (!raw) return { overrides: {} };
   try {
@@ -138,7 +198,10 @@ function parseStore(raw: string | null): DrinkCartaStore {
     const customDrinks = Array.isArray(data.customDrinks)
       ? data.customDrinks.filter(isValidDrink).map(repairCustomDrinkImage)
       : undefined;
-    return { overrides, bannerImageUrl, customDrinks };
+    const favorites = parseSlugList(data.favorites);
+    const hiddenSlugs = parseSlugList(data.hiddenSlugs);
+    const drinkMeta = parseDrinkMeta(data.drinkMeta);
+    return { overrides, bannerImageUrl, customDrinks, favorites, hiddenSlugs, drinkMeta };
   } catch {
     return { overrides: {} };
   }
@@ -200,6 +263,8 @@ export function mergeDrink(base: ViniciusDrink, override?: DrinkCartaOverride): 
     ingredients: override.ingredients?.length ? override.ingredients : base.ingredients,
     steps: override.steps?.length ? override.steps : base.steps,
     notes: override.notes !== undefined ? override.notes.trim() || undefined : base.notes,
+    garnish: override.garnish?.length ? override.garnish : base.garnish,
+    variations: override.variations?.length ? override.variations : base.variations,
   };
 }
 
@@ -298,4 +363,71 @@ export function linesToList(text: string): string[] {
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean);
+}
+
+export function isFavorite(store: DrinkCartaStore, slug: string): boolean {
+  return store.favorites?.includes(slug) ?? false;
+}
+
+export function toggleFavorite(store: DrinkCartaStore, slug: string): DrinkCartaStore {
+  const current = store.favorites ?? [];
+  const next = current.includes(slug)
+    ? current.filter((item) => item !== slug)
+    : [...current, slug];
+  return { ...store, favorites: next.length ? next : undefined };
+}
+
+export function toggleHidden(store: DrinkCartaStore, slug: string): DrinkCartaStore {
+  const current = store.hiddenSlugs ?? [];
+  const next = current.includes(slug)
+    ? current.filter((item) => item !== slug)
+    : [...current, slug];
+  return { ...store, hiddenSlugs: next.length ? next : undefined };
+}
+
+export function filterVisibleDrinks(
+  drinks: ViniciusDrink[],
+  store: DrinkCartaStore,
+): ViniciusDrink[] {
+  const hidden = new Set(store.hiddenSlugs ?? []);
+  if (!hidden.size) return drinks;
+  return drinks.filter((drink) => !hidden.has(drink.slug));
+}
+
+export function getDrinkMeta(store: DrinkCartaStore, slug: string): DrinkPersonalMeta {
+  return store.drinkMeta?.[slug] ?? {};
+}
+
+export function updateDrinkMeta(
+  store: DrinkCartaStore,
+  slug: string,
+  patch: Partial<DrinkPersonalMeta>,
+): DrinkCartaStore {
+  const current = store.drinkMeta?.[slug] ?? {};
+  const next: DrinkPersonalMeta = { ...current, ...patch };
+
+  for (const key of Object.keys(next) as (keyof DrinkPersonalMeta)[]) {
+    if (next[key] === undefined) delete next[key];
+  }
+
+  const drinkMeta = { ...(store.drinkMeta ?? {}) };
+  if (Object.keys(next).length === 0) delete drinkMeta[slug];
+  else drinkMeta[slug] = next;
+
+  return {
+    ...store,
+    drinkMeta: Object.keys(drinkMeta).length ? drinkMeta : undefined,
+  };
+}
+
+export function listTriedSlugs(store: DrinkCartaStore): string[] {
+  return Object.entries(store.drinkMeta ?? {})
+    .filter(([, meta]) => meta.tried)
+    .map(([slug]) => slug);
+}
+
+export function listWantToTrySlugs(store: DrinkCartaStore): string[] {
+  return Object.entries(store.drinkMeta ?? {})
+    .filter(([, meta]) => meta.wantToTry)
+    .map(([slug]) => slug);
 }

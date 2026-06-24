@@ -2,7 +2,19 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { fileToDrinkImageUrl, parseDrinkImageUrl } from '../../lib/drinkCartaImage';
+import {
+  aggregateShoppingList,
+  countDrinksForAdegaItem,
+  getDrinksForAdegaItem,
+} from '../../lib/drinkAdegaMatch';
+import { previewDrinksUnlockedByItem } from '../../lib/drinkSubstitutions';
 import { adegaItemGoogleQuery, openGoogleSearch } from '../../lib/googleSearch';
+import {
+  loadDrinkCartaStore,
+  resolveDrinks,
+  syncDrinkCartaStoreFromCloud,
+} from '../../lib/viniciusDrinksCartaStore';
+import { AdegaItemPersonalMetaPanel } from './AdegaItemPersonalMetaPanel';
 import { AdegaBeverageMediaPanel } from './AdegaBeverageMediaPanel';
 import { AdegaIngredientMediaPanel, type IngredientMediaMode } from './AdegaIngredientMediaPanel';
 import { AdegaItemCards } from './AdegaItemCards';
@@ -25,6 +37,7 @@ import {
   resolveAdegaItemDisplayIcon,
   saveAdegaItems,
   syncAdegaItemsFromCloud,
+  updateAdegaItemPersonalMeta,
   VINICIUS_ADEGA_BANNER_HEIGHT,
   VINICIUS_ADEGA_BANNER_URL,
   VINICIUS_ADEGA_BANNER_WIDTH,
@@ -194,6 +207,8 @@ export function ViniciusAdega() {
   const [imageUrlInput, setImageUrlInput] = useState('');
   const [imageLoading, setImageLoading] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
+  const [shoppingOpen, setShoppingOpen] = useState(false);
+  const [cartaStore, setCartaStore] = useState(() => loadDrinkCartaStore(userId));
   const photoInputRef = useRef<HTMLInputElement>(null);
 
   const setEditMode = (next: boolean) => {
@@ -219,6 +234,45 @@ export function ViniciusAdega() {
       if (cloudItems) setItems(cloudItems);
     });
   }, [userId]);
+
+  useEffect(() => {
+    setCartaStore(loadDrinkCartaStore(userId));
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId) return;
+    void syncDrinkCartaStoreFromCloud(userId).then((cloudStore) => {
+      if (cloudStore) setCartaStore(cloudStore);
+    });
+  }, [userId]);
+
+  const cartaDrinks = useMemo(() => resolveDrinks(cartaStore), [cartaStore]);
+
+  const drinkCountByItemId = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const item of items) {
+      counts[item.id] = countDrinksForAdegaItem(item, cartaDrinks);
+    }
+    return counts;
+  }, [items, cartaDrinks]);
+
+  const shoppingList = useMemo(
+    () => aggregateShoppingList(cartaDrinks, items),
+    [cartaDrinks, items],
+  );
+
+  const viewingDrinks = useMemo(
+    () => (viewingItem ? getDrinksForAdegaItem(viewingItem, cartaDrinks) : []),
+    [viewingItem, cartaDrinks],
+  );
+
+  const viewingUnlock = useMemo(
+    () =>
+      viewingItem && viewingItem.quantity <= 0
+        ? previewDrinksUnlockedByItem(viewingItem, cartaDrinks, items)
+        : null,
+    [viewingItem, cartaDrinks, items],
+  );
 
   const persist = (next: AdegaItem[]) => {
     setItems(next);
@@ -354,6 +408,22 @@ export function ViniciusAdega() {
     persist(items.filter((item) => item.id !== id));
   };
 
+  const handleToggleStock = (item: AdegaItem) => {
+    const now = new Date().toISOString();
+    persist(
+      items.map((entry) =>
+        entry.id === item.id
+          ? { ...entry, quantity: entry.quantity > 0 ? 0 : 1, updatedAt: now }
+          : entry,
+      ),
+    );
+  };
+
+  const openCartaDrink = (slug: string) => {
+    setViewingItem(null);
+    navigate(`/pessoal?drinks=1&drink=${encodeURIComponent(slug)}`);
+  };
+
   const uploadItemId = editingId ?? draftItemId;
 
   const handlePhotoFile = async (file: File | null) => {
@@ -462,6 +532,11 @@ export function ViniciusAdega() {
             <span className={styles.stat}>{stats.totalItems} itens</span>
             <span className={styles.stat}>{stats.totalBottles} garrafas</span>
             <span className={styles.stat}>{stats.categories.length} categorias</span>
+            {!editing && shoppingList.length > 0 ? (
+              <button type="button" className={styles.shoppingBannerBtn} onClick={() => setShoppingOpen(true)}>
+                Lista de compras ({shoppingList.length})
+              </button>
+            ) : null}
           </div>
         ) : null}
       </header>
@@ -527,6 +602,7 @@ export function ViniciusAdega() {
         <AdegaItemCards
           items={filteredBeverages}
           editing={editing}
+          drinkCountByItemId={drinkCountByItemId}
           emptyIcon="🍾"
           emptyTitle={beverages.length === 0 ? 'Nenhuma bebida ainda' : 'Nenhuma bebida encontrada'}
           emptyText={
@@ -544,6 +620,7 @@ export function ViniciusAdega() {
           onCardClick={handleCardClick}
           onEdit={openEdit}
           onDelete={(id) => handleDelete(id, 'beverage')}
+          onToggleStock={!editing ? handleToggleStock : undefined}
         />
       </section>
 
@@ -569,6 +646,7 @@ export function ViniciusAdega() {
           items={filteredIngredients}
           editing={editing}
           compact
+          drinkCountByItemId={drinkCountByItemId}
           emptyIcon="🍋"
           emptyTitle={ingredients.length === 0 ? 'Despensa vazia' : 'Nenhum ingrediente encontrado'}
           emptyText={
@@ -586,6 +664,7 @@ export function ViniciusAdega() {
           onCardClick={handleCardClick}
           onEdit={openEdit}
           onDelete={(id) => handleDelete(id, 'ingredient')}
+          onToggleStock={!editing ? handleToggleStock : undefined}
         />
       </section>
 
@@ -690,6 +769,46 @@ export function ViniciusAdega() {
                   <p className={styles.viewNotesText}>{viewingItem.notes}</p>
                 </div>
               ) : null}
+              {!editing ? (
+                <AdegaItemPersonalMetaPanel
+                  item={viewingItem}
+                  onChange={(patch) => {
+                    if (!viewingItem) return;
+                    const next = updateAdegaItemPersonalMeta(items, viewingItem.id, patch);
+                    persist(next);
+                    setViewingItem(next.find((entry) => entry.id === viewingItem.id) ?? null);
+                  }}
+                />
+              ) : null}
+              {viewingUnlock && viewingUnlock.drinksReady > 0 ? (
+                <div className={styles.viewUnlockSection}>
+                  <p className={styles.viewNotesLabel}>
+                    Se repor este item, desbloqueia {viewingUnlock.drinksReady}{' '}
+                    {viewingUnlock.drinksReady === 1 ? 'drink' : 'drinks'}
+                  </p>
+                  <p className={styles.viewUnlockList}>{viewingUnlock.drinkTitles.join(', ')}</p>
+                </div>
+              ) : null}
+              {viewingDrinks.length > 0 ? (
+                <div className={styles.viewDrinksSection}>
+                  <p className={styles.viewNotesLabel}>
+                    Drinks na carta ({viewingDrinks.length})
+                  </p>
+                  <ul className={styles.viewDrinksList}>
+                    {viewingDrinks.map((drink) => (
+                      <li key={drink.slug}>
+                        <button
+                          type="button"
+                          className={styles.viewDrinkBtn}
+                          onClick={() => openCartaDrink(drink.slug)}
+                        >
+                          {drink.title}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
             </div>
             <div className={styles.viewFoot}>
               <button
@@ -708,6 +827,54 @@ export function ViniciusAdega() {
                 Buscar no Google
               </button>
               <button type="button" className={styles.saveBtn} onClick={() => setViewingItem(null)}>
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {shoppingOpen ? (
+        <div className={styles.overlay} role="presentation" onClick={() => setShoppingOpen(false)}>
+          <div
+            className={`${styles.dialog} ${styles.dialogView}`}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="adega-shopping-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={styles.dialogHead}>
+              <div className={styles.dialogHeadRow}>
+                <h3 id="adega-shopping-title" className={styles.dialogTitle}>
+                  Lista de compras
+                </h3>
+                <button
+                  type="button"
+                  className={styles.dialogClose}
+                  onClick={() => setShoppingOpen(false)}
+                  aria-label="Fechar"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            <div className={styles.viewBody}>
+              <p className={styles.viewNotesText}>
+                Ingredientes que faltam para drinks quase completos na carta.
+              </p>
+              <ul className={styles.shoppingList}>
+                {shoppingList.map((entry) => (
+                  <li key={entry.label} className={styles.shoppingItem}>
+                    <span className={styles.shoppingLabel}>{entry.label}</span>
+                    <span className={styles.shoppingMeta}>
+                      {entry.count} {entry.count === 1 ? 'drink' : 'drinks'} · {entry.drinks.join(', ')}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className={styles.viewFoot}>
+              <button type="button" className={styles.saveBtn} onClick={() => setShoppingOpen(false)}>
                 Fechar
               </button>
             </div>

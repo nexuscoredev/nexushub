@@ -55,7 +55,7 @@ export type DrinkAdegaMatch = {
   status: DrinkAdegaMatchStatus;
   groups: DrinkRequirementGroup[];
   missingLabels: string[];
-  matches: { groupLabel: string; itemName: string }[];
+  matches: { groupLabel: string; itemName: string; itemId: string }[];
 };
 
 function normalizeText(value: string): string {
@@ -317,6 +317,30 @@ function findItemForGroup(items: AdegaItem[], group: DrinkRequirementGroup): Ade
   return items.find((item) => itemMatchesGroup(item, group)) ?? null;
 }
 
+/** Itens na adega da mesma família, mas que não satisfazem a variante exata pedida na receita. */
+export function findSubstituteItemsForGroup(
+  group: DrinkRequirementGroup,
+  adegaItems: AdegaItem[],
+  excludeItemIds: Set<string> = new Set(),
+): AdegaItem[] {
+  if (!group.ruleIds.length) return [];
+
+  return adegaItems.filter((item) => {
+    if (item.quantity <= 0 || excludeItemIds.has(item.id)) return false;
+    if (itemMatchesGroup(item, group)) return false;
+
+    const haystack = itemHaystack(item);
+    const matchesRule = group.ruleIds.some((ruleId) => {
+      const rule = SPIRIT_RULES.find((entry) => entry.id === ruleId);
+      return rule ? itemMatchesRule(item, rule) : false;
+    });
+
+    if (!matchesRule) return false;
+    if (group.variant) return !itemMatchesSpiritVariant(haystack, group.variant);
+    return true;
+  });
+}
+
 export function matchDrinkToAdega(drink: ViniciusDrink, adegaItems: AdegaItem[]): DrinkAdegaMatch {
   const available = adegaItems.filter((item) => item.quantity > 0);
   const groups = extractDrinkRequirementGroups(drink);
@@ -326,7 +350,7 @@ export function matchDrinkToAdega(drink: ViniciusDrink, adegaItems: AdegaItem[])
   for (const group of groups) {
     const hit = findItemForGroup(available, group);
     if (hit) {
-      matches.push({ groupLabel: group.label, itemName: hit.name });
+      matches.push({ groupLabel: group.label, itemName: hit.name, itemId: hit.id });
     } else {
       missingLabels.push(group.label);
     }
@@ -360,7 +384,7 @@ export function matchDrinksToAdega(
 export function filterDrinksByAdega(
   drinks: ViniciusDrink[],
   adegaItems: AdegaItem[],
-  mode: 'ready' | 'partial' | 'all',
+  mode: 'ready' | 'partial' | 'almost' | 'all',
 ): ViniciusDrink[] {
   if (mode === 'all') return drinks;
 
@@ -369,8 +393,69 @@ export function filterDrinksByAdega(
     const match = matches.get(drink.slug);
     if (!match) return false;
     if (mode === 'ready') return match.status === 'ready';
+    if (mode === 'almost') {
+      return (
+        match.status === 'partial' &&
+        match.missingLabels.length > 0 &&
+        match.missingLabels.length <= 2
+      );
+    }
     return match.status === 'ready' || match.status === 'partial';
   });
+}
+
+export function adegaItemUsedInDrink(item: AdegaItem, drink: ViniciusDrink): boolean {
+  const groups = extractDrinkRequirementGroups(drink);
+  return groups.some((group) => itemMatchesGroup(item, group));
+}
+
+export function getDrinksForAdegaItem(
+  item: AdegaItem,
+  drinks: ViniciusDrink[],
+): ViniciusDrink[] {
+  return drinks.filter((drink) => adegaItemUsedInDrink(item, drink));
+}
+
+export function countDrinksForAdegaItem(item: AdegaItem, drinks: ViniciusDrink[]): number {
+  return getDrinksForAdegaItem(item, drinks).length;
+}
+
+export type ShoppingListEntry = {
+  label: string;
+  count: number;
+  drinks: string[];
+};
+
+export function aggregateShoppingList(
+  drinks: ViniciusDrink[],
+  adegaItems: AdegaItem[],
+): ShoppingListEntry[] {
+  const almost = filterDrinksByAdega(drinks, adegaItems, 'almost');
+  const matches = matchDrinksToAdega(almost, adegaItems);
+  const map = new Map<string, { label: string; count: number; drinks: Set<string> }>();
+
+  for (const drink of almost) {
+    const match = matches.get(drink.slug);
+    if (!match) continue;
+    for (const label of match.missingLabels) {
+      const key = normalizeText(label);
+      const existing = map.get(key);
+      if (existing) {
+        existing.count += 1;
+        existing.drinks.add(drink.title);
+      } else {
+        map.set(key, { label, count: 1, drinks: new Set([drink.title]) });
+      }
+    }
+  }
+
+  return [...map.values()]
+    .map((entry) => ({
+      label: entry.label,
+      count: entry.count,
+      drinks: [...entry.drinks].sort((a, b) => a.localeCompare(b, 'pt-BR')),
+    }))
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, 'pt-BR'));
 }
 
 export type DrinkSuggestion = {

@@ -118,6 +118,33 @@ export function DrinkRecipeToolkit({ drink }: DrinkRecipeToolkitProps) {
               );
             })}
           </ul>
+          {drink.garnish?.length ? (
+            <div className={styles.recipeBlockHead}>
+              <h4 className={styles.recipeHeading}>Guarnição</h4>
+            </div>
+          ) : null}
+          {drink.garnish?.length ? (
+            <ul className={styles.garnishList}>
+              {drink.garnish.map((item) => (
+                <li key={item} className={styles.garnishItem}>
+                  <span className={styles.ingredientDot} aria-hidden />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          {drink.variations?.length ? (
+            <>
+              <div className={styles.recipeBlockHead}>
+                <h4 className={styles.recipeHeading}>Variações</h4>
+              </div>
+              <ul className={styles.variationsList}>
+                {drink.variations.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </>
+          ) : null}
           {drink.notes ? <p className={styles.recipeNote}>{drink.notes}</p> : null}
         </section>
       ) : null}

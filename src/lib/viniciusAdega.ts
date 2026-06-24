@@ -84,6 +84,9 @@ export type AdegaItem = {
   imageUrl?: string;
   iconEmoji?: string;
   barcode?: string;
+  personalRating?: number;
+  tastingNote?: string;
+  triedAt?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -103,6 +106,9 @@ export type AdegaItemInput = {
   imageUrl?: string;
   iconEmoji?: string;
   barcode?: string;
+  personalRating?: number;
+  tastingNote?: string;
+  triedAt?: string;
 };
 
 function storageKey(userId: string): string {
@@ -162,7 +168,13 @@ function isValidItem(value: unknown): value is AdegaItem {
     (item.iconEmoji == null ||
       (typeof item.iconEmoji === 'string' && item.iconEmoji.trim().length > 0)) &&
     (item.kind == null || item.kind === 'beverage' || item.kind === 'ingredient') &&
-    (item.unit == null || (typeof item.unit === 'string' && item.unit.trim().length > 0))
+    (item.unit == null || (typeof item.unit === 'string' && item.unit.trim().length > 0)) &&
+    (item.personalRating == null ||
+      (Number.isInteger(item.personalRating) &&
+        item.personalRating >= 1 &&
+        item.personalRating <= 5)) &&
+    (item.tastingNote == null || typeof item.tastingNote === 'string') &&
+    (item.triedAt == null || typeof item.triedAt === 'string')
   );
 }
 
@@ -324,6 +336,33 @@ export function formatIngredientQuantity(quantity: number, unit?: string): strin
   return `${quantity} ${label}`;
 }
 
+export function updateAdegaItemPersonalMeta(
+  items: AdegaItem[],
+  itemId: string,
+  patch: Pick<AdegaItemInput, 'personalRating' | 'tastingNote' | 'triedAt'>,
+): AdegaItem[] {
+  const now = new Date().toISOString();
+  return items.map((item) => {
+    if (item.id !== itemId) return item;
+    return {
+      ...item,
+      personalRating:
+        patch.personalRating !== undefined
+          ? patch.personalRating != null &&
+            patch.personalRating >= 1 &&
+            patch.personalRating <= 5
+            ? patch.personalRating
+            : undefined
+          : item.personalRating,
+      tastingNote:
+        patch.tastingNote !== undefined
+          ? patch.tastingNote.trim() || undefined
+          : item.tastingNote,
+      triedAt: patch.triedAt !== undefined ? patch.triedAt || undefined : item.triedAt,
+      updatedAt: now,
+    };
+  });
+}
 export function adegaStats(items: AdegaItem[]): {
   totalItems: number;
   totalBottles: number;

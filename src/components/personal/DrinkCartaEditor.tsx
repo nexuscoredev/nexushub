@@ -39,6 +39,7 @@ export function DrinkCartaEditor({
   const [ingredientsText, setIngredientsText] = useState('');
   const [stepsText, setStepsText] = useState('');
   const [notes, setNotes] = useState('');
+  const [variationsText, setVariationsText] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [imagePreview, setImagePreview] = useState('');
   const [localFileName, setLocalFileName] = useState<string | null>(null);
@@ -53,6 +54,7 @@ export function DrinkCartaEditor({
     setIngredientsText(listToLines(drink.ingredients));
     setStepsText(listToLines(drink.steps));
     setNotes(drink.notes ?? '');
+    setVariationsText(listToLines(drink.variations ?? []));
     setImagePreview(drink.imageUrl);
     if (drink.imageUrl.startsWith('data:')) {
       setImageUrl('');
@@ -118,6 +120,7 @@ export function DrinkCartaEditor({
       ingredients: linesToList(ingredientsText),
       steps: linesToList(stepsText),
       notes: notes.trim(),
+      variations: linesToList(variationsText),
     };
 
     if (imagePreview && imagePreview !== defaultImage) {
@@ -254,6 +257,18 @@ export function DrinkCartaEditor({
               placeholder="Um por linha"
             />
           </section>
+
+          <details className={styles.editorDetails}>
+            <summary>Variações</summary>
+            <textarea
+              id="drink-edit-variations"
+              className={styles.editorTextarea}
+              rows={2}
+              value={variationsText}
+              onChange={(e) => setVariationsText(e.target.value)}
+              placeholder="Uma variação por linha"
+            />
+          </details>
 
           <details className={styles.editorDetails}>
             <summary>Observações</summary>
