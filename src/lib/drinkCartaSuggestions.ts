@@ -1,42 +1,18 @@
 import { matchDrinkToAdega, type DrinkAdegaMatch } from './drinkAdegaMatch';
 import {
-  DRINK_FALLBACK_THUMB,
   drinkThumbPath,
   isCatalogDrinkSlug,
   type ViniciusDrink,
 } from './viniciusDrinksCarta';
 import type { AdegaItem } from './viniciusAdega';
 
-/** Thumb existente no repo para cada sugestão (evita URL /thumbs/{slug}.jpg inexistente). */
-const SUGGESTION_THUMB_BY_SLUG: Record<string, string> = {
-  caipirinha: 'caipitudo',
-  'gin-tonic': 'dry-martini',
-  'old-fashioned': 'whisky-sour',
-  manhattan: 'dry-martini',
-  'rum-cola': 'cuba-libre',
-  'tequila-sunrise': 'cozumel',
-  'gin-fizz': 'mojito',
-  'whiskey-smash': 'whisky-sour',
-  paloma: 'margarita',
-  'tom-collins': 'mojito',
-  'aperol-spritz': 'negroni',
-  'french-75': 'dry-martini',
-};
-
+/** Thumb por slug — mesmo padrão da carta (`/thumbs/{slug}.jpg`). */
 export function suggestionDrinkThumbPath(slug: string): string {
-  const mapped = SUGGESTION_THUMB_BY_SLUG[slug];
-  return mapped ? drinkThumbPath(mapped) : DRINK_FALLBACK_THUMB;
+  return drinkThumbPath(slug);
 }
 
 function suggestionDrink(entry: Omit<ViniciusDrink, 'imageUrl'>): ViniciusDrink {
   return { ...entry, imageUrl: suggestionDrinkThumbPath(entry.slug) };
-}
-
-/** Corrige drinks custom salvos com thumb inexistente (/thumbs/{slug}.jpg). */
-export function repairCustomDrinkImage(drink: ViniciusDrink): ViniciusDrink {
-  if (isCatalogDrinkSlug(drink.slug)) return drink;
-  if (drink.imageUrl !== drinkThumbPath(drink.slug)) return drink;
-  return { ...drink, imageUrl: suggestionDrinkThumbPath(drink.slug) };
 }
 
 /** Receitas clássicas que ainda não estão na carta padrão. */
@@ -234,6 +210,17 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
     notes: 'Drink batido e depois completado com espumante!',
   }),
 ];
+
+const SUGGESTION_SLUGS = new Set(DRINK_SUGGESTION_CATALOG.map((drink) => drink.slug));
+
+/** Corrige drinks adicionados via sugestões com thumb legado (mapeamento errado). */
+export function repairCustomDrinkImage(drink: ViniciusDrink): ViniciusDrink {
+  if (isCatalogDrinkSlug(drink.slug)) return drink;
+  if (!SUGGESTION_SLUGS.has(drink.slug)) return drink;
+  const expected = drinkThumbPath(drink.slug);
+  if (drink.imageUrl === expected) return drink;
+  return { ...drink, imageUrl: expected };
+}
 
 export type NewDrinkSuggestion = {
   drink: ViniciusDrink;

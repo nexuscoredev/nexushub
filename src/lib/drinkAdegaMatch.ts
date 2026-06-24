@@ -173,12 +173,14 @@ function ingredientDisplayLabel(ingredient: string): string {
   }
 
   text = text
-    .replace(/^(\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*/i, '')
-    .replace(/^(?:suco de\s+)?(\d+\/\d+\s+|\d+\s+ou\s+\d+\/?\s*)/i, '')
+    // "60ml de", "1 dose de" — unidade obrigatória (evita cortar só o número em "60ml")
     .replace(
-      /^(\d+(?:[.,]\d+)?)\s*(?:ml|cl|doses?|colher(?:es)?|gotas?|pitadas?|lata|garrafa|un\.?|g|kg|l)?\s*(?:de\s+)?/i,
+      /^(\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s*(?:ml|cl|doses?|colher(?:es)?|gotas?|pitadas?|lata(?:s)?|garrafa(?:s)?|un\.?|g|kg|l)\s*(?:de\s+)?/i,
       '',
     )
+    .replace(/^(?:suco de\s+)?(\d+\/\d+\s+|\d+\s+ou\s+\d+\/?\s*)/i, '')
+    // número solto com espaço: "1 Limão", "1/2 dose de"
+    .replace(/^(\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s+(?:doses?\s+)?(?:de\s+)?/i, '')
     .replace(/^(?:uma|um)\s+(?:fatia|lata|garrafa)\s+(?:de\s+)?/i, '')
     .replace(/^de\s+/i, '')
     .replace(/\s+ou\s+(?:\d+(?:\/\d+)?|meio(?:\s+\w+)?)\s*$/i, '')

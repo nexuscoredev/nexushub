@@ -10,7 +10,7 @@ import type { ViniciusDrink } from './viniciusDrinksCarta';
 import type { AdegaItem } from './viniciusAdega';
 
 export type { DrinkCollectionId };
-export { DRINK_COLLECTIONS } from './drinkCartaCollections';
+export { DRINK_COLLECTIONS, getCollectionById } from './drinkCartaCollections';
 
 export type DrinkCategoryId =
   | 'classico'

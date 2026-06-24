@@ -4,6 +4,7 @@ import {
   DRINK_COLLECTIONS,
   DRINK_FLAVOR_CHIPS,
   encodeBarShare,
+  getCollectionById,
   rankPartyModeDrinks,
   type DrinkCategoryId,
   type DrinkCollectionId,
@@ -40,6 +41,84 @@ type DrinkCartaDiscoverBarProps = {
   onOpenDrink: (slug: string) => void;
 };
 
+type ActiveTag = {
+  id: string;
+  label: string;
+  onRemove: () => void;
+};
+
+function buildActiveTags(
+  filters: DiscoverFilters,
+  onFiltersChange: (patch: Partial<DiscoverFilters>) => void,
+): ActiveTag[] {
+  const tags: ActiveTag[] = [];
+
+  if (filters.collection) {
+    const collection = getCollectionById(filters.collection);
+    tags.push({
+      id: 'collection',
+      label: collection ? `${collection.emoji} ${collection.label}` : 'Coleção',
+      onRemove: () => onFiltersChange({ collection: null }),
+    });
+  }
+
+  if (filters.flavor) {
+    const flavor = DRINK_FLAVOR_CHIPS.find((chip) => chip.id === filters.flavor);
+    tags.push({
+      id: 'flavor',
+      label: flavor?.label ?? 'Sabor',
+      onRemove: () => onFiltersChange({ flavor: null }),
+    });
+  }
+
+  const spirit = filters.baseSpirit ?? filters.category;
+  if (spirit) {
+    const chip = DRINK_CATEGORY_CHIPS.find((entry) => entry.id === spirit);
+    tags.push({
+      id: 'spirit',
+      label: chip?.label ?? 'Tipo',
+      onRemove: () => onFiltersChange({ baseSpirit: null, category: null }),
+    });
+  }
+
+  if (filters.favoritesOnly) {
+    tags.push({
+      id: 'favorites',
+      label: '★ Favoritos',
+      onRemove: () => onFiltersChange({ favoritesOnly: false }),
+    });
+  }
+
+  if (filters.triedOnly) {
+    tags.push({
+      id: 'tried',
+      label: '✓ Já provei',
+      onRemove: () => onFiltersChange({ triedOnly: false }),
+    });
+  }
+
+  if (filters.wantToTryOnly) {
+    tags.push({
+      id: 'want',
+      label: 'Quero experimentar',
+      onRemove: () => onFiltersChange({ wantToTryOnly: false }),
+    });
+  }
+
+  return tags;
+}
+
+function countExtraFilters(filters: DiscoverFilters): number {
+  let count = 0;
+  if (filters.collection) count += 1;
+  if (filters.flavor) count += 1;
+  if (filters.baseSpirit || filters.category) count += 1;
+  if (filters.favoritesOnly) count += 1;
+  if (filters.triedOnly) count += 1;
+  if (filters.wantToTryOnly) count += 1;
+  return count;
+}
+
 export function DrinkCartaDiscoverBar({
   drinks,
   adegaItems,
@@ -53,6 +132,8 @@ export function DrinkCartaDiscoverBar({
   onFiltersChange,
   onOpenDrink,
 }: DrinkCartaDiscoverBarProps) {
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
   const [shoppingOpen, setShoppingOpen] = useState(false);
   const [partyOpen, setPartyOpen] = useState(false);
   const [guestCount, setGuestCount] = useState(4);
@@ -68,6 +149,29 @@ export function DrinkCartaDiscoverBar({
     [drinks, adegaItems, guestCount, hasAdegaStock],
   );
 
+  const activeTags = useMemo(
+    () => buildActiveTags(filters, onFiltersChange),
+    [filters, onFiltersChange],
+  );
+
+  const extraFilterCount = countExtraFilters(filters);
+
+  const clearExtraFilters = () => {
+    onFiltersChange({
+      collection: null,
+      flavor: null,
+      baseSpirit: null,
+      category: null,
+      favoritesOnly: false,
+      triedOnly: false,
+      wantToTryOnly: false,
+    });
+  };
+
+  const setSpirit = (id: DrinkCategoryId | null) => {
+    onFiltersChange({ baseSpirit: id, category: id });
+  };
+
   const handleShare = async () => {
     const encoded = encodeBarShare(drinks, adegaItems);
     const url = new URL(window.location.href);
@@ -80,200 +184,296 @@ export function DrinkCartaDiscoverBar({
     } catch {
       window.prompt('Copie o link do bar:', url.toString());
     }
+    setToolsOpen(false);
   };
 
   return (
     <>
       <div className={styles.discoverBar}>
-        <label className={styles.discoverSearchWrap}>
-          <span className={styles.discoverSearchIcon} aria-hidden>
-            ⌕
-          </span>
-          <input
-            type="search"
-            className={styles.discoverSearch}
-            placeholder="Buscar drink ou ingrediente…"
-            value={filters.search}
-            onChange={(e) => onFiltersChange({ search: e.target.value })}
-            aria-label="Buscar na carta"
-          />
-        </label>
-
-        <div className={styles.discoverChips} role="group" aria-label="Coleções">
+        <div className={styles.discoverTopRow}>
+          <label className={styles.discoverSearchWrap}>
+            <span className={styles.discoverSearchIcon} aria-hidden>
+              ⌕
+            </span>
+            <input
+              type="search"
+              className={styles.discoverSearch}
+              placeholder="Buscar drink ou ingrediente…"
+              value={filters.search}
+              onChange={(e) => onFiltersChange({ search: e.target.value })}
+              aria-label="Buscar na carta"
+            />
+          </label>
           <button
             type="button"
-            className={`${styles.discoverChip} ${filters.collection == null ? styles.discoverChipActive : ''}`}
-            onClick={() => onFiltersChange({ collection: null })}
+            className={`${styles.discoverIconBtn} ${extraFilterCount > 0 ? styles.discoverIconBtnActive : ''}`}
+            onClick={() => setFiltersOpen(true)}
+            aria-label="Abrir filtros"
           >
-            Todas
+            Filtros
+            {extraFilterCount > 0 ? (
+              <span className={styles.discoverBadge}>{extraFilterCount}</span>
+            ) : null}
           </button>
-          {DRINK_COLLECTIONS.map((collection) => (
-            <button
-              key={collection.id}
-              type="button"
-              className={`${styles.discoverChip} ${filters.collection === collection.id ? styles.discoverChipActive : ''}`}
-              onClick={() =>
-                onFiltersChange({
-                  collection: filters.collection === collection.id ? null : collection.id,
-                })
-              }
-              title={collection.description}
-            >
-              {collection.emoji} {collection.label}
-            </button>
-          ))}
-        </div>
-
-        <div className={styles.discoverChips} role="group" aria-label="Perfil de sabor">
-          <button
-            type="button"
-            className={`${styles.discoverChip} ${filters.flavor == null ? styles.discoverChipActive : ''}`}
-            onClick={() => onFiltersChange({ flavor: null })}
-          >
-            Qualquer sabor
-          </button>
-          {DRINK_FLAVOR_CHIPS.map((chip) => (
-            <button
-              key={chip.id}
-              type="button"
-              className={`${styles.discoverChip} ${filters.flavor === chip.id ? styles.discoverChipActive : ''}`}
-              onClick={() =>
-                onFiltersChange({ flavor: filters.flavor === chip.id ? null : chip.id })
-              }
-            >
-              {chip.label}
-            </button>
-          ))}
-        </div>
-
-        <div className={styles.discoverChips} role="group" aria-label="Base drink">
-          <button
-            type="button"
-            className={`${styles.discoverChip} ${filters.baseSpirit == null ? styles.discoverChipActive : ''}`}
-            onClick={() => onFiltersChange({ baseSpirit: null })}
-          >
-            Qualquer base
-          </button>
-          {DRINK_CATEGORY_CHIPS.filter((chip) => chip.id !== 'classico' && chip.id !== 'sem-alcool').map(
-            (chip) => (
-              <button
-                key={`base-${chip.id}`}
-                type="button"
-                className={`${styles.discoverChip} ${filters.baseSpirit === chip.id ? styles.discoverChipActive : ''}`}
-                onClick={() =>
-                  onFiltersChange({
-                    baseSpirit: filters.baseSpirit === chip.id ? null : chip.id,
-                  })
-                }
-              >
-                {chip.label}
-              </button>
-            ),
-          )}
-        </div>
-
-        <div className={styles.discoverChips} role="group" aria-label="Categorias">
-          <button
-            type="button"
-            className={`${styles.discoverChip} ${filters.category == null ? styles.discoverChipActive : ''}`}
-            onClick={() => onFiltersChange({ category: null })}
-          >
-            Todas
-          </button>
-          {DRINK_CATEGORY_CHIPS.map((chip) => (
-            <button
-              key={chip.id}
-              type="button"
-              className={`${styles.discoverChip} ${filters.category === chip.id ? styles.discoverChipActive : ''}`}
-              onClick={() =>
-                onFiltersChange({ category: filters.category === chip.id ? null : chip.id })
-              }
-            >
-              {chip.label}
-            </button>
-          ))}
-        </div>
-
-        <div className={styles.discoverActions}>
-          {triedCount > 0 ? (
-            <button
-              type="button"
-              className={`${styles.discoverActionBtn} ${filters.triedOnly ? styles.discoverActionBtnActive : ''}`}
-              onClick={() => onFiltersChange({ triedOnly: !filters.triedOnly })}
-            >
-              ✓ Já provei ({triedCount})
-            </button>
-          ) : null}
-
-          {wantToTryCount > 0 ? (
-            <button
-              type="button"
-              className={`${styles.discoverActionBtn} ${filters.wantToTryOnly ? styles.discoverActionBtnActive : ''}`}
-              onClick={() => onFiltersChange({ wantToTryOnly: !filters.wantToTryOnly })}
-            >
-              Quero experimentar ({wantToTryCount})
-            </button>
-          ) : null}
-
-          {favoriteCount > 0 ? (
-            <button
-              type="button"
-              className={`${styles.discoverActionBtn} ${filters.favoritesOnly ? styles.discoverActionBtnActive : ''}`}
-              onClick={() => onFiltersChange({ favoritesOnly: !filters.favoritesOnly })}
-            >
-              ★ Favoritos ({favoriteCount})
-            </button>
-          ) : null}
-
           {hasAdegaStock ? (
-            <div className={styles.adegaFilterBar} role="group" aria-label="Filtrar por adega">
-              <button
-                type="button"
-                className={`${styles.adegaFilterBtn} ${filters.adegaMode === 'all' ? styles.adegaFilterBtnActive : ''}`}
-                onClick={() => onFiltersChange({ adegaMode: 'all' })}
-              >
-                Todas
-              </button>
-              <button
-                type="button"
-                className={`${styles.adegaFilterBtn} ${filters.adegaMode === 'ready' ? styles.adegaFilterBtnActive : ''}`}
-                onClick={() => onFiltersChange({ adegaMode: 'ready' })}
-              >
-                Posso fazer ({readyCount})
-              </button>
-              <button
-                type="button"
-                className={`${styles.adegaFilterBtn} ${filters.adegaMode === 'almost' ? styles.adegaFilterBtnActive : ''}`}
-                onClick={() => onFiltersChange({ adegaMode: 'almost' })}
-              >
-                Quase posso ({almostCount})
-              </button>
-            </div>
-          ) : null}
-
-          {hasAdegaStock && shoppingList.length > 0 ? (
             <button
               type="button"
-              className={styles.discoverActionBtn}
-              onClick={() => setShoppingOpen(true)}
+              className={styles.discoverIconBtn}
+              onClick={() => setToolsOpen(true)}
+              aria-label="Ferramentas do bar"
             >
-              Lista de compras ({shoppingList.length})
-            </button>
-          ) : null}
-
-          {hasAdegaStock ? (
-            <button type="button" className={styles.discoverActionBtn} onClick={() => setPartyOpen(true)}>
-              Modo festa
-            </button>
-          ) : null}
-
-          {hasAdegaStock ? (
-            <button type="button" className={styles.discoverActionBtn} onClick={() => void handleShare()}>
-              {shareCopied ? 'Link copiado!' : 'Compartilhar bar'}
+              ⋯
             </button>
           ) : null}
         </div>
+
+        {hasAdegaStock ? (
+          <div className={styles.discoverPrimaryScroll} role="group" aria-label="Disponível na adega">
+            <button
+              type="button"
+              className={`${styles.discoverPrimaryChip} ${filters.adegaMode === 'all' ? styles.discoverPrimaryChipActive : ''}`}
+              onClick={() => onFiltersChange({ adegaMode: 'all' })}
+            >
+              Todas
+            </button>
+            <button
+              type="button"
+              className={`${styles.discoverPrimaryChip} ${filters.adegaMode === 'ready' ? styles.discoverPrimaryChipActive : ''}`}
+              onClick={() => onFiltersChange({ adegaMode: 'ready' })}
+            >
+              Posso fazer · {readyCount}
+            </button>
+            <button
+              type="button"
+              className={`${styles.discoverPrimaryChip} ${filters.adegaMode === 'almost' ? styles.discoverPrimaryChipActive : ''}`}
+              onClick={() => onFiltersChange({ adegaMode: 'almost' })}
+            >
+              Quase · {almostCount}
+            </button>
+          </div>
+        ) : null}
+
+        {activeTags.length > 0 ? (
+          <div className={styles.discoverActiveTags}>
+            {activeTags.map((tag) => (
+              <button
+                key={tag.id}
+                type="button"
+                className={styles.discoverActiveTag}
+                onClick={tag.onRemove}
+                aria-label={`Remover filtro ${tag.label}`}
+              >
+                {tag.label}
+                <span aria-hidden> ×</span>
+              </button>
+            ))}
+            <button type="button" className={styles.discoverClearTags} onClick={clearExtraFilters}>
+              Limpar
+            </button>
+          </div>
+        ) : null}
       </div>
+
+      {filtersOpen ? (
+        <div className={styles.modalBackdrop} role="presentation" onClick={() => setFiltersOpen(false)}>
+          <div
+            className={styles.modalSheet}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="discover-filters-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <header className={styles.modalHead}>
+              <h3 id="discover-filters-title" className={styles.modalTitle}>
+                Filtros
+              </h3>
+              <button
+                type="button"
+                className={styles.modalClose}
+                onClick={() => setFiltersOpen(false)}
+                aria-label="Fechar"
+              >
+                ×
+              </button>
+            </header>
+            <div className={styles.modalBody}>
+              <section className={styles.filterSection}>
+                <p className={styles.filterSectionTitle}>Coleção</p>
+                <div className={styles.filterChipGrid}>
+                  {DRINK_COLLECTIONS.map((collection) => (
+                    <button
+                      key={collection.id}
+                      type="button"
+                      className={`${styles.filterChip} ${filters.collection === collection.id ? styles.filterChipActive : ''}`}
+                      onClick={() =>
+                        onFiltersChange({
+                          collection:
+                            filters.collection === collection.id ? null : collection.id,
+                        })
+                      }
+                    >
+                      {collection.emoji} {collection.label}
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              <section className={styles.filterSection}>
+                <p className={styles.filterSectionTitle}>Sabor</p>
+                <div className={styles.filterChipGrid}>
+                  {DRINK_FLAVOR_CHIPS.map((chip) => (
+                    <button
+                      key={chip.id}
+                      type="button"
+                      className={`${styles.filterChip} ${filters.flavor === chip.id ? styles.filterChipActive : ''}`}
+                      onClick={() =>
+                        onFiltersChange({
+                          flavor: filters.flavor === chip.id ? null : chip.id,
+                        })
+                      }
+                    >
+                      {chip.label}
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              <section className={styles.filterSection}>
+                <p className={styles.filterSectionTitle}>Base / tipo</p>
+                <div className={styles.filterChipGrid}>
+                  {DRINK_CATEGORY_CHIPS.map((chip) => {
+                    const active = (filters.baseSpirit ?? filters.category) === chip.id;
+                    return (
+                      <button
+                        key={chip.id}
+                        type="button"
+                        className={`${styles.filterChip} ${active ? styles.filterChipActive : ''}`}
+                        onClick={() => setSpirit(active ? null : chip.id)}
+                      >
+                        {chip.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+
+              {(favoriteCount > 0 || triedCount > 0 || wantToTryCount > 0) ? (
+                <section className={styles.filterSection}>
+                  <p className={styles.filterSectionTitle}>Minha lista</p>
+                  <div className={styles.filterChipGrid}>
+                    {favoriteCount > 0 ? (
+                      <button
+                        type="button"
+                        className={`${styles.filterChip} ${filters.favoritesOnly ? styles.filterChipActive : ''}`}
+                        onClick={() => onFiltersChange({ favoritesOnly: !filters.favoritesOnly })}
+                      >
+                        ★ Favoritos ({favoriteCount})
+                      </button>
+                    ) : null}
+                    {triedCount > 0 ? (
+                      <button
+                        type="button"
+                        className={`${styles.filterChip} ${filters.triedOnly ? styles.filterChipActive : ''}`}
+                        onClick={() => onFiltersChange({ triedOnly: !filters.triedOnly })}
+                      >
+                        ✓ Já provei ({triedCount})
+                      </button>
+                    ) : null}
+                    {wantToTryCount > 0 ? (
+                      <button
+                        type="button"
+                        className={`${styles.filterChip} ${filters.wantToTryOnly ? styles.filterChipActive : ''}`}
+                        onClick={() => onFiltersChange({ wantToTryOnly: !filters.wantToTryOnly })}
+                      >
+                        Quero experimentar ({wantToTryCount})
+                      </button>
+                    ) : null}
+                  </div>
+                </section>
+              ) : null}
+
+              <div className={styles.filterSheetFoot}>
+                <button type="button" className={styles.filterClearBtn} onClick={clearExtraFilters}>
+                  Limpar filtros
+                </button>
+                <button
+                  type="button"
+                  className={styles.filterApplyBtn}
+                  onClick={() => setFiltersOpen(false)}
+                >
+                  Ver resultados
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {toolsOpen ? (
+        <div className={styles.modalBackdrop} role="presentation" onClick={() => setToolsOpen(false)}>
+          <div
+            className={styles.modalSheet}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="discover-tools-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <header className={styles.modalHead}>
+              <h3 id="discover-tools-title" className={styles.modalTitle}>
+                Ferramentas
+              </h3>
+              <button
+                type="button"
+                className={styles.modalClose}
+                onClick={() => setToolsOpen(false)}
+                aria-label="Fechar"
+              >
+                ×
+              </button>
+            </header>
+            <div className={styles.modalBody}>
+              <ul className={styles.toolsList}>
+                {shoppingList.length > 0 ? (
+                  <li>
+                    <button
+                      type="button"
+                      className={styles.toolsItem}
+                      onClick={() => {
+                        setToolsOpen(false);
+                        setShoppingOpen(true);
+                      }}
+                    >
+                      <span className={styles.toolsItemLabel}>Lista de compras</span>
+                      <span className={styles.toolsItemMeta}>{shoppingList.length} itens</span>
+                    </button>
+                  </li>
+                ) : null}
+                <li>
+                  <button
+                    type="button"
+                    className={styles.toolsItem}
+                    onClick={() => {
+                      setToolsOpen(false);
+                      setPartyOpen(true);
+                    }}
+                  >
+                    <span className={styles.toolsItemLabel}>Modo festa</span>
+                    <span className={styles.toolsItemMeta}>Sugestões para convidados</span>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" className={styles.toolsItem} onClick={() => void handleShare()}>
+                    <span className={styles.toolsItemLabel}>
+                      {shareCopied ? 'Link copiado!' : 'Compartilhar bar'}
+                    </span>
+                    <span className={styles.toolsItemMeta}>Link só leitura</span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {shoppingOpen ? (
         <div className={styles.modalBackdrop} role="presentation" onClick={() => setShoppingOpen(false)}>

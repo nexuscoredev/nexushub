@@ -24,6 +24,18 @@ const DRINKS = [
   ['caipiroska-de-maracuja', 'caipiroska-de-maracuj%C3%A1'],
   ['blue-lagoon', 'blue-lagoon'],
   ['bloody-mary', 'bloody-mary'],
+  ['caipirinha', 'caipirinha'],
+  ['gin-tonic', 'gin-tonic'],
+  ['old-fashioned', 'old-fashioned'],
+  ['manhattan', 'manhattan'],
+  ['rum-cola', 'rum-cola'],
+  ['tequila-sunrise', 'tequila-sunrise'],
+  ['gin-fizz', 'gin-fizz'],
+  ['whiskey-smash', 'whiskey-smash'],
+  ['paloma', 'paloma'],
+  ['tom-collins', 'tom-collins'],
+  ['aperol-spritz', 'aperol-spritz'],
+  ['french-75', 'french-75'],
 ];
 
 fs.mkdirSync(outDir, { recursive: true });
