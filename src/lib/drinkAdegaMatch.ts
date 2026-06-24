@@ -99,14 +99,37 @@ function splitOrAlternatives(text: string): string[] {
   return parts;
 }
 
+const PREP_CLAUSE_RE =
+  /(?:,\s*|\s+)(?:bem\s+)?(?:gelad[oa]s?|fri[oa]s?|em\s+temperatura\s+ambiente|à\s+temperatura\s+ambiente|com\s+gelo|sem\s+gelo|para\s+decorar|para\s+servir).*$/i;
+
+const PREP_TERM_RE =
+  /^(?:bem\s+)?(?:gelad[oa]s?|fri[oa]s?|em\s+temperatura\s+ambiente|com\s+gelo|sem\s+gelo|para\s+decorar|para\s+servir)$/i;
+
 function stripPreparationClause(text: string): string {
-  return text
-    .replace(
-      /,\s*(?:bem\s+)?(?:gelad[oa]s?|fri[oa]s?|em\s+temperatura\s+ambiente|à\s+temperatura\s+ambiente|com\s+gelo|sem\s+gelo|para\s+decorar|para\s+servir).*$/i,
-      '',
-    )
-    .replace(/[;,.\s]+$/, '')
-    .trim();
+  return text.replace(PREP_CLAUSE_RE, '').replace(/[;,.\s]+$/, '').trim();
+}
+
+function stripIngredientPrefix(text: string): string {
+  return text.replace(/^ou\s+/i, '').trim();
+}
+
+function orOptionsWithPrep(ingredient: string): string[] {
+  const base = stripPreparationClause(ingredient.replace(/\([^)]*\)/g, '').trim());
+  return splitOrAlternatives(base)
+    .map((part) => stripPreparationClause(stripIngredientPrefix(part)))
+    .filter(Boolean);
+}
+
+/** Prefer the OR branch that names a spirit/beer (ex.: lata OU garrafa de cerveja). */
+function pickSpiritOrAlternative(ingredient: string): string {
+  const options = orOptionsWithPrep(ingredient);
+  if (options.length <= 1) return options[0] ?? stripPreparationClause(stripIngredientPrefix(ingredient.trim()));
+
+  for (const option of options) {
+    if (findRulesForToken(option).length > 0) return option;
+  }
+
+  return options[options.length - 1] ?? ingredient;
 }
 
 function findRulesForToken(token: string): SpiritRule[] {
@@ -117,7 +140,7 @@ function findRulesForToken(token: string): SpiritRule[] {
 }
 
 function findRulesForIngredient(ingredient: string): SpiritRule[] {
-  const orOptions = splitOrAlternatives(ingredient);
+  const orOptions = orOptionsWithPrep(ingredient);
   if (orOptions.length > 1) {
     const rules = orOptions.flatMap((option) => findRulesForToken(option));
     return [...new Map(rules.map((rule) => [rule.id, rule])).values()];
@@ -186,14 +209,9 @@ function itemMatchesSpiritVariant(haystack: string, variant: SpiritVariant): boo
 }
 
 function ingredientDisplayLabel(ingredient: string): string {
-  let text = ingredient.trim();
+  let text = pickSpiritOrAlternative(ingredient);
   text = text.replace(/\([^)]*\)/g, '').trim();
   text = stripPreparationClause(text);
-
-  const orParts = splitOrAlternatives(text);
-  if (orParts.length > 1) {
-    text = orParts.map((part) => stripPreparationClause(part)).find(Boolean) ?? text;
-  }
 
   if (text.includes('/')) {
     const parts = splitSlashAlternatives(text)
@@ -213,21 +231,28 @@ function ingredientDisplayLabel(ingredient: string): string {
     // número solto com espaço: "1 Limão", "1/2 dose de"
     .replace(/^(\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?)\s+(?:doses?\s+)?(?:de\s+)?/i, '')
     .replace(/^(?:uma|um)\s+(?:fatia|lata|garrafa)\s+(?:de\s+)?/i, '')
+    .replace(/^(?:fatia|lata|garrafa)\s+(?:de\s+)?/i, '')
     .replace(/^de\s+/i, '')
     .replace(/\s+ou\s+(?:\d+(?:\/\d+)?|meio(?:\s+\w+)?)\s*$/i, '')
     .trim();
 
   text = stripPreparationClause(text);
 
-  if (!text) return ingredient.trim().slice(0, 48);
+  if (!text) {
+    text = stripPreparationClause(stripIngredientPrefix(pickSpiritOrAlternative(ingredient)));
+  }
+
+  if (!text) return 'Ingrediente';
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 function buildSearchTerms(ingredient: string, label: string): string[] {
   const terms = new Set<string>();
   const add = (value: string) => {
-    const normalized = normalizeText(value.trim());
-    if (normalized.length >= 2) terms.add(normalized);
+    const cleaned = stripPreparationClause(stripIngredientPrefix(value.trim()));
+    const normalized = normalizeText(cleaned);
+    if (normalized.length < 2 || PREP_TERM_RE.test(normalized)) return;
+    terms.add(normalized);
   };
 
   add(label);
@@ -239,9 +264,9 @@ function buildSearchTerms(ingredient: string, label: string): string[] {
   if (deMatch) add(deMatch[1]);
 
   for (const token of splitSlashAlternatives(ingredient)
-    .concat(splitOrAlternatives(ingredient))
+    .concat(orOptionsWithPrep(ingredient))
     .concat(ingredient.split(/[,;]/))) {
-    const cleaned = token.replace(/.*\bde\b\s+/i, '').trim();
+    const cleaned = stripPreparationClause(token.replace(/.*\bde\b\s+/i, '').trim());
     if (cleaned.length >= 3) add(cleaned);
   }
 
@@ -268,14 +293,15 @@ export function extractDrinkRequirementGroups(drink: ViniciusDrink): DrinkRequir
 
     const rules = findRulesForIngredient(ingredient);
     const slashOptions = splitSlashAlternatives(ingredient).filter((part) => part.trim().length > 0);
-    const orOptions = splitOrAlternatives(ingredient).filter((part) => part.trim().length > 0);
+    const orOptions = orOptionsWithPrep(ingredient);
     const isOrGroup =
       (slashOptions.length > 1 && rules.length > 1) || (orOptions.length > 1 && rules.length > 1);
 
     if (rules.length) {
-      const primaryRule = pickPrimaryRule(ingredient, rules);
+      const spiritAlternative = pickSpiritOrAlternative(ingredient);
+      const primaryRule = pickPrimaryRule(spiritAlternative, rules);
       const displayLabel = ingredientDisplayLabel(ingredient);
-      const variant = extractSpiritVariant(ingredient);
+      const variant = extractSpiritVariant(spiritAlternative);
       const group: DrinkRequirementGroup = isOrGroup
         ? {
             label: rules.map((rule) => rule.label).join(' ou '),
@@ -384,6 +410,10 @@ function itemMatchesRule(item: AdegaItem, rule: SpiritRule): boolean {
     return namePatternMatch || haystackPatternMatch;
   }
 
+  if (rule.id === 'cerveja' && categoryMatch) {
+    return true;
+  }
+
   if (categoryMatch) return true;
   return namePatternMatch || haystackPatternMatch;
 }
@@ -484,6 +514,14 @@ function itemMatchesGroup(item: AdegaItem, group: DrinkRequirementGroup): boolea
       const rule = SPIRIT_RULES.find((entry) => entry.id === ruleId);
       if (!rule || !itemMatchesRule(item, rule)) continue;
       if (rule.id === 'licor' && !licorSubtypeMatches(group.label, item)) continue;
+      if (rule.id === 'cerveja') {
+        const label = normalizeText(group.label);
+        const name = itemNameBrandHaystack(item);
+        if (/clar[ao]/.test(label) && /escur[ao]|pret[ao]|stout|porter|black/.test(name)) continue;
+        if (/escur[ao]|pret[ao]|stout|porter|black/.test(label) && /clar[ao]|pilsen|lager|puro\s*malte/.test(name) && !/escur[ao]|pret[ao]|stout|porter|black/.test(name)) {
+          continue;
+        }
+      }
       return true;
     }
 
