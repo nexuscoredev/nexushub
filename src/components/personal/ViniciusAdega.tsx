@@ -716,17 +716,16 @@ export function ViniciusAdega() {
                   {resolveAdegaItemDisplayIcon(viewingItem)}
                 </span>
               )}
-              <div className={styles.viewHeroScrim} aria-hidden />
-              <div className={styles.viewHeroCaption}>
-                <span className={styles.viewCategoryPill}>
-                  <span aria-hidden>{categoryEmoji(viewingItem.category)}</span>
-                  {viewingItem.category}
-                </span>
-                <h3 id="adega-view-title" className={styles.viewHeroTitle}>
-                  {viewingItem.name}
-                </h3>
-                {viewingItem.brand ? <p className={styles.viewHeroBrand}>{viewingItem.brand}</p> : null}
-              </div>
+            </div>
+            <div className={styles.viewDetailHead}>
+              <span className={styles.viewCategoryPill}>
+                <span aria-hidden>{categoryEmoji(viewingItem.category)}</span>
+                {viewingItem.category}
+              </span>
+              <h3 id="adega-view-title" className={styles.viewHeroTitle}>
+                {viewingItem.name}
+              </h3>
+              {viewingItem.brand ? <p className={styles.viewHeroBrand}>{viewingItem.brand}</p> : null}
             </div>
             <div className={styles.viewScrollPane}>
               <section className={styles.viewSectionCard} aria-label="Detalhes do item">

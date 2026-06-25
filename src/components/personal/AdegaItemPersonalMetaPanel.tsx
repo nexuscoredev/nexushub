@@ -55,7 +55,7 @@ export function AdegaItemPersonalMetaPanel({ item, onChange }: AdegaItemPersonal
         <span className={styles.viewNotesLabel}>Nota de degustação</span>
         <textarea
           className={styles.personalMetaNote}
-          rows={2}
+          rows={3}
           placeholder="Doce, encorpado, boa para Negroni…"
           value={item.tastingNote ?? ''}
           onChange={(e) => onChange({ tastingNote: e.target.value })}
