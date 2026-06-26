@@ -11,14 +11,8 @@ export function suggestionDrinkThumbPath(slug: string): string {
   return drinkThumbPath(slug);
 }
 
-function suggestionDrink(
-  entry: Omit<ViniciusDrink, 'imageUrl'> & { thumbSlug?: string },
-): ViniciusDrink {
-  const { thumbSlug, ...drink } = entry;
-  return {
-    ...drink,
-    imageUrl: drinkThumbPath(thumbSlug ?? drink.slug),
-  };
+function suggestionDrink(entry: Omit<ViniciusDrink, 'imageUrl'>): ViniciusDrink {
+  return { ...entry, imageUrl: drinkThumbPath(entry.slug) };
 }
 
 /** Receitas clássicas que ainda não estão na carta padrão. */
@@ -219,7 +213,6 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
     slug: 'pisco-sour',
     title: 'Pisco Sour',
     tagline: 'Pisco, limão e açúcar — clássico chileno batido e cremoso.',
-    thumbSlug: 'daiquiri',
     ingredients: ['50ml de Pisco', 'Suco de 1 limão', '2 colheres de açúcar', 'Gelo'],
     steps: [
       'Bata pisco, limão, açúcar e gelo na coqueteleira;',
@@ -233,7 +226,6 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
     slug: 'gin-tonica-rose',
     title: 'Gin Tônica Rosé',
     tagline: 'Gin com Schweppes Tônica Rosé — floral e refrescante.',
-    thumbSlug: 'gin-tonic',
     ingredients: ['50ml de Gin', '150ml de Schweppes Tônica Rosé', 'Gelo', '1 rodela de limão'],
     steps: [
       'Gele o copo;',
@@ -248,7 +240,6 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
     slug: 'vodka-tonica',
     title: 'Vodka Tônica',
     tagline: 'Vodka, água tônica e limão — seco e direto.',
-    thumbSlug: 'gin-tonic',
     ingredients: ['50ml de Vodka', '150ml de Água Tônica', 'Gelo', '1 rodela de limão'],
     steps: [
       'Gele o copo;',
@@ -260,14 +251,13 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
     category: 'Vodka',
   }),
   suggestionDrink({
-    slug: 'tequila-cola',
+    slug: 'ballena-cola',
     title: 'Batanga',
-    tagline: 'Tequila, Coca-Cola e limão — clássico mexicano no copo alto.',
-    thumbSlug: 'cuba-libre',
+    tagline: 'Ballena, Coca-Cola e limão — clássico mexicano no copo alto.',
     ingredients: ['50ml de Tequila', '1 Coca-Cola', 'Suco de 1/2 limão', 'Gelo'],
     steps: [
       'Gele o copo;',
-      'Acrescente tequila e limão;',
+      'Acrescente a Ballena e o limão;',
       'Complete com Coca-Cola;',
       'Misture suavemente.',
     ],
@@ -275,10 +265,64 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
     category: 'Tequila',
   }),
   suggestionDrink({
+    slug: 'ballena-mule',
+    title: 'Ballena Mule',
+    tagline: 'Tequila Ballena, ginger ale e limão — mule mexicano.',
+    ingredients: ['50ml de Tequila', 'Schweppes Ginger Ale', 'Suco de 1/2 limão', 'Gelo'],
+    steps: [
+      'Gele o copo ou caneca;',
+      'Acrescente a Ballena e o limão;',
+      'Complete com ginger ale;',
+      'Misture suavemente.',
+    ],
+    notes: 'Drink misturado (não batido)!',
+    category: 'Tequila',
+  }),
+  suggestionDrink({
+    slug: 'ballena-tonica',
+    title: 'Ballena Tônica',
+    tagline: 'Ballena, água tônica e limão — seco e cítrico.',
+    ingredients: ['50ml de Tequila', '150ml de Água Tônica', 'Gelo', '1 rodela de limão'],
+    steps: [
+      'Gele o copo;',
+      'Acrescente a Ballena;',
+      'Complete com tônica;',
+      'Decore com limão.',
+    ],
+    notes: 'Drink misturado (não batido)!',
+    category: 'Tequila',
+  }),
+  suggestionDrink({
+    slug: 'ballena-tonica-rose',
+    title: 'Ballena Tônica Rosé',
+    tagline: 'Ballena com Schweppes Tônica Rosé — floral e refrescante.',
+    ingredients: ['50ml de Tequila', '150ml de Schweppes Tônica Rosé', 'Gelo', '1 rodela de limão'],
+    steps: [
+      'Gele o copo;',
+      'Acrescente a Ballena;',
+      'Complete com tônica rosé;',
+      'Decore com limão.',
+    ],
+    notes: 'Drink misturado (não batido)!',
+    category: 'Tequila',
+  }),
+  suggestionDrink({
+    slug: 'ballena-sour',
+    title: 'Ballena Sour',
+    tagline: 'Ballena, limão e açúcar — sour simples e equilibrado.',
+    ingredients: ['50ml de Tequila', 'Suco de 1 limão', '2 colheres de açúcar', 'Gelo'],
+    steps: [
+      'Bata Ballena, limão, açúcar e gelo na coqueteleira;',
+      'Coe para taça ou copo;',
+      'Sirva gelado.',
+    ],
+    notes: 'Drink batido!',
+    category: 'Tequila',
+  }),
+  suggestionDrink({
     slug: 'jack-ginger',
     title: 'Jack Ginger',
-    tagline: 'Whisky Jack Daniel\'s, ginger ale e limão.',
-    thumbSlug: 'moscow-mule',
+    tagline: "Whisky Jack Daniel's, ginger ale e limão.",
     ingredients: ['50ml de Whisky', 'Schweppes Ginger Ale', 'Suco de 1/2 limão', 'Gelo'],
     steps: [
       'Gele o copo;',
@@ -293,7 +337,6 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
     slug: 'jack-honey-ginger',
     title: 'Honey Ginger',
     tagline: 'Tennessee Honey, ginger ale e limão — doce e especiado.',
-    thumbSlug: 'whiskey-smash',
     ingredients: [
       "50ml de Jack Daniel's Tennessee Honey",
       'Schweppes Ginger Ale',
@@ -313,7 +356,6 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
     slug: 'bacardi-apple-mule',
     title: 'Apple Mule',
     tagline: 'Bacardi Big Apple, ginger ale e limão — mule com maçã.',
-    thumbSlug: 'moscow-mule',
     ingredients: ['50ml de Rum', 'Schweppes Ginger Ale', 'Suco de 1/2 limão', 'Gelo'],
     steps: [
       'Gele o copo ou caneca;',
@@ -328,7 +370,6 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
     slug: 'lillet-spritz',
     title: 'Lillet Spritz',
     tagline: 'Lillet Blanc, tônica e limão — leve e aromático.',
-    thumbSlug: 'aperol-spritz',
     ingredients: ['60ml de Vermouth Lillet', '90ml de Água Tônica', 'Gelo', '1 rodela de limão'],
     steps: [
       'Gele a taça de vinho;',
@@ -342,7 +383,6 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
     slug: 'martini-bianco',
     title: 'Martini Bianco',
     tagline: 'Gin e vermute bianco — suave e aromático.',
-    thumbSlug: 'dry-martini',
     ingredients: ['60ml de Gin', '20ml de Vermute Bianco', 'Gelo'],
     steps: [
       'Misture gin e vermute com gelo;',
@@ -356,7 +396,6 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
     slug: 'pisco-ginger',
     title: 'Chilcano',
     tagline: 'Pisco, ginger ale e limão — refrescante e leve.',
-    thumbSlug: 'moscow-mule',
     ingredients: ['50ml de Pisco', 'Schweppes Ginger Ale', 'Suco de 1/2 limão', 'Gelo'],
     steps: [
       'Gele o copo alto;',
@@ -371,7 +410,6 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
     slug: 'sake-ginger',
     title: 'Sake Ginger',
     tagline: 'Saquê e ginger ale — highball leve e seco.',
-    thumbSlug: 'tom-collins',
     ingredients: ['60ml de Saquê', 'Schweppes Ginger Ale', 'Gelo'],
     steps: [
       'Gele o copo alto;',
@@ -386,7 +424,6 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
     slug: 'royal-mule',
     title: 'Royal Mule',
     tagline: 'Royal Salute, ginger ale e limão — mule premium.',
-    thumbSlug: 'old-fashioned',
     ingredients: ['50ml de Whisky', 'Schweppes Ginger Ale', 'Suco de 1/2 limão', 'Gelo'],
     steps: [
       'Gele a caneca ou copo;',
@@ -396,20 +433,6 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
     ],
     notes: 'Drink misturado (não batido)!',
     category: 'Whisky',
-  }),
-  suggestionDrink({
-    slug: 'contini-negroni',
-    title: 'Contini Negroni',
-    tagline: 'Gin, Contini e bitter — negroni com seu vermute de casa.',
-    thumbSlug: 'negroni',
-    ingredients: ['30ml de Gin', '30ml de Contini', '30ml de bitter Campari', 'Gelo'],
-    steps: [
-      'Misture gin, Contini e bitter com gelo;',
-      'Sirva no copo old fashioned;',
-      'Decore com casca de laranja.',
-    ],
-    notes: 'Substitua Campari por outro bitter se preferir. Drink misturado!',
-    category: 'Gin',
   }),
 ];
 

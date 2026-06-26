@@ -1,5 +1,5 @@
 /**
- * Lista sugestões "ready" com a adega atual e gera JSON para customDrinks.
+ * Lista sugestões "ready" com a adega atual.
  * Uso: node scripts/seed-custom-drinks-from-adega.mjs
  */
 import { getNewDrinkSuggestions } from '../src/lib/drinkCartaSuggestions.ts';
@@ -56,7 +56,7 @@ const ready = suggestions.filter((s) => s.match.status === 'ready');
 
 console.log('Ready suggestions:', ready.length);
 for (const { drink, match } of ready) {
-  console.log(`  ${drink.slug} — ${drink.title}`);
+  console.log(`  ${drink.slug} — ${drink.title} (${drink.imageUrl})`);
 }
 
 const partial = suggestions.filter((s) => s.match.status === 'partial').slice(0, 8);
@@ -64,17 +64,3 @@ console.log('\nPartial (sample):');
 for (const { drink, match } of partial) {
   console.log(`  ${drink.slug}: ${match.missingLabels.join(', ')}`);
 }
-
-const toAdd = ready.map((s) => s.drink);
-const customDrinks = [...(store.customDrinks ?? []), ...toAdd];
-
-if (process.argv.includes('--write')) {
-  const fs = await import('node:fs');
-  fs.writeFileSync('scripts/.custom-drinks-payload.json', JSON.stringify(customDrinks));
-  console.error(`Wrote ${customDrinks.length} drinks to scripts/.custom-drinks-payload.json`);
-  process.exit(0);
-}
-
-console.log('\n--- customDrinks JSON ---');
-console.log(JSON.stringify(customDrinks, null, 2));
-console.log('\nUser:', USER_ID);
