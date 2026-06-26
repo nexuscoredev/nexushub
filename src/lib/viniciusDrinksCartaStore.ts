@@ -1,5 +1,6 @@
 import {
   VINICIUS_DRINKS,
+  isCatalogDrinkSlug,
   type ViniciusDrink,
 } from './viniciusDrinksCarta';
 import { repairCustomDrinkImage, suggestionDrinkThumbPath } from './drinkCartaSuggestions';
@@ -134,8 +135,45 @@ function shouldDropBannerOverride(url: string): boolean {
   return false;
 }
 
+/** Overrides que trocaram receita por cerveja clara (bug antigo de importação). */
+function isCorruptedBeerOverride(slug: string, override: DrinkCartaOverride): boolean {
+  if (!isCatalogDrinkSlug(slug)) return false;
+
+  const catalog = VINICIUS_DRINKS.find((drink) => drink.slug === slug);
+  if (!catalog) return false;
+
+  const catalogUsesBeer = catalog.ingredients.some((item) => /cerveja/i.test(item));
+  if (catalogUsesBeer) return false;
+
+  const blob = [
+    override.title,
+    override.tagline,
+    override.notes,
+    ...(override.ingredients ?? []),
+    ...(override.steps ?? []),
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+
+  return /cerveja/.test(blob) && /lata ou garrafa|acrescentar a cerveja|crosta de sal na taça/.test(blob);
+}
+
+function repairCorruptedDrinkOverrides(store: DrinkCartaStore): DrinkCartaStore {
+  const overrides = { ...store.overrides };
+  let changed = false;
+
+  for (const [slug, override] of Object.entries(store.overrides)) {
+    if (!isCorruptedBeerOverride(slug, override)) continue;
+    delete overrides[slug];
+    changed = true;
+  }
+
+  return changed ? { ...store, overrides } : store;
+}
+
 function migrateDrinkCartaStore(store: DrinkCartaStore): DrinkCartaStore {
-  let next = store;
+  let next = repairCorruptedDrinkOverrides(store);
   if (store.bannerImageUrl && shouldDropBannerOverride(store.bannerImageUrl)) {
     next = { ...next, bannerImageUrl: undefined };
   }
