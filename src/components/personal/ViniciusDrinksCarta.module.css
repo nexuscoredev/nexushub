@@ -119,8 +119,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 88%;
-  transform: scale(1.14);
+  object-position: center center;
+  transform: scale(1.06);
 }
 
 .cardBody {
@@ -209,7 +209,7 @@
   height: auto;
   border-radius: 0.85rem;
   object-fit: contain;
-  object-position: center bottom;
+  object-position: center center;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
 }
 
@@ -776,7 +776,7 @@
   width: 4.5rem;
   height: 5.5rem;
   object-fit: cover;
-  object-position: center 88%;
+  object-position: center center;
   border-radius: 0.5rem;
   background: #050505;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -1172,7 +1172,7 @@ select.editorInput option:checked,
   width: 100%;
   height: 100%;
   object-fit: contain;
-  object-position: center bottom;
+  object-position: center center;
 }
 
 .suggestBody {

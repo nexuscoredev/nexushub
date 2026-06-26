@@ -8,6 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
+import { THUMB_BG, THUMB_SIZE, centerDrinkThumb } from './drink-thumb-center.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const thumbsDir = path.join(__dirname, '../public/img/personal/drinks/thumbs');
@@ -30,16 +31,18 @@ if (!fs.existsSync(input)) {
 const output = path.join(thumbsDir, `${slug}.jpg`);
 fs.mkdirSync(thumbsDir, { recursive: true });
 
-const THUMB = 512;
-const BG = { r: 8, g: 8, b: 10 };
+const temp = path.join(thumbsDir, `${slug}.tmp.jpg`);
 
 await sharp(input)
-  .resize(THUMB, THUMB, {
+  .resize(THUMB_SIZE, THUMB_SIZE, {
     fit: 'contain',
-    background: BG,
-    position: 'bottom',
+    background: THUMB_BG,
+    position: 'centre',
   })
   .jpeg({ quality: 90 })
-  .toFile(output);
+  .toFile(temp);
+
+await centerDrinkThumb(temp, output);
+fs.unlinkSync(temp);
 
 console.log('saved', output);
