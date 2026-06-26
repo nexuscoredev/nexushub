@@ -120,7 +120,6 @@
   height: 100%;
   object-fit: cover;
   object-position: center center;
-  transform: scale(1.02);
 }
 
 .cardBody {
@@ -1173,7 +1172,6 @@ select.editorInput option:checked,
   height: 100%;
   object-fit: cover;
   object-position: center center;
-  transform: scale(1.02);
 }
 
 .suggestBody {

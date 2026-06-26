@@ -4,6 +4,8 @@
 import sharp from 'sharp';
 
 export const THUMB_SIZE = 512;
+/** Drink ocupa até esta fração do quadrado — margem uniforme sem zoom excessivo. */
+export const THUMB_INNER = Math.round(THUMB_SIZE * 0.84);
 export const THUMB_BG = { r: 8, g: 8, b: 10 };
 
 export async function findContentBounds(input, threshold = 42) {
@@ -47,7 +49,7 @@ export async function centerDrinkThumb(input, output = input) {
     throw new Error('Nenhum conteúdo visível na imagem');
   }
 
-  const pad = Math.round(Math.max(bounds.width, bounds.height) * 0.03);
+  const pad = Math.round(Math.max(bounds.width, bounds.height) * 0.1);
   const left = Math.max(0, bounds.left - pad);
   const top = Math.max(0, bounds.top - pad);
   const right = Math.min(meta.width, bounds.left + bounds.width + pad);
@@ -60,15 +62,25 @@ export async function centerDrinkThumb(input, output = input) {
       width: right - left,
       height: bottom - top,
     })
-    .resize(THUMB_SIZE, THUMB_SIZE, {
-      fit: 'cover',
-      position: 'centre',
+    .resize(THUMB_INNER, THUMB_INNER, {
+      fit: 'inside',
+      background: THUMB_BG,
     })
     .toBuffer();
 
   const target = output === input ? `${output}.tmp` : output;
 
-  await sharp(crop).jpeg({ quality: 90 }).toFile(target);
+  await sharp({
+    create: {
+      width: THUMB_SIZE,
+      height: THUMB_SIZE,
+      channels: 3,
+      background: THUMB_BG,
+    },
+  })
+    .composite([{ input: crop, gravity: 'centre' }])
+    .jpeg({ quality: 90 })
+    .toFile(target);
 
   if (output === input) {
     const fs = await import('node:fs');
