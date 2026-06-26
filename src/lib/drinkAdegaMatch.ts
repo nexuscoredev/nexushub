@@ -15,8 +15,9 @@ const SPIRIT_RULES: SpiritRule[] = [
   { id: 'gin', label: 'Gin', categories: ['Gin'], patterns: [/\bgin\b/i] },
   { id: 'rum', label: 'Rum', categories: ['Rum'], patterns: [/rum/i] },
   { id: 'tequila', label: 'Tequila', categories: ['Tequila'], patterns: [/tequila/i] },
+  { id: 'pisco', label: 'Pisco', categories: ['Pisco'], patterns: [/pisco/i] },
   { id: 'cachaca', label: 'Cachaça', categories: ['Cachaça'], patterns: [/cacha[cç]a/i] },
-  { id: 'sake', label: 'Saquê', categories: ['Outro'], patterns: [/saqu[eê]/i] },
+  { id: 'sake', label: 'Saquê', categories: ['Outro', 'Sake'], patterns: [/saqu[eê]/i] },
   { id: 'cerveja', label: 'Cerveja', categories: ['Cerveja'], patterns: [/cerveja|pilsen/i] },
   {
     id: 'lillet',
@@ -398,7 +399,11 @@ function itemMatchesRule(item: AdegaItem, rule: SpiritRule): boolean {
   const haystackPatternMatch = rule.patterns.some((pattern) => pattern.test(haystack));
 
   if (rule.id === 'sake') {
-    return namePatternMatch || haystackPatternMatch;
+    return (
+      rule.categories.some((category) => normalizeText(item.category) === normalizeText(category)) ||
+      namePatternMatch ||
+      haystackPatternMatch
+    );
   }
 
   // Licor: só nome/marca — categoria "Licor" sozinha gerava falso Campari/Cointreau.
@@ -419,12 +424,18 @@ function itemMatchesRule(item: AdegaItem, rule: SpiritRule): boolean {
 }
 
 function itemMatchesGenericGroup(item: AdegaItem, group: DrinkRequirementGroup): boolean {
-  if (item.quantity <= 0 || !isPantryItem(item)) return false;
+  if (item.quantity <= 0) return false;
 
   const name = normalizeText(item.name);
   const label = normalizeText(group.label);
   const nameCompact = compactAlnum(item.name);
   const labelCompact = compactAlnum(group.label);
+
+  if (isSpiritBeverage(item) && labelCompact.length >= 8) {
+    if (nameCompact.includes(labelCompact) || labelCompact.includes(nameCompact)) return true;
+  }
+
+  if (!isPantryItem(item)) return false;
 
   if (labelCompact.length >= 5 && nameCompact.includes(labelCompact)) return true;
 

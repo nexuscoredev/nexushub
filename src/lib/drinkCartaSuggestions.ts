@@ -11,8 +11,14 @@ export function suggestionDrinkThumbPath(slug: string): string {
   return drinkThumbPath(slug);
 }
 
-function suggestionDrink(entry: Omit<ViniciusDrink, 'imageUrl'>): ViniciusDrink {
-  return { ...entry, imageUrl: suggestionDrinkThumbPath(entry.slug) };
+function suggestionDrink(
+  entry: Omit<ViniciusDrink, 'imageUrl'> & { thumbSlug?: string },
+): ViniciusDrink {
+  const { thumbSlug, ...drink } = entry;
+  return {
+    ...drink,
+    imageUrl: drinkThumbPath(thumbSlug ?? drink.slug),
+  };
 }
 
 /** Receitas clássicas que ainda não estão na carta padrão. */
@@ -62,12 +68,12 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
   suggestionDrink({
     slug: 'manhattan',
     title: 'Manhattan',
-    tagline: 'Whisky, vermute e bitter — elegante e aromático.',
-    ingredients: ['50ml de Whisky', '25ml de Vermute', '2 dashes de bitter', 'Gelo'],
+    tagline: 'Whisky e vermute rosso — elegante e aromático.',
+    ingredients: ['50ml de Whisky', '25ml de Vermute Rosso', 'Gelo'],
     steps: [
-      'Misture whisky, vermute e bitter com gelo;',
+      'Misture whisky e vermute com gelo;',
       'Coe para taça gelada;',
-      'Decore com cereja ou casca de limão.',
+      'Decore com casca de limão ou cereja.',
     ],
     notes: 'Drink misturado (não batido)!',
   }),
@@ -208,6 +214,202 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
       'Complete com espumante.',
     ],
     notes: 'Drink batido e depois completado com espumante!',
+  }),
+  suggestionDrink({
+    slug: 'pisco-sour',
+    title: 'Pisco Sour',
+    tagline: 'Pisco, limão e açúcar — clássico chileno batido e cremoso.',
+    thumbSlug: 'daiquiri',
+    ingredients: ['50ml de Pisco', 'Suco de 1 limão', '2 colheres de açúcar', 'Gelo'],
+    steps: [
+      'Bata pisco, limão, açúcar e gelo na coqueteleira;',
+      'Coe para taça ou copo;',
+      'Opcional: uma gota de bitter na espuma.',
+    ],
+    notes: 'Drink batido!',
+    category: 'Pisco',
+  }),
+  suggestionDrink({
+    slug: 'gin-tonica-rose',
+    title: 'Gin Tônica Rosé',
+    tagline: 'Gin com Schweppes Tônica Rosé — floral e refrescante.',
+    thumbSlug: 'gin-tonic',
+    ingredients: ['50ml de Gin', '150ml de Schweppes Tônica Rosé', 'Gelo', '1 rodela de limão'],
+    steps: [
+      'Gele o copo;',
+      'Acrescente o gin;',
+      'Complete com tônica rosé;',
+      'Decore com limão.',
+    ],
+    notes: 'Drink misturado (não batido)!',
+    category: 'Gin',
+  }),
+  suggestionDrink({
+    slug: 'vodka-tonica',
+    title: 'Vodka Tônica',
+    tagline: 'Vodka, água tônica e limão — seco e direto.',
+    thumbSlug: 'gin-tonic',
+    ingredients: ['50ml de Vodka', '150ml de Água Tônica', 'Gelo', '1 rodela de limão'],
+    steps: [
+      'Gele o copo;',
+      'Acrescente a vodka;',
+      'Complete com tônica;',
+      'Decore com limão.',
+    ],
+    notes: 'Drink misturado (não batido)!',
+    category: 'Vodka',
+  }),
+  suggestionDrink({
+    slug: 'tequila-cola',
+    title: 'Batanga',
+    tagline: 'Tequila, Coca-Cola e limão — clássico mexicano no copo alto.',
+    thumbSlug: 'cuba-libre',
+    ingredients: ['50ml de Tequila', '1 Coca-Cola', 'Suco de 1/2 limão', 'Gelo'],
+    steps: [
+      'Gele o copo;',
+      'Acrescente tequila e limão;',
+      'Complete com Coca-Cola;',
+      'Misture suavemente.',
+    ],
+    notes: 'Drink misturado (não batido)!',
+    category: 'Tequila',
+  }),
+  suggestionDrink({
+    slug: 'jack-ginger',
+    title: 'Jack Ginger',
+    tagline: 'Whisky Jack Daniel\'s, ginger ale e limão.',
+    thumbSlug: 'moscow-mule',
+    ingredients: ['50ml de Whisky', 'Schweppes Ginger Ale', 'Suco de 1/2 limão', 'Gelo'],
+    steps: [
+      'Gele o copo;',
+      'Acrescente whisky e limão;',
+      'Complete com ginger ale;',
+      'Misture suavemente.',
+    ],
+    notes: 'Drink misturado (não batido)!',
+    category: 'Whisky',
+  }),
+  suggestionDrink({
+    slug: 'jack-honey-ginger',
+    title: 'Honey Ginger',
+    tagline: 'Tennessee Honey, ginger ale e limão — doce e especiado.',
+    thumbSlug: 'whiskey-smash',
+    ingredients: [
+      "50ml de Jack Daniel's Tennessee Honey",
+      'Schweppes Ginger Ale',
+      'Suco de 1/2 limão',
+      'Gelo',
+    ],
+    steps: [
+      'Gele o copo;',
+      'Acrescente o licor e o limão;',
+      'Complete com ginger ale;',
+      'Misture suavemente.',
+    ],
+    notes: 'Drink misturado (não batido)!',
+    category: 'Licor',
+  }),
+  suggestionDrink({
+    slug: 'bacardi-apple-mule',
+    title: 'Apple Mule',
+    tagline: 'Bacardi Big Apple, ginger ale e limão — mule com maçã.',
+    thumbSlug: 'moscow-mule',
+    ingredients: ['50ml de Rum', 'Schweppes Ginger Ale', 'Suco de 1/2 limão', 'Gelo'],
+    steps: [
+      'Gele o copo ou caneca;',
+      'Acrescente rum e limão;',
+      'Complete com ginger ale;',
+      'Misture suavemente.',
+    ],
+    notes: 'Drink misturado (não batido)!',
+    category: 'Rum',
+  }),
+  suggestionDrink({
+    slug: 'lillet-spritz',
+    title: 'Lillet Spritz',
+    tagline: 'Lillet Blanc, tônica e limão — leve e aromático.',
+    thumbSlug: 'aperol-spritz',
+    ingredients: ['60ml de Vermouth Lillet', '90ml de Água Tônica', 'Gelo', '1 rodela de limão'],
+    steps: [
+      'Gele a taça de vinho;',
+      'Acrescente Lillet e tônica;',
+      'Misture suavemente e decore com limão.',
+    ],
+    notes: 'Drink montado (não batido)!',
+    category: 'Aperitivo',
+  }),
+  suggestionDrink({
+    slug: 'martini-bianco',
+    title: 'Martini Bianco',
+    tagline: 'Gin e vermute bianco — suave e aromático.',
+    thumbSlug: 'dry-martini',
+    ingredients: ['60ml de Gin', '20ml de Vermute Bianco', 'Gelo'],
+    steps: [
+      'Misture gin e vermute com gelo;',
+      'Coe para taça martini gelada;',
+      'Finalize com casca de limão.',
+    ],
+    notes: 'Drink misturado (não batido)!',
+    category: 'Gin',
+  }),
+  suggestionDrink({
+    slug: 'pisco-ginger',
+    title: 'Chilcano',
+    tagline: 'Pisco, ginger ale e limão — refrescante e leve.',
+    thumbSlug: 'moscow-mule',
+    ingredients: ['50ml de Pisco', 'Schweppes Ginger Ale', 'Suco de 1/2 limão', 'Gelo'],
+    steps: [
+      'Gele o copo alto;',
+      'Acrescente pisco e limão;',
+      'Complete com ginger ale;',
+      'Misture suavemente.',
+    ],
+    notes: 'Drink misturado (não batido)!',
+    category: 'Pisco',
+  }),
+  suggestionDrink({
+    slug: 'sake-ginger',
+    title: 'Sake Ginger',
+    tagline: 'Saquê e ginger ale — highball leve e seco.',
+    thumbSlug: 'tom-collins',
+    ingredients: ['60ml de Saquê', 'Schweppes Ginger Ale', 'Gelo'],
+    steps: [
+      'Gele o copo alto;',
+      'Acrescente o saquê;',
+      'Complete com ginger ale;',
+      'Misture suavemente.',
+    ],
+    notes: 'Drink misturado (não batido)!',
+    category: 'Saquê',
+  }),
+  suggestionDrink({
+    slug: 'royal-mule',
+    title: 'Royal Mule',
+    tagline: 'Royal Salute, ginger ale e limão — mule premium.',
+    thumbSlug: 'old-fashioned',
+    ingredients: ['50ml de Whisky', 'Schweppes Ginger Ale', 'Suco de 1/2 limão', 'Gelo'],
+    steps: [
+      'Gele a caneca ou copo;',
+      'Acrescente whisky e limão;',
+      'Complete com ginger ale;',
+      'Misture suavemente.',
+    ],
+    notes: 'Drink misturado (não batido)!',
+    category: 'Whisky',
+  }),
+  suggestionDrink({
+    slug: 'contini-negroni',
+    title: 'Contini Negroni',
+    tagline: 'Gin, Contini e bitter — negroni com seu vermute de casa.',
+    thumbSlug: 'negroni',
+    ingredients: ['30ml de Gin', '30ml de Contini', '30ml de bitter Campari', 'Gelo'],
+    steps: [
+      'Misture gin, Contini e bitter com gelo;',
+      'Sirva no copo old fashioned;',
+      'Decore com casca de laranja.',
+    ],
+    notes: 'Substitua Campari por outro bitter se preferir. Drink misturado!',
+    category: 'Gin',
   }),
 ];
 
