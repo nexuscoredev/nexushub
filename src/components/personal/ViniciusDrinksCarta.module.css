@@ -1602,6 +1602,15 @@ select.editorInput option:checked,
   color: rgba(226, 232, 240, 0.68);
 }
 
+.newDrinksCardCategory {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(212, 175, 55, 0.85);
+}
+
 .newDrinksCardMissing {
   margin: 0;
   font-size: 0.72rem;

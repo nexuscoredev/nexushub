@@ -118,6 +118,9 @@ export function DrinkNewSuggestions({
                         </span>
                       </div>
                       <p className={styles.newDrinksCardTagline}>{drink.tagline}</p>
+                      {drink.category?.startsWith('IBA ·') ? (
+                        <p className={styles.newDrinksCardCategory}>{drink.category}</p>
+                      ) : null}
                       {match.missingLabels.length > 0 ? (
                         <p className={styles.newDrinksCardMissing}>
                           Falta: {formatMissingIngredients(match)}

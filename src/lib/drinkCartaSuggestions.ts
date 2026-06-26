@@ -1,4 +1,5 @@
 import { matchDrinkToAdega, type DrinkAdegaMatch } from './drinkAdegaMatch';
+import { IBA_SUGGESTION_DRINKS } from './ibaCocktails';
 import {
   drinkThumbPath,
   isCatalogDrinkSlug,
@@ -15,8 +16,8 @@ function suggestionDrink(entry: Omit<ViniciusDrink, 'imageUrl'>): ViniciusDrink 
   return { ...entry, imageUrl: drinkThumbPath(entry.slug) };
 }
 
-/** Receitas clássicas que ainda não estão na carta padrão. */
-export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
+/** Receitas clássicas + coquetéis oficiais IBA fora da carta padrão. */
+const PERSONAL_SUGGESTION_DRINKS: ViniciusDrink[] = [
   suggestionDrink({
     slug: 'caipirinha',
     title: 'Caipirinha',
@@ -434,6 +435,11 @@ export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
     notes: 'Drink misturado (não batido)!',
     category: 'Whisky',
   }),
+];
+
+export const DRINK_SUGGESTION_CATALOG: ViniciusDrink[] = [
+  ...PERSONAL_SUGGESTION_DRINKS,
+  ...IBA_SUGGESTION_DRINKS,
 ];
 
 const SUGGESTION_SLUGS = new Set(DRINK_SUGGESTION_CATALOG.map((drink) => drink.slug));
