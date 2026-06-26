@@ -61,24 +61,14 @@ export async function centerDrinkThumb(input, output = input) {
       height: bottom - top,
     })
     .resize(THUMB_SIZE, THUMB_SIZE, {
-      fit: 'inside',
-      background: THUMB_BG,
+      fit: 'cover',
+      position: 'centre',
     })
     .toBuffer();
 
   const target = output === input ? `${output}.tmp` : output;
 
-  await sharp({
-    create: {
-      width: THUMB_SIZE,
-      height: THUMB_SIZE,
-      channels: 3,
-      background: THUMB_BG,
-    },
-  })
-    .composite([{ input: crop, gravity: 'centre' }])
-    .jpeg({ quality: 90 })
-    .toFile(target);
+  await sharp(crop).jpeg({ quality: 90 }).toFile(target);
 
   if (output === input) {
     const fs = await import('node:fs');
