@@ -164,8 +164,14 @@
   display: none;
 }
 
+.fileBtnRow {
+  display: flex;
+  gap: 0.45rem;
+}
+
 .fileBtn {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   padding: 0.55rem 0.75rem;
   border-radius: 10px;
   border: 1px dashed var(--pf-border-strong);

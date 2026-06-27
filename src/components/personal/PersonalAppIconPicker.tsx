@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { readClipboardImageFile, readClipboardImageUrl } from '../../lib/adegaImageImport';
 import {
   fileToAppIconImage,
   iconsEqual,
@@ -60,6 +61,83 @@ export function PersonalAppIconPicker({
     setFileLoading(false);
   }, [open, app]);
 
+  const handleFileChange = useCallback(
+    async (file: File | null) => {
+      if (!file || !app) return;
+      setFileLoading(true);
+      setError(null);
+      try {
+        const icon = await fileToAppIconImage(file, userId ? { userId, appId: app.id } : undefined);
+        setLocalFileName(file.name);
+        setImageUrl('');
+        onSelect(icon);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Não foi possível usar este arquivo.');
+      } finally {
+        setFileLoading(false);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      }
+    },
+    [app, onSelect, userId],
+  );
+
+  const pasteFromClipboard = useCallback(async () => {
+    setFileLoading(true);
+    setError(null);
+    try {
+      const file = await readClipboardImageFile();
+      if (file) {
+        await handleFileChange(file);
+        return;
+      }
+      const clipUrl = await readClipboardImageUrl();
+      if (clipUrl) {
+        const icon = parseImageIconUrl(clipUrl);
+        if (icon) {
+          setImageUrl(clipUrl);
+          setLocalFileName(null);
+          onSelect(icon);
+          return;
+        }
+      }
+      setError('Nada na área de transferência (imagem ou URL de imagem).');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Não foi possível colar.');
+    } finally {
+      setFileLoading(false);
+    }
+  }, [handleFileChange, onSelect]);
+
+  useEffect(() => {
+    if (!open || !app) return;
+
+    const onPaste = (event: ClipboardEvent) => {
+      const items = event.clipboardData?.items;
+      if (items?.length) {
+        for (const item of items) {
+          if (!item.type.startsWith('image/')) continue;
+          const file = item.getAsFile();
+          if (!file) continue;
+          event.preventDefault();
+          void handleFileChange(file);
+          return;
+        }
+      }
+
+      const text = event.clipboardData?.getData('text/plain')?.trim() ?? '';
+      if (!text) return;
+      const icon = parseImageIconUrl(text);
+      if (!icon) return;
+      event.preventDefault();
+      setImageUrl(text);
+      setLocalFileName(null);
+      onSelect(icon);
+    };
+
+    window.addEventListener('paste', onPaste);
+    return () => window.removeEventListener('paste', onPaste);
+  }, [app, handleFileChange, onSelect, open]);
+
   if (!open || !app) return null;
 
   const hasCustomIcon = defaultIcon != null && !iconsEqual(app.icon, defaultIcon);
@@ -84,23 +162,6 @@ export function PersonalAppIconPicker({
 
   const applyLetter = () => {
     onSelect(parseLetterIcon(letterInput, app.label));
-  };
-
-  const handleFileChange = async (file: File | null) => {
-    if (!file) return;
-    setFileLoading(true);
-    setError(null);
-    try {
-      const icon = await fileToAppIconImage(file, userId && app ? { userId, appId: app.id } : undefined);
-      setLocalFileName(file.name);
-      setImageUrl('');
-      onSelect(icon);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Não foi possível usar este arquivo.');
-    } finally {
-      setFileLoading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    }
   };
 
   return (
@@ -216,7 +277,9 @@ export function PersonalAppIconPicker({
 
         <section className={styles.section}>
           <p className={styles.sectionLabel}>Do computador</p>
-          <p className={styles.hint}>.ico, .icon, .png, .jpg, .webp ou .svg — até 2 MB.</p>
+          <p className={styles.hint}>
+            Arquivo, colar imagem (Ctrl+V) ou URL — .ico, .png, .jpg, .webp ou .svg, até 2 MB.
+          </p>
           <input
             ref={fileInputRef}
             type="file"
@@ -226,14 +289,24 @@ export function PersonalAppIconPicker({
               void handleFileChange(e.target.files?.[0] ?? null);
             }}
           />
-          <button
-            type="button"
-            className={styles.fileBtn}
-            disabled={fileLoading}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            {fileLoading ? 'Processando…' : 'Escolher arquivo'}
-          </button>
+          <div className={styles.fileBtnRow}>
+            <button
+              type="button"
+              className={styles.fileBtn}
+              disabled={fileLoading}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {fileLoading ? 'Processando…' : 'Escolher arquivo'}
+            </button>
+            <button
+              type="button"
+              className={styles.fileBtn}
+              disabled={fileLoading}
+              onClick={() => void pasteFromClipboard()}
+            >
+              {fileLoading ? 'Processando…' : 'Colar imagem'}
+            </button>
+          </div>
           {localFileName ? <p className={styles.fileName}>{localFileName}</p> : null}
         </section>
 
