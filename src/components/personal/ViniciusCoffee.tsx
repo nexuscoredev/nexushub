@@ -102,6 +102,8 @@ const CAPSULE_CATEGORY_BY_SYSTEM: Record<CoffeeCapsuleSystem, string> = {
   nespresso: 'Cápsula Nespresso',
 };
 
+const SYSTEM_CATEGORY_LABELS = new Set(Object.values(CAPSULE_CATEGORY_BY_SYSTEM));
+
 const SCREEN_LABELS: Record<CoffeeScreen, string> = {
   home: 'Início',
   collection: 'Coleção',
@@ -185,6 +187,10 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
   }, [navigate, searchParams]);
 
   const stockCategories = useMemo(() => coffeeStockCategoriesInUse(stock), [stock]);
+  const filterCategories = useMemo(
+    () => stockCategories.filter((category) => !SYSTEM_CATEGORY_LABELS.has(category)),
+    [stockCategories],
+  );
   const inStockCount = useMemo(() => stock.filter((item) => item.quantity > 0).length, [stock]);
   const favorites = useMemo(() => stock.filter((item) => item.favorite), [stock]);
   const activeScreen: CoffeeScreen =
@@ -535,7 +541,7 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
                     {system.label}
                   </button>
                 ))}
-                {stockCategories.map((category) => (
+                {filterCategories.map((category) => (
                   <button
                     key={category}
                     type="button"
@@ -848,7 +854,7 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
                 ))}
               </div>
             </section>
-            {stockCategories.length > 0 ? (
+            {filterCategories.length > 0 ? (
               <section className={styles.filterBlock}>
                 <p className={styles.filterLabel}>Categoria</p>
                 <div className={styles.filterChips}>
@@ -859,7 +865,7 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
                   >
                     Todas
                   </button>
-                  {stockCategories.map((category) => (
+                  {filterCategories.map((category) => (
                     <button
                       key={category}
                       type="button"

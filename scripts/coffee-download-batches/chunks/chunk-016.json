@@ -1,0 +1,34 @@
+[
+  {
+    "system": "nespresso",
+    "slug": "vivalto-lungo",
+    "name": "Vivalto Lungo",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653947448642/vivalto-lungo-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "nespresso",
+    "slug": "linizio-lungo",
+    "name": "Linizio Lungo",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653948060854/linizio-lungo-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "tres-coracoes",
+    "slug": "espresso-forza",
+    "name": "Espresso Forza",
+    "box": "https://mercafefaststore.vtexassets.com/arquivos/ids/553882/FORZA.png?v=638836110347800000",
+    "capsule": "https://mercafefaststore.vtexassets.com/arquivos/ids/553884/CAPSULA-FORZA--1-.png?v=638836110348570000",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/cafe-espresso-forza/"
+  },
+  {
+    "system": "tres-coracoes",
+    "slug": "espresso-ristretto",
+    "name": "Espresso Ristretto",
+    "box": "https://mercafefaststore.vtexassets.com/arquivos/ids/553672/Espresso-Gourmet-Dark-Roast.png?v=638836119744000000",
+    "capsule": "https://mercafefaststore.vtexassets.com/arquivos/ids/549883/Capsula-de-Espresso-Gourmet-Dark-Roast-TRES-3C.png?v=638158916136200000",
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-gourmet-dark-roast-tres/p"
+  }
+]

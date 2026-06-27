@@ -1,0 +1,34 @@
+[
+  {
+    "system": "dolce-gusto",
+    "slug": "neo-lungo-chapada-diamantina",
+    "name": "NEO Lungo Chapada Diamantina",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/n/e/neostart_lungo_chapadadiamantina_hero-images_1000x1000px_5_1__1.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "caramelo-salgado",
+    "name": "CARAMELO SALGADO",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_1_4.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "chococino-alpino",
+    "name": "CHOCOCINO ALPINO",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/a/l/alpino_mobile_hero.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "kitkat",
+    "name": "KITKAT",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_3.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  }
+]

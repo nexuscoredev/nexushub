@@ -1,0 +1,34 @@
+[
+  {
+    "system": "dolce-gusto",
+    "slug": "origens-do-mundo-brasil-organico",
+    "name": "ORIGENS DO MUNDO BRASIL ORGÂNICO",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/2/0/20240528_mockups_sabores_produtos_regulares_ndg_origens-do-mundo-brasil-organico---10-capsulas.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "espresso-serras-do-alto-paranaiba",
+    "name": "ESPRESSO SERRAS DO ALTO PARANAÍBA",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_serras.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "starbucks-espresso-roast",
+    "name": "Espresso Roast",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/2/0/20240517_mockups_de_ndg_novo_modelo_roast.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "starbucks-americano-house-blend",
+    "name": "Americano House Blend",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/2/0/20240517_mockups_de_ndg_novo_modelo_house.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "system": "dolce-gusto",
+    "slug": "nestea-pessego",
+    "name": "NESTEA PÊSSEGO",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/n/e/nestea_pessego_10_capsulas_mobile_hero.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "nature-s-heart-zen-style",
+    "name": "NATURE'S HEART ZEN STYLE",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_zen_style.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "neo-espresso-delicate",
+    "name": "NEO Espresso Delicate",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/n/e/neostart_espresso_delicate-images_1000x1000px_5.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "neo-espresso-serras-do-alto-paranaiba",
+    "name": "NEO Espresso Serras do Alto Paranaíba",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/n/e/neostart_espresso_altoparanaiba_hero-images_1000x1000px_5_1.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  }
+]

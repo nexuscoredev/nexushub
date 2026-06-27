@@ -1,0 +1,34 @@
+[
+  {
+    "system": "dolce-gusto",
+    "slug": "starbucks-caramel-macchiato",
+    "name": "Caramel Macchiato",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/2/0/20240517_mockups_de_ndg_novo_modelo_caramel.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "kopenhagen-lingua-de-gato",
+    "name": "KOPENHAGEN LÍNGUA DE GATO",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero-02_1.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "galak",
+    "name": "GALAK",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/e/n/enxoval-site--maktplace-galak.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "nescau",
+    "name": "NESCAU",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_8_.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  }
+]

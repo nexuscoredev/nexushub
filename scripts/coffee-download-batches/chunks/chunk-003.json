@@ -1,0 +1,34 @@
+[
+  {
+    "system": "dolce-gusto",
+    "slug": "lungo-chapada-diamantina",
+    "name": "LUNGO CHAPADA DIAMANTINA",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_4_1.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "espresso-nescafe-gold",
+    "name": "ESPRESSO NESCAFÉ GOLD",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/g/o/gold_6_mobile_hero.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "lungo-nescafe-gold",
+    "name": "LUNGO NESCAFÉ GOLD",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/g/o/gold_8_mobile_hero.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "espresso-cerrado-mineiro",
+    "name": "ESPRESSO CERRADO MINEIRO",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/e/n/enxoval-site--maktplace-cerrado.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  }
+]

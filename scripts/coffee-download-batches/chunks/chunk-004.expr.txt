@@ -1,0 +1,57 @@
+(async () => {
+  const items = [{"system":"dolce-gusto","slug":"origens-do-mundo-brasil-organico","name":"ORIGENS DO MUNDO BRASIL ORGÂNICO","box":"https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/2/0/20240528_mockups_sabores_produtos_regulares_ndg_origens-do-mundo-brasil-organico---10-capsulas.png","capsule":null,"catalogUrl":"https://www.nescafe-dolcegusto.com.br/sabores"},{"system":"dolce-gusto","slug":"espresso-serras-do-alto-paranaiba","name":"ESPRESSO SERRAS DO ALTO PARANAÍBA","box":"https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_serras.png","capsule":null,"catalogUrl":"https://www.nescafe-dolcegusto.com.br/sabores"},{"system":"dolce-gusto","slug":"starbucks-espresso-roast","name":"Espresso Roast","box":"https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/2/0/20240517_mockups_de_ndg_novo_modelo_roast.png","capsule":null,"catalogUrl":"https://www.nescafe-dolcegusto.com.br/sabores"},{"system":"dolce-gusto","slug":"starbucks-americano-house-blend","name":"Americano House Blend","box":"https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/2/0/20240517_mockups_de_ndg_novo_modelo_house.png","capsule":null,"catalogUrl":"https://www.nescafe-dolcegusto.com.br/sabores"}];
+  function bufToB64(buf) {
+    const bytes = new Uint8Array(buf);
+    let binary = '';
+    const chunk = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunk) {
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+    }
+    return btoa(binary);
+  }
+  function deriveCapsule(box) {
+    const reps = [
+      [/mobile[-_]?hero[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
+      [/mobile_hero[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
+      [/frente[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
+      [/mockups?[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
+      [/enxoval[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
+    ];
+    const out = new Set();
+    for (const [re, rep] of reps) out.add(box.replace(re, rep));
+    if (/-3-coracoes\.png$/i.test(box)) out.add(box.replace(/\.png$/i, '-02.png'));
+    return [...out];
+  }
+  async function pickCapsule(box, explicit) {
+    const candidates = explicit ? [explicit, ...deriveCapsule(box)] : deriveCapsule(box);
+    for (const url of candidates) {
+      try {
+        const r = await fetch(url);
+        if (!r.ok) continue;
+        const buf = await r.arrayBuffer();
+        if (buf.byteLength > 12000) return { url, buf };
+      } catch {}
+    }
+    const r = await fetch(box);
+    return { url: box, buf: await r.arrayBuffer() };
+  }
+  const results = [];
+  for (const item of items) {
+    try {
+      const boxR = await fetch(item.box);
+      if (!boxR.ok) throw new Error('box HTTP ' + boxR.status);
+      const boxBuf = await boxR.arrayBuffer();
+      const cap = await pickCapsule(item.box, item.capsule);
+      results.push({
+        system: item.system,
+        slug: item.slug,
+        catalogUrl: item.catalogUrl,
+        boxB64: bufToB64(boxBuf),
+        capB64: bufToB64(cap.buf),
+      });
+    } catch (e) {
+      results.push({ system: item.system, slug: item.slug, error: String(e.message || e) });
+    }
+  }
+  return JSON.stringify(results);
+})()

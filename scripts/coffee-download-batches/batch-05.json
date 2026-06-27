@@ -1,0 +1,98 @@
+[
+  {
+    "system": "nespresso",
+    "slug": "volluto",
+    "name": "Volluto",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653946224318/volluto-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "nespresso",
+    "slug": "napoli",
+    "name": "Napoli",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653931806750/ispirazione-napoli-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "nespresso",
+    "slug": "kazaar",
+    "name": "Kazaar",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653942259742/kazaar-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "nespresso",
+    "slug": "fortissio-lungo",
+    "name": "Fortissio Lungo",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653946836430/fortissio-lungo-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "nespresso",
+    "slug": "vivalto-lungo",
+    "name": "Vivalto Lungo",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653947448642/vivalto-lungo-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "nespresso",
+    "slug": "linizio-lungo",
+    "name": "Linizio Lungo",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653948060854/linizio-lungo-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "tres-coracoes",
+    "slug": "espresso-forza",
+    "name": "Espresso Forza",
+    "box": "https://mercafefaststore.vtexassets.com/arquivos/ids/553882/FORZA.png?v=638836110347800000",
+    "capsule": "https://mercafefaststore.vtexassets.com/arquivos/ids/553884/CAPSULA-FORZA--1-.png?v=638836110348570000",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/cafe-espresso-forza/"
+  },
+  {
+    "system": "tres-coracoes",
+    "slug": "espresso-ristretto",
+    "name": "Espresso Ristretto",
+    "box": "https://mercafefaststore.vtexassets.com/arquivos/ids/553672/Espresso-Gourmet-Dark-Roast.png?v=638836119744000000",
+    "capsule": "https://mercafefaststore.vtexassets.com/arquivos/ids/549883/Capsula-de-Espresso-Gourmet-Dark-Roast-TRES-3C.png?v=638158916136200000",
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-gourmet-dark-roast-tres/p"
+  },
+  {
+    "system": "tres-coracoes",
+    "slug": "espresso-classico",
+    "name": "Espresso Clássico",
+    "box": "https://mercafefaststore.vtexassets.com/arquivos/ids/553112/PLENO.png?v=638751595686300000",
+    "capsule": "https://mercafefaststore.vtexassets.com/arquivos/ids/553828/CAPSULA-PLENO.png?v=638751595686600000",
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-pleno-tres/p"
+  },
+  {
+    "system": "tres-coracoes",
+    "slug": "espresso-suave",
+    "name": "Espresso Suave",
+    "box": "https://mercafefaststore.vtexassets.com/arquivos/ids/552787/SUPREMO.png?v=638836109783300000",
+    "capsule": "https://mercafefaststore.vtexassets.com/arquivos/ids/553824/CAPSULA-SUPREMO.png?v=638836109783600000",
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-supremo-tres/p"
+  },
+  {
+    "system": "tres-coracoes",
+    "slug": "lungo-intenso",
+    "name": "Lungo Intenso",
+    "box": "https://mercafefaststore.vtexassets.com/arquivos/ids/553888/VIBRANTE.png?v=638755959103930000",
+    "capsule": "https://mercafefaststore.vtexassets.com/arquivos/ids/553891/CAPSULA-VIBRANTE.png?v=638755959104100000",
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-vibrante-tres/p"
+  },
+  {
+    "system": "tres-coracoes",
+    "slug": "cappuccino-classico",
+    "name": "Cappuccino Clássico",
+    "box": "https://www.cafe3coracoes.com.br/wp-content/uploads/2024/09/capsula-tres-cappuccino-3-coracoes.png",
+    "capsule": "https://www.cafe3coracoes.com.br/wp-content/uploads/2024/09/capsula-tres-cappuccino-3-coracoes-02.png",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/cappuccino-classic/"
+  }
+]

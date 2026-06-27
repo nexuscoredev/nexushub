@@ -1,0 +1,34 @@
+[
+  {
+    "system": "nespresso",
+    "slug": "roma",
+    "name": "Roma",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653932462110/ispirazione-roma-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "nespresso",
+    "slug": "livanto",
+    "name": "Livanto",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653944487966/livanto-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "nespresso",
+    "slug": "capriccio",
+    "name": "Capriccio",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653945000094/capriccio-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "nespresso",
+    "slug": "cosi",
+    "name": "Cosi",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653945612206/cosi-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  }
+]

@@ -8,8 +8,11 @@
     "cupSize": "regular",
     "flavorNotes": "Cremoso & Equilibrado",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/moca-pistacchio-latte/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/moca-pistacchio-latte/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "starbucks-espresso-colombia",
@@ -44,8 +47,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Delicado e frutado",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/espresso/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/espresso/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "espresso-descafeinado",
@@ -58,8 +64,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Saboroso e agradável",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/espresso-descafeinado/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/espresso-descafeinado/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "espresso-intenso",
@@ -72,8 +81,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Energético e aromático",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/espresso-intenso/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/espresso-intenso/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "doppio-espresso",
@@ -86,8 +98,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Rico e Intenso",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/doppio-espresso/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/doppio-espresso/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "espresso-barista",
@@ -100,8 +115,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Poderoso e saboroso",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/espresso-barista/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/espresso-barista/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "caffe-matinal",
@@ -114,8 +132,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Aromático e Intenso",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/caffe-matinal/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/caffe-matinal/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "lungo",
@@ -128,8 +149,11 @@
     "cupVolumeMl": 110,
     "flavorNotes": "Equilibrado e torrado",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/lungo/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/lungo/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "cafe-caseiro",
@@ -142,8 +166,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Suave e Saboroso",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/cafe-caseiro/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/cafe-caseiro/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "cafe-caseiro-intenso",
@@ -156,8 +183,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Encorpado e Saboroso",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/cafe-caseiro-intenso/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/cafe-caseiro-intenso/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "kopenhagen-espresso",
@@ -170,8 +200,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "O sabor da cafeteria",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/kopenhagen-espresso/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/kopenhagen-espresso/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "lungo-chapada-diamantina",
@@ -184,8 +217,11 @@
     "cupVolumeMl": 110,
     "flavorNotes": "Com a alma da Chapada",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/lungo-chapada-diamantina/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/lungo-chapada-diamantina/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "espresso-nescafe-gold",
@@ -198,8 +234,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Equilibrado e Intenso",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/espresso-nescafe-gold/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/espresso-nescafe-gold/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "lungo-nescafe-gold",
@@ -212,8 +251,11 @@
     "cupVolumeMl": 110,
     "flavorNotes": "Equilibrado e Intenso",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/lungo-nescafe-gold/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/lungo-nescafe-gold/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "espresso-cerrado-mineiro",
@@ -226,8 +268,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Muito sabor num só café",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/espresso-cerrado-mineiro/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/espresso-cerrado-mineiro/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "origens-do-mundo-brasil-organico",
@@ -240,8 +285,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Sabor orgânico do Brasil",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/origens-do-mundo-brasil-organico/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/origens-do-mundo-brasil-organico/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "espresso-serras-do-alto-paranaiba",
@@ -254,8 +302,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Das montanhas de Minas",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/espresso-serras-do-alto-paranaiba/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/espresso-serras-do-alto-paranaiba/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "starbucks-espresso-roast",
@@ -268,8 +319,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Um clássico Starbucks",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/starbucks-espresso-roast/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/starbucks-espresso-roast/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "starbucks-americano-house-blend",
@@ -282,8 +336,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Um clássico equilibrado",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/starbucks-americano-house-blend/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/starbucks-americano-house-blend/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "shakerato",
@@ -295,8 +352,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Refrescante",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/shakerato/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/shakerato/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "mochaccino-canela",
@@ -307,8 +367,11 @@
     "cupSize": "regular",
     "flavorNotes": "Único e cremoso",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/mochaccino-canela/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/mochaccino-canela/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "cappuccino",
@@ -319,8 +382,11 @@
     "cupSize": "regular",
     "flavorNotes": "Extra Cremoso",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/cappuccino/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/cappuccino/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "cafe-au-lait",
@@ -331,8 +397,11 @@
     "cupSize": "regular",
     "flavorNotes": "Equilibrado e encorpado",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/cafe-au-lait/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/cafe-au-lait/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "cafe-au-lait-desnatado",
@@ -343,8 +412,11 @@
     "cupSize": "regular",
     "flavorNotes": "Equilibrado e cremoso",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/cafe-au-lait-desnatado/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/cafe-au-lait-desnatado/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "cafe-au-lait-vanilla",
@@ -355,8 +427,11 @@
     "cupSize": "regular",
     "flavorNotes": "Equilibrado e aromático",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/cafe-au-lait-vanilla/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/cafe-au-lait-vanilla/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "cortado",
@@ -368,8 +443,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Forte e torrado",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/cortado/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/cortado/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "pingado",
@@ -380,8 +458,11 @@
     "cupSize": "regular",
     "flavorNotes": "Tradição é tradição",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/pingado/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/pingado/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "mochaccino-avela",
@@ -392,8 +473,11 @@
     "cupSize": "regular",
     "flavorNotes": "Café, cacau e sabor avelã",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/mochaccino-avela/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/mochaccino-avela/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "latte-macchiato",
@@ -404,8 +488,11 @@
     "cupSize": "regular",
     "flavorNotes": "Delicado e Cremoso",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/latte-macchiato/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/latte-macchiato/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "vanilla-latte-macchiato",
@@ -416,8 +503,11 @@
     "cupSize": "regular",
     "flavorNotes": "Delicado e encorpado",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/vanilla-latte-macchiato/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/vanilla-latte-macchiato/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "frappe",
@@ -429,8 +519,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Cremoso e refrescante",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/frappe/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/frappe/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "cappuccino-moca-doce-de-leite",
@@ -441,8 +534,11 @@
     "cupSize": "regular",
     "flavorNotes": "Denso e adocicado",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/cappuccino-moca-doce-de-leite/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/cappuccino-moca-doce-de-leite/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "kopenhagen-cappuccino",
@@ -453,8 +549,11 @@
     "cupSize": "regular",
     "flavorNotes": "Um clássico Kopenhagen",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/kopenhagen-cappuccino/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/kopenhagen-cappuccino/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "kopenhagen-lajotinha",
@@ -466,8 +565,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Encorpado e delicioso",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/kopenhagen-lajotinha/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/kopenhagen-lajotinha/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "starbucks-cappuccino",
@@ -478,8 +580,11 @@
     "cupSize": "regular",
     "flavorNotes": "Rico e cremoso",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/starbucks-cappuccino/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/starbucks-cappuccino/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "starbucks-caramel-macchiato",
@@ -490,8 +595,11 @@
     "cupSize": "regular",
     "flavorNotes": "Doce, cremoso e único",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/starbucks-caramel-macchiato/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/starbucks-caramel-macchiato/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "kopenhagen-lingua-de-gato",
@@ -503,8 +611,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Com sabor do chocolate",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/kopenhagen-lingua-de-gato/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/kopenhagen-lingua-de-gato/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "galak",
@@ -516,8 +627,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Cremoso e aveludado",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/galak/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/galak/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "nescau",
@@ -529,8 +643,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Cremoso e Saboroso",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/nescau/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/nescau/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "chococino-nestle",
@@ -542,8 +659,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Intenso e delicioso",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/chococino-nestle/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/chococino-nestle/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "nesquik",
@@ -555,8 +675,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Docinho e cremoso",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/nesquik/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/nesquik/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "chai-tea-latte",
@@ -567,8 +690,11 @@
     "cupSize": "regular",
     "flavorNotes": "Seleção de especiarias",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/chai-tea-latte/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/chai-tea-latte/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "nature-s-heart-hibiscus-pink-lemonade",
@@ -580,8 +706,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Para refrescar",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/nature-s-heart-hibiscus-pink-lemonade/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/nature-s-heart-hibiscus-pink-lemonade/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "nestea-pessego",
@@ -593,8 +722,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Saboroso e refrescante",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/nestea-pessego/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/nestea-pessego/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "nature-s-heart-zen-style",
@@ -606,8 +738,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Para equilibrar",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/nature-s-heart-zen-style/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/nature-s-heart-zen-style/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "neo-espresso-delicate",
@@ -620,8 +755,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Café NEO delicado",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/neo-espresso-delicate/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/neo-espresso-delicate/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "neo-espresso-serras-do-alto-paranaiba",
@@ -634,8 +772,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Café NEO serras",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/neo-espresso-serras-do-alto-paranaiba/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/neo-espresso-serras-do-alto-paranaiba/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "neo-lungo-chapada-diamantina",
@@ -648,8 +789,11 @@
     "cupVolumeMl": 110,
     "flavorNotes": "Café NEO lungo",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/neo-lungo-chapada-diamantina/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/neo-lungo-chapada-diamantina/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "caramelo-salgado",
@@ -661,8 +805,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Encorpado e Delicioso",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/caramelo-salgado/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/caramelo-salgado/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "chococino-alpino",
@@ -674,8 +821,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Cremoso e denso",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/chococino-alpino/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/chococino-alpino/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "kitkat",
@@ -687,8 +837,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "O sabor oficial do break",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/kitkat/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/kitkat/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "nestea-mate-limao",
@@ -700,8 +853,11 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Cítrico e refrescante",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/nestea-mate-limao/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/nestea-mate-limao/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "neo-espresso-sul-de-minas-organico",
@@ -714,7 +870,10 @@
     "cupVolumeMl": 30,
     "flavorNotes": "Café NEO orgânico",
     "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores",
-    "images": {},
-    "imagesPending": true
+    "images": {
+      "box": "/img/personal/coffee/catalog/dolce-gusto/neo-espresso-sul-de-minas-organico/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/dolce-gusto/neo-espresso-sul-de-minas-organico/capsule.jpg"
+    },
+    "imagesPending": false
   }
 ]

@@ -1,0 +1,34 @@
+[
+  {
+    "system": "nespresso",
+    "slug": "volluto",
+    "name": "Volluto",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653946224318/volluto-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "nespresso",
+    "slug": "napoli",
+    "name": "Napoli",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653931806750/ispirazione-napoli-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "nespresso",
+    "slug": "kazaar",
+    "name": "Kazaar",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653942259742/kazaar-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "nespresso",
+    "slug": "fortissio-lungo",
+    "name": "Fortissio Lungo",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653946836430/fortissio-lungo-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  }
+]

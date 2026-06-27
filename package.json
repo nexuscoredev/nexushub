@@ -18,7 +18,11 @@
     "db:migrations:status": "npx supabase migration list --linked",
     "db:migrations:repair": "node scripts/repair-migrations.mjs",
     "db:migrations:push": "npx supabase db push --linked",
-    "coffee:catalog:seed-dg": "node scripts/seed-coffee-catalog-dg.mjs"
+    "coffee:catalog:seed-dg": "node scripts/seed-coffee-catalog-dg.mjs",
+    "coffee:catalog:scrape-images": "node scripts/scrape-coffee-capsule-images.mjs",
+    "coffee:catalog:build-manifest": "node scripts/build-coffee-image-manifest.mjs",
+    "coffee:catalog:download-images": "node scripts/build-coffee-image-manifest.mjs && node scripts/generate-coffee-download-batches.mjs && node scripts/split-coffee-batches.mjs 4",
+    "coffee:catalog:fetch-images": "node scripts/download-coffee-catalog-images.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",

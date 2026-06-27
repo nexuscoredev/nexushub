@@ -12,11 +12,12 @@
     "description": "Blend de cafés selecionados com intensidade máxima para espresso encorpado na Solução TRES.",
     "ingredients": "Café torrado e moído. 10 cápsulas de 8g.",
     "coffeeType": "Blend",
-    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/cafe-espresso-forza/",
     "images": {
       "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-forza/box.jpg",
       "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-forza/capsule.jpg"
-    }
+    },
+    "imagesPending": false
   },
   {
     "slug": "espresso-ristretto",
@@ -28,9 +29,12 @@
     "cupSize": "ristretto",
     "cupVolumeMl": 25,
     "flavorNotes": "Muito intenso",
-    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/",
-    "images": {},
-    "imagesPending": true
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-gourmet-dark-roast-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-ristretto/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-ristretto/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "espresso-classico",
@@ -42,9 +46,12 @@
     "cupSize": "espresso",
     "cupVolumeMl": 30,
     "flavorNotes": "Equilibrado",
-    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/",
-    "images": {},
-    "imagesPending": true
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-pleno-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-classico/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-classico/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "espresso-suave",
@@ -56,9 +63,12 @@
     "cupSize": "espresso",
     "cupVolumeMl": 30,
     "flavorNotes": "Suave e aromático",
-    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/",
-    "images": {},
-    "imagesPending": true
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-supremo-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-suave/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-suave/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "lungo-intenso",
@@ -70,9 +80,12 @@
     "cupSize": "lungo",
     "cupVolumeMl": 110,
     "flavorNotes": "Café longo intenso",
-    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/",
-    "images": {},
-    "imagesPending": true
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-vibrante-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/lungo-intenso/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/lungo-intenso/capsule.jpg"
+    },
+    "imagesPending": false
   },
   {
     "slug": "cappuccino-classico",
@@ -82,8 +95,11 @@
     "packSize": 10,
     "cupSize": "regular",
     "flavorNotes": "Cremoso",
-    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/",
-    "images": {},
-    "imagesPending": true
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/cappuccino-classic/",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/cappuccino-classico/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cappuccino-classico/capsule.jpg"
+    },
+    "imagesPending": false
   }
 ]

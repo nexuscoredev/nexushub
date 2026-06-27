@@ -1,0 +1,98 @@
+[
+  {
+    "system": "dolce-gusto",
+    "slug": "neo-lungo-chapada-diamantina",
+    "name": "NEO Lungo Chapada Diamantina",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/n/e/neostart_lungo_chapadadiamantina_hero-images_1000x1000px_5_1__1.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "caramelo-salgado",
+    "name": "CARAMELO SALGADO",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_1_4.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "chococino-alpino",
+    "name": "CHOCOCINO ALPINO",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/a/l/alpino_mobile_hero.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "kitkat",
+    "name": "KITKAT",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_3.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "nestea-mate-limao",
+    "name": "NESTEA MATE LIMÃO",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile-hero_5_.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "dolce-gusto",
+    "slug": "neo-espresso-sul-de-minas-organico",
+    "name": "NEO Espresso Sul de Minas Orgânico",
+    "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/n/e/neostart_espresso_suldeminashero-images_1000x1000px_5.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
+  },
+  {
+    "system": "nespresso",
+    "slug": "ristretto",
+    "name": "Ristretto",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16467720470558/ispirazione-ristretto-italiano-XL.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "nespresso",
+    "slug": "arpeggio",
+    "name": "Arpeggio",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653366034462/arpeggio-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "nespresso",
+    "slug": "roma",
+    "name": "Roma",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653932462110/ispirazione-roma-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "nespresso",
+    "slug": "livanto",
+    "name": "Livanto",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653944487966/livanto-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "nespresso",
+    "slug": "capriccio",
+    "name": "Capriccio",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653945000094/capriccio-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  },
+  {
+    "system": "nespresso",
+    "slug": "cosi",
+    "name": "Cosi",
+    "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653945612206/cosi-2x.png",
+    "capsule": null,
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+  }
+]

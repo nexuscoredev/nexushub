@@ -1,0 +1,57 @@
+(async () => {
+  const items = [{"system":"dolce-gusto","slug":"chococino-nestle","name":"CHOCOCINO NESTLÉ","box":"https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_2__2.png","capsule":null,"catalogUrl":"https://www.nescafe-dolcegusto.com.br/sabores"},{"system":"dolce-gusto","slug":"nesquik","name":"NESQUIK","box":"https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/e/n/enxoval-site--maktplace-nesquiick.png","capsule":null,"catalogUrl":"https://www.nescafe-dolcegusto.com.br/sabores"},{"system":"dolce-gusto","slug":"chai-tea-latte","name":"CHAI TEA LATTE","box":"https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile-hero-mocha.png","capsule":null,"catalogUrl":"https://www.nescafe-dolcegusto.com.br/sabores"},{"system":"dolce-gusto","slug":"nature-s-heart-hibiscus-pink-lemonade","name":"NATURE'S HEART HIBISCUS PINK LEMONADE","box":"https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_pink_lemonade.png","capsule":null,"catalogUrl":"https://www.nescafe-dolcegusto.com.br/sabores"}];
+  function bufToB64(buf) {
+    const bytes = new Uint8Array(buf);
+    let binary = '';
+    const chunk = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunk) {
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+    }
+    return btoa(binary);
+  }
+  function deriveCapsule(box) {
+    const reps = [
+      [/mobile[-_]?hero[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
+      [/mobile_hero[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
+      [/frente[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
+      [/mockups?[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
+      [/enxoval[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
+    ];
+    const out = new Set();
+    for (const [re, rep] of reps) out.add(box.replace(re, rep));
+    if (/-3-coracoes\.png$/i.test(box)) out.add(box.replace(/\.png$/i, '-02.png'));
+    return [...out];
+  }
+  async function pickCapsule(box, explicit) {
+    const candidates = explicit ? [explicit, ...deriveCapsule(box)] : deriveCapsule(box);
+    for (const url of candidates) {
+      try {
+        const r = await fetch(url);
+        if (!r.ok) continue;
+        const buf = await r.arrayBuffer();
+        if (buf.byteLength > 12000) return { url, buf };
+      } catch {}
+    }
+    const r = await fetch(box);
+    return { url: box, buf: await r.arrayBuffer() };
+  }
+  const results = [];
+  for (const item of items) {
+    try {
+      const boxR = await fetch(item.box);
+      if (!boxR.ok) throw new Error('box HTTP ' + boxR.status);
+      const boxBuf = await boxR.arrayBuffer();
+      const cap = await pickCapsule(item.box, item.capsule);
+      results.push({
+        system: item.system,
+        slug: item.slug,
+        catalogUrl: item.catalogUrl,
+        boxB64: bufToB64(boxBuf),
+        capB64: bufToB64(cap.buf),
+      });
+    } catch (e) {
+      results.push({ system: item.system, slug: item.slug, error: String(e.message || e) });
+    }
+  }
+  return JSON.stringify(results);
+})()

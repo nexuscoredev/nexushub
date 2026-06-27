@@ -1,0 +1,57 @@
+(async () => {
+  const items = [{"system":"tres-coracoes","slug":"espresso-classico","name":"Espresso Clássico","box":"https://mercafefaststore.vtexassets.com/arquivos/ids/553112/PLENO.png?v=638751595686300000","capsule":"https://mercafefaststore.vtexassets.com/arquivos/ids/553828/CAPSULA-PLENO.png?v=638751595686600000","catalogUrl":"https://www.mercafe.com.br/capsula-cafe-espresso-pleno-tres/p"},{"system":"tres-coracoes","slug":"espresso-suave","name":"Espresso Suave","box":"https://mercafefaststore.vtexassets.com/arquivos/ids/552787/SUPREMO.png?v=638836109783300000","capsule":"https://mercafefaststore.vtexassets.com/arquivos/ids/553824/CAPSULA-SUPREMO.png?v=638836109783600000","catalogUrl":"https://www.mercafe.com.br/capsula-cafe-espresso-supremo-tres/p"},{"system":"tres-coracoes","slug":"lungo-intenso","name":"Lungo Intenso","box":"https://mercafefaststore.vtexassets.com/arquivos/ids/553888/VIBRANTE.png?v=638755959103930000","capsule":"https://mercafefaststore.vtexassets.com/arquivos/ids/553891/CAPSULA-VIBRANTE.png?v=638755959104100000","catalogUrl":"https://www.mercafe.com.br/capsula-cafe-espresso-vibrante-tres/p"},{"system":"tres-coracoes","slug":"cappuccino-classico","name":"Cappuccino Clássico","box":"https://www.cafe3coracoes.com.br/wp-content/uploads/2024/09/capsula-tres-cappuccino-3-coracoes.png","capsule":"https://www.cafe3coracoes.com.br/wp-content/uploads/2024/09/capsula-tres-cappuccino-3-coracoes-02.png","catalogUrl":"https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/cappuccino-classic/"}];
+  function bufToB64(buf) {
+    const bytes = new Uint8Array(buf);
+    let binary = '';
+    const chunk = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunk) {
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+    }
+    return btoa(binary);
+  }
+  function deriveCapsule(box) {
+    const reps = [
+      [/mobile[-_]?hero[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
+      [/mobile_hero[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
+      [/frente[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
+      [/mockups?[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
+      [/enxoval[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
+    ];
+    const out = new Set();
+    for (const [re, rep] of reps) out.add(box.replace(re, rep));
+    if (/-3-coracoes\.png$/i.test(box)) out.add(box.replace(/\.png$/i, '-02.png'));
+    return [...out];
+  }
+  async function pickCapsule(box, explicit) {
+    const candidates = explicit ? [explicit, ...deriveCapsule(box)] : deriveCapsule(box);
+    for (const url of candidates) {
+      try {
+        const r = await fetch(url);
+        if (!r.ok) continue;
+        const buf = await r.arrayBuffer();
+        if (buf.byteLength > 12000) return { url, buf };
+      } catch {}
+    }
+    const r = await fetch(box);
+    return { url: box, buf: await r.arrayBuffer() };
+  }
+  const results = [];
+  for (const item of items) {
+    try {
+      const boxR = await fetch(item.box);
+      if (!boxR.ok) throw new Error('box HTTP ' + boxR.status);
+      const boxBuf = await boxR.arrayBuffer();
+      const cap = await pickCapsule(item.box, item.capsule);
+      results.push({
+        system: item.system,
+        slug: item.slug,
+        catalogUrl: item.catalogUrl,
+        boxB64: bufToB64(boxBuf),
+        capB64: bufToB64(cap.buf),
+      });
+    } catch (e) {
+      results.push({ system: item.system, slug: item.slug, error: String(e.message || e) });
+    }
+  }
+  return JSON.stringify(results);
+})()
