@@ -625,6 +625,12 @@
   color: #f8fafc;
 }
 
+.formError {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #fca5a5;
+}
+
 .field {
   display: flex;
   flex-direction: column;

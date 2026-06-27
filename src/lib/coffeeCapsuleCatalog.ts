@@ -1,5 +1,6 @@
 import type { CoffeeCupSize } from './viniciusCoffeeStock';
-import type { CoffeeCapsuleSystem } from './viniciusCoffeeStock';
+import type { CoffeeCapsuleSystem, CoffeeStockItem } from './viniciusCoffeeStock';
+import { categoryEmoji, createCoffeeStockId } from './viniciusCoffeeStock';
 import { COFFEE_CAPSULE_CATALOGS } from './coffeeCapsuleImageSearch';
 import dolceGusto from '../data/coffeeCapsuleCatalog/dolce-gusto.json';
 import nespresso from '../data/coffeeCapsuleCatalog/nespresso.json';
@@ -129,3 +130,137 @@ export function catalogEntryToStockPrefill(entry: CoffeeCapsuleCatalogEntry) {
 }
 
 export type CoffeeCatalogStockPrefill = ReturnType<typeof catalogEntryToStockPrefill>;
+
+export const CATALOG_DISPLAY_ID_PREFIX = 'catalog:';
+
+export function catalogDisplayId(entry: Pick<CoffeeCapsuleCatalogEntry, 'system' | 'slug'>): string {
+  return `${CATALOG_DISPLAY_ID_PREFIX}${entry.system}:${entry.slug}`;
+}
+
+export function isCatalogDisplayId(id: string): boolean {
+  return id.startsWith(CATALOG_DISPLAY_ID_PREFIX);
+}
+
+export function parseCatalogDisplayId(
+  id: string,
+): { system: CoffeeCapsuleSystem; slug: string } | null {
+  if (!isCatalogDisplayId(id)) return null;
+  const rest = id.slice(CATALOG_DISPLAY_ID_PREFIX.length);
+  const splitAt = rest.indexOf(':');
+  if (splitAt <= 0) return null;
+  const system = rest.slice(0, splitAt) as CoffeeCapsuleSystem;
+  const slug = rest.slice(splitAt + 1);
+  if (!slug) return null;
+  return { system, slug };
+}
+
+function mergeCatalogEntryWithStock(
+  entry: CoffeeCapsuleCatalogEntry,
+  stock?: CoffeeStockItem,
+): CoffeeStockItem {
+  const prefill = catalogEntryToStockPrefill(entry);
+  const now = new Date().toISOString();
+  if (stock) {
+    return {
+      ...stock,
+      name: stock.name || prefill.name,
+      category: stock.category || prefill.category,
+      capsuleSystem: entry.system,
+      catalogSlug: entry.slug,
+      imageUrl: stock.imageUrl ?? prefill.imageUrl,
+      extraImageUrls: stock.extraImageUrls?.length ? stock.extraImageUrls : prefill.extraImageUrls,
+      brand: stock.brand ?? prefill.brand,
+      intensity: stock.intensity ?? prefill.intensity,
+      flavorNotes: stock.flavorNotes ?? prefill.flavorNotes,
+      description: stock.description ?? prefill.description,
+      ingredients: stock.ingredients ?? prefill.ingredients,
+      origin: stock.origin ?? prefill.origin,
+      cupSize: stock.cupSize ?? prefill.cupSize,
+      packSize: stock.packSize ?? prefill.packSize,
+      pricePaid: stock.pricePaid ?? prefill.pricePaid,
+      catalogUrl: stock.catalogUrl ?? prefill.catalogUrl,
+    };
+  }
+  return {
+    id: catalogDisplayId(entry),
+    name: prefill.name,
+    category: prefill.category,
+    capsuleSystem: entry.system,
+    brand: prefill.brand,
+    intensity: prefill.intensity,
+    quantity: 0,
+    imageUrl: prefill.imageUrl,
+    extraImageUrls: prefill.extraImageUrls,
+    catalogSlug: entry.slug,
+    catalogUrl: prefill.catalogUrl,
+    description: prefill.description,
+    ingredients: prefill.ingredients,
+    origin: prefill.origin,
+    flavorNotes: prefill.flavorNotes,
+    cupSize: prefill.cupSize,
+    packSize: prefill.packSize,
+    pricePaid: prefill.pricePaid,
+    iconEmoji: categoryEmoji(prefill.category),
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
+/** Catálogo embutido (72) + estoque pessoal (quantidade, favoritos, extras). */
+export function resolveCoffeeDisplayStock(stock: CoffeeStockItem[]): CoffeeStockItem[] {
+  const stockByCatalogKey = new Map<string, CoffeeStockItem>();
+  const customItems: CoffeeStockItem[] = [];
+
+  for (const item of stock) {
+    if (item.catalogSlug && item.capsuleSystem) {
+      stockByCatalogKey.set(`${item.capsuleSystem}:${item.catalogSlug}`, item);
+      continue;
+    }
+    customItems.push(item);
+  }
+
+  const catalogItems = ALL_ENTRIES.map((entry) => {
+    const key = `${entry.system}:${entry.slug}`;
+    const override = stockByCatalogKey.get(key);
+    stockByCatalogKey.delete(key);
+    return mergeCatalogEntryWithStock(entry, override);
+  });
+
+  const orphanCatalogStock = [...stockByCatalogKey.values()];
+  return [...catalogItems, ...orphanCatalogStock, ...customItems].sort((a, b) =>
+    a.name.localeCompare(b.name, 'pt-BR'),
+  );
+}
+
+export function catalogEntryToStockItem(
+  entry: CoffeeCapsuleCatalogEntry,
+  overrides: Partial<CoffeeStockItem> & { id?: string } = {},
+): CoffeeStockItem {
+  const prefill = catalogEntryToStockPrefill(entry);
+  const now = new Date().toISOString();
+  return {
+    id: overrides.id ?? createCoffeeStockId(),
+    name: prefill.name,
+    category: prefill.category,
+    capsuleSystem: entry.system,
+    brand: prefill.brand,
+    intensity: prefill.intensity,
+    quantity: overrides.quantity ?? 0,
+    favorite: overrides.favorite,
+    notes: overrides.notes,
+    imageUrl: prefill.imageUrl,
+    extraImageUrls: prefill.extraImageUrls,
+    catalogSlug: entry.slug,
+    catalogUrl: prefill.catalogUrl,
+    description: prefill.description,
+    ingredients: prefill.ingredients,
+    origin: prefill.origin,
+    flavorNotes: prefill.flavorNotes,
+    cupSize: prefill.cupSize,
+    packSize: prefill.packSize,
+    pricePaid: prefill.pricePaid,
+    iconEmoji: categoryEmoji(prefill.category),
+    createdAt: overrides.createdAt ?? now,
+    updatedAt: overrides.updatedAt ?? now,
+  };
+}

@@ -16,6 +16,7 @@ import {
   categoryEmoji,
   categoryToCapsuleSystem,
   createCoffeeStockId,
+  findCoffeeStockByCatalog,
   loadCoffeeStock,
   normalizeCoffeeStockInput,
   saveCoffeeStock,
@@ -44,6 +45,12 @@ import { CoffeeStockCards } from './CoffeeStockCards';
 import { CoffeeStockViewMenu } from './CoffeeStockViewMenu';
 import {
   catalogEntryToStockPrefill,
+  catalogEntryToStockItem,
+  COFFEE_CAPSULE_CATALOG_COUNT,
+  findCoffeeCapsuleCatalogEntry,
+  isCatalogDisplayId,
+  parseCatalogDisplayId,
+  resolveCoffeeDisplayStock,
   type CoffeeCapsuleCatalogEntry,
 } from '../../lib/coffeeCapsuleCatalog';
 import { CoffeeStockPhotoTools } from './CoffeeStockPhotoTools';
@@ -162,6 +169,7 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
   const [catalogPickerOpen, setCatalogPickerOpen] = useState(false);
   const [editingStockId, setEditingStockId] = useState<string | null>(null);
   const [stockForm, setStockForm] = useState<StockFormState>(EMPTY_STOCK_FORM);
+  const [stockFormError, setStockFormError] = useState<string | null>(null);
   const stockPhotoInputRef = useRef<HTMLInputElement>(null);
   const draftStockIdRef = useRef(createCoffeeStockId());
 
@@ -186,18 +194,22 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
     navigate(`/pessoal?${params.toString()}`, { replace: true });
   }, [navigate, searchParams]);
 
-  const stockCategories = useMemo(() => coffeeStockCategoriesInUse(stock), [stock]);
+  const displayStock = useMemo(() => resolveCoffeeDisplayStock(stock), [stock]);
+  const stockCategories = useMemo(() => coffeeStockCategoriesInUse(displayStock), [displayStock]);
   const filterCategories = useMemo(
     () => stockCategories.filter((category) => !SYSTEM_CATEGORY_LABELS.has(category)),
     [stockCategories],
   );
-  const inStockCount = useMemo(() => stock.filter((item) => item.quantity > 0).length, [stock]);
-  const favorites = useMemo(() => stock.filter((item) => item.favorite), [stock]);
+  const inStockCount = useMemo(
+    () => displayStock.filter((item) => item.quantity > 0).length,
+    [displayStock],
+  );
+  const favorites = useMemo(() => displayStock.filter((item) => item.favorite), [displayStock]);
   const activeScreen: CoffeeScreen =
     embeddedDesktop && screen === 'home' ? 'collection' : screen;
 
   const filteredStock = useMemo(() => {
-    let list = stock;
+    let list = displayStock;
     if (activeScreen === 'favorites') {
       list = list.filter((item) => item.favorite);
     }
@@ -210,7 +222,7 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
     }
     list = filterCoffeeStockByCategory(list, stockCategoryFilter);
     return list;
-  }, [stock, stockSearch, stockCategoryFilter, systemFilter, activeScreen]);
+  }, [displayStock, stockSearch, stockCategoryFilter, systemFilter, activeScreen]);
 
   const handleStockViewModeChange = (mode: CoffeeStockViewMode) => {
     setStockViewMode(mode);
@@ -218,14 +230,58 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
   };
 
   const homeCarouselItems = useMemo(() => {
-    const available = stock.filter((item) => item.quantity > 0);
-    const source = available.length > 0 ? available : stock;
+    const available = displayStock.filter((item) => item.quantity > 0);
+    const source = available.length > 0 ? available : displayStock;
     return source.slice(0, 12);
-  }, [stock]);
+  }, [displayStock]);
 
   const persistStock = (next: CoffeeStockItem[]) => {
     setStock(next);
     if (userId) saveCoffeeStock(userId, next);
+  };
+
+  const upsertStockFromDisplay = (
+    displayItem: CoffeeStockItem,
+    patch: Partial<CoffeeStockItem>,
+  ) => {
+    if (!isCatalogDisplayId(displayItem.id)) {
+      persistStock(
+        stock.map((item) =>
+          item.id === displayItem.id
+            ? { ...item, ...patch, updatedAt: new Date().toISOString() }
+            : item,
+        ),
+      );
+      return;
+    }
+
+    const parsed = parseCatalogDisplayId(displayItem.id);
+    if (!parsed) return;
+    const entry = findCoffeeCapsuleCatalogEntry(parsed.slug);
+    if (!entry) return;
+
+    const existing = stock.find(
+      (item) => item.catalogSlug === parsed.slug && item.capsuleSystem === parsed.system,
+    );
+    const now = new Date().toISOString();
+
+    if (existing) {
+      persistStock(
+        stock.map((item) =>
+          item.id === existing.id ? { ...item, ...patch, updatedAt: now } : item,
+        ),
+      );
+      return;
+    }
+
+    persistStock([
+      ...stock,
+      catalogEntryToStockItem(entry, {
+        ...patch,
+        favorite: patch.favorite ?? displayItem.favorite,
+        quantity: patch.quantity ?? displayItem.quantity,
+      }),
+    ]);
   };
 
   const setScreen = (next: CoffeeScreen) => {
@@ -247,6 +303,7 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
   const openStockCreate = (presetCategory?: string) => {
     draftStockIdRef.current = createCoffeeStockId();
     setEditingStockId(null);
+    setStockFormError(null);
     setStockForm({
       ...EMPTY_STOCK_FORM,
       category: presetCategory ?? COFFEE_STOCK_CATEGORY_PRESETS[0],
@@ -256,12 +313,17 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
 
   const applyCatalogEntry = (entry: CoffeeCapsuleCatalogEntry) => {
     const prefill = catalogEntryToStockPrefill(entry);
+    const existing = findCoffeeStockByCatalog(stock, entry.slug, entry.system);
+    setStockFormError(null);
+    setEditingStockId(existing?.id ?? null);
+    draftStockIdRef.current = existing?.id ?? createCoffeeStockId();
     setStockForm({
       ...EMPTY_STOCK_FORM,
       name: prefill.name,
       category: prefill.category,
       brand: prefill.brand ?? '',
       intensity: prefill.intensity != null ? String(prefill.intensity) : '',
+      quantity: String(existing?.quantity ?? 10),
       packSize: prefill.packSize != null ? String(prefill.packSize) : '',
       cupSize: prefill.cupSize ?? '',
       origin: prefill.origin ?? '',
@@ -291,10 +353,45 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
   };
 
   const openStockEdit = (item: CoffeeStockItem) => {
+    let target = item;
+    if (isCatalogDisplayId(item.id)) {
+      const parsed = parseCatalogDisplayId(item.id);
+      const entry = parsed ? findCoffeeCapsuleCatalogEntry(parsed.slug) : undefined;
+      if (entry && parsed) {
+        const prefill = catalogEntryToStockPrefill(entry);
+        const existing = findCoffeeStockByCatalog(stock, parsed.slug, parsed.system);
+        draftStockIdRef.current = existing?.id ?? createCoffeeStockId();
+        setEditingStockId(existing?.id ?? null);
+        setStockFormError(null);
+        setStockForm({
+          ...EMPTY_STOCK_FORM,
+          name: prefill.name,
+          category: prefill.category,
+          brand: prefill.brand ?? '',
+          intensity: prefill.intensity != null ? String(prefill.intensity) : '',
+          quantity: String(item.quantity),
+          packSize: prefill.packSize != null ? String(prefill.packSize) : '',
+          cupSize: prefill.cupSize ?? '',
+          origin: prefill.origin ?? '',
+          flavorNotes: prefill.flavorNotes ?? '',
+          description: prefill.description ?? '',
+          ingredients: prefill.ingredients ?? '',
+          pricePaid: prefill.pricePaid != null ? String(prefill.pricePaid) : '',
+          catalogUrl: prefill.catalogUrl ?? '',
+          catalogSlug: prefill.catalogSlug,
+          extraImageUrls: joinExtraImageUrls(prefill.extraImageUrls),
+          imageUrl: prefill.imageUrl ?? '',
+          imageUrlInput: prefill.imageUrl ?? '',
+        });
+        setStockDialogOpen(true);
+        return;
+      }
+    }
+
     const preset = COFFEE_STOCK_CATEGORY_PRESETS.includes(
-      item.category as (typeof COFFEE_STOCK_CATEGORY_PRESETS)[number],
+      target.category as (typeof COFFEE_STOCK_CATEGORY_PRESETS)[number],
     );
-    setEditingStockId(item.id);
+    setEditingStockId(target.id);
     setStockForm({
       name: item.name,
       category: preset ? item.category : 'Outro',
@@ -321,7 +418,11 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
 
   const handleStockSubmit = (event: FormEvent) => {
     event.preventDefault();
-    if (!userId) return;
+    setStockFormError(null);
+    if (!userId) {
+      setStockFormError('Faça login para salvar seu estoque.');
+      return;
+    }
     const category =
       stockForm.category === 'Outro' ? stockForm.customCategory.trim() : stockForm.category;
     const input: CoffeeStockInput = {
@@ -345,14 +446,23 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
       imageUrl: stockForm.imageUrl || undefined,
     };
     const normalized = normalizeCoffeeStockInput(input);
-    if (!normalized) return;
+    if (!normalized) {
+      setStockFormError('Preencha nome e sistema da cápsula.');
+      return;
+    }
 
     const now = new Date().toISOString();
-    if (editingStockId) {
-      const existing = stock.find((item) => item.id === editingStockId);
+    const existingByCatalog =
+      !editingStockId && normalized.catalogSlug && normalized.capsuleSystem
+        ? findCoffeeStockByCatalog(stock, normalized.catalogSlug, normalized.capsuleSystem)
+        : undefined;
+    const targetId = editingStockId ?? existingByCatalog?.id;
+
+    if (targetId) {
+      const existing = stock.find((item) => item.id === targetId);
       persistStock(
         stock.map((item) =>
-          item.id === editingStockId
+          item.id === targetId
             ? {
                 ...item,
                 ...normalized,
@@ -373,32 +483,27 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
         },
       ]);
     }
+    draftStockIdRef.current = createCoffeeStockId();
     setStockDialogOpen(false);
   };
 
   const handleDeleteStock = (id: string) => {
+    if (isCatalogDisplayId(id)) return;
     persistStock(stock.filter((item) => item.id !== id));
     setViewingStockItem(null);
   };
 
   const toggleStockQuantity = (id: string) => {
-    persistStock(
-      stock.map((item) =>
-        item.id === id
-          ? { ...item, quantity: item.quantity > 0 ? 0 : 1, updatedAt: new Date().toISOString() }
-          : item,
-      ),
-    );
+    const displayItem = displayStock.find((item) => item.id === id);
+    if (!displayItem) return;
+    const nextQty = displayItem.quantity > 0 ? 0 : displayItem.packSize ?? 1;
+    upsertStockFromDisplay(displayItem, { quantity: nextQty });
   };
 
   const toggleFavorite = (id: string) => {
-    persistStock(
-      stock.map((item) =>
-        item.id === id
-          ? { ...item, favorite: !item.favorite, updatedAt: new Date().toISOString() }
-          : item,
-      ),
-    );
+    const displayItem = displayStock.find((item) => item.id === id);
+    if (!displayItem) return;
+    upsertStockFromDisplay(displayItem, { favorite: !displayItem.favorite });
   };
 
   const openItem = (item: CoffeeStockItem) => {
@@ -416,7 +521,7 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
   };
 
   const detailItem = viewingStockItem
-    ? stock.find((entry) => entry.id === viewingStockItem.id) ?? viewingStockItem
+    ? displayStock.find((entry) => entry.id === viewingStockItem.id) ?? viewingStockItem
     : null;
 
   if (detailItem && !stockDialogOpen) {
@@ -448,7 +553,7 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
             <p className={adegaStyles.adegaToolbarHint}>
               {editing
                 ? 'Toque em um item para editar ou use + para adicionar.'
-                : `${stock.length} cápsulas no catálogo · ${inStockCount} disponíveis`}
+                : `${COFFEE_CAPSULE_CATALOG_COUNT} cápsulas no catálogo · ${inStockCount} disponíveis`}
             </p>
             <div className={styles.desktopToolbarActions}>
               {editing ? (
@@ -482,9 +587,9 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
                 decoding="async"
               />
             </div>
-            {stock.length > 0 ? (
+            {displayStock.length > 0 ? (
               <div className={adegaStyles.bannerMeta}>
-                <span className={adegaStyles.stat}>{stock.length} cápsulas</span>
+                <span className={adegaStyles.stat}>{COFFEE_CAPSULE_CATALOG_COUNT} cápsulas</span>
                 <span className={adegaStyles.stat}>{inStockCount} disponíveis</span>
                 {favorites.length > 0 ? (
                   <span className={adegaStyles.stat}>{favorites.length} favoritas</span>
@@ -607,16 +712,16 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
             emptyTitle={
               activeScreen === 'favorites'
                 ? 'Nenhuma favorita'
-                : stock.length === 0
-                  ? 'Catálogo vazio'
-                  : 'Nenhuma cápsula encontrada'
+                : filteredStock.length === 0 && displayStock.length > 0
+                  ? 'Nenhuma cápsula encontrada'
+                  : 'Catálogo vazio'
             }
             emptyText={
               activeScreen === 'favorites'
                 ? 'Marque cápsulas com ♥ para vê-las aqui.'
-                : stock.length === 0
-                  ? 'Adicione sua primeira cápsula com + Cápsula.'
-                  : 'Tente outra busca ou limpe os filtros.'
+                : filteredStock.length === 0 && displayStock.length > 0
+                  ? 'Tente outra busca ou limpe os filtros.'
+                  : 'Catálogo indisponível.'
             }
             onCardClick={openItem}
             onEdit={openStockEdit}
@@ -631,7 +736,7 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
                 <h2 className={styles.heroTitle}>{hero.title}</h2>
                 <p className={styles.heroSubtitle}>{hero.subtitle}</p>
                 <div className={styles.heroStats}>
-                  <span>{stock.length} no catálogo</span>
+                  <span>{COFFEE_CAPSULE_CATALOG_COUNT} no catálogo</span>
                   <span aria-hidden>·</span>
                   <span>{inStockCount} disponíveis</span>
                 </div>
@@ -672,7 +777,7 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
             <section className={styles.section}>
               <div className={styles.sectionHead}>
                 <h3 className={styles.sectionTitle}>Sua coleção</h3>
-                {stock.length > 0 ? (
+                {displayStock.length > 0 ? (
                   <button type="button" className={styles.sectionLink} onClick={() => setScreen('collection')}>
                     Ver tudo
                   </button>
@@ -693,10 +798,7 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
                 </div>
               ) : (
                 <div className={styles.sectionEmpty}>
-                  <p>Nenhuma cápsula ainda.</p>
-                  <button type="button" className={styles.goldBtn} onClick={() => openStockCreate()}>
-                    Adicionar primeira cápsula
-                  </button>
+                  <p>Carregando catálogo…</p>
                 </div>
               )}
             </section>
@@ -783,16 +885,16 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
                 <p>
                   {screen === 'favorites'
                     ? 'Nenhuma favorita por enquanto.'
-                    : stock.length === 0
-                      ? 'Seu catálogo está vazio.'
+                    : displayStock.length === 0
+                      ? 'Catálogo indisponível.'
                       : 'Nenhuma cápsula encontrada.'}
                 </p>
                 <button
                   type="button"
                   className={styles.goldBtn}
-                  onClick={() => (stock.length === 0 ? openStockCreate() : clearFilters())}
+                  onClick={() => (displayStock.length === 0 ? openStockCreate() : clearFilters())}
                 >
-                  {stock.length === 0 ? 'Adicionar cápsula' : 'Limpar filtros'}
+                  {displayStock.length === 0 ? 'Adicionar cápsula' : 'Limpar filtros'}
                 </button>
               </div>
             )}
@@ -904,6 +1006,7 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
             <h3 className={styles.dialogTitle}>
               {editingStockId ? 'Editar cápsula' : 'Adicionar cápsula'}
             </h3>
+            {stockFormError ? <p className={styles.formError}>{stockFormError}</p> : null}
             <label className={styles.field}>
               <span>Nome</span>
               <input

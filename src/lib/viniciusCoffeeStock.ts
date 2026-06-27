@@ -187,19 +187,45 @@ export function saveCoffeeStock(userId: string, items: CoffeeStockItem[]): void 
 }
 
 export async function syncCoffeeStockFromCloud(userId: string): Promise<CoffeeStockItem[] | null> {
+  const local = loadCoffeeStock(userId);
+  const localUpdatedAt = readLocalUpdatedAt(userId);
   const cloud = await fetchCoffeeStockCloud(userId);
-  if (!cloud) return null;
-  const items = cloud.items.filter(isValidItem);
-  if (!isCloudNewer(cloud.updatedAt, readLocalUpdatedAt(userId))) return null;
+
+  if (!cloud) {
+    if (local.length > 0) {
+      void upsertCoffeeStockCloud(userId, local);
+    }
+    return null;
+  }
+
+  const cloudItems = cloud.items.filter(isValidItem);
+
+  if (!isCloudNewer(cloud.updatedAt, localUpdatedAt)) {
+    if (local.length > 0) {
+      void upsertCoffeeStockCloud(userId, local);
+    }
+    return null;
+  }
+
   if (typeof localStorage !== 'undefined') {
     try {
-      localStorage.setItem(storageKey(userId), JSON.stringify(items));
+      localStorage.setItem(storageKey(userId), JSON.stringify(cloudItems));
       writeLocalUpdatedAt(userId, cloud.updatedAt);
     } catch {
       /* quota */
     }
   }
-  return items.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+  return cloudItems.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+}
+
+export function findCoffeeStockByCatalog(
+  items: CoffeeStockItem[],
+  catalogSlug: string,
+  capsuleSystem: CoffeeCapsuleSystem,
+): CoffeeStockItem | undefined {
+  return items.find(
+    (item) => item.catalogSlug === catalogSlug && item.capsuleSystem === capsuleSystem,
+  );
 }
 
 export function createCoffeeStockId(): string {
@@ -218,7 +244,6 @@ export function normalizeCoffeeStockInput(input: CoffeeStockInput): CoffeeStockI
   const name = input.name.trim();
   const category = input.category.trim();
   if (!name || !category) return null;
-  const quantity = Math.max(0, Math.round(input.quantity || 0));
   const intensity =
     input.intensity != null && input.intensity >= 1 && input.intensity <= 12
       ? Math.round(input.intensity)
@@ -227,6 +252,8 @@ export function normalizeCoffeeStockInput(input: CoffeeStockInput): CoffeeStockI
     input.packSize != null && input.packSize >= 1 ? Math.round(input.packSize) : undefined;
   const pricePaid =
     input.pricePaid != null && input.pricePaid >= 0 ? Math.round(input.pricePaid * 100) / 100 : undefined;
+  const rawQty = Number(input.quantity);
+  const quantity = Number.isFinite(rawQty) ? Math.max(0, Math.round(rawQty)) : 0;
   const extraImageUrls = (input.extraImageUrls ?? [])
     .map((url) => url.trim())
     .filter((url) => url && isValidImageUrl(url));
@@ -241,13 +268,13 @@ export function normalizeCoffeeStockInput(input: CoffeeStockInput): CoffeeStockI
     capsuleSystem: input.capsuleSystem ?? categoryToCapsuleSystem(category),
     brand: input.brand?.trim() || undefined,
     intensity,
-    quantity: quantity || 1,
+    quantity,
     notes: input.notes?.trim() || undefined,
     description: input.description?.trim() || undefined,
     ingredients: input.ingredients?.trim() || undefined,
     origin: input.origin?.trim() || undefined,
     flavorNotes: input.flavorNotes?.trim() || undefined,
-    cupSize: input.cupSize,
+    cupSize: input.cupSize || undefined,
     packSize,
     pricePaid,
     catalogUrl,
