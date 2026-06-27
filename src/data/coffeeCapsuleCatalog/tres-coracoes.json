@@ -1,0 +1,89 @@
+[
+  {
+    "slug": "espresso-forza",
+    "system": "tres-coracoes",
+    "name": "Espresso Forza",
+    "brand": "Três Corações",
+    "intensity": 10,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 30,
+    "flavorNotes": "Intenso e encorpado",
+    "description": "Blend de cafés selecionados com intensidade máxima para espresso encorpado na Solução TRES.",
+    "ingredients": "Café torrado e moído. 10 cápsulas de 8g.",
+    "coffeeType": "Blend",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-forza/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-forza/capsule.jpg"
+    }
+  },
+  {
+    "slug": "espresso-ristretto",
+    "system": "tres-coracoes",
+    "name": "Espresso Ristretto",
+    "brand": "Três Corações",
+    "intensity": 12,
+    "packSize": 10,
+    "cupSize": "ristretto",
+    "cupVolumeMl": 25,
+    "flavorNotes": "Muito intenso",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/",
+    "images": {},
+    "imagesPending": true
+  },
+  {
+    "slug": "espresso-classico",
+    "system": "tres-coracoes",
+    "name": "Espresso Clássico",
+    "brand": "Três Corações",
+    "intensity": 7,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 30,
+    "flavorNotes": "Equilibrado",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/",
+    "images": {},
+    "imagesPending": true
+  },
+  {
+    "slug": "espresso-suave",
+    "system": "tres-coracoes",
+    "name": "Espresso Suave",
+    "brand": "Três Corações",
+    "intensity": 5,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 30,
+    "flavorNotes": "Suave e aromático",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/",
+    "images": {},
+    "imagesPending": true
+  },
+  {
+    "slug": "lungo-intenso",
+    "system": "tres-coracoes",
+    "name": "Lungo Intenso",
+    "brand": "Três Corações",
+    "intensity": 8,
+    "packSize": 10,
+    "cupSize": "lungo",
+    "cupVolumeMl": 110,
+    "flavorNotes": "Café longo intenso",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/",
+    "images": {},
+    "imagesPending": true
+  },
+  {
+    "slug": "cappuccino-classico",
+    "system": "tres-coracoes",
+    "name": "Cappuccino Clássico",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "flavorNotes": "Cremoso",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/",
+    "images": {},
+    "imagesPending": true
+  }
+]

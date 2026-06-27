@@ -1,0 +1,150 @@
+.shell {
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+.desktopTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.desktopTop :global(header) {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-bottom: 0;
+  padding: 0.32rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.backBtn:hover {
+  color: var(--accent);
+  border-color: var(--pf-border-strong);
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.mobileChrome {
+  display: none;
+}
+
+.appBody {
+  min-width: 0;
+}
+
+@media (max-width: 899px) {
+  .shell {
+    max-width: none;
+    margin-inline: calc(-1 * max(0.85rem, env(safe-area-inset-left, 0px)));
+    width: calc(100% + 2 * max(0.85rem, env(safe-area-inset-left, 0px)));
+    min-height: calc(100dvh - 3.25rem - env(safe-area-inset-top, 0px));
+    display: flex;
+    flex-direction: column;
+    background: #09090b;
+  }
+
+  .desktopTop {
+    display: none;
+  }
+
+  .mobileChrome {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.45rem;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    padding: 0.55rem max(0.85rem, env(safe-area-inset-right, 0px)) 0.5rem
+      max(0.85rem, env(safe-area-inset-left, 0px));
+    background: rgba(9, 9, 11, 0.94);
+    backdrop-filter: blur(16px) saturate(1.1);
+    -webkit-backdrop-filter: blur(16px) saturate(1.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .shell_adega .mobileChromeTitle {
+    color: #fde68a;
+  }
+
+  .shell_drinks .mobileChromeTitle {
+    color: #ddd6fe;
+  }
+
+  .mobileBackBtn {
+    width: 2.35rem;
+    height: 2.35rem;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 1rem;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobileChromeTitles {
+    min-width: 0;
+  }
+
+  .mobileChromeTitle {
+    margin: 0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  .mobileChromeSubtitle {
+    margin: 0.12rem 0 0;
+    font-size: 0.68rem;
+    color: rgba(255, 255, 255, 0.48);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .appBody {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 479px) {
+  .shell {
+    margin-inline: calc(-1 * max(0.65rem, env(safe-area-inset-left, 0px)));
+    width: calc(100% + 2 * max(0.65rem, env(safe-area-inset-left, 0px)));
+  }
+
+  .mobileChrome {
+    padding-inline: max(0.65rem, env(safe-area-inset-left, 0px))
+      max(0.65rem, env(safe-area-inset-right, 0px));
+  }
+}

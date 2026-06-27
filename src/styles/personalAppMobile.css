@@ -1,0 +1,90 @@
+/* Mobile app shell — Adega, Carta de Drinks e Café (≤899px, dentro de PersonalAppShell) */
+
+@media (max-width: 899px) {
+  [data-personal-app] .nexus-personal-app-root {
+    flex: 1;
+    min-height: 0;
+    max-width: none;
+    margin-inline: 0;
+    gap: 0.75rem;
+    padding: 0 max(0.85rem, env(safe-area-inset-right, 0px)) 0.85rem
+      max(0.85rem, env(safe-area-inset-left, 0px));
+  }
+
+  [data-personal-app] .nexus-personal-banner-wrap {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  [data-personal-app] .banner {
+    margin-inline: calc(-1 * max(0.85rem, env(safe-area-inset-left, 0.85rem)));
+  }
+
+  [data-personal-app] .nexus-personal-toolbar-hint {
+    display: none;
+  }
+
+  [data-personal-app] .nexus-personal-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 22;
+    margin-inline: calc(-1 * max(0.85rem, env(safe-area-inset-left, 0.85rem)));
+    padding: 0.35rem max(0.85rem, env(safe-area-inset-right, 0.85rem)) 0.45rem
+      max(0.85rem, env(safe-area-inset-left, 0.85rem));
+    background: rgba(9, 9, 11, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  [data-personal-app='adega'] .nexus-adega-nav {
+    position: sticky;
+    top: 0;
+    z-index: 25;
+    margin-inline: calc(-1 * max(0.85rem, env(safe-area-inset-left, 0.85rem)));
+    padding-inline: max(0.85rem, env(safe-area-inset-left, 0.85rem))
+      max(0.85rem, env(safe-area-inset-right, 0.85rem));
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+  }
+
+  [data-personal-app='drinks'] .nexus-drinks-discover {
+    position: sticky;
+    top: 0;
+    z-index: 25;
+    margin-inline: calc(-1 * max(0.85rem, env(safe-area-inset-left, 0.85rem)));
+    padding-inline: max(0.85rem, env(safe-area-inset-left, 0.85rem))
+      max(0.85rem, env(safe-area-inset-right, 0.85rem));
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  [data-personal-app='coffee'] .nexus-coffee-app {
+    flex: 1;
+    min-height: calc(100dvh - 3.25rem - env(safe-area-inset-top, 0px));
+    padding: 0;
+    border-radius: 0;
+    border: none;
+    margin: 0;
+    background: linear-gradient(180deg, #0d0d0d 0%, #0a0a0a 28%);
+  }
+}
+
+@media (max-width: 479px) {
+  [data-personal-app] .nexus-personal-app-root {
+    padding-inline: max(0.65rem, env(safe-area-inset-left, 0px))
+      max(0.65rem, env(safe-area-inset-right, 0px));
+  }
+
+  [data-personal-app] .banner,
+  [data-personal-app] .nexus-personal-toolbar,
+  [data-personal-app='adega'] .nexus-adega-nav,
+  [data-personal-app='drinks'] .nexus-drinks-discover {
+    margin-inline: calc(-1 * max(0.65rem, env(safe-area-inset-left, 0.65rem)));
+    padding-inline: max(0.65rem, env(safe-area-inset-left, 0px))
+      max(0.65rem, env(safe-area-inset-right, 0px));
+  }
+}

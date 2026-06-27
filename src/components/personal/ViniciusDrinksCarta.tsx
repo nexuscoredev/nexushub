@@ -365,9 +365,9 @@ export function ViniciusDrinksCarta() {
   }
 
   return (
-    <div className={styles.carta}>
-      <div className={styles.cartaToolbar}>
-        <p className={styles.cartaToolbarHint}>
+    <div className={`${styles.carta} nexus-personal-app-root nexus-drinks-carta-root`}>
+      <div className={`${styles.cartaToolbar} nexus-personal-toolbar`}>
+        <p className={`${styles.cartaToolbarHint} nexus-personal-toolbar-hint`}>
           {editing
             ? 'Toque em ✎ para editar foto e receita de cada drink.'
             : `${visibleDrinks.length} receitas na carta`}
@@ -393,7 +393,7 @@ export function ViniciusDrinksCarta() {
       </div>
 
       <header className={styles.banner}>
-        <div className={styles.bannerArtWrap}>
+        <div className={`${styles.bannerArtWrap} nexus-personal-banner-wrap`}>
           <img
             src={bannerImage}
             alt="Carta de Drinks"

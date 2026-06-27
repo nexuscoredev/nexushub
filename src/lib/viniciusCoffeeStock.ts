@@ -38,6 +38,8 @@ export const COFFEE_STOCK_CATEGORY_PRESETS = [
   'Outro',
 ] as const;
 
+export type CoffeeCupSize = 'espresso' | 'lungo' | 'ristretto' | 'regular' | 'other';
+
 export type CoffeeStockItem = {
   id: string;
   name: string;
@@ -48,8 +50,18 @@ export type CoffeeStockItem = {
   quantity: number;
   notes?: string;
   imageUrl?: string;
+  extraImageUrls?: string[];
   iconEmoji?: string;
   favorite?: boolean;
+  catalogSlug?: string;
+  description?: string;
+  ingredients?: string;
+  origin?: string;
+  flavorNotes?: string;
+  cupSize?: CoffeeCupSize;
+  packSize?: number;
+  pricePaid?: number;
+  catalogUrl?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -63,7 +75,17 @@ export type CoffeeStockInput = {
   quantity: number;
   notes?: string;
   imageUrl?: string;
+  extraImageUrls?: string[];
   iconEmoji?: string;
+  description?: string;
+  ingredients?: string;
+  origin?: string;
+  flavorNotes?: string;
+  cupSize?: CoffeeCupSize;
+  packSize?: number;
+  pricePaid?: number;
+  catalogUrl?: string;
+  catalogSlug?: string;
 };
 
 function storageKey(userId: string): string {
@@ -94,6 +116,15 @@ function isValidImageUrl(value: string): boolean {
   }
 }
 
+function isValidCatalogUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 function isValidItem(value: unknown): value is CoffeeStockItem {
   if (!value || typeof value !== 'object') return false;
   const item = value as Partial<CoffeeStockItem>;
@@ -111,7 +142,20 @@ function isValidItem(value: unknown): value is CoffeeStockItem {
     (item.capsuleSystem == null ||
       item.capsuleSystem === 'dolce-gusto' ||
       item.capsuleSystem === 'tres-coracoes' ||
-      item.capsuleSystem === 'nespresso')
+      item.capsuleSystem === 'nespresso') &&
+    (item.extraImageUrls == null ||
+      (Array.isArray(item.extraImageUrls) &&
+        item.extraImageUrls.every((url) => typeof url === 'string' && isValidImageUrl(url)))) &&
+    (item.cupSize == null ||
+      item.cupSize === 'espresso' ||
+      item.cupSize === 'lungo' ||
+      item.cupSize === 'ristretto' ||
+      item.cupSize === 'regular' ||
+      item.cupSize === 'other') &&
+    (item.packSize == null || (typeof item.packSize === 'number' && item.packSize > 0)) &&
+    (item.pricePaid == null || (typeof item.pricePaid === 'number' && item.pricePaid >= 0)) &&
+    (item.catalogUrl == null ||
+      (typeof item.catalogUrl === 'string' && isValidCatalogUrl(item.catalogUrl)))
   );
 }
 
@@ -179,6 +223,18 @@ export function normalizeCoffeeStockInput(input: CoffeeStockInput): CoffeeStockI
     input.intensity != null && input.intensity >= 1 && input.intensity <= 12
       ? Math.round(input.intensity)
       : undefined;
+  const packSize =
+    input.packSize != null && input.packSize >= 1 ? Math.round(input.packSize) : undefined;
+  const pricePaid =
+    input.pricePaid != null && input.pricePaid >= 0 ? Math.round(input.pricePaid * 100) / 100 : undefined;
+  const extraImageUrls = (input.extraImageUrls ?? [])
+    .map((url) => url.trim())
+    .filter((url) => url && isValidImageUrl(url));
+  const catalogUrl =
+    input.catalogUrl?.trim() && isValidCatalogUrl(input.catalogUrl.trim())
+      ? input.catalogUrl.trim()
+      : undefined;
+
   return {
     name,
     category,
@@ -187,10 +243,20 @@ export function normalizeCoffeeStockInput(input: CoffeeStockInput): CoffeeStockI
     intensity,
     quantity: quantity || 1,
     notes: input.notes?.trim() || undefined,
+    description: input.description?.trim() || undefined,
+    ingredients: input.ingredients?.trim() || undefined,
+    origin: input.origin?.trim() || undefined,
+    flavorNotes: input.flavorNotes?.trim() || undefined,
+    cupSize: input.cupSize,
+    packSize,
+    pricePaid,
+    catalogUrl,
+    catalogSlug: input.catalogSlug?.trim() || undefined,
     imageUrl:
       input.imageUrl?.trim() && isValidImageUrl(input.imageUrl.trim())
         ? input.imageUrl.trim()
         : undefined,
+    extraImageUrls: extraImageUrls.length ? extraImageUrls : undefined,
     iconEmoji: input.iconEmoji?.trim() || categoryEmoji(category),
   };
 }

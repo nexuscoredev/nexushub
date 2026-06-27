@@ -497,9 +497,9 @@ export function ViniciusAdega() {
   }, [viewingItem]);
 
   return (
-    <div className={`${styles.adega} ${editing ? styles.adegaEditing : ''}`}>
-      <div className={styles.adegaToolbar}>
-        <p className={styles.adegaToolbarHint}>
+    <div className={`${styles.adega} nexus-personal-app-root nexus-adega-root ${editing ? styles.adegaEditing : ''}`}>
+      <div className={`${styles.adegaToolbar} nexus-personal-toolbar`}>
+        <p className={`${styles.adegaToolbarHint} nexus-personal-toolbar-hint`}>
           {editing
             ? 'Toque em um item para editar ou use + para adicionar.'
             : stats.totalItems > 0
@@ -516,7 +516,7 @@ export function ViniciusAdega() {
       </div>
 
       <header className={styles.banner}>
-        <div className={styles.bannerArtWrap}>
+        <div className={`${styles.bannerArtWrap} nexus-personal-banner-wrap`}>
           <img
             src={VINICIUS_ADEGA_BANNER_URL}
             alt="Adega — estoque particular de bebidas"
@@ -542,7 +542,7 @@ export function ViniciusAdega() {
         ) : null}
       </header>
 
-      <nav className={styles.adegaNav} aria-label="Busca e filtros da adega">
+      <nav className={`${styles.adegaNav} nexus-adega-nav`} aria-label="Busca e filtros da adega">
         <div className={styles.toolbar}>
           <label className={styles.searchWrap}>
             <span className={styles.searchIcon} aria-hidden>

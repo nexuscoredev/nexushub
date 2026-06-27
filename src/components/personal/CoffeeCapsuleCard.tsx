@@ -4,18 +4,13 @@ import {
   type CoffeeCapsuleSystem,
   type CoffeeStockItem,
 } from '../../lib/viniciusCoffeeStock';
+import { intensityLabel } from '../../lib/coffeeCapsuleMeta';
 import styles from './ViniciusCoffee.module.css';
-
-export function intensityLabel(intensity?: number): string | null {
-  if (intensity == null) return null;
-  if (intensity <= 4) return 'Suave';
-  if (intensity <= 8) return 'Equilibrado';
-  return 'Intenso';
-}
 
 function capsuleSubtitle(item: CoffeeStockItem): string {
   return (
     intensityLabel(item.intensity) ??
+    item.flavorNotes ??
     item.brand ??
     item.category.replace(/^Cápsula\s+/i, '')
   );

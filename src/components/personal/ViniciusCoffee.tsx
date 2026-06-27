@@ -21,11 +21,24 @@ import {
   saveCoffeeStock,
   syncCoffeeStockFromCloud,
   type CoffeeCapsuleSystem,
+  type CoffeeCupSize,
   type CoffeeStockInput,
   type CoffeeStockItem,
 } from '../../lib/viniciusCoffeeStock';
+import {
+  COFFEE_CUP_SIZES,
+  joinExtraImageUrls,
+  parseExtraImageUrls,
+} from '../../lib/coffeeCapsuleMeta';
 import { useAuth } from '../../contexts/AuthContext';
+import { useMaxWidth } from '../../hooks/useMaxWidth';
 import { CoffeeCapsuleCard } from './CoffeeCapsuleCard';
+import { CoffeeCapsuleCatalogPicker } from './CoffeeCapsuleCatalogPicker';
+import { CoffeeCapsuleDetail } from './CoffeeCapsuleDetail';
+import {
+  catalogEntryToStockPrefill,
+  type CoffeeCapsuleCatalogEntry,
+} from '../../lib/coffeeCapsuleCatalog';
 import { CoffeeStockPhotoTools } from './CoffeeStockPhotoTools';
 import styles from './ViniciusCoffee.module.css';
 
@@ -38,6 +51,16 @@ type StockFormState = {
   brand: string;
   intensity: string;
   quantity: string;
+  packSize: string;
+  cupSize: CoffeeCupSize | '';
+  origin: string;
+  flavorNotes: string;
+  description: string;
+  ingredients: string;
+  pricePaid: string;
+  catalogUrl: string;
+  extraImageUrls: string;
+  catalogSlug: string;
   notes: string;
   imageUrl: string;
   imageUrlInput: string;
@@ -50,6 +73,16 @@ const EMPTY_STOCK_FORM: StockFormState = {
   brand: '',
   intensity: '',
   quantity: '10',
+  packSize: '10',
+  cupSize: 'espresso',
+  origin: '',
+  flavorNotes: '',
+  description: '',
+  ingredients: '',
+  pricePaid: '',
+  catalogUrl: '',
+  extraImageUrls: '',
+  catalogSlug: '',
   notes: '',
   imageUrl: '',
   imageUrlInput: '',
@@ -96,13 +129,15 @@ type ViniciusCoffeeProps = {
   onBack?: () => void;
 };
 
-export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps) {
+export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
   const { user } = useAuth();
   const userId = user?.id;
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editing = searchParams.get('edit') === '1';
   const screen = parseScreen(searchParams.get('view'));
+  const isMobileApp = useMaxWidth(899);
+  const embeddedDesktop = Boolean(onBack && !isMobileApp);
 
   const [stock, setStock] = useState<CoffeeStockItem[]>(() => loadCoffeeStock(userId));
   const [stockSearch, setStockSearch] = useState('');
@@ -111,6 +146,7 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps) {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [viewingStockItem, setViewingStockItem] = useState<CoffeeStockItem | null>(null);
   const [stockDialogOpen, setStockDialogOpen] = useState(false);
+  const [catalogPickerOpen, setCatalogPickerOpen] = useState(false);
   const [editingStockId, setEditingStockId] = useState<string | null>(null);
   const [stockForm, setStockForm] = useState<StockFormState>(EMPTY_STOCK_FORM);
   const stockPhotoInputRef = useRef<HTMLInputElement>(null);
@@ -191,6 +227,42 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps) {
       ...EMPTY_STOCK_FORM,
       category: presetCategory ?? COFFEE_STOCK_CATEGORY_PRESETS[0],
     });
+    setCatalogPickerOpen(true);
+  };
+
+  const applyCatalogEntry = (entry: CoffeeCapsuleCatalogEntry) => {
+    const prefill = catalogEntryToStockPrefill(entry);
+    setStockForm({
+      ...EMPTY_STOCK_FORM,
+      name: prefill.name,
+      category: prefill.category,
+      brand: prefill.brand ?? '',
+      intensity: prefill.intensity != null ? String(prefill.intensity) : '',
+      packSize: prefill.packSize != null ? String(prefill.packSize) : '',
+      cupSize: prefill.cupSize ?? '',
+      origin: prefill.origin ?? '',
+      flavorNotes: prefill.flavorNotes ?? '',
+      description: prefill.description ?? '',
+      ingredients: prefill.ingredients ?? '',
+      pricePaid: prefill.pricePaid != null ? String(prefill.pricePaid) : '',
+      catalogUrl: prefill.catalogUrl ?? '',
+      extraImageUrls: joinExtraImageUrls(prefill.extraImageUrls),
+      catalogSlug: prefill.catalogSlug,
+      imageUrl: prefill.imageUrl ?? '',
+      imageUrlInput: prefill.imageUrl ?? '',
+    });
+    setCatalogPickerOpen(false);
+    setStockDialogOpen(true);
+  };
+
+  const openManualStockCreate = (presetCategory?: string) => {
+    draftStockIdRef.current = createCoffeeStockId();
+    setEditingStockId(null);
+    setStockForm({
+      ...EMPTY_STOCK_FORM,
+      category: presetCategory ?? COFFEE_STOCK_CATEGORY_PRESETS[0],
+    });
+    setCatalogPickerOpen(false);
     setStockDialogOpen(true);
   };
 
@@ -206,6 +278,16 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps) {
       brand: item.brand ?? '',
       intensity: item.intensity != null ? String(item.intensity) : '',
       quantity: String(item.quantity),
+      packSize: item.packSize != null ? String(item.packSize) : '',
+      cupSize: item.cupSize ?? '',
+      origin: item.origin ?? '',
+      flavorNotes: item.flavorNotes ?? '',
+      description: item.description ?? '',
+      ingredients: item.ingredients ?? '',
+      pricePaid: item.pricePaid != null ? String(item.pricePaid) : '',
+      catalogUrl: item.catalogUrl ?? '',
+      catalogSlug: item.catalogSlug ?? '',
+      extraImageUrls: joinExtraImageUrls(item.extraImageUrls),
       notes: item.notes ?? '',
       imageUrl: item.imageUrl ?? '',
       imageUrlInput: item.imageUrl ?? '',
@@ -224,6 +306,16 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps) {
       brand: stockForm.brand || undefined,
       intensity: stockForm.intensity ? Number(stockForm.intensity) : undefined,
       quantity: Number(stockForm.quantity),
+      packSize: stockForm.packSize ? Number(stockForm.packSize) : undefined,
+      cupSize: stockForm.cupSize || undefined,
+      origin: stockForm.origin || undefined,
+      flavorNotes: stockForm.flavorNotes || undefined,
+      description: stockForm.description || undefined,
+      ingredients: stockForm.ingredients || undefined,
+      pricePaid: stockForm.pricePaid ? Number(stockForm.pricePaid.replace(',', '.')) : undefined,
+      catalogUrl: stockForm.catalogUrl || undefined,
+      catalogSlug: stockForm.catalogSlug || undefined,
+      extraImageUrls: parseExtraImageUrls(stockForm.extraImageUrls),
       notes: stockForm.notes || undefined,
       capsuleSystem: categoryToCapsuleSystem(category),
       imageUrl: stockForm.imageUrl || undefined,
@@ -299,12 +391,35 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps) {
     setStockSearch('');
   };
 
+  const detailItem = viewingStockItem
+    ? stock.find((entry) => entry.id === viewingStockItem.id) ?? viewingStockItem
+    : null;
+
+  if (detailItem && !stockDialogOpen) {
+    return (
+      <div className={`${styles.app} nexus-coffee-app nexus-personal-app-root`}>
+        <CoffeeCapsuleDetail
+          item={detailItem}
+          onBack={() => setViewingStockItem(null)}
+          onEdit={() => {
+            setViewingStockItem(null);
+            openStockEdit(detailItem);
+          }}
+          onToggleQuantity={() => toggleStockQuantity(detailItem.id)}
+          onToggleFavorite={() => toggleFavorite(detailItem.id)}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className={styles.app}>
-      <header className={styles.appHeader}>
-        <button type="button" className={styles.headerBtn} onClick={onBack} aria-label="Voltar ao cantinho">
-          ←
-        </button>
+    <div className={`${styles.app} nexus-coffee-app nexus-personal-app-root`}>
+      <header className={`${styles.appHeader} ${embeddedDesktop ? styles.appHeaderEmbedded : ''}`}>
+        {onBack && isMobileApp ? (
+          <button type="button" className={styles.headerBtn} onClick={onBack} aria-label="Voltar ao cantinho">
+            ←
+          </button>
+        ) : null}
         <h1 className={styles.appTitle}>MEU CAFÉ</h1>
         <div className={styles.headerActions}>
           {screen !== 'home' ? (
@@ -597,6 +712,15 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps) {
         </div>
       ) : null}
 
+      {catalogPickerOpen ? (
+        <CoffeeCapsuleCatalogPicker
+          initialSystem={systemFilter}
+          onPick={applyCatalogEntry}
+          onCustom={() => openManualStockCreate(systemFilter ? CAPSULE_CATEGORY_BY_SYSTEM[systemFilter] : undefined)}
+          onClose={() => setCatalogPickerOpen(false)}
+        />
+      ) : null}
+
       {stockDialogOpen ? (
         <div className={styles.overlay} role="presentation" onClick={() => setStockDialogOpen(false)}>
           <form
@@ -647,18 +771,64 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps) {
                 onChange={(e) => setStockForm((f) => ({ ...f, brand: e.target.value }))}
               />
             </label>
+            <p className={styles.formSectionTitle}>Características</p>
+            <div className={styles.formRow}>
+              <label className={styles.field}>
+                <span>Intensidade 1–12</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={12}
+                  value={stockForm.intensity}
+                  onChange={(e) => setStockForm((f) => ({ ...f, intensity: e.target.value }))}
+                  placeholder="Ex.: 7"
+                />
+              </label>
+              <label className={styles.field}>
+                <span>Cápsulas por caixa</span>
+                <input
+                  type="number"
+                  min={1}
+                  value={stockForm.packSize}
+                  onChange={(e) => setStockForm((f) => ({ ...f, packSize: e.target.value }))}
+                  placeholder="10"
+                />
+              </label>
+            </div>
             <label className={styles.field}>
-              <span>Intensidade 1–12 (opcional)</span>
+              <span>Tamanho da xícara</span>
+              <select
+                value={stockForm.cupSize}
+                onChange={(e) =>
+                  setStockForm((f) => ({ ...f, cupSize: e.target.value as CoffeeCupSize | '' }))
+                }
+              >
+                <option value="">Não informado</option>
+                {COFFEE_CUP_SIZES.map((size) => (
+                  <option key={size.id} value={size.id}>
+                    {size.icon} {size.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className={styles.field}>
+              <span>Origem (opcional)</span>
               <input
-                type="number"
-                min={1}
-                max={12}
-                value={stockForm.intensity}
-                onChange={(e) => setStockForm((f) => ({ ...f, intensity: e.target.value }))}
+                value={stockForm.origin}
+                onChange={(e) => setStockForm((f) => ({ ...f, origin: e.target.value }))}
+                placeholder="Ex.: Colômbia"
               />
             </label>
             <label className={styles.field}>
-              <span>Quantidade</span>
+              <span>Perfil de sabor</span>
+              <input
+                value={stockForm.flavorNotes}
+                onChange={(e) => setStockForm((f) => ({ ...f, flavorNotes: e.target.value }))}
+                placeholder="Ex.: equilibrado, notas de nozes"
+              />
+            </label>
+            <label className={styles.field}>
+              <span>Quantidade em estoque</span>
               <input
                 type="number"
                 min={0}
@@ -667,16 +837,69 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps) {
                 onChange={(e) => setStockForm((f) => ({ ...f, quantity: e.target.value }))}
               />
             </label>
+
+            <p className={styles.formSectionTitle}>Descrição</p>
             <label className={styles.field}>
-              <span>Notas</span>
+              <span>Sobre a cápsula</span>
+              <textarea
+                rows={3}
+                value={stockForm.description}
+                onChange={(e) => setStockForm((f) => ({ ...f, description: e.target.value }))}
+                placeholder="Texto como no site do fabricante…"
+              />
+            </label>
+            <label className={styles.field}>
+              <span>Ingredientes</span>
+              <textarea
+                rows={2}
+                value={stockForm.ingredients}
+                onChange={(e) => setStockForm((f) => ({ ...f, ingredients: e.target.value }))}
+                placeholder="Café torrado moído, …"
+              />
+            </label>
+            <label className={styles.field}>
+              <span>Suas notas</span>
               <textarea
                 rows={2}
                 value={stockForm.notes}
                 onChange={(e) => setStockForm((f) => ({ ...f, notes: e.target.value }))}
-                placeholder="Sabor, ocasião, lembrete…"
+                placeholder="Lembrete pessoal…"
               />
             </label>
 
+            <p className={styles.formSectionTitle}>Referência (opcional)</p>
+            <div className={styles.formRow}>
+              <label className={styles.field}>
+                <span>Preço pago (R$)</span>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={stockForm.pricePaid}
+                  onChange={(e) => setStockForm((f) => ({ ...f, pricePaid: e.target.value }))}
+                  placeholder="17,90"
+                />
+              </label>
+            </div>
+            <label className={styles.field}>
+              <span>Link do produto</span>
+              <input
+                type="url"
+                value={stockForm.catalogUrl}
+                onChange={(e) => setStockForm((f) => ({ ...f, catalogUrl: e.target.value }))}
+                placeholder="https://…"
+              />
+            </label>
+            <label className={styles.field}>
+              <span>Fotos extras (uma URL por linha)</span>
+              <textarea
+                rows={2}
+                value={stockForm.extraImageUrls}
+                onChange={(e) => setStockForm((f) => ({ ...f, extraImageUrls: e.target.value }))}
+                placeholder="https://…"
+              />
+            </label>
+
+            <p className={styles.formSectionTitle}>Foto principal</p>
             <CoffeeStockPhotoTools
               name={stockForm.name}
               brand={stockForm.brand}
@@ -721,76 +944,6 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps) {
           </form>
         </div>
       ) : null}
-
-      {viewingStockItem ? (
-        <CoffeeCapsuleDetail
-          item={stock.find((entry) => entry.id === viewingStockItem.id) ?? viewingStockItem}
-          onClose={() => setViewingStockItem(null)}
-          onEdit={() => {
-            setViewingStockItem(null);
-            openStockEdit(viewingStockItem);
-          }}
-          onToggleQuantity={() => toggleStockQuantity(viewingStockItem.id)}
-          onToggleFavorite={() => toggleFavorite(viewingStockItem.id)}
-        />
-      ) : null}
-    </div>
-  );
-}
-
-function CoffeeCapsuleDetail({
-  item,
-  onClose,
-  onEdit,
-  onToggleQuantity,
-  onToggleFavorite,
-}: {
-  item: CoffeeStockItem;
-  onClose: () => void;
-  onEdit: () => void;
-  onToggleQuantity: () => void;
-  onToggleFavorite: () => void;
-}) {
-  return (
-    <div className={styles.overlay} role="presentation" onClick={onClose}>
-      <div className={styles.stockDetail} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
-        <button type="button" className={styles.stockDetailClose} onClick={onClose} aria-label="Fechar">
-          ×
-        </button>
-        <button
-          type="button"
-          className={`${styles.detailFavorite} ${item.favorite ? styles.detailFavoriteOn : ''}`}
-          onClick={onToggleFavorite}
-          aria-label={item.favorite ? 'Remover dos favoritos' : 'Favoritar'}
-        >
-          ♥
-        </button>
-        <div className={styles.stockDetailHero}>
-          {item.imageUrl ? (
-            <img src={item.imageUrl} alt="" className={styles.stockDetailPhoto} />
-          ) : (
-            <span className={styles.stockDetailEmoji}>{item.iconEmoji ?? categoryEmoji(item.category)}</span>
-          )}
-        </div>
-        <h3 className={styles.stockDetailTitle}>{item.name}</h3>
-        <p className={styles.stockDetailMeta}>
-          {item.category}
-          {item.brand ? ` · ${item.brand}` : ''}
-          {item.intensity != null ? ` · Int. ${item.intensity}` : ''}
-        </p>
-        <p className={styles.stockDetailQty}>
-          {item.quantity > 0 ? `${item.quantity} em estoque` : 'Acabou'}
-        </p>
-        {item.notes ? <p className={styles.stockDetailNotes}>{item.notes}</p> : null}
-        <div className={styles.stockDetailActions}>
-          <button type="button" className={styles.saveBtn} onClick={onToggleQuantity}>
-            {item.quantity > 0 ? 'Marcar como acabou' : 'Tenho de novo'}
-          </button>
-          <button type="button" className={styles.cancelBtn} onClick={onEdit}>
-            Editar
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

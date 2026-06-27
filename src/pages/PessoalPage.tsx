@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PageHeader } from '../components/PageHeader';
-import { PersonalAreaHome } from '../components/personal/PersonalAreaHome';
-import { PersonalFinancePanel } from '../components/personal/PersonalFinancePanel';
+import { PersonalAppShell } from '../components/personal/PersonalAppShell';
+import { PersonalAreaHome } from '../components/personal/PersonalAreaHome';import { PersonalFinancePanel } from '../components/personal/PersonalFinancePanel';
 import { ViniciusDrinksCarta } from '../components/personal/ViniciusDrinksCarta';
 import { ViniciusPcGuide } from '../components/personal/ViniciusPcGuide';
 import { ViniciusAdega } from '../components/personal/ViniciusAdega';
@@ -11,7 +11,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { resolveFinanceMonthKey } from '../lib/personalFinanceMonth';
 import { isViniciusOnly } from '../lib/viniciusPersonalFinance';
 import styles from './PessoalPage.module.css';
-
+import '../styles/personalAppMobile.css';
 export function PessoalPage() {
   const { profile, user } = useAuth();
   const navigate = useNavigate();
@@ -59,18 +59,19 @@ export function PessoalPage() {
 
   if (drinks && viniciusOnly) {
     return (
-      <div className={`${styles.page} ${styles.drinksPage}`}>
-        <div className={styles.financeTop}>
-          <PageHeader compact title="Carta de drinks" subtitle={`${firstName} · só seu`} />
-          <button type="button" className={styles.backBtn} onClick={backHome}>
-            ← Cantinho
-          </button>
-        </div>
-        <ViniciusDrinksCarta />
+      <div className={`${styles.page} ${styles.personalAppPage}`}>
+        <PersonalAppShell
+          title="Carta de drinks"
+          mobileTitle="Carta de Drinks"
+          subtitle={`${firstName} · só seu`}
+          onBack={backHome}
+          variant="drinks"
+        >
+          <ViniciusDrinksCarta />
+        </PersonalAppShell>
       </div>
     );
   }
-
   if (pcGuide && viniciusOnly) {
     return (
       <div className={`${styles.page} ${styles.drinksPage}`}>
@@ -87,26 +88,34 @@ export function PessoalPage() {
 
   if (coffee && viniciusOnly) {
     return (
-      <div className={`${styles.page} ${styles.coffeePage}`}>
-        <ViniciusCoffee onBack={backHome} />
+      <div className={`${styles.page} ${styles.personalAppPage}`}>
+        <PersonalAppShell
+          title="Café"
+          subtitle={`${firstName} · cápsulas`}
+          onBack={backHome}
+          variant="coffee"
+        >
+          <ViniciusCoffee onBack={backHome} />
+        </PersonalAppShell>
       </div>
     );
   }
 
   if (adega && viniciusOnly) {
     return (
-      <div className={`${styles.page} ${styles.drinksPage}`}>
-        <div className={styles.financeTop}>
-          <PageHeader compact title="Minha adega" subtitle={`${firstName} · coleção`} />
-          <button type="button" className={styles.backBtn} onClick={backHome}>
-            ← Cantinho
-          </button>
-        </div>
-        <ViniciusAdega />
+      <div className={`${styles.page} ${styles.personalAppPage}`}>
+        <PersonalAppShell
+          title="Minha adega"
+          mobileTitle="Minha Adega"
+          subtitle={`${firstName} · coleção`}
+          onBack={backHome}
+          variant="adega"
+        >
+          <ViniciusAdega />
+        </PersonalAppShell>
       </div>
     );
   }
-
   return (
     <div className={styles.page}>
       {financeiro ? (

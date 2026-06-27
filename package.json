@@ -17,7 +17,8 @@
     "drinks:thumbs": "node scripts/crop-drink-thumbs.mjs",
     "db:migrations:status": "npx supabase migration list --linked",
     "db:migrations:repair": "node scripts/repair-migrations.mjs",
-    "db:migrations:push": "npx supabase db push --linked"
+    "db:migrations:push": "npx supabase db push --linked",
+    "coffee:catalog:seed-dg": "node scripts/seed-coffee-catalog-dg.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",

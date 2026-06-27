@@ -189,7 +189,7 @@ export function DrinkCartaDiscoverBar({
 
   return (
     <>
-      <div className={styles.discoverBar}>
+      <div className={`${styles.discoverBar} nexus-drinks-discover`}>
         <div className={styles.discoverTopRow}>
           <label className={styles.discoverSearchWrap}>
             <span className={styles.discoverSearchIcon} aria-hidden>
