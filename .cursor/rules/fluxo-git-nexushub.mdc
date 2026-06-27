@@ -9,7 +9,7 @@ alwaysApply: true
 
 - **GitHub:** https://github.com/nexuscoredev/nexushub
 - **Clone local:** `C:\dev\NEXUS\nexushub`
-- **Deploy:** Vercel (projeto `nexushub`)
+- **Deploy:** Vercel — time **NEXUS** (`nexus-79f43b6c`), projeto `nexushub` → https://nexussystems.dev
 - **Nunca** usar OneDrive ou Google Drive para versionar ou sincronizar código
 - **Nunca** commitar `.env`, `.env.local`, service role ou tokens
 
@@ -31,7 +31,10 @@ npm run build
 git add .
 git commit -m "mensagem"
 git push origin main
-npx vercel --prod --yes
 ```
+
+**Deploy:** o push em `main` dispara deploy automático no Vercel — time **NEXUS**, projeto `nexushub` → https://nexussystems.dev
+
+**Não usar** `npx vercel --prod` nesta máquina: o CLI local está na conta pessoal (`vinicius-isliker-s-projects`) e publicaria no projeto errado.
 
 Em conflitos ou working tree suja: parar e perguntar.

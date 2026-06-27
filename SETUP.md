@@ -30,7 +30,11 @@ URL: `https://ndcenckgtezerlmggola.supabase.co`
 
 ## 2. Vercel
 
-Projeto: **nexushub** (time NEXUS) — https://nexuscorehub.vercel.app
+Projeto: **nexushub** (time NEXUS) — https://nexussystems.dev
+
+Deploy de produção: **push em `main`** no GitHub (`nexuscoredev/nexushub`). A integração Vercel do time NEXUS faz o build automaticamente.
+
+**Não** usar `npx vercel --prod` neste PC sem relink: o CLI local aponta para a conta pessoal `vinicius-isliker-s-projects` (projeto errado). Para relink manual: `npx vercel link --project nexushub --scope team_rIF5nQ4kiddAUYnHt6Fzv3c6` (requer login com acesso ao time NEXUS).
 
 Variáveis **já configuradas pelo agente** (se existirem no dashboard):
 

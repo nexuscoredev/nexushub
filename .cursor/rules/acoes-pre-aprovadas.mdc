@@ -15,9 +15,9 @@ Salvo conflito de git ou working tree suja: parar e perguntar (conforme Fluxo Gi
 
 ## Git & deploy
 
-- `git push origin main`
+- `git push origin main` (deploy de produção via integração GitHub → Vercel time **NEXUS** / `nexushub`)
 - `git pull --rebase origin main` (inclui stash/pop quando necessário para sincronizar)
-- `npx vercel --prod --yes` e deploy de produção via MCP Vercel
+- **Não** usar `npx vercel --prod` local (conta pessoal errada); deploy = push em `main`
 - Fluxo completo de publicação do `fluxo-git-nexushub.mdc` quando o utilizador pedir commit/deploy
 
 ## Assets & ficheiros
