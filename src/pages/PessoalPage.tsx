@@ -87,14 +87,8 @@ export function PessoalPage() {
 
   if (coffee && viniciusOnly) {
     return (
-      <div className={`${styles.page} ${styles.drinksPage}`}>
-        <div className={styles.financeTop}>
-          <PageHeader compact title="Café" subtitle={`${firstName} · cápsulas e carta`} />
-          <button type="button" className={styles.backBtn} onClick={backHome}>
-            ← Cantinho
-          </button>
-        </div>
-        <ViniciusCoffee />
+      <div className={`${styles.page} ${styles.coffeePage}`}>
+        <ViniciusCoffee onBack={backHome} />
       </div>
     );
   }

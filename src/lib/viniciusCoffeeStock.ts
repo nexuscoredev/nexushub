@@ -49,6 +49,7 @@ export type CoffeeStockItem = {
   notes?: string;
   imageUrl?: string;
   iconEmoji?: string;
+  favorite?: boolean;
   createdAt: string;
   updatedAt: string;
 };

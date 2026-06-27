@@ -15,7 +15,7 @@ export interface ViniciusCoffeeRecipe {
   notes?: string;
 }
 
-export const VINICIUS_COFFEE_BANNER_URL = '/img/personal/coffee/banner.png?v=1';
+export const VINICIUS_COFFEE_BANNER_URL = '/img/personal/coffee/banner.jpg?v=2';
 export const VINICIUS_COFFEE_BANNER_WIDTH = 1024;
 export const VINICIUS_COFFEE_BANNER_HEIGHT = 576;
 export const COFFEE_FALLBACK_THUMB = '/img/personal/apps/coffee.png';

@@ -14,6 +14,14 @@
   margin-inline: auto;
 }
 
+.coffeePage {
+  width: 100%;
+  max-width: 430px;
+  margin-inline: auto;
+  padding-left: max(0.35rem, env(safe-area-inset-left));
+  padding-right: max(0.35rem, env(safe-area-inset-right));
+}
+
 .financeTop {
   display: flex;
   align-items: flex-start;

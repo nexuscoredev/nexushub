@@ -7,7 +7,6 @@ type CoffeeStockCardsProps = {
   items: CoffeeStockItem[];
   editing: boolean;
   viewMode: CoffeeStockViewMode;
-  recipeCountByItemId: Record<string, number>;
   emptyTitle: string;
   emptyText: string;
   onCardClick: (item: CoffeeStockItem) => void;
@@ -34,7 +33,6 @@ function CoffeeStockCard({
   item,
   editing,
   viewMode,
-  recipeCount,
   onCardClick,
   onEdit,
   onDelete,
@@ -43,7 +41,6 @@ function CoffeeStockCard({
   item: CoffeeStockItem;
   editing: boolean;
   viewMode: CoffeeStockViewMode;
-  recipeCount: number;
   onCardClick: (item: CoffeeStockItem) => void;
   onEdit: (item: CoffeeStockItem) => void;
   onDelete: (id: string) => void;
@@ -84,13 +81,8 @@ function CoffeeStockCard({
           {showTags ? (
             <div className={styles.cardTags}>
               <span className={`${styles.tag} ${outOfStock ? styles.tagOpened : ''}`}>
-                {outOfStock ? 'Sem estoque' : `${item.quantity} un.`}
+                {outOfStock ? 'Acabou' : `${item.quantity} un.`}
               </span>
-              {recipeCount > 0 ? (
-                <span className={`${styles.tag} ${styles.tagDrinks}`}>
-                  {recipeCount} {recipeCount === 1 ? 'receita' : 'receitas'}
-                </span>
-              ) : null}
             </div>
           ) : null}
           {showMeta && !editing && item.notes ? <p className={styles.cardNotes}>{item.notes}</p> : null}
@@ -129,7 +121,6 @@ export function CoffeeStockCards({
   items,
   editing,
   viewMode,
-  recipeCountByItemId,
   emptyTitle,
   emptyText,
   onCardClick,
@@ -151,17 +142,14 @@ export function CoffeeStockCards({
 
   if (viewMode === 'details' && !editing) {
     return (
-      <div className={styles.detailsTable} role="table" aria-label="Estoque de café">
+      <div className={styles.detailsTable} role="table" aria-label="Minhas cápsulas">
         <div className={styles.detailsHead} role="row">
-          <span role="columnheader">Item</span>
+          <span role="columnheader">Cápsula</span>
           <span role="columnheader" className={styles.detailsColCategory}>
-            Categoria
+            Sistema
           </span>
           <span role="columnheader" className={styles.detailsColStock}>
-            Estoque
-          </span>
-          <span role="columnheader" className={styles.detailsColDrinks}>
-            Receitas
+            Quantidade
           </span>
         </div>
         <ul className={`${styles.list} ${styles.listView_details}`}>
@@ -185,10 +173,7 @@ export function CoffeeStockCards({
                   {item.category}
                 </span>
                 <span className={styles.detailsColStock} role="cell">
-                  {item.quantity > 0 ? `${item.quantity} un.` : 'Sem estoque'}
-                </span>
-                <span className={styles.detailsColDrinks} role="cell">
-                  {recipeCountByItemId[item.id] ?? 0}
+                  {item.quantity > 0 ? `${item.quantity} un.` : 'Acabou'}
                 </span>
               </button>
             </li>
@@ -210,7 +195,6 @@ export function CoffeeStockCards({
           item={item}
           editing={editing}
           viewMode={viewMode}
-          recipeCount={recipeCountByItemId[item.id] ?? 0}
           onCardClick={onCardClick}
           onEdit={onEdit}
           onDelete={onDelete}
