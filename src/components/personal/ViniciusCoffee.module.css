@@ -568,6 +568,97 @@
   color: #fff;
 }
 
+.stockDetail {
+  position: relative;
+  width: min(100%, 22rem);
+  max-height: min(90vh, 36rem);
+  overflow: auto;
+  padding: 1rem;
+  border-radius: calc(var(--radius) + 2px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #0a0a0a;
+}
+
+.stockDetailClose {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.stockDetailHero {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.stockDetailPhoto {
+  width: 6rem;
+  height: 6rem;
+  object-fit: cover;
+  border-radius: 0.75rem;
+}
+
+.stockDetailEmoji {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.stockDetailTitle {
+  margin: 0 0 0.35rem;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.35rem;
+  color: #fff;
+  text-align: center;
+}
+
+.stockDetailMeta,
+.stockDetailQty,
+.stockDetailNotes {
+  margin: 0;
+  text-align: center;
+  font-size: 0.78rem;
+  color: rgba(226, 232, 240, 0.75);
+}
+
+.stockDetailQty {
+  margin-top: 0.35rem;
+  font-weight: 600;
+  color: #fde68a;
+}
+
+.stockDetailNotes {
+  margin-top: 0.5rem;
+}
+
+.stockDetailActions {
+  display: flex;
+  justify-content: center;
+  margin: 0.85rem 0;
+}
+
+.stockDetailRecipes h4 {
+  margin: 0 0 0.45rem;
+  font-size: 0.78rem;
+  color: rgba(251, 191, 36, 0.9);
+}
+
+.stockDetailRecipes ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
 @media (min-width: 640px) {
   .overlay {
     align-items: center;

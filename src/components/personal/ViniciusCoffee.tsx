@@ -1,11 +1,31 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
 import {
-  filterCoffeeByStock,
+  applyCoffeeDiscoverFilters,
+  coffeeStockCategoriesInUse,
+  filterCoffeeStockByCategory,
+  getCoffeeStockCounts,
+  isCapsuleCartaRecipe,
+  recipeUsesStock,
+  searchCoffeeStock,
+  type CoffeeDiscoverFilters,
+} from '../../lib/coffeeCartaDiscover';
+import {
+  loadCoffeeCartaViewMode,
+  saveCoffeeCartaViewMode,
+  type CoffeeCartaViewMode,
+} from '../../lib/coffeeCartaView';
+import {
+  countRecipesForStockItem,
+  getRecipesForStockItem,
   matchCoffeeRecipeToStock,
   matchCoffeeRecipesToStock,
 } from '../../lib/coffeeStockMatch';
+import {
+  loadCoffeeStockViewMode,
+  saveCoffeeStockViewMode,
+  type CoffeeStockViewMode,
+} from '../../lib/coffeeStockView';
 import {
   COFFEE_FALLBACK_THUMB,
   VINICIUS_COFFEE_BANNER_HEIGHT,
@@ -42,8 +62,16 @@ import {
   type CoffeeStockInput,
   type CoffeeStockItem,
 } from '../../lib/viniciusCoffeeStock';
+import { useAuth } from '../../contexts/AuthContext';
+import { CoffeeCartaDiscoverBar } from './CoffeeCartaDiscoverBar';
+import { CoffeeCartaList } from './CoffeeCartaList';
+import { CoffeeCartaViewMenu } from './CoffeeCartaViewMenu';
+import { CoffeeStockCards } from './CoffeeStockCards';
+import { CoffeeStockViewMenu } from './CoffeeStockViewMenu';
 import { DrinkThumb } from './DrinkThumb';
 import { CoffeeStockPhotoTools } from './CoffeeStockPhotoTools';
+import drinkStyles from './ViniciusDrinksCarta.module.css';
+import adegaStyles from './ViniciusAdega.module.css';
 import styles from './ViniciusCoffee.module.css';
 
 type CoffeeTab = 'carta' | 'estoque';
@@ -85,8 +113,21 @@ export function ViniciusCoffee() {
   const [store, setStore] = useState<CoffeeCartaStore>(() => loadCoffeeCartaStore(userId));
   const [stock, setStock] = useState<CoffeeStockItem[]>(() => loadCoffeeStock(userId));
   const [stockSearch, setStockSearch] = useState('');
-  const [cartaSearch, setCartaSearch] = useState('');
-  const [stockFilter, setStockFilter] = useState<'all' | 'ready'>('all');
+  const [stockCategoryFilter, setStockCategoryFilter] = useState<string | null>(null);
+  const [filters, setFilters] = useState<CoffeeDiscoverFilters>({
+    search: '',
+    method: null,
+    capsuleSystem: null,
+    stockMode: 'all',
+  });
+  const [cartaViewMode, setCartaViewMode] = useState<CoffeeCartaViewMode>(() =>
+    loadCoffeeCartaViewMode(userId),
+  );
+  const [stockViewMode, setStockViewMode] = useState<CoffeeStockViewMode>(() =>
+    loadCoffeeStockViewMode(userId),
+  );
+  const [viewingStockItem, setViewingStockItem] = useState<CoffeeStockItem | null>(null);
+  const [editorSlug, setEditorSlug] = useState<string | null>(null);
   const [stockDialogOpen, setStockDialogOpen] = useState(false);
   const [editingStockId, setEditingStockId] = useState<string | null>(null);
   const [stockForm, setStockForm] = useState<StockFormState>(EMPTY_STOCK_FORM);
@@ -112,31 +153,41 @@ export function ViniciusCoffee() {
 
   const recipes = useMemo(() => resolveCoffeeRecipes(store), [store]);
   const stockMatches = useMemo(() => matchCoffeeRecipesToStock(recipes, stock), [recipes, stock]);
-  const hasStock = stock.some((item) => item.quantity > 0);
-  const readyCount = useMemo(
-    () => filterCoffeeByStock(recipes, stock, 'ready').length,
-    [recipes, stock],
+  const stockCounts = useMemo(() => getCoffeeStockCounts(recipes, stock), [recipes, stock]);
+  const hasStockDependentRecipes = useMemo(() => recipes.some(recipeUsesStock), [recipes]);
+  const hasGroundCoffeeInStock = useMemo(
+    () =>
+      stock.some(
+        (item) => item.quantity > 0 && /grão|grao|moído|moido/i.test(item.category),
+      ),
+    [stock],
   );
 
-  const filteredRecipes = useMemo(() => {
-    let list = recipes;
-    if (stockFilter === 'ready' && hasStock) {
-      list = filterCoffeeByStock(list, stock, 'ready');
+  const visibleRecipes = useMemo(
+    () => applyCoffeeDiscoverFilters(recipes, stock, filters),
+    [recipes, stock, filters],
+  );
+
+  const recipeCountByItemId = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const item of stock) {
+      map[item.id] = countRecipesForStockItem(item, recipes);
     }
-    const q = cartaSearch.trim().toLowerCase();
-    if (!q) return list;
-    return list.filter((recipe) =>
-      [recipe.title, recipe.tagline, ...recipe.ingredients].join(' ').toLowerCase().includes(q),
-    );
-  }, [recipes, stock, stockFilter, hasStock, cartaSearch]);
+    return map;
+  }, [stock, recipes]);
+
+  const stockCategories = useMemo(() => coffeeStockCategoriesInUse(stock), [stock]);
 
   const filteredStock = useMemo(() => {
-    const q = stockSearch.trim().toLowerCase();
-    if (!q) return stock;
-    return stock.filter((item) =>
-      [item.name, item.brand ?? '', item.category, item.notes ?? ''].join(' ').toLowerCase().includes(q),
-    );
-  }, [stock, stockSearch]);
+    let list = searchCoffeeStock(stock, stockSearch);
+    list = filterCoffeeStockByCategory(list, stockCategoryFilter);
+    return list;
+  }, [stock, stockSearch, stockCategoryFilter]);
+
+  const editorRecipe = useMemo(
+    () => (editorSlug ? findResolvedCoffeeRecipe(editorSlug, store) : null),
+    [editorSlug, store],
+  );
 
   const activeRecipe = useMemo(
     () => findResolvedCoffeeRecipe(activeSlug, store),
@@ -272,6 +323,16 @@ export function ViniciusCoffee() {
     );
   };
 
+  const handleCartaViewModeChange = (mode: CoffeeCartaViewMode) => {
+    setCartaViewMode(mode);
+    if (userId) saveCoffeeCartaViewMode(userId, mode);
+  };
+
+  const handleStockViewModeChange = (mode: CoffeeStockViewMode) => {
+    setStockViewMode(mode);
+    if (userId) saveCoffeeStockViewMode(userId, mode);
+  };
+
   const bannerImage = store.bannerImageUrl ?? VINICIUS_COFFEE_BANNER_URL;
 
   if (activeRecipe) {
@@ -305,7 +366,15 @@ export function ViniciusCoffee() {
               </span>
             </div>
           ) : null}
-          {activeMatch && hasStock ? (
+          {activeRecipe && isCapsuleCartaRecipe(activeRecipe) ? (
+            activeMatch?.matches.length ? (
+              <div className={styles.matchPanel}>
+                <p className={styles.matchTitle}>
+                  No seu estoque: {activeMatch.matches.map((m) => m.itemName).join(', ')}
+                </p>
+              </div>
+            ) : null
+          ) : activeMatch ? (
             <div className={styles.matchPanel}>
               <p className={styles.matchTitle}>
                 {activeMatch.status === 'ready'
@@ -388,81 +457,97 @@ export function ViniciusCoffee() {
             />
             <div className={styles.bannerMeta}>
               <span className={styles.pill}>{recipes.length} receitas</span>
-              {hasStock && readyCount > 0 ? (
-                <span className={styles.pillReady}>{readyCount} com seu estoque</span>
+              {stockCounts.ready > 0 ? (
+                <span className={styles.pillReady}>{stockCounts.ready} na carta agora</span>
               ) : null}
             </div>
           </header>
 
-          <div className={styles.filters}>
-            <input
-              type="search"
-              className={styles.search}
-              placeholder="Buscar receita…"
-              value={cartaSearch}
-              onChange={(e) => setCartaSearch(e.target.value)}
+          {!editing ? (
+            <CoffeeCartaDiscoverBar
+              showStockFilters={recipes.length > 0}
+              readyCount={stockCounts.ready}
+              almostCount={stockCounts.almost}
+              filters={filters}
+              onFiltersChange={(patch) => setFilters((prev) => ({ ...prev, ...patch }))}
             />
-            {hasStock ? (
-              <div className={styles.chips}>
-                <button
-                  type="button"
-                  className={`${styles.chip} ${stockFilter === 'all' ? styles.chipActive : ''}`}
-                  onClick={() => setStockFilter('all')}
-                >
-                  Todas
-                </button>
-                <button
-                  type="button"
-                  className={`${styles.chip} ${stockFilter === 'ready' ? styles.chipActive : ''}`}
-                  onClick={() => setStockFilter('ready')}
-                >
-                  Posso fazer ({readyCount})
-                </button>
-              </div>
-            ) : null}
-            {editing ? (
+          ) : null}
+
+          {!editing ? (
+            <div className={drinkStyles.cartaViewToolbar}>
+              <CoffeeCartaViewMenu viewMode={cartaViewMode} onViewModeChange={handleCartaViewModeChange} />
+            </div>
+          ) : null}
+
+          {editing ? (
+            <div className={styles.filters}>
               <button type="button" className={styles.addBtn} onClick={() => setNewRecipeOpen(true)}>
                 + Nova receita
               </button>
-            ) : null}
-          </div>
+            </div>
+          ) : null}
 
-          {!hasStock ? (
+          {hasStockDependentRecipes && !hasGroundCoffeeInStock ? (
             <p className={styles.hint}>
-              Cadastre cápsulas no{' '}
+              Cápsulas aparecem sempre na carta. Cadastre café moído ou grão no{' '}
               <button type="button" className={styles.linkBtn} onClick={() => setTab('estoque')}>
                 estoque
               </button>{' '}
-              para ver o que você pode preparar agora.
+              para marcar filtro e prensa como prontos.
             </p>
           ) : null}
 
-          <ul className={styles.recipeList}>
-            {filteredRecipes.map((recipe) => {
-              const match = stockMatches.get(recipe.slug);
-              return (
-                <li key={recipe.slug}>
-                  <button type="button" className={styles.recipeCard} onClick={() => openRecipe(recipe.slug)}>
-                    <DrinkThumb
-                      src={recipe.imageUrl}
-                      alt=""
-                      className={styles.recipeThumb}
-                      fallbackClassName={styles.recipeThumbFallback}
-                    />
-                    <span className={styles.recipeBody}>
-                      <span className={styles.recipeTitleRow}>
-                        <span className={styles.recipeTitle}>{recipe.title}</span>
-                        {match?.status === 'ready' ? (
-                          <span className={styles.badgeReady}>Estoque</span>
-                        ) : null}
-                      </span>
-                      <span className={styles.recipeTagline}>{recipe.tagline}</span>
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+          {!editing && filters.stockMode !== 'all' && visibleRecipes.length === 0 ? (
+            <div className={drinkStyles.adegaEmptyState}>
+              <p className={drinkStyles.adegaEmptyStateTitle}>
+                {filters.stockMode === 'ready'
+                  ? 'Nenhuma receita completa por enquanto'
+                  : 'Nenhuma receita quase completa'}
+              </p>
+              <p className={drinkStyles.adegaEmptyStateText}>
+                {filters.stockMode === 'ready'
+                  ? 'Cápsulas sempre aparecem aqui; filtro e prensa só com estoque completo.'
+                  : 'Só aparecem receitas de filtro ou prensa que faltam um item.'}
+              </p>
+              <button
+                type="button"
+                className={drinkStyles.adegaEmptyStateBtn}
+                onClick={() => setFilters((prev) => ({ ...prev, stockMode: 'all' }))}
+              >
+                Ver todas as receitas
+              </button>
+            </div>
+          ) : visibleRecipes.length === 0 ? (
+            <div className={drinkStyles.adegaEmptyState}>
+              <p className={drinkStyles.adegaEmptyStateTitle}>Nenhuma receita encontrada</p>
+              <p className={drinkStyles.adegaEmptyStateText}>
+                Tente outro termo ou limpe os filtros.
+              </p>
+              <button
+                type="button"
+                className={drinkStyles.adegaEmptyStateBtn}
+                onClick={() =>
+                  setFilters({
+                    search: '',
+                    method: null,
+                    capsuleSystem: null,
+                    stockMode: 'all',
+                  })
+                }
+              >
+                Limpar busca
+              </button>
+            </div>
+          ) : (
+            <CoffeeCartaList
+              recipes={visibleRecipes}
+              viewMode={cartaViewMode}
+              editing={editing}
+              stockMatches={stockMatches}
+              onOpenRecipe={openRecipe}
+              onEditRecipe={setEditorSlug}
+            />
+          )}
         </>
       ) : (
         <>
@@ -486,67 +571,79 @@ export function ViniciusCoffee() {
             ))}
           </div>
 
-          <input
-            type="search"
-            className={styles.search}
-            placeholder="Buscar no estoque…"
-            value={stockSearch}
-            onChange={(e) => setStockSearch(e.target.value)}
-          />
+          <nav className={adegaStyles.adegaNav} aria-label="Busca e filtros do estoque">
+            <div className={adegaStyles.toolbar}>
+              <label className={adegaStyles.searchWrap}>
+                <span className={adegaStyles.searchIcon} aria-hidden>
+                  ⌕
+                </span>
+                <input
+                  type="search"
+                  className={adegaStyles.search}
+                  placeholder="Buscar cápsulas, grãos e equipamentos…"
+                  value={stockSearch}
+                  onChange={(e) => setStockSearch(e.target.value)}
+                  aria-label="Buscar no estoque"
+                  enterKeyHint="search"
+                />
+              </label>
+              {!editing ? (
+                <CoffeeStockViewMenu viewMode={stockViewMode} onViewModeChange={handleStockViewModeChange} />
+              ) : null}
+              {editing ? (
+                <button
+                  type="button"
+                  className={`${styles.addBtn} ${adegaStyles.toolbarAddBtn}`}
+                  onClick={openStockCreate}
+                >
+                  + Adicionar
+                </button>
+              ) : null}
+            </div>
 
-          <ul className={styles.stockList}>
-            {filteredStock.length === 0 ? (
-              <li className={styles.empty}>Nenhum item cadastrado.</li>
-            ) : (
-              filteredStock.map((item) => (
-                <li key={item.id} className={styles.stockItem}>
+            {stockCategories.length > 0 ? (
+              <div className={adegaStyles.filtersWrap}>
+                <div className={adegaStyles.filters} role="group" aria-label="Filtrar por categoria">
                   <button
                     type="button"
-                    className={styles.stockMain}
-                    onClick={() => (editing ? openStockEdit(item) : undefined)}
+                    className={`${adegaStyles.filterBtn} ${stockCategoryFilter == null ? adegaStyles.filterBtnActive : ''}`}
+                    onClick={() => setStockCategoryFilter(null)}
                   >
-                    <span className={styles.stockEmoji} aria-hidden>
-                      {item.imageUrl ? (
-                        <img src={item.imageUrl} alt="" className={styles.stockThumb} />
-                      ) : (
-                        item.iconEmoji ?? categoryEmoji(item.category)
-                      )}
-                    </span>
-                    <span className={styles.stockInfo}>
-                      <span className={styles.stockName}>{item.name}</span>
-                      <span className={styles.stockMeta}>
-                        {item.category}
-                        {item.brand ? ` · ${item.brand}` : ''}
-                        {item.intensity ? ` · Int. ${item.intensity}` : ''}
-                      </span>
-                    </span>
-                    <span className={item.quantity > 0 ? styles.qtyOk : styles.qtyEmpty}>
-                      {item.quantity}
-                    </span>
+                    Todas
                   </button>
-                  {!editing ? (
+                  {stockCategories.map((category) => (
                     <button
+                      key={category}
                       type="button"
-                      className={styles.stockToggle}
-                      onClick={() => toggleStockQuantity(item.id)}
-                      title={item.quantity > 0 ? 'Marcar como acabou' : 'Tenho de novo'}
+                      className={`${adegaStyles.filterBtn} ${stockCategoryFilter === category ? adegaStyles.filterBtnActive : ''}`}
+                      onClick={() => setStockCategoryFilter(category)}
+                      title={category}
                     >
-                      {item.quantity > 0 ? '✓' : '○'}
+                      <span aria-hidden>{categoryEmoji(category)}</span>
+                      <span className={adegaStyles.filterLabel}>{category}</span>
                     </button>
-                  ) : (
-                    <button
-                      type="button"
-                      className={styles.stockDelete}
-                      onClick={() => handleDeleteStock(item.id)}
-                      aria-label="Excluir"
-                    >
-                      ×
-                    </button>
-                  )}
-                </li>
-              ))
-            )}
-          </ul>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </nav>
+
+          <CoffeeStockCards
+            items={filteredStock}
+            editing={editing}
+            viewMode={stockViewMode}
+            recipeCountByItemId={recipeCountByItemId}
+            emptyTitle={stock.length === 0 ? 'Nenhum item cadastrado' : 'Nenhum item encontrado'}
+            emptyText={
+              stock.length === 0
+                ? 'Adicione cápsulas, grãos ou equipamentos para cruzar com a carta.'
+                : 'Tente outro termo ou remova o filtro de categoria.'
+            }
+            onCardClick={setViewingStockItem}
+            onEdit={openStockEdit}
+            onDelete={handleDeleteStock}
+            onToggleQuantity={toggleStockQuantity}
+          />
         </>
       )}
 
@@ -668,6 +765,90 @@ export function ViniciusCoffee() {
           }}
         />
       ) : null}
+
+      {editorRecipe ? (
+        <CoffeeRecipeEditor
+          recipe={editorRecipe}
+          onClose={() => setEditorSlug(null)}
+          onSave={(patch) => {
+            persistStore(updateCoffeeOverride(store, editorRecipe.slug, patch));
+            setEditorSlug(null);
+          }}
+        />
+      ) : null}
+
+      {viewingStockItem ? (
+        <CoffeeStockItemDetail
+          item={stock.find((entry) => entry.id === viewingStockItem.id) ?? viewingStockItem}
+          recipes={getRecipesForStockItem(
+            stock.find((entry) => entry.id === viewingStockItem.id) ?? viewingStockItem,
+            recipes,
+          )}
+          onClose={() => setViewingStockItem(null)}
+          onOpenRecipe={openRecipe}
+          onToggleQuantity={() => toggleStockQuantity(viewingStockItem.id)}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+function CoffeeStockItemDetail({
+  item,
+  recipes: linkedRecipes,
+  onClose,
+  onOpenRecipe,
+  onToggleQuantity,
+}: {
+  item: CoffeeStockItem;
+  recipes: ViniciusCoffeeRecipe[];
+  onClose: () => void;
+  onOpenRecipe: (slug: string) => void;
+  onToggleQuantity: () => void;
+}) {
+  return (
+    <div className={styles.overlay} role="presentation" onClick={onClose}>
+      <div className={styles.stockDetail} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+        <button type="button" className={styles.stockDetailClose} onClick={onClose} aria-label="Fechar">
+          ×
+        </button>
+        <div className={styles.stockDetailHero}>
+          {item.imageUrl ? (
+            <img src={item.imageUrl} alt="" className={styles.stockDetailPhoto} />
+          ) : (
+            <span className={styles.stockDetailEmoji}>{item.iconEmoji ?? categoryEmoji(item.category)}</span>
+          )}
+        </div>
+        <h3 className={styles.stockDetailTitle}>{item.name}</h3>
+        <p className={styles.stockDetailMeta}>
+          {item.category}
+          {item.brand ? ` · ${item.brand}` : ''}
+          {item.intensity != null ? ` · Int. ${item.intensity}` : ''}
+        </p>
+        <p className={styles.stockDetailQty}>
+          {item.quantity > 0 ? `${item.quantity} em estoque` : 'Sem estoque'}
+        </p>
+        {item.notes ? <p className={styles.stockDetailNotes}>{item.notes}</p> : null}
+        <div className={styles.stockDetailActions}>
+          <button type="button" className={styles.saveBtn} onClick={onToggleQuantity}>
+            {item.quantity > 0 ? 'Marcar como acabou' : 'Tenho de novo'}
+          </button>
+        </div>
+        {linkedRecipes.length > 0 ? (
+          <section className={styles.stockDetailRecipes}>
+            <h4>Receitas com este item</h4>
+            <ul>
+              {linkedRecipes.map((recipe) => (
+                <li key={recipe.slug}>
+                  <button type="button" className={styles.linkBtn} onClick={() => onOpenRecipe(recipe.slug)}>
+                    {recipe.title}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+      </div>
     </div>
   );
 }
