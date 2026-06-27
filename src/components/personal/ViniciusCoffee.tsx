@@ -32,14 +32,22 @@ import {
 } from '../../lib/coffeeCapsuleMeta';
 import { useAuth } from '../../contexts/AuthContext';
 import { useMaxWidth } from '../../hooks/useMaxWidth';
+import {
+  loadCoffeeStockViewMode,
+  saveCoffeeStockViewMode,
+  type CoffeeStockViewMode,
+} from '../../lib/coffeeStockView';
 import { CoffeeCapsuleCard } from './CoffeeCapsuleCard';
 import { CoffeeCapsuleCatalogPicker } from './CoffeeCapsuleCatalogPicker';
 import { CoffeeCapsuleDetail } from './CoffeeCapsuleDetail';
+import { CoffeeStockCards } from './CoffeeStockCards';
+import { CoffeeStockViewMenu } from './CoffeeStockViewMenu';
 import {
   catalogEntryToStockPrefill,
   type CoffeeCapsuleCatalogEntry,
 } from '../../lib/coffeeCapsuleCatalog';
 import { CoffeeStockPhotoTools } from './CoffeeStockPhotoTools';
+import adegaStyles from './ViniciusAdega.module.css';
 import styles from './ViniciusCoffee.module.css';
 
 type CoffeeScreen = 'home' | 'collection' | 'favorites';
@@ -140,6 +148,9 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
   const embeddedDesktop = Boolean(onBack && !isMobileApp);
 
   const [stock, setStock] = useState<CoffeeStockItem[]>(() => loadCoffeeStock(userId));
+  const [stockViewMode, setStockViewMode] = useState<CoffeeStockViewMode>(() =>
+    loadCoffeeStockViewMode(userId),
+  );
   const [stockSearch, setStockSearch] = useState('');
   const [stockCategoryFilter, setStockCategoryFilter] = useState<string | null>(null);
   const [systemFilter, setSystemFilter] = useState<CoffeeCapsuleSystem | null>(null);
@@ -176,10 +187,12 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
   const stockCategories = useMemo(() => coffeeStockCategoriesInUse(stock), [stock]);
   const inStockCount = useMemo(() => stock.filter((item) => item.quantity > 0).length, [stock]);
   const favorites = useMemo(() => stock.filter((item) => item.favorite), [stock]);
+  const activeScreen: CoffeeScreen =
+    embeddedDesktop && screen === 'home' ? 'collection' : screen;
 
   const filteredStock = useMemo(() => {
     let list = stock;
-    if (screen === 'favorites') {
+    if (activeScreen === 'favorites') {
       list = list.filter((item) => item.favorite);
     }
     list = searchCoffeeStock(list, stockSearch);
@@ -191,7 +204,12 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
     }
     list = filterCoffeeStockByCategory(list, stockCategoryFilter);
     return list;
-  }, [stock, stockSearch, stockCategoryFilter, systemFilter, screen]);
+  }, [stock, stockSearch, stockCategoryFilter, systemFilter, activeScreen]);
+
+  const handleStockViewModeChange = (mode: CoffeeStockViewMode) => {
+    setStockViewMode(mode);
+    if (userId) saveCoffeeStockViewMode(userId, mode);
+  };
 
   const homeCarouselItems = useMemo(() => {
     const available = stock.filter((item) => item.quantity > 0);
@@ -397,7 +415,9 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
 
   if (detailItem && !stockDialogOpen) {
     return (
-      <div className={`${styles.app} nexus-coffee-app nexus-personal-app-root`}>
+      <div
+        className={`${styles.app} ${embeddedDesktop ? styles.appDesktop : ''} nexus-coffee-app nexus-personal-app-root`}
+      >
         <CoffeeCapsuleDetail
           item={detailItem}
           onBack={() => setViewingStockItem(null)}
@@ -413,46 +433,191 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
   }
 
   return (
-    <div className={`${styles.app} nexus-coffee-app nexus-personal-app-root`}>
-      <header className={`${styles.appHeader} ${embeddedDesktop ? styles.appHeaderEmbedded : ''}`}>
-        {onBack && isMobileApp ? (
-          <button type="button" className={styles.headerBtn} onClick={onBack} aria-label="Voltar ao cantinho">
-            ←
-          </button>
-        ) : null}
-        <h1 className={styles.appTitle}>MEU CAFÉ</h1>
-        <div className={styles.headerActions}>
-          {screen !== 'home' ? (
-            <button
-              type="button"
-              className={styles.headerBtn}
-              onClick={() => setFiltersOpen(true)}
-              aria-label="Filtros"
-            >
-              ☰
+    <div
+      className={`${styles.app} ${embeddedDesktop ? styles.appDesktop : ''} nexus-coffee-app nexus-personal-app-root`}
+    >
+      {embeddedDesktop ? (
+        <>
+          <div className={adegaStyles.adegaToolbar}>
+            <p className={adegaStyles.adegaToolbarHint}>
+              {editing
+                ? 'Toque em um item para editar ou use + para adicionar.'
+                : `${stock.length} cápsulas no catálogo · ${inStockCount} disponíveis`}
+            </p>
+            <div className={styles.desktopToolbarActions}>
+              {editing ? (
+                <button
+                  type="button"
+                  className={`${adegaStyles.addBtn} ${adegaStyles.toolbarAddBtn}`}
+                  onClick={() => openStockCreate()}
+                >
+                  + Cápsula
+                </button>
+              ) : null}
+              <button
+                type="button"
+                className={editing ? adegaStyles.editModeBtnActive : adegaStyles.editModeBtn}
+                onClick={() => setEditing(!editing)}
+              >
+                {editing ? 'Concluído' : 'Editar catálogo'}
+              </button>
+            </div>
+          </div>
+
+          <header className={adegaStyles.banner}>
+            <div className={`${adegaStyles.bannerArtWrap} nexus-personal-banner-wrap`}>
+              <img
+                src={VINICIUS_COFFEE_BANNER_URL}
+                alt="Café — catálogo de cápsulas"
+                className={adegaStyles.bannerArt}
+                width={VINICIUS_COFFEE_BANNER_WIDTH}
+                height={VINICIUS_COFFEE_BANNER_HEIGHT}
+                loading="eager"
+                decoding="async"
+              />
+            </div>
+            {stock.length > 0 ? (
+              <div className={adegaStyles.bannerMeta}>
+                <span className={adegaStyles.stat}>{stock.length} cápsulas</span>
+                <span className={adegaStyles.stat}>{inStockCount} disponíveis</span>
+                {favorites.length > 0 ? (
+                  <span className={adegaStyles.stat}>{favorites.length} favoritas</span>
+                ) : null}
+              </div>
+            ) : null}
+          </header>
+
+          <nav className={adegaStyles.adegaNav} aria-label="Busca e filtros do café">
+            <div className={adegaStyles.toolbar}>
+              <label className={adegaStyles.searchWrap}>
+                <span className={adegaStyles.searchIcon} aria-hidden>
+                  ⌕
+                </span>
+                <input
+                  type="search"
+                  className={adegaStyles.search}
+                  placeholder="Buscar cápsula, marca ou nota…"
+                  value={stockSearch}
+                  onChange={(e) => setStockSearch(e.target.value)}
+                  aria-label="Buscar cápsulas"
+                />
+              </label>
+              {!editing ? (
+                <CoffeeStockViewMenu viewMode={stockViewMode} onViewModeChange={handleStockViewModeChange} />
+              ) : null}
+            </div>
+
+            <div className={adegaStyles.filtersWrap}>
+              <div className={adegaStyles.filters} role="group" aria-label="Filtrar catálogo">
+                <button
+                  type="button"
+                  className={`${adegaStyles.filterBtn} ${activeScreen === 'collection' ? adegaStyles.filterBtnActive : ''}`}
+                  onClick={() => setScreen('collection')}
+                >
+                  Coleção
+                </button>
+                <button
+                  type="button"
+                  className={`${adegaStyles.filterBtn} ${activeScreen === 'favorites' ? adegaStyles.filterBtnActive : ''}`}
+                  onClick={() => setScreen('favorites')}
+                >
+                  Favoritas
+                </button>
+                {COFFEE_CAPSULE_SYSTEMS.map((system) => (
+                  <button
+                    key={system.id}
+                    type="button"
+                    className={`${adegaStyles.filterBtn} ${systemFilter === system.id ? adegaStyles.filterBtnActive : ''}`}
+                    onClick={() =>
+                      setSystemFilter((current) => (current === system.id ? null : system.id))
+                    }
+                  >
+                    {system.label}
+                  </button>
+                ))}
+                {stockCategories.map((category) => (
+                  <button
+                    key={category}
+                    type="button"
+                    className={`${adegaStyles.filterBtn} ${stockCategoryFilter === category ? adegaStyles.filterBtnActive : ''}`}
+                    onClick={() =>
+                      setStockCategoryFilter((current) => (current === category ? null : category))
+                    }
+                    title={category}
+                  >
+                    <span aria-hidden>{categoryEmoji(category)}</span>
+                    <span className={styles.filterBtnLabel}>{category.replace(/^Cápsula /, '')}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </nav>
+        </>
+      ) : (
+        <header className={`${styles.appHeader} ${embeddedDesktop ? styles.appHeaderEmbedded : ''}`}>
+          {onBack && isMobileApp ? (
+            <button type="button" className={styles.headerBtn} onClick={onBack} aria-label="Voltar ao cantinho">
+              ←
             </button>
           ) : null}
-          <button
-            type="button"
-            className={`${styles.headerBtn} ${editing ? styles.headerBtnActive : ''}`}
-            onClick={() => setEditing(!editing)}
-            aria-label={editing ? 'Concluir edição' : 'Editar catálogo'}
-          >
-            {editing ? '✓' : '✎'}
-          </button>
-          <button
-            type="button"
-            className={`${styles.headerBtn} ${styles.headerBtnGold}`}
-            onClick={() => openStockCreate(systemFilter ? CAPSULE_CATEGORY_BY_SYSTEM[systemFilter] : undefined)}
-            aria-label="Adicionar cápsula"
-          >
-            +
-          </button>
-        </div>
-      </header>
+          <h1 className={styles.appTitle}>MEU CAFÉ</h1>
+          <div className={styles.headerActions}>
+            {screen !== 'home' ? (
+              <button
+                type="button"
+                className={styles.headerBtn}
+                onClick={() => setFiltersOpen(true)}
+                aria-label="Filtros"
+              >
+                ☰
+              </button>
+            ) : null}
+            <button
+              type="button"
+              className={`${styles.headerBtn} ${editing ? styles.headerBtnActive : ''}`}
+              onClick={() => setEditing(!editing)}
+              aria-label={editing ? 'Concluir edição' : 'Editar catálogo'}
+            >
+              {editing ? '✓' : '✎'}
+            </button>
+            <button
+              type="button"
+              className={`${styles.headerBtn} ${styles.headerBtnGold}`}
+              onClick={() => openStockCreate(systemFilter ? CAPSULE_CATEGORY_BY_SYSTEM[systemFilter] : undefined)}
+              aria-label="Adicionar cápsula"
+            >
+              +
+            </button>
+          </div>
+        </header>
+      )}
 
       <main className={styles.appMain}>
-        {screen === 'home' ? (
+        {embeddedDesktop ? (
+          <CoffeeStockCards
+            items={filteredStock}
+            editing={editing}
+            viewMode={stockViewMode}
+            emptyTitle={
+              activeScreen === 'favorites'
+                ? 'Nenhuma favorita'
+                : stock.length === 0
+                  ? 'Catálogo vazio'
+                  : 'Nenhuma cápsula encontrada'
+            }
+            emptyText={
+              activeScreen === 'favorites'
+                ? 'Marque cápsulas com ♥ para vê-las aqui.'
+                : stock.length === 0
+                  ? 'Adicione sua primeira cápsula com + Cápsula.'
+                  : 'Tente outra busca ou limpe os filtros.'
+            }
+            onCardClick={openItem}
+            onEdit={openStockEdit}
+            onDelete={handleDeleteStock}
+            onToggleQuantity={toggleStockQuantity}
+          />
+        ) : screen === 'home' ? (
           <>
             <section className={styles.hero}>
               <div className={styles.heroCopy}>
@@ -633,24 +798,26 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
         )}
       </main>
 
-      <nav className={styles.bottomNav} aria-label="Navegação do café">
-        {(['home', 'collection', 'favorites'] as CoffeeScreen[]).map((id) => (
-          <button
-            key={id}
-            type="button"
-            className={`${styles.bottomNavBtn} ${screen === id ? styles.bottomNavBtnActive : ''}`}
-            onClick={() => setScreen(id)}
-            aria-current={screen === id ? 'page' : undefined}
-          >
-            <span className={styles.bottomNavIcon} aria-hidden>
-              {id === 'home' ? '⌂' : id === 'collection' ? '◉' : '♥'}
-            </span>
-            <span>{SCREEN_LABELS[id]}</span>
-          </button>
-        ))}
-      </nav>
+      {!embeddedDesktop ? (
+        <nav className={styles.bottomNav} aria-label="Navegação do café">
+          {(['home', 'collection', 'favorites'] as CoffeeScreen[]).map((id) => (
+            <button
+              key={id}
+              type="button"
+              className={`${styles.bottomNavBtn} ${screen === id ? styles.bottomNavBtnActive : ''}`}
+              onClick={() => setScreen(id)}
+              aria-current={screen === id ? 'page' : undefined}
+            >
+              <span className={styles.bottomNavIcon} aria-hidden>
+                {id === 'home' ? '⌂' : id === 'collection' ? '◉' : '♥'}
+              </span>
+              <span>{SCREEN_LABELS[id]}</span>
+            </button>
+          ))}
+        </nav>
+      ) : null}
 
-      {filtersOpen ? (
+      {filtersOpen && !embeddedDesktop ? (
         <div className={styles.overlay} role="presentation" onClick={() => setFiltersOpen(false)}>
           <div className={styles.filterSheet} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
             <header className={styles.filterSheetHead}>
