@@ -177,33 +177,45 @@ export function loadCoffeeStock(userId: string | undefined): CoffeeStockItem[] {
 
 /** Limpa coleção local + nuvem. */
 export function clearCoffeeStock(userId: string): void {
-  saveCoffeeStock(userId, []);
+  void saveCoffeeStock(userId, []);
 }
 
 /**
- * Reset único: esvazia a coleção que antes listava o catálogo inteiro.
- * Depois disso, só entra o que você adicionar manualmente.
+ * Reset único: esvazia a coleção local (v2). A nuvem já foi zerada no reset
+ * administrativo — não dispara upsert vazio aqui para evitar race com saves.
  */
 export function ensureCoffeeCollectionReset(userId: string): CoffeeStockItem[] {
   if (typeof localStorage === 'undefined') return loadCoffeeStock(userId);
   if (localStorage.getItem(COLLECTION_RESET_KEY)) return loadCoffeeStock(userId);
-  clearCoffeeStock(userId);
-  localStorage.setItem(COLLECTION_RESET_KEY, new Date().toISOString());
+
+  const updatedAt = new Date().toISOString();
+  try {
+    localStorage.setItem(storageKey(userId), '[]');
+    writeLocalUpdatedAt(userId, updatedAt);
+  } catch {
+    /* quota */
+  }
+  localStorage.setItem(COLLECTION_RESET_KEY, updatedAt);
   return [];
 }
 
-export function saveCoffeeStock(userId: string, items: CoffeeStockItem[]): void {
-  if (typeof localStorage === 'undefined') return;
+export async function saveCoffeeStock(
+  userId: string,
+  items: CoffeeStockItem[],
+): Promise<string | null> {
+  if (typeof localStorage === 'undefined') return null;
+
   const updatedAt = new Date().toISOString();
   try {
     localStorage.setItem(storageKey(userId), JSON.stringify(items));
     writeLocalUpdatedAt(userId, updatedAt);
   } catch {
-    /* quota */
+    return 'Não foi possível salvar localmente (armazenamento cheio).';
   }
-  void upsertCoffeeStockCloud(userId, items).then((err) => {
-    if (err) console.warn('[coffee stock] sync:', err);
-  });
+
+  const err = await upsertCoffeeStockCloud(userId, items, updatedAt);
+  if (err) return err;
+  return null;
 }
 
 export async function syncCoffeeStockFromCloud(userId: string): Promise<CoffeeStockItem[] | null> {
@@ -219,6 +231,12 @@ export async function syncCoffeeStockFromCloud(userId: string): Promise<CoffeeSt
   }
 
   const cloudItems = cloud.items.filter(isValidItem);
+
+  // Nuvem vazia (reset admin) não pode apagar coleção local com itens salvos.
+  if (cloudItems.length === 0 && local.length > 0) {
+    void upsertCoffeeStockCloud(userId, local, readLocalUpdatedAt(userId) ?? undefined);
+    return null;
+  }
 
   if (!isCloudNewer(cloud.updatedAt, localUpdatedAt)) {
     if (local.length > 0) {

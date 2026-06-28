@@ -149,17 +149,18 @@ function normalizeName(value) {
 }
 
 function matchManifest(entry, manifestList) {
+  const bySlug = manifestList.find((m) => m.slug === entry.slug);
+  if (bySlug) return bySlug;
+
   const keys = [
     normalizeName(entry.name),
     normalizeName(`${entry.brand ?? ''} ${entry.name}`),
   ];
   for (const item of manifestList) {
     const itemKey = normalizeName(item.name);
-    if (keys.some((k) => k === itemKey || k.includes(itemKey) || itemKey.includes(k))) {
-      return item;
-    }
+    if (keys.some((k) => k === itemKey)) return item;
   }
-  return manifestList.find((m) => m.slug === entry.slug) ?? null;
+  return null;
 }
 
 async function main() {

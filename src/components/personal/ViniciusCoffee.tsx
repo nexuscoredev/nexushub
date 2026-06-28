@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   coffeeStockCategoriesInUse,
@@ -170,6 +170,7 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
   const [editingStockId, setEditingStockId] = useState<string | null>(null);
   const [stockForm, setStockForm] = useState<StockFormState>(EMPTY_STOCK_FORM);
   const [stockFormError, setStockFormError] = useState<string | null>(null);
+  const [stockSaving, setStockSaving] = useState(false);
   const stockPhotoInputRef = useRef<HTMLInputElement>(null);
   const draftStockIdRef = useRef(createCoffeeStockId());
 
@@ -180,11 +181,16 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
       setStock([]);
       return;
     }
-    const reset = ensureCoffeeCollectionReset(userId);
-    setStock(reset);
+    const local = ensureCoffeeCollectionReset(userId);
+    setStock(local);
+
+    let cancelled = false;
     void syncCoffeeStockFromCloud(userId).then((cloud) => {
-      if (cloud) setStock(cloud);
+      if (!cancelled && cloud) setStock(cloud);
     });
+    return () => {
+      cancelled = true;
+    };
   }, [userId]);
 
   useEffect(() => {
@@ -233,21 +239,43 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
 
   const homeCarouselItems = useMemo(() => displayStock.slice(0, 12), [displayStock]);
 
-  const persistStock = (next: CoffeeStockItem[]) => {
-    setStock(next);
-    if (userId) saveCoffeeStock(userId, next);
-  };
+  const persistStock = useCallback(
+    (updater: CoffeeStockItem[] | ((prev: CoffeeStockItem[]) => CoffeeStockItem[])) => {
+      setStock((prev) => {
+        const next = typeof updater === 'function' ? updater(prev) : updater;
+        if (userId) {
+          void saveCoffeeStock(userId, next).then((err) => {
+            if (err) console.warn('[coffee stock] sync:', err);
+          });
+        }
+        return next;
+      });
+    },
+    [userId],
+  );
 
   const upsertStockFromDisplay = (
     displayItem: CoffeeStockItem,
     patch: Partial<CoffeeStockItem>,
   ) => {
     const now = new Date().toISOString();
-    persistStock(
-      stock.map((item) =>
-        item.id === displayItem.id ? { ...item, ...patch, updatedAt: now } : item,
-      ),
-    );
+    persistStock((prev) => {
+      const byId = prev.findIndex((item) => item.id === displayItem.id);
+      if (byId >= 0) {
+        return prev.map((item, index) =>
+          index === byId ? { ...item, ...patch, updatedAt: now } : item,
+        );
+      }
+      if (displayItem.catalogSlug && displayItem.capsuleSystem) {
+        return prev.map((item) =>
+          item.catalogSlug === displayItem.catalogSlug &&
+          item.capsuleSystem === displayItem.capsuleSystem
+            ? { ...item, ...patch, updatedAt: now }
+            : item,
+        );
+      }
+      return prev;
+    });
   };
 
   const setScreen = (next: CoffeeScreen) => {
@@ -382,7 +410,7 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
     setStockDialogOpen(true);
   };
 
-  const handleStockSubmit = (event: FormEvent) => {
+  const handleStockSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setStockFormError(null);
     if (!userId) {
@@ -424,33 +452,40 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
         : undefined;
     const targetId = editingStockId ?? existingByCatalog?.id;
 
-    if (targetId) {
-      const existing = stock.find((item) => item.id === targetId);
-      persistStock(
-        stock.map((item) =>
+    const nextStock = targetId
+      ? stock.map((item) =>
           item.id === targetId
             ? {
                 ...item,
                 ...normalized,
-                favorite: existing?.favorite,
+                favorite: stock.find((entry) => entry.id === targetId)?.favorite,
                 updatedAt: now,
               }
             : item,
-        ),
-      );
-    } else {
-      persistStock([
-        ...stock,
-        {
-          id: draftStockIdRef.current,
-          ...normalized,
-          createdAt: now,
-          updatedAt: now,
-        },
-      ]);
+        )
+      : [
+          ...stock,
+          {
+            id: draftStockIdRef.current,
+            ...normalized,
+            createdAt: now,
+            updatedAt: now,
+          },
+        ];
+
+    setStockSaving(true);
+    try {
+      setStock(nextStock);
+      const err = await saveCoffeeStock(userId, nextStock);
+      if (err) {
+        setStockFormError(`Não foi possível salvar: ${err}`);
+        return;
+      }
+      draftStockIdRef.current = createCoffeeStockId();
+      setStockDialogOpen(false);
+    } finally {
+      setStockSaving(false);
     }
-    draftStockIdRef.current = createCoffeeStockId();
-    setStockDialogOpen(false);
   };
 
   const handleDeleteStock = (id: string) => {
@@ -1181,8 +1216,8 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
               <button type="button" className={styles.cancelBtn} onClick={() => setStockDialogOpen(false)}>
                 Cancelar
               </button>
-              <button type="submit" className={styles.saveBtn}>
-                Salvar
+              <button type="submit" className={styles.saveBtn} disabled={stockSaving}>
+                {stockSaving ? 'Salvando…' : 'Salvar'}
               </button>
             </div>
           </form>

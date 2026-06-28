@@ -205,12 +205,13 @@ export async function fetchCoffeeStockCloud(
 export async function upsertCoffeeStockCloud(
   userId: string,
   items: CoffeeStockItem[],
+  updatedAt?: string,
 ): Promise<string | null> {
   if (!supabase) return 'Supabase não configurado';
 
-  const updatedAt = new Date().toISOString();
+  const at = updatedAt ?? new Date().toISOString();
   const { error } = await supabase.from('hub_personal_coffee_stock').upsert(
-    { user_id: userId, items, updated_at: updatedAt },
+    { user_id: userId, items, updated_at: at },
     { onConflict: 'user_id' },
   );
 

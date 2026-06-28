@@ -183,24 +183,23 @@ function norm(value) {
     .replace(/\p{M}/gu, '')
     .toLowerCase()
     .replace(/®/g, '')
-    .replace(/starbucks\s+/i, '')
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
 }
 
 function lookup(map, entry) {
-  const keys = [entry.name, entry.name.toUpperCase(), `${entry.brand ?? ''} ${entry.name}`.trim()];
+  const keys = [
+    `${entry.brand ?? ''} ${entry.name}`.trim(),
+    entry.name,
+    entry.name.toUpperCase(),
+  ];
   for (const key of keys) {
+    if (!key) continue;
     if (map[key]) return map[key];
     const n = norm(key);
     for (const [k, v] of Object.entries(map)) {
       if (norm(k) === n) return v;
     }
-  }
-  for (const [k, v] of Object.entries(map)) {
-    const nk = norm(k);
-    const ne = norm(entry.name);
-    if (nk.includes(ne) || ne.includes(nk)) return v;
   }
   return null;
 }

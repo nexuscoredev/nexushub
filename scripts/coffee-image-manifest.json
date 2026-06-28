@@ -283,9 +283,9 @@
     {
       "slug": "starbucks-cappuccino",
       "name": "Cappuccino",
-      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/c/a/cappuccino_mobile-hero.png",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/c/a/cappuccino_xicara-reta.png",
-      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/c/a/cappuccino_capsula.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/2/0/20240517_mockups_de_ndg_novo_modelo_cappuccino.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/2/0/20240517_mockups_de_ndg_novo_modelo_cappuccino.png",
+      "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
