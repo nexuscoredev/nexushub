@@ -3,432 +3,437 @@
     {
       "slug": "moca-pistacchio-latte",
       "name": "MOÇA PISTACCHIO LATTE",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_1__2.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile_hero_1__2.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_1__2.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_1__2.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "starbucks-espresso-colombia",
       "name": "Espresso Colombia",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/2/0/20240517_mockups_de_ndg_novo_modelo_colombia.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/2/0/20240517_mockups_de_ndg_novo_modelo_colombia.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/2/0/20240517_mockups_de_ndg_novo_modelo_colombia.png",
       "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "espresso",
       "name": "ESPRESSO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/e/s/espresso_mobile-hero.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/e/s/espresso_mobile-hero.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/e/s/espresso_xicara-reta.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/e/s/espresso_capsula.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "espresso-descafeinado",
       "name": "ESPRESSO DESCAFEINADO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/2/0/20250314_mockup_decaff_descafeinado_nacionalizado_8_copiar_1_.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/2/0/20250314_mockup_decaff_descafeinado_nacionalizado_8_copiar_1_.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/2/0/20250314_mockup_decaff_descafeinado_nacionalizado_8_copiar_1_.png",
       "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "espresso-intenso",
       "name": "ESPRESSO INTENSO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/e/s/espresso_intenso_mobile-hero.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/e/s/espresso_intenso_mobile-hero.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/e/s/espresso_intenso_xicara-reta.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/e/s/espresso_intenso_capsula.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "doppio-espresso",
       "name": "DOPPIO ESPRESSO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile-hero_7.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile-hero_7.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_7.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_7.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "espresso-barista",
       "name": "ESPRESSO BARISTA",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile-hero_5_1.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile-hero_5_1.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_5_1.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_5_1.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "caffe-matinal",
       "name": "CAFFÈ MATINAL",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/f/r/frente_6.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/f/r/frente_6.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/f/r/frente_6.png",
       "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "lungo",
       "name": "LUNGO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile-hero_4.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile-hero_4.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_4.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_4.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "cafe-caseiro",
       "name": "CAFÉ CASEIRO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile-hero_3_1.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile-hero_3_1.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_3_1.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_3_1.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "cafe-caseiro-intenso",
       "name": "CAFÉ CASEIRO INTENSO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile-hero_5.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile-hero_5.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_5.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_5.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "kopenhagen-espresso",
       "name": "KOPENHAGEN ESPRESSO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_7_1.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile_hero_7_1.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_7_1.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_7_1.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "lungo-chapada-diamantina",
       "name": "LUNGO CHAPADA DIAMANTINA",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_4_1.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile_hero_4_1.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_4_1.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_4_1.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "espresso-nescafe-gold",
       "name": "ESPRESSO NESCAFÉ GOLD",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/g/o/gold_6_mobile_hero.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/g/o/gold_6_mobile_hero.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/g/o/gold_6_xicara-reta.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/g/o/gold_6_capsula.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "lungo-nescafe-gold",
       "name": "LUNGO NESCAFÉ GOLD",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/g/o/gold_8_mobile_hero.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/g/o/gold_8_xicara_reta.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/g/o/gold_8_xicara_reta.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/g/o/gold_8_capsula.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "espresso-cerrado-mineiro",
       "name": "ESPRESSO CERRADO MINEIRO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/e/n/enxoval-site--maktplace-cerrado.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/e/n/enxoval-site--maktplace-cerrado.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/e/n/enxoval-site--maktplace-cerrado.png",
       "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "origens-do-mundo-brasil-organico",
       "name": "ORIGENS DO MUNDO BRASIL ORGÂNICO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/2/0/20240528_mockups_sabores_produtos_regulares_ndg_origens-do-mundo-brasil-organico---10-capsulas.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/2/0/20240528_mockups_sabores_produtos_regulares_ndg_origens-do-mundo-brasil-organico---10-capsulas.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/2/0/20240528_mockups_sabores_produtos_regulares_ndg_origens-do-mundo-brasil-organico---10-capsulas.png",
       "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "espresso-serras-do-alto-paranaiba",
       "name": "ESPRESSO SERRAS DO ALTO PARANAÍBA",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_serras.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile_hero_serras.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_serras.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_serras.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "starbucks-espresso-roast",
       "name": "Espresso Roast",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/2/0/20240517_mockups_de_ndg_novo_modelo_roast.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/2/0/20240517_mockups_de_ndg_novo_modelo_roast.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/2/0/20240517_mockups_de_ndg_novo_modelo_roast.png",
       "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "starbucks-americano-house-blend",
       "name": "Americano House Blend",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/2/0/20240517_mockups_de_ndg_novo_modelo_house.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/2/0/20240517_mockups_de_ndg_novo_modelo_house.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/2/0/20240517_mockups_de_ndg_novo_modelo_house.png",
       "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "shakerato",
       "name": "SHAKERATO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_7_.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile_hero_7_.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_7_.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_7_.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "mochaccino-canela",
       "name": "MOCHACCINO CANELA",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mochaccino_canela_mobile-hero.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mochaccino_canela_mobile-hero.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mochaccino_canela_xicara-reta.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mochaccino_canela_capsula.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "cappuccino",
       "name": "CAPPUCCINO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/c/a/cappuccino_mobile-hero.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/c/a/cappuccino_mobile-hero.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/c/a/cappuccino_xicara-reta.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/c/a/cappuccino_capsula.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "cafe-au-lait",
       "name": "CAFÉ AU LAIT",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile-hero.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/a/u/au_laitfrente.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/a/u/au_laitfrente.png",
       "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "cafe-au-lait-desnatado",
       "name": "CAFÉ AU LAIT DESNATADO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/a/u/au-lait-desnatado-mobile-hero.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/a/u/au-lait-desnatado-mobile-hero.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/a/u/au-lait-desnatado-xicara-reta.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/a/u/au-lait-desnatado-capsula.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "cafe-au-lait-vanilla",
       "name": "CAFÉ AU LAIT VANILLA",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile-hero_2_.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile-hero_2_.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_2_.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_2_.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "cortado",
       "name": "CORTADO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile-hero_3_.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile-hero_3_.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_3_.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_3_.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "pingado",
       "name": "PINGADO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/p/i/pingado_mobile-hero.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/p/i/pingado_mobile-hero.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/p/i/pingado_xicara-reta.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/p/i/pingado_capsula.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "mochaccino-avela",
       "name": "MOCHACCINO AVELÃ",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_1_.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/x/_/x_cara-capsula.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/x/_/x_cara-capsula.png",
       "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "latte-macchiato",
       "name": "LATTE MACCHIATO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile-hero_1_.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile-hero_1_.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_1_.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_1_.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "vanilla-latte-macchiato",
       "name": "VANILLA LATTE MACCHIATO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_6_.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile_hero_6_.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_6_.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_6_.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "frappe",
       "name": "FRAPPE",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_4_.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile_hero_4_.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_4_.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_4_.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "cappuccino-moca-doce-de-leite",
       "name": "CAPPUCCINO MOÇA DOCE DE LEITE",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/e/n/enxoval-site--maktplace_mo_a_1_.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/e/n/enxoval-site--maktplace_mo_a_1_.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/e/n/enxoval-site--maktplace_mo_a_1_.png",
       "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "kopenhagen-cappuccino",
       "name": "KOPENHAGEN CAPPUCCINO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_7.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile_hero_7.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_7.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_7.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "kopenhagen-lajotinha",
       "name": "KOPENHAGEN LAJOTINHA",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_6_1.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile_hero_6_1.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_6_1.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_6_1.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "starbucks-cappuccino",
       "name": "Cappuccino",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/c/a/cappuccino_mobile-hero.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/c/a/cappuccino_mobile-hero.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/c/a/cappuccino_xicara-reta.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/c/a/cappuccino_capsula.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "starbucks-caramel-macchiato",
       "name": "Caramel Macchiato",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/2/0/20240517_mockups_de_ndg_novo_modelo_caramel.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/2/0/20240517_mockups_de_ndg_novo_modelo_caramel.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/2/0/20240517_mockups_de_ndg_novo_modelo_caramel.png",
       "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "kopenhagen-lingua-de-gato",
       "name": "KOPENHAGEN LÍNGUA DE GATO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero-02_1.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile_hero-02_1.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta-02_1.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula-02_1.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "galak",
       "name": "GALAK",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/e/n/enxoval-site--maktplace-galak.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/e/n/enxoval-site--maktplace-galak.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/e/n/enxoval-site--maktplace-galak.png",
       "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "nescau",
       "name": "NESCAU",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_8_.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile_hero_8_.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_8_.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_8_.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "chococino-nestle",
       "name": "CHOCOCINO NESTLÉ",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_2__2.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile_hero_2__2.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_2__2.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_2__2.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "nesquik",
       "name": "NESQUIK",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/e/n/enxoval-site--maktplace-nesquiick.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/e/n/enxoval-site--maktplace-nesquiick.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/e/n/enxoval-site--maktplace-nesquiick.png",
       "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "chai-tea-latte",
       "name": "CHAI TEA LATTE",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile-hero-mocha.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/x/i/xicara-e-capsula-mocha.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/x/i/xicara-e-capsula-mocha.png",
       "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "nature-s-heart-hibiscus-pink-lemonade",
       "name": "NATURE'S HEART HIBISCUS PINK LEMONADE",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_pink_lemonade.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile_hero_pink_lemonade.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_pink_lemonade.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_pink_lemonade.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "nestea-pessego",
       "name": "NESTEA PÊSSEGO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/n/e/nestea_pessego_10_capsulas_mobile_hero.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/n/e/nestea_pessego_10_capsulas_xicara_reta.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/n/e/nestea_pessego_10_capsulas_xicara_reta.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/n/e/nestea_pessego_10_capsulas_capsula.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "nature-s-heart-zen-style",
       "name": "NATURE'S HEART ZEN STYLE",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_zen_style.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile_hero_zen_style.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_zen_style.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_zen_style.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "neo-espresso-delicate",
       "name": "NEO Espresso Delicate",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/n/e/neostart_espresso_delicate-images_1000x1000px_5.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/n/e/neostart_espresso_delicate-images_1000x1000px_5.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/n/e/neostart_espresso_delicate-images_1000x1000px_5.png",
       "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "neo-espresso-serras-do-alto-paranaiba",
       "name": "NEO Espresso Serras do Alto Paranaíba",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/n/e/neostart_espresso_altoparanaiba_hero-images_1000x1000px_5_1.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/n/e/neostart_espresso_altoparanaiba_hero-images_1000x1000px_5_1.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/n/e/neostart_espresso_altoparanaiba_hero-images_1000x1000px_5_1.png",
       "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "neo-lungo-chapada-diamantina",
       "name": "NEO Lungo Chapada Diamantina",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/n/e/neostart_lungo_chapadadiamantina_hero-images_1000x1000px_5_1__1.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/n/e/neostart_lungo_chapadadiamantina_hero-images_1000x1000px_5_1__1.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/n/e/neostart_lungo_chapadadiamantina_hero-images_1000x1000px_5_1__1.png",
       "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "caramelo-salgado",
       "name": "CARAMELO SALGADO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_1_4.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile_hero_1_4.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_1_4.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_1_4.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "chococino-alpino",
       "name": "CHOCOCINO ALPINO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/a/l/alpino_mobile_hero.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/a/l/alpino_xicara_reta.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/a/l/alpino_xicara_reta.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/a/l/alpino_capsula.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "kitkat",
       "name": "KITKAT",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_3.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile_hero_3.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_3.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_3.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "nestea-mate-limao",
       "name": "NESTEA MATE LIMÃO",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile-hero_5_.png",
-      "capsule": null,
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/mobile-hero_5_.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/xicara-reta_5_.png",
+      "capsule": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/m/o/capsula_5_.png",
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     },
     {
       "slug": "neo-espresso-sul-de-minas-organico",
       "name": "NEO Espresso Sul de Minas Orgânico",
-      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/n/e/neostart_espresso_suldeminashero-images_1000x1000px_5.png",
+      "rawBox": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/n/e/neostart_espresso_suldeminashero-images_1000x1000px_5.png",
+      "box": "https://www.nescafe-dolcegusto.com.br/media/catalog/product/n/e/neostart_espresso_suldeminashero-images_1000x1000px_5.png",
       "capsule": null,
       "catalogUrl": "https://www.nescafe-dolcegusto.com.br/sabores"
     }
   ],
   "nespresso": [
-    {
-      "slug": "ristretto",
-      "name": "Ristretto",
-      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16467720470558/ispirazione-ristretto-italiano-XL.png",
-      "capsule": null,
-      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
-    },
-    {
-      "slug": "arpeggio",
-      "name": "Arpeggio",
-      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653366034462/arpeggio-2x.png",
-      "capsule": null,
-      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
-    },
-    {
-      "slug": "roma",
-      "name": "Roma",
-      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653932462110/ispirazione-roma-2x.png",
-      "capsule": null,
-      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
-    },
-    {
-      "slug": "livanto",
-      "name": "Livanto",
-      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653944487966/livanto-2x.png",
-      "capsule": null,
-      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
-    },
-    {
-      "slug": "capriccio",
-      "name": "Capriccio",
-      "box": "https://www.nespresso.com/shared_res/agility/commons/img/coffees/OL/composition/ol_coffee-sleeves_capriccio_16-9_2x.png",
-      "capsule": null,
-      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
-    },
-    {
-      "slug": "cosi",
-      "name": "Cosi",
-      "box": "https://www.nespresso.com/shared_res/agility/commons/img/coffees/OL/composition/ol_coffee-sleeves_cosi_16-9_2x.png",
-      "capsule": null,
-      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
-    },
-    {
-      "slug": "volluto",
-      "name": "Volluto",
-      "box": "https://www.nespresso.com/static/us/solutions/product/pdp/ol_coffee-sleeves_volluto_1200x672.png",
-      "capsule": null,
-      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
-    },
     {
       "slug": "napoli",
       "name": "Napoli",
@@ -444,23 +449,317 @@
       "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
     },
     {
-      "slug": "fortissio-lungo",
-      "name": "Fortissio Lungo",
-      "box": "https://www.nespresso.com/static/us/solutions/product/pdp/stockholm-fortissio-lungo/stockholm-fortissio-lungo_XL-02.png",
+      "slug": "india",
+      "name": "India",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653744439326/india-2x.png",
       "capsule": null,
       "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
     },
     {
-      "slug": "vivalto-lungo",
-      "name": "Vivalto Lungo",
-      "box": "https://www.nespresso.com/shared_res/agility/n-components/pdp/sku-main-info/coffee-sleeves/ol/tokyo-vivalto-lungo_XL.png",
+      "slug": "cape-town-lungo",
+      "name": "Cape Town Lungo",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653513130014/cape-town-lungo-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "lisbon-bica",
+      "name": "Lisbon Bica",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/30234256965662.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "ristretto",
+      "name": "Ristretto",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16467720470558/ispirazione-ristretto-italiano-XL.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "ristretto-decaffeinato",
+      "name": "Ristretto Decaffeinato",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/34682663632926/ristretto-decaffeinato-plp.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "arpeggio",
+      "name": "Arpeggio",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653366034462/arpeggio-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "arpeggio-decaffeinato",
+      "name": "Arpeggio Decaffeinato",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/34682651541534/arpeggio-decaffeinato-plp.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "caffe-florian",
+      "name": "Caffè Florian",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/35020949356574/C-1299-OL-Responsive-plp.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "rio-de-janeiro-espresso",
+      "name": "Rio de Janeiro Espresso",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16654101577758/rio-de-janeiro-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "fortissio-lungo",
+      "name": "Fortissio Lungo",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16724841758750/stockholm-lungo-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "indonesia",
+      "name": "Indonesia",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653745881118/indonesia-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "istanbul-espresso",
+      "name": "Istanbul Espresso",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/15414727049246/before-PLP-318x318px.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "roma",
+      "name": "Roma",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653932462110/ispirazione-roma-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "venezia",
+      "name": "Venezia",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653932789790/ispirazione-venezia-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "brazil-organic",
+      "name": "Brazil Organic",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/15762787401758/C-1021-ResponsivePLPImage.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "livanto",
+      "name": "Livanto",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653944487966/livanto-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "vienna-lungo-decaffeinato",
+      "name": "Vienna Lungo Decaffeinato",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/33381856575518/vienna-lungo-decaf-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "colombia",
+      "name": "Colombia",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653527384094/colombia-2x.png",
       "capsule": null,
       "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
     },
     {
       "slug": "linizio-lungo",
       "name": "Linizio Lungo",
-      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/28536773083166/Nes-OL-Big-Pack-36Caps-PACKSHOT-Linizio-Lungo-x3-VV-D1-2000x2000px.png",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16724849066014/vienna-lungo-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "paris-espresso",
+      "name": "Paris Espresso",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16724971225118/paris-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "vivalto-lungo",
+      "name": "Vivalto Lungo",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16724845232158/tokyo-lungo-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "capriccio",
+      "name": "Capriccio",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653514899486/capriccio-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "nicaragua",
+      "name": "Nicaragua",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16654090272798/nicaragua-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "shanghai-lungo",
+      "name": "Shanghai Lungo",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16724973486110/shangai-lungo-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "buenos-aires-lungo",
+      "name": "Buenos Aires Lungo",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653500481566/buenos-aires-lungo-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "cosi",
+      "name": "Cosi",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/15762785566750/cosi.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "ethiopia",
+      "name": "Ethiopia",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653733724190/ethiopia-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "volluto",
+      "name": "Volluto",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16724852604958/volluto-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "volluto-decaffeinato",
+      "name": "Volluto Decaffeinato",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/34682639351838/volluto-decaffeinato-plp.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "caramello",
+      "name": "Caramello",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/17431332945950/C-1061-Responsive-PLP.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "chiaro",
+      "name": "Chiaro",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16542356045854/chiaro-XL.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "cioccolatino",
+      "name": "Cioccolatino",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/17431322361886/C-1060-Responsive-PLP.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "corto",
+      "name": "Corto",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16653730414622/corto-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "nocciola",
+      "name": "Nocciola",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/17432559943710/C-1063-Responsive-PLP.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "scuro",
+      "name": "Scuro",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/16654104068126/scuro-2x.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "vaniglia",
+      "name": "Vaniglia",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/17432222531614/C-1062-Responsive-PLP.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "vaniglia-decaffeinato",
+      "name": "Vaniglia Decaffeinato",
+      "box": "https://www.nespresso.com/ecom/medias/sys_master/public/44327065813022/C-1324-OL-PLP-320x320.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "3c-maximo",
+      "name": "Espresso Máximo",
+      "box": "https://www.cafe3coracoes.com.br/wp-content/uploads/2024/09/capsulas-compativeis-intensidade-maxima.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "3c-espresso-intenso",
+      "name": "Espresso Intenso",
+      "box": "https://www.cafe3coracoes.com.br/wp-content/uploads/2024/09/capsulas-compativeis-intenso.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "3c-cerrado-mineiro",
+      "name": "Espresso Cerrado Mineiro",
+      "box": "https://www.cafe3coracoes.com.br/wp-content/uploads/2024/09/capsulas-compativeis-cerrado-mineiro-1.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "3c-mogiana-paulista",
+      "name": "Espresso Mogiana Paulista",
+      "box": "https://www.cafe3coracoes.com.br/wp-content/uploads/2024/09/capsulas-compativeis-mogiana-paulista.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "3c-regioes-colombia",
+      "name": "Espresso Regiões do Mundo Colômbia",
+      "box": "https://www.cafe3coracoes.com.br/wp-content/uploads/2024/09/capsulas-compativeis-colombia.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "3c-regioes-peru",
+      "name": "Espresso Regiões do Mundo Peru",
+      "box": "https://www.cafe3coracoes.com.br/wp-content/uploads/2024/09/capsulas-compativeis-peru.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "3c-organico",
+      "name": "Espresso Orgânico",
+      "box": "https://www.cafe3coracoes.com.br/wp-content/uploads/2024/09/capsulas-compativeis-organico.png",
+      "capsule": null,
+      "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
+    },
+    {
+      "slug": "3c-descafeinado",
+      "name": "Espresso Descafeinado",
+      "box": "https://www.cafe3coracoes.com.br/wp-content/uploads/2024/05/capsula-compativel-nespresso-3-coracoes-descafeinado.png",
       "capsule": null,
       "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original"
     }
@@ -507,6 +806,20 @@
       "box": "https://www.cafe3coracoes.com.br/wp-content/uploads/2024/09/capsula-tres-cappuccino-3-coracoes.png",
       "capsule": "https://www.cafe3coracoes.com.br/wp-content/uploads/2024/09/capsula-tres-cappuccino-3-coracoes-02.png",
       "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/cappuccino-classic/"
+    },
+    {
+      "slug": "cafe-filtrado",
+      "name": "Café Filtrado",
+      "box": "https://www.cafe3coracoes.com.br/wp-content/uploads/2024/09/capsula-tres-cafe-filtrado-3-coracoes.png",
+      "capsule": "https://www.cafe3coracoes.com.br/wp-content/uploads/2024/09/capsula-tres-cafe-filtrado-3-coracoes-02.png",
+      "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/"
+    },
+    {
+      "slug": "cha-hibisco-maca",
+      "name": "Chá Hibisco e Maçã",
+      "box": "https://www.cafe3coracoes.com.br/wp-content/uploads/2024/09/capsula-cha-tres-hibisco-maca-3-coracoes.png",
+      "capsule": "https://www.cafe3coracoes.com.br/wp-content/uploads/2024/09/capsula-cha-tres-hibisco-maca-3-coracoes-02.png",
+      "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/"
     }
   ]
 }

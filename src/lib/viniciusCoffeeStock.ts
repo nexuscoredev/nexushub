@@ -6,6 +6,9 @@ import {
 
 const STORAGE_PREFIX = 'nexus-pessoal-coffee-stock';
 const UPDATED_AT_SUFFIX = ':updated-at';
+/** Bump para reset único da coleção (catálogo deixou de preencher a coleção automaticamente). */
+const COLLECTION_RESET_VERSION = 2;
+const COLLECTION_RESET_KEY = `${STORAGE_PREFIX}:collection-reset-v${COLLECTION_RESET_VERSION}`;
 
 export type CoffeeCapsuleSystem = 'dolce-gusto' | 'tres-coracoes' | 'nespresso';
 
@@ -170,6 +173,23 @@ export function loadCoffeeStock(userId: string | undefined): CoffeeStockItem[] {
   } catch {
     return [];
   }
+}
+
+/** Limpa coleção local + nuvem. */
+export function clearCoffeeStock(userId: string): void {
+  saveCoffeeStock(userId, []);
+}
+
+/**
+ * Reset único: esvazia a coleção que antes listava o catálogo inteiro.
+ * Depois disso, só entra o que você adicionar manualmente.
+ */
+export function ensureCoffeeCollectionReset(userId: string): CoffeeStockItem[] {
+  if (typeof localStorage === 'undefined') return loadCoffeeStock(userId);
+  if (localStorage.getItem(COLLECTION_RESET_KEY)) return loadCoffeeStock(userId);
+  clearCoffeeStock(userId);
+  localStorage.setItem(COLLECTION_RESET_KEY, new Date().toISOString());
+  return [];
 }
 
 export function saveCoffeeStock(userId: string, items: CoffeeStockItem[]): void {

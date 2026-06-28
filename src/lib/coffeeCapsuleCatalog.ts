@@ -59,8 +59,12 @@ export function listCoffeeCapsuleCatalog(system?: CoffeeCapsuleSystem): CoffeeCa
 
 export function findCoffeeCapsuleCatalogEntry(
   slug: string | null | undefined,
+  system?: CoffeeCapsuleSystem,
 ): CoffeeCapsuleCatalogEntry | undefined {
   if (!slug) return undefined;
+  if (system) {
+    return ALL_ENTRIES.find((entry) => entry.slug === slug && entry.system === system);
+  }
   return ALL_ENTRIES.find((entry) => entry.slug === slug);
 }
 
@@ -88,13 +92,13 @@ export function searchCoffeeCapsuleCatalog(
 }
 
 export function catalogEntryPrimaryImage(entry: CoffeeCapsuleCatalogEntry): string | undefined {
-  return entry.images.box ?? entry.images.capsule ?? entry.images.gallery?.[0];
+  return entry.images.capsule ?? entry.images.box ?? entry.images.gallery?.[0];
 }
 
 export function catalogEntryGalleryImages(entry: CoffeeCapsuleCatalogEntry): string[] {
   const urls = [
-    entry.images.box,
     entry.images.capsule,
+    entry.images.box,
     entry.images.serving,
     ...(entry.images.gallery ?? []),
   ].filter((url): url is string => Boolean(url));
@@ -206,30 +210,17 @@ function mergeCatalogEntryWithStock(
   };
 }
 
-/** Catálogo embutido (72) + estoque pessoal (quantidade, favoritos, extras). */
+/** Estoque pessoal enriquecido com metadados do catálogo (só o que você adicionou). */
 export function resolveCoffeeDisplayStock(stock: CoffeeStockItem[]): CoffeeStockItem[] {
-  const stockByCatalogKey = new Map<string, CoffeeStockItem>();
-  const customItems: CoffeeStockItem[] = [];
-
-  for (const item of stock) {
-    if (item.catalogSlug && item.capsuleSystem) {
-      stockByCatalogKey.set(`${item.capsuleSystem}:${item.catalogSlug}`, item);
-      continue;
-    }
-    customItems.push(item);
-  }
-
-  const catalogItems = ALL_ENTRIES.map((entry) => {
-    const key = `${entry.system}:${entry.slug}`;
-    const override = stockByCatalogKey.get(key);
-    stockByCatalogKey.delete(key);
-    return mergeCatalogEntryWithStock(entry, override);
-  });
-
-  const orphanCatalogStock = [...stockByCatalogKey.values()];
-  return [...catalogItems, ...orphanCatalogStock, ...customItems].sort((a, b) =>
-    a.name.localeCompare(b.name, 'pt-BR'),
-  );
+  return stock
+    .map((item) => {
+      if (item.catalogSlug && item.capsuleSystem) {
+        const entry = findCoffeeCapsuleCatalogEntry(item.catalogSlug, item.capsuleSystem);
+        if (entry) return mergeCatalogEntryWithStock(entry, item);
+      }
+      return item;
+    })
+    .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
 }
 
 export function catalogEntryToStockItem(

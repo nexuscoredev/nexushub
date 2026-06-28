@@ -21,6 +21,8 @@ function deriveCapsuleCandidates(boxUrl) {
   const replacements = [
     [/mobile[-_]?hero[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
     [/mobile_hero[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
+    [/xicara[-_]reta\.(png|jpe?g|webp)/i, 'capsula.$1'],
+    [/10_capsulas_xicara_reta\.(png|jpe?g|webp)/i, '10_capsulas_capsula.$1'],
     [/frente[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
     [/mockups?[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
     [/enxoval[^/]*\.(png|jpe?g|webp)/i, 'capsula.$1'],
@@ -37,29 +39,99 @@ function deriveCapsuleCandidates(boxUrl) {
   return [...candidates];
 }
 
-async function fetchBuffer(url) {
-  const res = await fetch(url, {
+function stripMagentoCache(url) {
+  if (!url) return url;
+  return url.replace(/\/cache\/[a-f0-9]{20,}\//i, '/');
+}
+
+/** mobile-hero (selo 10x) → xicara-reta (limpa) para imagem principal Dolce Gusto. */
+function cleanDolceGustoBoxUrl(url) {
+  if (!url) return url;
+  const base = stripMagentoCache(url);
+  return base
+    .replace(/mobile[-_]?hero/gi, 'xicara-reta')
+    .replace(/10_capsulas_mobile_hero/gi, '10_capsulas_xicara_reta')
+    .replace(/xicara-reta-reta/gi, 'xicara-reta');
+}
+
+function dolceGustoCapsuleUrlFromBox(boxUrl) {
+  if (!boxUrl) return null;
+  const base = stripMagentoCache(boxUrl);
+  const fromHero = base
+    .replace(/xicara[-_]reta/gi, 'capsula')
+    .replace(/mobile[-_]?hero/gi, 'capsula')
+    .replace(/10_capsulas_xicara_reta/gi, '10_capsulas_capsula');
+  return fromHero !== base ? fromHero : null;
+}
+
+function dolceGustoBoxCandidates(rawUrl) {
+  const raw = stripMagentoCache(rawUrl);
+  const candidates = [
+    cleanDolceGustoBoxUrl(raw),
+    raw.replace(/mobile[-_]?hero/gi, 'xicara_reta'),
+    raw.replace(/mobile_hero/gi, 'xicara_reta'),
+    raw.replace(/mobile[-_]?hero/gi, 'xicara_e_capsula'),
+    dolceGustoCapsuleUrlFromBox(raw),
+    raw.replace(/mobile[-_]?hero[^/]*/i, (m) => m.replace(/mobile[-_]?hero/i, 'frente')),
+  ];
+  return [...new Set(candidates.filter(Boolean))];
+}
+
+function isGenericPlaceholderUrl(url) {
+  return /\/xicara-reta\.png$/i.test(url) || /\/capsula\.png$/i.test(url);
+}
+
+async function fetchBuffer(url, minBytes = 800) {
+  const res = await fetch(stripMagentoCache(url), {
     headers: { 'User-Agent': UA, Accept: 'image/*,*/*;q=0.8' },
     redirect: 'follow',
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const buf = Buffer.from(await res.arrayBuffer());
-  if (buf.byteLength < 800) throw new Error(`muito pequena (${buf.byteLength} B)`);
+  if (buf.byteLength < minBytes) throw new Error(`muito pequena (${buf.byteLength} B)`);
   return buf;
 }
 
-async function pickCapsule(boxUrl, explicit) {
-  const candidates = explicit ? [explicit, ...deriveCapsuleCandidates(boxUrl)] : deriveCapsuleCandidates(boxUrl);
-  for (const url of candidates) {
+async function pickCleanBox(rawUrl) {
+  for (const url of dolceGustoBoxCandidates(rawUrl)) {
+    if (isGenericPlaceholderUrl(url)) continue;
     try {
-      const buf = await fetchBuffer(url);
-      if (buf.byteLength > 12_000) return { url, buf };
+      const buf = await fetchBuffer(url, 15_000);
+      return { url, buf };
     } catch {
       /* try next */
     }
   }
-  const boxBuf = await fetchBuffer(boxUrl);
-  return { url: boxUrl, buf: boxBuf };
+  const fallback = stripMagentoCache(rawUrl);
+  const buf = await fetchBuffer(fallback, 15_000);
+  return { url: fallback, buf };
+}
+
+const MIN_CAPSULE_BYTES = 12_000;
+
+async function tryCapsuleUrl(url) {
+  try {
+    const buf = await fetchBuffer(stripMagentoCache(url), MIN_CAPSULE_BYTES);
+    return { url, buf };
+  } catch {
+    return null;
+  }
+}
+
+async function pickCapsule(boxUrl, explicit, boxBuf) {
+  if (explicit) {
+    const hit = await tryCapsuleUrl(explicit);
+    if (hit) return hit;
+  }
+  for (const url of deriveCapsuleCandidates(boxUrl)) {
+    const hit = await tryCapsuleUrl(url);
+    if (hit) return hit;
+  }
+  if (boxBuf && boxBuf.byteLength >= MIN_CAPSULE_BYTES) {
+    return { url: boxUrl, buf: boxBuf };
+  }
+  const buf = await fetchBuffer(boxUrl, MIN_CAPSULE_BYTES);
+  return { url: boxUrl, buf };
 }
 
 function normalizeName(value) {
@@ -116,13 +188,21 @@ async function main() {
         continue;
       }
 
+      const rawDg = hit.rawBox ?? hit.box;
+      const capsuleHint =
+        hit.capsule ??
+        (system === 'dolce-gusto' ? dolceGustoCapsuleUrlFromBox(rawDg) : null);
+
       const outDir = join(IMG_ROOT, system, entry.slug);
       mkdirSync(outDir, { recursive: true });
 
       try {
-        const boxBuf = await fetchBuffer(hit.box);
-        const cap = await pickCapsule(hit.box, hit.capsule);
-        writeFileSync(join(outDir, 'box.jpg'), boxBuf);
+        const boxPick =
+          system === 'dolce-gusto'
+            ? await pickCleanBox(rawDg)
+            : { url: hit.box, buf: await fetchBuffer(hit.box, 15_000) };
+        const cap = await pickCapsule(boxPick.url, capsuleHint, boxPick.buf);
+        writeFileSync(join(outDir, 'box.jpg'), boxPick.buf);
         writeFileSync(join(outDir, 'capsule.jpg'), cap.buf);
         entry.images = {
           box: `/img/personal/coffee/catalog/${system}/${entry.slug}/box.jpg`,

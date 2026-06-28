@@ -101,5 +101,36 @@
       "capsule": "/img/personal/coffee/catalog/tres-coracoes/cappuccino-classico/capsule.jpg"
     },
     "imagesPending": false
+  },
+  {
+    "slug": "cafe-filtrado",
+    "system": "tres-coracoes",
+    "name": "Café Filtrado",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 180,
+    "flavorNotes": "Café filtrado na Solução TRES",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/cafe-filtrado/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cafe-filtrado/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "cha-hibisco-maca",
+    "system": "tres-coracoes",
+    "name": "Chá Hibisco e Maçã",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "flavorNotes": "Chá aromático hibisco e maçã",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/cha-hibisco-maca/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cha-hibisco-maca/capsule.jpg"
+    },
+    "imagesPending": false
   }
 ]

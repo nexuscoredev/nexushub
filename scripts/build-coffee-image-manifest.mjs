@@ -2,12 +2,36 @@
  * Gera coffee-image-manifest.json a partir dos catálogos + mapas extraídos do site oficial.
  * node scripts/build-coffee-image-manifest.mjs
  */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CATALOG_DIR = join(__dirname, '../src/data/coffeeCapsuleCatalog');
+
+function stripMagentoCache(url) {
+  if (!url) return url;
+  return url.replace(/\/cache\/[a-f0-9]{20,}\//i, '/');
+}
+
+function cleanDolceGustoBoxUrl(url) {
+  if (!url) return url;
+  const base = stripMagentoCache(url);
+  return base
+    .replace(/mobile[-_]?hero/gi, 'xicara-reta')
+    .replace(/10_capsulas_mobile_hero/gi, '10_capsulas_xicara_reta')
+    .replace(/xicara-reta-reta/gi, 'xicara-reta');
+}
+
+function dolceGustoCapsuleUrlFromBox(boxUrl) {
+  if (!boxUrl) return null;
+  const base = stripMagentoCache(boxUrl);
+  const capsule = base
+    .replace(/xicara[-_]reta/gi, 'capsula')
+    .replace(/mobile[-_]?hero/gi, 'capsula')
+    .replace(/10_capsulas_xicara_reta/gi, '10_capsulas_capsula');
+  return capsule !== base ? capsule : null;
+}
 
 /** Extraído de nescafe-dolcegusto.com.br/sabores (jun/2026). */
 const DG_BOX_BY_NAME = {
@@ -40,7 +64,7 @@ const DG_BOX_BY_NAME = {
   'ESPRESSO NESCAFÉ GOLD':
     'https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/g/o/gold_6_mobile_hero.png',
   'LUNGO NESCAFÉ GOLD':
-    'https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/g/o/gold_8_mobile_hero.png',
+    'https://www.nescafe-dolcegusto.com.br/media/catalog/product/g/o/gold_8_xicara_reta.png',
   'ESPRESSO CERRADO MINEIRO':
     'https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/e/n/enxoval-site--maktplace-cerrado.png',
   'ORIGENS DO MUNDO BRASIL ORGÂNICO':
@@ -58,7 +82,7 @@ const DG_BOX_BY_NAME = {
   CAPPUCCINO:
     'https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/c/a/cappuccino_mobile-hero.png',
   'CAFÉ AU LAIT':
-    'https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile-hero.png',
+    'https://www.nescafe-dolcegusto.com.br/media/catalog/product/a/u/au_laitfrente.png',
   'CAFÉ AU LAIT DESNATADO':
     'https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/a/u/au-lait-desnatado-mobile-hero.png',
   'CAFÉ AU LAIT VANILLA':
@@ -68,7 +92,7 @@ const DG_BOX_BY_NAME = {
   PINGADO:
     'https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/p/i/pingado_mobile-hero.png',
   'MOCHACCINO AVELÃ':
-    'https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_1_.png',
+    'https://www.nescafe-dolcegusto.com.br/media/catalog/product/x/_/x_cara-capsula.png',
   'LATTE MACCHIATO':
     'https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile-hero_1_.png',
   'VANILLA LATTE MACCHIATO':
@@ -96,11 +120,11 @@ const DG_BOX_BY_NAME = {
   NESQUIK:
     'https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/e/n/enxoval-site--maktplace-nesquiick.png',
   'CHAI TEA LATTE':
-    'https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile-hero-mocha.png',
+    'https://www.nescafe-dolcegusto.com.br/media/catalog/product/x/i/xicara-e-capsula-mocha.png',
   "NATURE'S HEART HIBISCUS PINK LEMONADE":
     'https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_pink_lemonade.png',
   'NESTEA PÊSSEGO':
-    'https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/n/e/nestea_pessego_10_capsulas_mobile_hero.png',
+    'https://www.nescafe-dolcegusto.com.br/media/catalog/product/n/e/nestea_pessego_10_capsulas_xicara_reta.png',
   "NATURE'S HEART ZEN STYLE":
     'https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_zen_style.png',
   'NEO Espresso Delicate':
@@ -112,7 +136,7 @@ const DG_BOX_BY_NAME = {
   'CARAMELO SALGADO':
     'https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_1_4.png',
   'CHOCOCINO ALPINO':
-    'https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/a/l/alpino_mobile_hero.png',
+    'https://www.nescafe-dolcegusto.com.br/media/catalog/product/a/l/alpino_xicara_reta.png',
   KITKAT:
     'https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/m/o/mobile_hero_3.png',
   'NESTEA MATE LIMÃO':
@@ -121,7 +145,7 @@ const DG_BOX_BY_NAME = {
     'https://www.nescafe-dolcegusto.com.br/media/catalog/product/cache/a7ed62b12c9d28aa0842b5a9bc7623a5/n/e/neostart_espresso_suldeminashero-images_1000x1000px_5.png',
 };
 
-const NESPRESSO_BOX = {
+const NESPRESSO_BOX_LEGACY = {
   Ristretto:
     'https://www.nespresso.com/ecom/medias/sys_master/public/16467720470558/ispirazione-ristretto-italiano-XL.png',
   Arpeggio:
@@ -140,6 +164,17 @@ const NESPRESSO_BOX = {
     'https://www.nespresso.com/shared_res/agility/n-components/pdp/sku-main-info/coffee-sleeves/ol/tokyo-vivalto-lungo_XL.png',
   'Linizio Lungo':
     'https://www.nespresso.com/ecom/medias/sys_master/public/28536773083166/Nes-OL-Big-Pack-36Caps-PACKSHOT-Linizio-Lungo-x3-VV-D1-2000x2000px.png',
+};
+
+const imageMapPath = join(__dirname, '_catalog-image-map.json');
+const scrapedMap = existsSync(imageMapPath)
+  ? JSON.parse(readFileSync(imageMapPath, 'utf8'))
+  : { nespresso: {}, tres3c: {}, tresExtra: {} };
+
+const NESPRESSO_BOX = {
+  ...NESPRESSO_BOX_LEGACY,
+  ...scrapedMap.nespresso,
+  ...scrapedMap.tres3c,
 };
 
 function norm(value) {
@@ -177,15 +212,30 @@ function resolveImageHit(map, entry) {
   return hit;
 }
 
-function buildSystem(system, map, catalogUrl) {
+function buildSystem(system, map, catalogUrl, options = {}) {
   const entries = JSON.parse(readFileSync(join(CATALOG_DIR, `${system}.json`), 'utf8'));
   return entries.map((entry) => {
     const hit = resolveImageHit(map, entry);
+    let box = hit?.box ?? null;
+    let capsule = hit?.capsule ?? null;
+    if (options.cleanDolceGusto && box) {
+      const raw = stripMagentoCache(box);
+      const cleaned = cleanDolceGustoBoxUrl(raw);
+      capsule = capsule ?? dolceGustoCapsuleUrlFromBox(raw) ?? dolceGustoCapsuleUrlFromBox(cleaned);
+      return {
+        slug: entry.slug,
+        name: entry.name,
+        rawBox: raw,
+        box: cleaned,
+        capsule: capsule ? stripMagentoCache(capsule) : null,
+        catalogUrl: hit?.catalogUrl ?? catalogUrl,
+      };
+    }
     return {
       slug: entry.slug,
       name: entry.name,
-      box: hit?.box ?? null,
-      capsule: hit?.capsule ?? null,
+      box,
+      capsule,
       catalogUrl: hit?.catalogUrl ?? catalogUrl,
     };
   });
@@ -229,6 +279,7 @@ const TRES_IMAGES_BY_NAME = {
       'https://www.cafe3coracoes.com.br/wp-content/uploads/2024/09/capsula-tres-cappuccino-3-coracoes-02.png',
     catalogUrl: 'https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/cappuccino-classic/',
   },
+  ...(scrapedMap.tresExtra ?? {}),
 };
 
 function buildTresCoracoes() {
@@ -252,6 +303,7 @@ const manifest = {
     'dolce-gusto',
     DG_BOX_BY_NAME,
     'https://www.nescafe-dolcegusto.com.br/sabores',
+    { cleanDolceGusto: true },
   ),
   nespresso: buildSystem(
     'nespresso',
