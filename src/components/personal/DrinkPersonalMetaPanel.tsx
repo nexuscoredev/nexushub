@@ -64,7 +64,15 @@ export function DrinkPersonalMetaPanel({ meta, onChange }: DrinkPersonalMetaPane
           rows={2}
           placeholder="Ficou forte, repetir na festa, usar menos açúcar…"
           value={meta.tastingNote ?? ''}
-          onChange={(e) => onChange({ tastingNote: e.target.value.trim() || undefined })}
+          onChange={(e) =>
+            onChange({ tastingNote: e.target.value === '' ? undefined : e.target.value })
+          }
+          onBlur={(e) => {
+            const trimmed = e.target.value.trim();
+            if (trimmed !== e.target.value) {
+              onChange({ tastingNote: trimmed || undefined });
+            }
+          }}
         />
       </label>
     </section>

@@ -58,7 +58,15 @@ export function AdegaItemPersonalMetaPanel({ item, onChange }: AdegaItemPersonal
           rows={3}
           placeholder="Doce, encorpado, boa para Negroni…"
           value={item.tastingNote ?? ''}
-          onChange={(e) => onChange({ tastingNote: e.target.value })}
+          onChange={(e) =>
+            onChange({ tastingNote: e.target.value === '' ? undefined : e.target.value })
+          }
+          onBlur={(e) => {
+            const trimmed = e.target.value.trim();
+            if (trimmed !== e.target.value) {
+              onChange({ tastingNote: trimmed || undefined });
+            }
+          }}
         />
       </label>
     </section>

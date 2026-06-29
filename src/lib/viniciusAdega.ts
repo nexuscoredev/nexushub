@@ -356,7 +356,9 @@ export function updateAdegaItemPersonalMeta(
           : item.personalRating,
       tastingNote:
         patch.tastingNote !== undefined
-          ? patch.tastingNote.trim() || undefined
+          ? patch.tastingNote.trim() === ''
+            ? undefined
+            : patch.tastingNote
           : item.tastingNote,
       triedAt: patch.triedAt !== undefined ? patch.triedAt || undefined : item.triedAt,
       updatedAt: now,

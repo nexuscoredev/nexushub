@@ -82,7 +82,7 @@ export function scaleIngredient(ingredient: string, servings: number): string {
   });
 
   text = text.replace(
-    /(\d+)\s*\/\s*(\d+)(?:\s+(colheres?|doses?|dash|gotas?|pitadas?|lim[aã]o|limões?|limao|frutas?))?/gi,
+    /(?<!\d\s)(\d+)\s*\/\s*(\d+)(?:\s+(colheres?|doses?|dash|gotas?|pitadas?|lim[aã]o|limões?|limao|frutas?))?/gi,
     (_, num, den, unit) => {
       const scaled = scaleNumber(Number(num) / Number(den), servings);
       const formatted = formatQuantity(scaled);
@@ -104,7 +104,7 @@ export function scaleIngredient(ingredient: string, servings: number): string {
   });
 
   text = text.replace(
-    /(?<!\uE000)(\d+)\s+(colheres?|doses?|dash|gotas?|pitadas?|lim[aã]o|limões?|limao|frutas?)/gi,
+    /(?<![/])(?<!\uE000)(\d+)\s+(colheres?|doses?|dash|gotas?|pitadas?|lim[aã]o|limões?|limao|frutas?)/gi,
     (_, qty, unit) => {
       const scaled = scaleNumber(Number(qty), servings);
       return markScaled(`${formatQuantity(scaled)} ${pluralizeUnit(unit, scaled)}`);
