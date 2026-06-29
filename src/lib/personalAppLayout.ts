@@ -133,8 +133,12 @@ export function savePersonalAppLayout(userId: string, layout: PersonalAppLayout)
   } catch {
     /* quota exceeded */
   }
-  void upsertPersonalAppLayoutCloud(userId, layout).then((err) => {
-    if (err) console.warn('[personal apps] sync:', err);
+  void upsertPersonalAppLayoutCloud(userId, layout).then((result) => {
+    if (result.error) {
+      console.warn('[personal apps] sync:', result.error);
+      return;
+    }
+    savePersonalAppLayoutLocalOnly(userId, result.layout, result.updatedAt);
   });
 }
 
@@ -142,16 +146,39 @@ export async function syncPersonalAppLayoutFromCloud(
   userId: string,
   viniciusOnly: boolean,
 ): Promise<PersonalAppLayout | null> {
-  const cloud = await fetchPersonalAppLayoutCloud(userId);
-  if (!cloud) return null;
+  const localUpdatedAt = readLocalUpdatedAt(userId);
+  const stored =
+    typeof localStorage !== 'undefined' ? parseLayout(localStorage.getItem(storageKey(userId))) : null;
+  const localLayout = normalizePersonalAppLayout(stored, viniciusOnly);
 
-  const normalized = normalizePersonalAppLayout(cloud.layout, viniciusOnly);
-  if (!isCloudNewer(cloud.updatedAt, readLocalUpdatedAt(userId))) {
+  const cloud = await fetchPersonalAppLayoutCloud(userId);
+
+  if (!cloud) {
+    if (stored) {
+      const pushed = await upsertPersonalAppLayoutCloud(userId, localLayout);
+      if (!pushed.error) {
+        savePersonalAppLayoutLocalOnly(userId, pushed.layout, pushed.updatedAt);
+      }
+    }
     return null;
   }
 
-  savePersonalAppLayoutLocalOnly(userId, normalized, cloud.updatedAt);
-  return normalized;
+  const normalized = normalizePersonalAppLayout(cloud.layout, viniciusOnly);
+
+  if (isCloudNewer(cloud.updatedAt, localUpdatedAt)) {
+    savePersonalAppLayoutLocalOnly(userId, normalized, cloud.updatedAt);
+    return normalized;
+  }
+
+  if (localUpdatedAt && Date.parse(localUpdatedAt) > Date.parse(cloud.updatedAt)) {
+    const pushed = await upsertPersonalAppLayoutCloud(userId, localLayout);
+    if (!pushed.error) {
+      savePersonalAppLayoutLocalOnly(userId, pushed.layout, pushed.updatedAt);
+    }
+    return localLayout;
+  }
+
+  return null;
 }
 
 function savePersonalAppLayoutLocalOnly(

@@ -9,6 +9,9 @@ type PersonalAppShellProps = {
   subtitle: string;
   mobileTitle?: string;
   onBack: () => void;
+  backLabel?: string;
+  backIcon?: ReactNode;
+  backAriaLabel?: string;
   variant: PersonalAppVariant;
   children: ReactNode;
 };
@@ -18,10 +21,14 @@ export function PersonalAppShell({
   subtitle,
   mobileTitle,
   onBack,
+  backLabel = 'Cantinho',
+  backIcon,
+  backAriaLabel,
   variant,
   children,
 }: PersonalAppShellProps) {
   const shellTitle = mobileTitle ?? title;
+  const ariaLabel = backAriaLabel ?? `Voltar: ${backLabel}`;
 
   return (
     <div
@@ -30,8 +37,14 @@ export function PersonalAppShell({
     >
       <div className={styles.desktopTop}>
         <PageHeader compact title={title} subtitle={subtitle} />
-        <button type="button" className={styles.backBtn} onClick={onBack}>
-          ← Cantinho
+        <button
+          type="button"
+          className={styles.backBtn}
+          onClick={onBack}
+          aria-label={ariaLabel}
+        >
+          {backIcon ? <span className={styles.backBtnIcon}>{backIcon}</span> : null}
+          <span>← {backLabel}</span>
         </button>
       </div>
 
@@ -41,7 +54,7 @@ export function PersonalAppShell({
             type="button"
             className={styles.mobileBackBtn}
             onClick={onBack}
-            aria-label="Voltar ao cantinho"
+            aria-label={ariaLabel}
           >
             ←
           </button>

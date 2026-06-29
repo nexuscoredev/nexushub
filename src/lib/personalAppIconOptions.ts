@@ -237,27 +237,15 @@ export function iconsEqual(a: PersonalAppIcon, b: PersonalAppIcon): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-/** Remove apenas referências legadas incorretas; mantém uploads locais (data URL). */
-export function shouldDropIconOverride(appId: string, icon: PersonalAppIcon): boolean {
+/** Remove apenas referências legadas incorretas (banner/thumbs); mantém ícones personalizados. */
+export function shouldDropIconOverride(_appId: string, icon: PersonalAppIcon): boolean {
   if (icon.type !== 'image') return false;
 
   const src = icon.src.toLowerCase();
   if (src.startsWith('data:')) return false;
 
-  if (appId === 'drinks') {
-    if (src.includes('/drinks/banner') || src.includes('banner.png')) return true;
-    if (src.includes('/drinks/thumbs/')) return true;
-    return src !== PERSONAL_APP_ICON_PATHS.drinks.toLowerCase();
-  }
-
-  if (appId === 'adega') {
-    if (src.includes('/drinks/banner') || src.includes('/drinks/thumbs/')) return true;
-    return src !== PERSONAL_APP_ICON_PATHS.adega.toLowerCase();
-  }
-
-  if (appId === 'coffee') {
-    return src !== PERSONAL_APP_ICON_PATHS.coffee.toLowerCase();
-  }
+  if (src.includes('/drinks/banner') || src.includes('banner.png')) return true;
+  if (src.includes('/drinks/thumbs/')) return true;
 
   return false;
 }

@@ -17,16 +17,16 @@ export const COFFEE_CAPSULE_SYSTEMS: {
   label: string;
   icon: string;
 }[] = [
-  { id: 'dolce-gusto', label: 'Dolce Gusto', icon: '/img/personal/coffee/systems/dolce-gusto.svg' },
+  { id: 'dolce-gusto', label: 'Dolce Gusto', icon: '/img/personal/coffee/systems/dolce-gusto.png' },
   {
     id: 'tres-coracoes',
     label: 'Três Corações',
-    icon: '/img/personal/coffee/systems/tres-coracoes.svg',
+    icon: '/img/personal/coffee/systems/tres-coracoes.png',
   },
   {
     id: 'nespresso',
     label: 'Nespresso',
-    icon: '/img/personal/coffee/systems/nespresso.svg',
+    icon: '/img/personal/coffee/systems/nespresso.png',
   },
 ];
 

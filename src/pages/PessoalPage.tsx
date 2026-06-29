@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PageHeader } from '../components/PageHeader';
 import { PersonalAppShell } from '../components/personal/PersonalAppShell';
+import { PersonalAppIcon } from '../components/personal/PersonalAppIcon';
 import { PersonalAreaHome } from '../components/personal/PersonalAreaHome';import { PersonalFinancePanel } from '../components/personal/PersonalFinancePanel';
 import { ViniciusDrinksCarta } from '../components/personal/ViniciusDrinksCarta';
 import { ViniciusPcGuide } from '../components/personal/ViniciusPcGuide';
@@ -57,6 +58,30 @@ export function PessoalPage() {
     navigate('/pessoal');
   };
 
+  const drinksBackToListRef = useRef<() => void>(() => {});
+  const [drinksInDetail, setDrinksInDetail] = useState(false);
+
+  const drinksShellBack = () => {
+    if (drinksInDetail) {
+      drinksBackToListRef.current();
+      return;
+    }
+    backHome();
+  };
+
+  const drinksBackLabel = drinksInDetail ? 'Carta de Drinks' : 'Aplicativos';
+  const drinksBackIcon = drinksInDetail ? (
+    <PersonalAppIcon
+      icon={{ type: 'image', src: '/img/personal/apps/drinks-carta.png' }}
+      label="Carta de Drinks"
+    />
+  ) : (
+    <PersonalAppIcon icon={{ type: 'material', name: 'apps', tone: 'cyan' }} label="Aplicativos" />
+  );
+  const drinksBackAria = drinksInDetail
+    ? 'Voltar à carta de drinks'
+    : 'Voltar aos aplicativos';
+
   if (drinks && viniciusOnly) {
     return (
       <div className={`${styles.page} ${styles.personalAppPage}`}>
@@ -64,10 +89,19 @@ export function PessoalPage() {
           title="Carta de drinks"
           mobileTitle="Carta de Drinks"
           subtitle={`${firstName} · só seu`}
-          onBack={backHome}
+          onBack={drinksShellBack}
+          backLabel={drinksBackLabel}
+          backIcon={drinksBackIcon}
+          backAriaLabel={drinksBackAria}
           variant="drinks"
         >
-          <ViniciusDrinksCarta />
+          <ViniciusDrinksCarta
+            onBackToApps={backHome}
+            onDetailChange={setDrinksInDetail}
+            onRegisterBackToList={(fn) => {
+              drinksBackToListRef.current = fn;
+            }}
+          />
         </PersonalAppShell>
       </div>
     );

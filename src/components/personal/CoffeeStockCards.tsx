@@ -2,6 +2,7 @@ import { categoryEmoji } from '../../lib/viniciusCoffeeStock';
 import type { CoffeeStockItem } from '../../lib/viniciusCoffeeStock';
 import type { CoffeeStockViewMode } from '../../lib/coffeeStockView';
 import styles from './ViniciusAdega.module.css';
+import coffeeStyles from './ViniciusCoffee.module.css';
 
 type CoffeeStockCardsProps = {
   items: CoffeeStockItem[];
@@ -20,7 +21,13 @@ function ItemThumb({ item }: { item: CoffeeStockItem }) {
     <span className={styles.cardIcon} aria-hidden>
       <span className={styles.cardIconInner}>
         {item.imageUrl ? (
-          <img src={item.imageUrl} alt="" className={styles.cardPhoto} loading="lazy" decoding="async" />
+          <img
+            src={item.imageUrl}
+            alt=""
+            className={`${styles.cardPhoto} ${coffeeStyles.stockThumbPhoto}`}
+            loading="lazy"
+            decoding="async"
+          />
         ) : (
           item.iconEmoji ?? categoryEmoji(item.category)
         )}
@@ -159,7 +166,13 @@ export function CoffeeStockCards({
                 <span className={styles.detailsItemCell} role="cell">
                   <span className={styles.detailsThumb}>
                     {item.imageUrl ? (
-                      <img src={item.imageUrl} alt="" className={styles.cardPhoto} loading="lazy" decoding="async" />
+                      <img
+                        src={item.imageUrl}
+                        alt=""
+                        className={`${styles.cardPhoto} ${coffeeStyles.stockThumbPhoto}`}
+                        loading="lazy"
+                        decoding="async"
+                      />
                     ) : (
                       <span className={styles.detailsThumbEmoji}>{categoryEmoji(item.category)}</span>
                     )}

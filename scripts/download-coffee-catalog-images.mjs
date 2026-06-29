@@ -5,6 +5,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { MERCAFE_COMPOSITE_CAPSULES, normalizeCoffeeCapsuleImage } from './coffee-capsule-image.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -118,20 +119,42 @@ async function tryCapsuleUrl(url) {
   }
 }
 
-async function pickCapsule(boxUrl, explicit, boxBuf) {
+function dolceGustoCapsuleCandidates(explicit, boxUrl) {
+  const candidates = new Set();
   if (explicit) {
-    const hit = await tryCapsuleUrl(explicit);
-    if (hit) return hit;
+    candidates.add(explicit);
+    if (explicit.includes('/m/o/capsula')) {
+      candidates.add(explicit.replace('/m/o/capsula', '/c/a/capsula'));
+    }
+  }
+  const fromBox = dolceGustoCapsuleUrlFromBox(boxUrl);
+  if (fromBox) {
+    candidates.add(fromBox);
+    if (fromBox.includes('/m/o/capsula')) {
+      candidates.add(fromBox.replace('/m/o/capsula', '/c/a/capsula'));
+    }
   }
   for (const url of deriveCapsuleCandidates(boxUrl)) {
+    candidates.add(url);
+    if (url.includes('/m/o/capsula')) {
+      candidates.add(url.replace('/m/o/capsula', '/c/a/capsula'));
+    }
+  }
+  return [...candidates];
+}
+
+async function pickCapsule(boxUrl, explicit, boxBuf, system) {
+  const candidates =
+    system === 'dolce-gusto'
+      ? dolceGustoCapsuleCandidates(explicit, boxUrl)
+      : [explicit, ...deriveCapsuleCandidates(boxUrl)].filter(Boolean);
+
+  for (const url of candidates) {
     const hit = await tryCapsuleUrl(url);
     if (hit) return hit;
   }
-  if (boxBuf && boxBuf.byteLength >= MIN_CAPSULE_BYTES) {
-    return { url: boxUrl, buf: boxBuf };
-  }
-  const buf = await fetchBuffer(boxUrl, MIN_CAPSULE_BYTES);
-  return { url: boxUrl, buf };
+
+  throw new Error('cápsula isolada indisponível (não usar caixa como fallback)');
 }
 
 function normalizeName(value) {
@@ -202,9 +225,13 @@ async function main() {
           system === 'dolce-gusto'
             ? await pickCleanBox(rawDg)
             : { url: hit.box, buf: await fetchBuffer(hit.box, 15_000) };
-        const cap = await pickCapsule(boxPick.url, capsuleHint, boxPick.buf);
+        const cap = await pickCapsule(boxPick.url, capsuleHint, boxPick.buf, system);
         writeFileSync(join(outDir, 'box.jpg'), boxPick.buf);
         writeFileSync(join(outDir, 'capsule.jpg'), cap.buf);
+        const catalogKey = `${system}/${entry.slug}`;
+        if (MERCAFE_COMPOSITE_CAPSULES.has(catalogKey)) {
+          await normalizeCoffeeCapsuleImage(join(outDir, 'capsule.jpg'), catalogKey);
+        }
         entry.images = {
           box: `/img/personal/coffee/catalog/${system}/${entry.slug}/box.jpg`,
           capsule: `/img/personal/coffee/catalog/${system}/${entry.slug}/capsule.jpg`,

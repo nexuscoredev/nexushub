@@ -1,5 +1,343 @@
 [
   {
+    "slug": "baileys-supremo-macchiato",
+    "system": "tres-coracoes",
+    "name": "Baileys Supremo Macchiato",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 80,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-baileys-supremo-macchiato-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/baileys-supremo-macchiato/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/baileys-supremo-macchiato/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "cafe-com-leite",
+    "system": "tres-coracoes",
+    "name": "Café com Leite",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 80,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-com-leite-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/cafe-com-leite/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cafe-com-leite/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "cafe-filtrado",
+    "system": "tres-coracoes",
+    "name": "Café Filtrado",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 100,
+    "flavorNotes": "Café filtrado na Solução TRES",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/cafe-filtrado/",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/cafe-filtrado/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cafe-filtrado/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "cafe-filtrado-gourmet",
+    "system": "tres-coracoes",
+    "name": "Café Filtrado Gourmet",
+    "brand": "Três Corações",
+    "intensity": 3,
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 100,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-filtrado-gourmet-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/cafe-filtrado-gourmet/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cafe-filtrado-gourmet/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "cappuccino-avela",
+    "system": "tres-coracoes",
+    "name": "Cappuccino Avelã",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 80,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cappuccino-avela-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/cappuccino-avela/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cappuccino-avela/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "cappuccino-classico",
+    "system": "tres-coracoes",
+    "name": "Cappuccino Classic",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 80,
+    "flavorNotes": "Cremoso",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/cappuccino-classic/",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/cappuccino-classico/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cappuccino-classico/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "cappuccino-doce-de-leite-havanna",
+    "system": "tres-coracoes",
+    "name": "Cappuccino Doce de Leite Havanna",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 80,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cappuccino-doce-de-leite-havanna-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/cappuccino-doce-de-leite-havanna/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cappuccino-doce-de-leite-havanna/capsule.jpg"
+    },
+    "imagesPending": true
+  },
+  {
+    "slug": "cha-camomila",
+    "system": "tres-coracoes",
+    "name": "Chá de Camomila",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 100,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cha-camomila-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/cha-camomila/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cha-camomila/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "cha-capim-cidreira",
+    "system": "tres-coracoes",
+    "name": "Chá de Capim Cidreira",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 100,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cha-capim-cidreira-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/cha-capim-cidreira/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cha-capim-cidreira/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "cha-erva-doce",
+    "system": "tres-coracoes",
+    "name": "Chá de Erva Doce",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 100,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cha-erva-doce-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/cha-erva-doce/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cha-erva-doce/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "cha-hortela",
+    "system": "tres-coracoes",
+    "name": "Chá de Hortelã",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 100,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cha-hortela-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/cha-hortela/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cha-hortela/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "cha-laranja-mediterranea-hibisco",
+    "system": "tres-coracoes",
+    "name": "Chá de Laranja Mediterrânea com Hibisco",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 100,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cha-laranja-mediterranea-com-hibisco-tres-3cha/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/cha-laranja-mediterranea-hibisco/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cha-laranja-mediterranea-hibisco/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "cha-maca-verde-cranberry",
+    "system": "tres-coracoes",
+    "name": "Chá de Maçã Verde com Cranberry",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 100,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cha-maca-verde-com-cranberry-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/cha-maca-verde-cranberry/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cha-maca-verde-cranberry/capsule.jpg"
+    },
+    "imagesPending": true
+  },
+  {
+    "slug": "cha-hibisco-maca",
+    "system": "tres-coracoes",
+    "name": "Chá Hibisco e Maçã",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 100,
+    "flavorNotes": "Chá aromático hibisco e maçã",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/cha-hibisco-e-maca/",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/cha-hibisco-maca/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cha-hibisco-maca/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "cha-verde-limao-gengibre",
+    "system": "tres-coracoes",
+    "name": "Chá Verde com Limão e Gengibre",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 100,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cha-verde-limao-e-gengibre-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/cha-verde-limao-gengibre/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cha-verde-limao-gengibre/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "chai-latte",
+    "system": "tres-coracoes",
+    "name": "Chai Latte",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 80,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-chai-latte-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/chai-latte/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/chai-latte/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "chocolatto-caramello",
+    "system": "tres-coracoes",
+    "name": "Chocolatto Caramello",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 80,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-chocolatto-caramello-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/chocolatto-caramello/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/chocolatto-caramello/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "chocolatto-classic",
+    "system": "tres-coracoes",
+    "name": "Chocolatto Classic",
+    "brand": "Três Corações",
+    "packSize": 10,
+    "cupSize": "regular",
+    "cupVolumeMl": 80,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-chocolatto-classic-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/chocolatto-classic/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/chocolatto-classic/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "espresso-ameno",
+    "system": "tres-coracoes",
+    "name": "Espresso Ameno",
+    "brand": "Três Corações",
+    "intensity": 4,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 50,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-ameno-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-ameno/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-ameno/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "espresso-atento",
+    "system": "tres-coracoes",
+    "name": "Espresso Atento",
+    "brand": "Três Corações",
+    "intensity": 8,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 50,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-atento-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-atento/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-atento/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "espresso-brasileiro",
+    "system": "tres-coracoes",
+    "name": "Espresso Brasileiro",
+    "brand": "Três Corações",
+    "intensity": 7,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 50,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-brasileiro-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-brasileiro/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-brasileiro/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "espresso-descafeinado",
+    "system": "tres-coracoes",
+    "name": "Espresso Descafeinado",
+    "brand": "Três Corações",
+    "intensity": 4,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 50,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-descafeinado-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-descafeinado/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-descafeinado/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
     "slug": "espresso-forza",
     "system": "tres-coracoes",
     "name": "Espresso Forza",
@@ -7,12 +345,9 @@
     "intensity": 10,
     "packSize": 10,
     "cupSize": "espresso",
-    "cupVolumeMl": 30,
+    "cupVolumeMl": 50,
     "flavorNotes": "Intenso e encorpado",
-    "description": "Blend de cafés selecionados com intensidade máxima para espresso encorpado na Solução TRES.",
-    "ingredients": "Café torrado e moído. 10 cápsulas de 8g.",
-    "coffeeType": "Blend",
-    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/cafe-espresso-forza/",
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-forza-tres/p",
     "images": {
       "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-forza/box.jpg",
       "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-forza/capsule.jpg"
@@ -20,14 +355,46 @@
     "imagesPending": false
   },
   {
+    "slug": "espresso-gourmet-cerrado-mineiro",
+    "system": "tres-coracoes",
+    "name": "Espresso Gourmet Cerrado Mineiro",
+    "brand": "Três Corações",
+    "intensity": 6,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 50,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-de-cafe-espresso-gourmet-cerrado-mineiro-tres-3-coracoes/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-gourmet-cerrado-mineiro/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-gourmet-cerrado-mineiro/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "espresso-gourmet-chapada-diamantina",
+    "system": "tres-coracoes",
+    "name": "Espresso Gourmet Chapada Diamantina",
+    "brand": "Três Corações",
+    "intensity": 4,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 50,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-gourmet-chapada-diamantina-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-gourmet-chapada-diamantina/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-gourmet-chapada-diamantina/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
     "slug": "espresso-ristretto",
     "system": "tres-coracoes",
-    "name": "Espresso Ristretto",
+    "name": "Espresso Gourmet Dark Roast",
     "brand": "Três Corações",
-    "intensity": 12,
+    "intensity": 10,
     "packSize": 10,
-    "cupSize": "ristretto",
-    "cupVolumeMl": 25,
+    "cupSize": "espresso",
+    "cupVolumeMl": 50,
     "flavorNotes": "Muito intenso",
     "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-gourmet-dark-roast-tres/p",
     "images": {
@@ -37,14 +404,30 @@
     "imagesPending": false
   },
   {
-    "slug": "espresso-classico",
+    "slug": "espresso-gourmet-mogiana-paulista",
     "system": "tres-coracoes",
-    "name": "Espresso Clássico",
+    "name": "Espresso Gourmet Mogiana Paulista",
     "brand": "Três Corações",
-    "intensity": 7,
+    "intensity": 6,
     "packSize": 10,
     "cupSize": "espresso",
-    "cupVolumeMl": 30,
+    "cupVolumeMl": 50,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-de-cafe-espresso-gourmet-mogiana-paulista-tres-3-coracoes/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-gourmet-mogiana-paulista/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-gourmet-mogiana-paulista/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "espresso-classico",
+    "system": "tres-coracoes",
+    "name": "Espresso Pleno",
+    "brand": "Três Corações",
+    "intensity": 6,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 50,
     "flavorNotes": "Equilibrado",
     "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-pleno-tres/p",
     "images": {
@@ -54,14 +437,158 @@
     "imagesPending": false
   },
   {
-    "slug": "espresso-suave",
+    "slug": "espresso-portinari-meninos-soltando-pipa",
     "system": "tres-coracoes",
-    "name": "Espresso Suave",
+    "name": "Espresso Portinari Meninos Soltando Pipa",
+    "brand": "Três Corações",
+    "intensity": 6,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 50,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-portinari-meninos-soltando-pipa-tres-3-coracoes/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-portinari-meninos-soltando-pipa/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-portinari-meninos-soltando-pipa/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "espresso-portinari-peneirando",
+    "system": "tres-coracoes",
+    "name": "Espresso Portinari Peneirando Café",
     "brand": "Três Corações",
     "intensity": 5,
     "packSize": 10,
     "cupSize": "espresso",
-    "cupVolumeMl": 30,
+    "cupVolumeMl": 50,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-portinari-peneirando-cafe-tres-3-coracoes/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-portinari-peneirando/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-portinari-peneirando/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "espresso-regioes-colombia",
+    "system": "tres-coracoes",
+    "name": "Espresso Regiões do Mundo Colômbia",
+    "brand": "Três Corações",
+    "intensity": 7,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 50,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-regioes-do-mundo-colombia-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-regioes-colombia/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-regioes-colombia/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "espresso-regioes-congo",
+    "system": "tres-coracoes",
+    "name": "Espresso Regiões do Mundo Congo",
+    "brand": "Três Corações",
+    "intensity": 5,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 50,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-regioes-do-mundo-congo-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-regioes-congo/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-regioes-congo/capsule.jpg"
+    },
+    "imagesPending": true
+  },
+  {
+    "slug": "espresso-regioes-india",
+    "system": "tres-coracoes",
+    "name": "Espresso Regiões do Mundo Índia",
+    "brand": "Três Corações",
+    "intensity": 6,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 50,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-regioes-do-mundo-india-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-regioes-india/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-regioes-india/capsule.jpg"
+    },
+    "imagesPending": true
+  },
+  {
+    "slug": "espresso-regioes-mexico",
+    "system": "tres-coracoes",
+    "name": "Espresso Regiões do Mundo México",
+    "brand": "Três Corações",
+    "intensity": 6,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 50,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-regioes-do-mundo-mexico-tres/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-regioes-mexico/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-regioes-mexico/capsule.jpg"
+    },
+    "imagesPending": true
+  },
+  {
+    "slug": "espresso-rituais-chocolate",
+    "system": "tres-coracoes",
+    "name": "Espresso Rituais Chocolate",
+    "brand": "Três Corações",
+    "intensity": 4,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 50,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-de-cafe-espresso-rituais-chocolate-tres-3-coracoes/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-rituais-chocolate/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-rituais-chocolate/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "espresso-rituais-exotico",
+    "system": "tres-coracoes",
+    "name": "Espresso Rituais Exótico",
+    "brand": "Três Corações",
+    "intensity": 6,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 50,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-de-cafe-espresso-rituais-exotico-tres-3-coracoes/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-rituais-exotico/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-rituais-exotico/capsule.jpg"
+    },
+    "imagesPending": false
+  },
+  {
+    "slug": "espresso-rituais-mogiana-paulista",
+    "system": "tres-coracoes",
+    "name": "Espresso Rituais Mogiana Paulista",
+    "brand": "Três Corações",
+    "intensity": 6,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 50,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-de-cafe-espresso-rituais-mogiana-paulista-tres-3-coracoes/p",
+    "images": {
+      "box": "/img/personal/coffee/catalog/tres-coracoes/espresso-rituais-mogiana-paulista/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/espresso-rituais-mogiana-paulista/capsule.jpg"
+    },
+    "imagesPending": true
+  },
+  {
+    "slug": "espresso-suave",
+    "system": "tres-coracoes",
+    "name": "Espresso Supremo",
+    "brand": "Três Corações",
+    "intensity": 5,
+    "packSize": 10,
+    "cupSize": "espresso",
+    "cupVolumeMl": 50,
     "flavorNotes": "Suave e aromático",
     "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-supremo-tres/p",
     "images": {
@@ -73,13 +600,13 @@
   {
     "slug": "lungo-intenso",
     "system": "tres-coracoes",
-    "name": "Lungo Intenso",
+    "name": "Espresso Vibrante",
     "brand": "Três Corações",
-    "intensity": 8,
+    "intensity": 7,
     "packSize": 10,
-    "cupSize": "lungo",
-    "cupVolumeMl": 110,
-    "flavorNotes": "Café longo intenso",
+    "cupSize": "espresso",
+    "cupVolumeMl": 50,
+    "flavorNotes": "Vibrante e marcante",
     "catalogUrl": "https://www.mercafe.com.br/capsula-cafe-espresso-vibrante-tres/p",
     "images": {
       "box": "/img/personal/coffee/catalog/tres-coracoes/lungo-intenso/box.jpg",
@@ -88,48 +615,47 @@
     "imagesPending": false
   },
   {
-    "slug": "cappuccino-classico",
+    "slug": "iced-coffee-rituais",
     "system": "tres-coracoes",
-    "name": "Cappuccino Clássico",
+    "name": "Iced Coffee Rituais",
     "brand": "Três Corações",
     "packSize": 10,
     "cupSize": "regular",
-    "flavorNotes": "Cremoso",
-    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/cappuccino-classic/",
+    "cupVolumeMl": 100,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-iced-coffee-rituais-3-coracoes/p",
     "images": {
-      "box": "/img/personal/coffee/catalog/tres-coracoes/cappuccino-classico/box.jpg",
-      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cappuccino-classico/capsule.jpg"
+      "box": "/img/personal/coffee/catalog/tres-coracoes/iced-coffee-rituais/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/iced-coffee-rituais/capsule.jpg"
     },
     "imagesPending": false
   },
   {
-    "slug": "cafe-filtrado",
+    "slug": "latte",
     "system": "tres-coracoes",
-    "name": "Café Filtrado",
+    "name": "Latte",
     "brand": "Três Corações",
     "packSize": 10,
     "cupSize": "regular",
-    "cupVolumeMl": 180,
-    "flavorNotes": "Café filtrado na Solução TRES",
-    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/",
+    "cupVolumeMl": 80,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-latte-tres/p",
     "images": {
-      "box": "/img/personal/coffee/catalog/tres-coracoes/cafe-filtrado/box.jpg",
-      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cafe-filtrado/capsule.jpg"
+      "box": "/img/personal/coffee/catalog/tres-coracoes/latte/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/latte/capsule.jpg"
     },
     "imagesPending": false
   },
   {
-    "slug": "cha-hibisco-maca",
+    "slug": "latte-macchiato",
     "system": "tres-coracoes",
-    "name": "Chá Hibisco e Maçã",
+    "name": "Latte Macchiato",
     "brand": "Três Corações",
     "packSize": 10,
     "cupSize": "regular",
-    "flavorNotes": "Chá aromático hibisco e maçã",
-    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/",
+    "cupVolumeMl": 80,
+    "catalogUrl": "https://www.mercafe.com.br/capsula-latte-macchiato-tres/p",
     "images": {
-      "box": "/img/personal/coffee/catalog/tres-coracoes/cha-hibisco-maca/box.jpg",
-      "capsule": "/img/personal/coffee/catalog/tres-coracoes/cha-hibisco-maca/capsule.jpg"
+      "box": "/img/personal/coffee/catalog/tres-coracoes/latte-macchiato/box.jpg",
+      "capsule": "/img/personal/coffee/catalog/tres-coracoes/latte-macchiato/capsule.jpg"
     },
     "imagesPending": false
   }

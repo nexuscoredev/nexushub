@@ -54,6 +54,10 @@ import {
   type CoffeeCapsuleCatalogEntry,
 } from '../../lib/coffeeCapsuleCatalog';
 import { CoffeeStockPhotoTools } from './CoffeeStockPhotoTools';
+import {
+  CoffeeCategoryFilterIcon,
+  coffeeCategoryFilterLabel,
+} from './CoffeeCategoryFilterIcon';
 import adegaStyles from './ViniciusAdega.module.css';
 import styles from './ViniciusCoffee.module.css';
 
@@ -622,28 +626,40 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
               <div className={adegaStyles.filters} role="group" aria-label="Filtrar catálogo">
                 <button
                   type="button"
-                  className={`${adegaStyles.filterBtn} ${activeScreen === 'collection' ? adegaStyles.filterBtnActive : ''}`}
+                  className={`${adegaStyles.filterBtn} ${adegaStyles.filterBtnIconOnly} ${activeScreen === 'collection' ? adegaStyles.filterBtnActive : ''}`}
                   onClick={() => setScreen('collection')}
+                  aria-label={coffeeCategoryFilterLabel('collection')}
+                  title={coffeeCategoryFilterLabel('collection')}
+                  aria-pressed={activeScreen === 'collection'}
                 >
-                  Coleção
+                  <CoffeeCategoryFilterIcon id="collection" active={activeScreen === 'collection'} />
                 </button>
                 <button
                   type="button"
-                  className={`${adegaStyles.filterBtn} ${activeScreen === 'favorites' ? adegaStyles.filterBtnActive : ''}`}
+                  className={`${adegaStyles.filterBtn} ${adegaStyles.filterBtnIconOnly} ${activeScreen === 'favorites' ? adegaStyles.filterBtnActive : ''}`}
                   onClick={() => setScreen('favorites')}
+                  aria-label={coffeeCategoryFilterLabel('favorites')}
+                  title={coffeeCategoryFilterLabel('favorites')}
+                  aria-pressed={activeScreen === 'favorites'}
                 >
-                  Favoritas
+                  <CoffeeCategoryFilterIcon id="favorites" active={activeScreen === 'favorites'} />
                 </button>
                 {COFFEE_CAPSULE_SYSTEMS.map((system) => (
                   <button
                     key={system.id}
                     type="button"
-                    className={`${adegaStyles.filterBtn} ${systemFilter === system.id ? adegaStyles.filterBtnActive : ''}`}
+                    className={`${adegaStyles.filterBtn} ${adegaStyles.filterBtnIconOnly} ${systemFilter === system.id ? adegaStyles.filterBtnActive : ''}`}
                     onClick={() =>
                       setSystemFilter((current) => (current === system.id ? null : system.id))
                     }
+                    aria-label={system.label}
+                    title={system.label}
+                    aria-pressed={systemFilter === system.id}
                   >
-                    {system.label}
+                    <CoffeeCategoryFilterIcon
+                      id={system.id}
+                      active={systemFilter === system.id}
+                    />
                   </button>
                 ))}
                 {filterCategories.map((category) => (
@@ -854,8 +870,14 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
                     type="button"
                     className={styles.activeFilterChip}
                     onClick={() => setSystemFilter(null)}
+                    aria-label={`Remover filtro ${COFFEE_CAPSULE_SYSTEMS.find((s) => s.id === systemFilter)?.label}`}
                   >
-                    {COFFEE_CAPSULE_SYSTEMS.find((s) => s.id === systemFilter)?.label} ×
+                    <img
+                      src={COFFEE_CAPSULE_SYSTEMS.find((s) => s.id === systemFilter)?.icon}
+                      alt=""
+                      className={styles.activeFilterChipIcon}
+                    />
+                    <span aria-hidden>×</span>
                   </button>
                 ) : null}
                 {stockCategoryFilter ? (
@@ -920,7 +942,15 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
               aria-current={screen === id ? 'page' : undefined}
             >
               <span className={styles.bottomNavIcon} aria-hidden>
-                {id === 'home' ? '⌂' : id === 'collection' ? '◉' : '♥'}
+                {id === 'home' ? (
+                  '⌂'
+                ) : id === 'collection' ? (
+                  <span className="material-symbols-outlined">apps</span>
+                ) : (
+                  <span className={`material-symbols-outlined ${screen === id ? styles.filterStarActive : ''}`}>
+                    star
+                  </span>
+                )}
               </span>
               <span>{SCREEN_LABELS[id]}</span>
             </button>
@@ -942,19 +972,26 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
               <div className={styles.filterChips}>
                 <button
                   type="button"
-                  className={`${styles.filterChip} ${!systemFilter ? styles.filterChipActive : ''}`}
+                  className={`${styles.filterChip} ${styles.filterChipIcon} ${!systemFilter ? styles.filterChipActive : ''}`}
                   onClick={() => setSystemFilter(null)}
+                  aria-label="Todos os sistemas"
+                  title="Todos os sistemas"
                 >
-                  Todos
+                  <span className={`material-symbols-outlined ${styles.filterChipMaterialIcon}`} aria-hidden>
+                    apps
+                  </span>
                 </button>
                 {COFFEE_CAPSULE_SYSTEMS.map((system) => (
                   <button
                     key={system.id}
                     type="button"
-                    className={`${styles.filterChip} ${systemFilter === system.id ? styles.filterChipActive : ''}`}
+                    className={`${styles.filterChip} ${styles.filterChipIcon} ${systemFilter === system.id ? styles.filterChipActive : ''}`}
                     onClick={() => setSystemFilter(system.id)}
+                    aria-label={system.label}
+                    title={system.label}
+                    aria-pressed={systemFilter === system.id}
                   >
-                    {system.label}
+                    <img src={system.icon} alt="" className={styles.filterChipBrandIcon} />
                   </button>
                 ))}
               </div>

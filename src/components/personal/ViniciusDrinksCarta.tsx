@@ -27,6 +27,7 @@ import {
   toggleFavorite,
   toggleHidden,
   updateDrinkMeta,
+  addDrinkTastingEntry,
   updateDrinkOverride,
   type DrinkCartaOverride,
   type DrinkCartaStore,
@@ -60,6 +61,7 @@ import { DrinkGuidedPrep } from './DrinkGuidedPrep';
 import { DrinkNewSuggestions } from './DrinkNewSuggestions';
 import { DrinkPersonalMetaPanel } from './DrinkPersonalMetaPanel';
 import { DrinkRecipeToolkit } from './DrinkRecipeToolkit';
+import { PersonalAppIcon } from './PersonalAppIcon';
 import styles from './ViniciusDrinksCarta.module.css';
 
 const DEFAULT_FILTERS: DiscoverFilters = {
@@ -74,7 +76,19 @@ const DEFAULT_FILTERS: DiscoverFilters = {
   wantToTryOnly: false,
 };
 
-export function ViniciusDrinksCarta() {
+const APPS_BACK_ICON = { type: 'material', name: 'apps', tone: 'cyan' } as const;
+
+type ViniciusDrinksCartaProps = {
+  onBackToApps?: () => void;
+  onDetailChange?: (inDetail: boolean) => void;
+  onRegisterBackToList?: (backToList: () => void) => void;
+};
+
+export function ViniciusDrinksCarta({
+  onBackToApps,
+  onDetailChange,
+  onRegisterBackToList,
+}: ViniciusDrinksCartaProps = {}) {
   const { user } = useAuth();
   const userId = user?.id;
   const navigate = useNavigate();
@@ -210,6 +224,16 @@ export function ViniciusDrinksCarta() {
     navigate(`/pessoal?${params.toString()}`);
   };
 
+  const backToApps = onBackToApps ?? (() => navigate('/pessoal'));
+
+  useEffect(() => {
+    onDetailChange?.(Boolean(activeDrink));
+  }, [activeDrink, onDetailChange]);
+
+  useEffect(() => {
+    onRegisterBackToList?.(backToList);
+  });
+
   const persistStore = (next: DrinkCartaStore) => {
     setStore(next);
     if (userId) saveDrinkCartaStore(userId, next);
@@ -249,8 +273,16 @@ export function ViniciusDrinksCarta() {
     return (
       <div className={styles.carta}>
         <div className={styles.cartaToolbar}>
-          <button type="button" className={styles.backLink} onClick={backToList}>
-            ← Carta
+          <button
+            type="button"
+            className={styles.backLink}
+            onClick={backToApps}
+            aria-label="Voltar aos aplicativos"
+          >
+            <span className={styles.backLinkIcon}>
+              <PersonalAppIcon icon={APPS_BACK_ICON} label="Aplicativos" />
+            </span>
+            <span>← Aplicativos</span>
           </button>
           <div className={styles.cartaToolbarActions}>
             {!editing ? (
@@ -321,6 +353,9 @@ export function ViniciusDrinksCarta() {
               <DrinkPersonalMetaPanel
                 meta={activeDrinkMeta}
                 onChange={(patch) => handleDrinkMetaChange(activeDrink.slug, patch)}
+                onAddTastingEntry={(entry) =>
+                  persistStore(addDrinkTastingEntry(store, activeDrink.slug, entry))
+                }
               />
             ) : null}
 

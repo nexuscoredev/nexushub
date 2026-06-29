@@ -49,14 +49,22 @@ export async function hydratePersonalAppLayoutForCloud(
   return { ...layout, iconOverrides };
 }
 
+export type PersonalAppLayoutCloudResult = {
+  error: string | null;
+  layout: PersonalAppLayout;
+  updatedAt: string;
+};
+
 export async function upsertPersonalAppLayoutCloud(
   userId: string,
   layout: PersonalAppLayout,
-): Promise<string | null> {
-  if (!supabase) return 'Supabase não configurado';
-
+): Promise<PersonalAppLayoutCloudResult> {
   const hydrated = await hydratePersonalAppLayoutForCloud(userId, layout);
   const updatedAt = new Date().toISOString();
+
+  if (!supabase) {
+    return { error: 'Supabase não configurado', layout: hydrated, updatedAt };
+  }
 
   const { error } = await supabase.from('hub_personal_app_layout').upsert(
     {
@@ -67,7 +75,11 @@ export async function upsertPersonalAppLayoutCloud(
     { onConflict: 'user_id' },
   );
 
-  return error ? supabaseErrorMessage(error) : null;
+  return {
+    error: error ? supabaseErrorMessage(error) : null,
+    layout: hydrated,
+    updatedAt,
+  };
 }
 
 export async function fetchDrinkCartaStoreCloud(
@@ -91,6 +103,9 @@ export async function fetchDrinkCartaStoreCloud(
       overrides: store.overrides ?? {},
       bannerImageUrl: store.bannerImageUrl,
       customDrinks: Array.isArray(store.customDrinks) ? store.customDrinks : undefined,
+      favorites: Array.isArray(store.favorites) ? store.favorites : undefined,
+      hiddenSlugs: Array.isArray(store.hiddenSlugs) ? store.hiddenSlugs : undefined,
+      drinkMeta: store.drinkMeta,
     },
     updatedAt: data.updated_at,
   };
@@ -125,17 +140,30 @@ export async function hydrateDrinkCartaStoreForCloud(
     customDrinks.push({ ...drink, imageUrl });
   }
 
-  return { overrides, bannerImageUrl, customDrinks: customDrinks.length ? customDrinks : undefined };
+  return {
+    ...store,
+    overrides,
+    bannerImageUrl,
+    customDrinks: customDrinks.length ? customDrinks : undefined,
+  };
 }
+
+export type DrinkCartaStoreCloudResult = {
+  error: string | null;
+  store: DrinkCartaStore;
+  updatedAt: string;
+};
 
 export async function upsertDrinkCartaStoreCloud(
   userId: string,
   store: DrinkCartaStore,
-): Promise<string | null> {
-  if (!supabase) return 'Supabase não configurado';
-
+): Promise<DrinkCartaStoreCloudResult> {
   const hydrated = await hydrateDrinkCartaStoreForCloud(userId, store);
   const updatedAt = new Date().toISOString();
+
+  if (!supabase) {
+    return { error: 'Supabase não configurado', store: hydrated, updatedAt };
+  }
 
   const { error } = await supabase.from('hub_personal_drinks_carta').upsert(
     {
@@ -146,7 +174,11 @@ export async function upsertDrinkCartaStoreCloud(
     { onConflict: 'user_id' },
   );
 
-  return error ? supabaseErrorMessage(error) : null;
+  return {
+    error: error ? supabaseErrorMessage(error) : null,
+    store: hydrated,
+    updatedAt,
+  };
 }
 
 export async function fetchAdegaItemsCloud(

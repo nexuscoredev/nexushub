@@ -24,11 +24,19 @@ export type DrinkCartaOverride = {
   variations?: string[];
 };
 
+export type DrinkTastingEntry = {
+  id: string;
+  createdAt: string;
+  rating: 1 | 2 | 3 | 4 | 5;
+  note: string;
+};
+
 export type DrinkPersonalMeta = {
   rating?: 1 | 2 | 3 | 4 | 5;
   tried?: boolean;
   wantToTry?: boolean;
   tastingNote?: string;
+  tastingHistory?: DrinkTastingEntry[];
 };
 
 export type DrinkCartaStore = {
@@ -189,6 +197,22 @@ function migrateDrinkCartaStore(store: DrinkCartaStore): DrinkCartaStore {
   return next;
 }
 
+function isValidTastingEntry(value: unknown): value is DrinkTastingEntry {
+  if (!value || typeof value !== 'object') return false;
+  const entry = value as DrinkTastingEntry;
+  return (
+    typeof entry.id === 'string' &&
+    entry.id.trim().length > 0 &&
+    typeof entry.createdAt === 'string' &&
+    !Number.isNaN(Date.parse(entry.createdAt)) &&
+    Number.isInteger(entry.rating) &&
+    entry.rating >= 1 &&
+    entry.rating <= 5 &&
+    typeof entry.note === 'string' &&
+    entry.note.trim().length > 0
+  );
+}
+
 function isValidDrinkMeta(value: unknown): value is DrinkPersonalMeta {
   if (!value || typeof value !== 'object') return false;
   const meta = value as DrinkPersonalMeta;
@@ -201,6 +225,13 @@ function isValidDrinkMeta(value: unknown): value is DrinkPersonalMeta {
   if (meta.tried != null && typeof meta.tried !== 'boolean') return false;
   if (meta.wantToTry != null && typeof meta.wantToTry !== 'boolean') return false;
   if (meta.tastingNote != null && typeof meta.tastingNote !== 'string') return false;
+  if (
+    meta.tastingHistory != null &&
+    (!Array.isArray(meta.tastingHistory) ||
+      !meta.tastingHistory.every((entry) => isValidTastingEntry(entry)))
+  ) {
+    return false;
+  }
   return true;
 }
 
@@ -264,31 +295,65 @@ export function saveDrinkCartaStore(userId: string, store: DrinkCartaStore): voi
   } catch {
     /* quota exceeded */
   }
-  void upsertDrinkCartaStoreCloud(userId, store).then((err) => {
-    if (err) console.warn('[drinks carta] sync:', err);
+  void upsertDrinkCartaStoreCloud(userId, store).then((result) => {
+    if (result.error) {
+      console.warn('[drinks carta] sync:', result.error);
+      return;
+    }
+    saveDrinkCartaStoreLocalOnly(userId, migrateDrinkCartaStore(result.store), result.updatedAt);
   });
+}
+
+function saveDrinkCartaStoreLocalOnly(
+  userId: string,
+  store: DrinkCartaStore,
+  updatedAt: string,
+): void {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem(storageKey(userId), JSON.stringify(store));
+    writeLocalUpdatedAt(userId, updatedAt);
+  } catch {
+    /* quota exceeded */
+  }
 }
 
 export async function syncDrinkCartaStoreFromCloud(
   userId: string,
 ): Promise<DrinkCartaStore | null> {
-  const cloud = await fetchDrinkCartaStoreCloud(userId);
-  if (!cloud) return null;
+  const localUpdatedAt = readLocalUpdatedAt(userId);
+  const localRaw =
+    typeof localStorage !== 'undefined' ? localStorage.getItem(storageKey(userId)) : null;
+  const localStore = migrateDrinkCartaStore(parseStore(localRaw));
 
-  const migrated = migrateDrinkCartaStore(cloud.store);
-  if (!isCloudNewer(cloud.updatedAt, readLocalUpdatedAt(userId))) {
+  const cloud = await fetchDrinkCartaStoreCloud(userId);
+
+  if (!cloud) {
+    if (localRaw) {
+      const pushed = await upsertDrinkCartaStoreCloud(userId, localStore);
+      if (!pushed.error) {
+        saveDrinkCartaStoreLocalOnly(userId, migrateDrinkCartaStore(pushed.store), pushed.updatedAt);
+      }
+    }
     return null;
   }
 
-  if (typeof localStorage !== 'undefined') {
-    try {
-      localStorage.setItem(storageKey(userId), JSON.stringify(migrated));
-      writeLocalUpdatedAt(userId, cloud.updatedAt);
-    } catch {
-      /* quota exceeded */
-    }
+  const migrated = migrateDrinkCartaStore(cloud.store);
+
+  if (isCloudNewer(cloud.updatedAt, localUpdatedAt)) {
+    saveDrinkCartaStoreLocalOnly(userId, migrated, cloud.updatedAt);
+    return migrated;
   }
-  return migrated;
+
+  if (localUpdatedAt && Date.parse(localUpdatedAt) > Date.parse(cloud.updatedAt)) {
+    const pushed = await upsertDrinkCartaStoreCloud(userId, localStore);
+    if (!pushed.error) {
+      saveDrinkCartaStoreLocalOnly(userId, migrateDrinkCartaStore(pushed.store), pushed.updatedAt);
+    }
+    return localStore;
+  }
+
+  return null;
 }
 
 export function mergeDrink(base: ViniciusDrink, override?: DrinkCartaOverride): ViniciusDrink {
@@ -447,6 +512,7 @@ export function updateDrinkMeta(
   for (const key of Object.keys(next) as (keyof DrinkPersonalMeta)[]) {
     if (next[key] === undefined) delete next[key];
   }
+  if (next.tastingHistory?.length === 0) delete next.tastingHistory;
 
   const drinkMeta = { ...(store.drinkMeta ?? {}) };
   if (Object.keys(next).length === 0) delete drinkMeta[slug];
@@ -456,6 +522,41 @@ export function updateDrinkMeta(
     ...store,
     drinkMeta: Object.keys(drinkMeta).length ? drinkMeta : undefined,
   };
+}
+
+function newTastingEntryId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `tasting-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+export function addDrinkTastingEntry(
+  store: DrinkCartaStore,
+  slug: string,
+  entry: { rating: 1 | 2 | 3 | 4 | 5; note: string },
+): DrinkCartaStore {
+  const note = entry.note.trim();
+  if (!note) return store;
+
+  const current = store.drinkMeta?.[slug] ?? {};
+  const tastingHistory: DrinkTastingEntry[] = [
+    {
+      id: newTastingEntryId(),
+      createdAt: new Date().toISOString(),
+      rating: entry.rating,
+      note,
+    },
+    ...(current.tastingHistory ?? []),
+  ];
+
+  return updateDrinkMeta(store, slug, {
+    rating: entry.rating,
+    tried: true,
+    wantToTry: false,
+    tastingNote: undefined,
+    tastingHistory,
+  });
 }
 
 export function listTriedSlugs(store: DrinkCartaStore): string[] {
