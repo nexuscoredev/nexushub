@@ -352,6 +352,55 @@ function itemNameBrandHaystack(item: AdegaItem): string {
   return normalizeText(`${item.name} ${item.brand ?? ''}`);
 }
 
+/**
+ * Bebidas de sabor/marca própria (Ballena, Bacardi Big Apple, etc.) não substituem
+ * espíritos genéricos em receitas clássicas — só quando a receita cita o produto.
+ */
+const SIGNATURE_SPIRIT_RULES: { item: RegExp; allowedWhen: RegExp }[] = [
+  { item: /\bballena\b/i, allowedWhen: /ballena/i },
+  {
+    item: /big\s*apple|bacardi\s*apple/i,
+    allowedWhen: /big\s*apple|bacardi\s*apple|ma[cç][aã]\s*verde/i,
+  },
+  { item: /\bmalibu\b/i, allowedWhen: /malibu|coco(?:nut)?/i },
+  { item: /\bdisaronno\b/i, allowedWhen: /disaronno|amaretto/i },
+  { item: /\bbaileys?\b/i, allowedWhen: /baileys?|irish\s*cream|creme\s*de\s*whisky/i },
+];
+
+const FLAVORED_SPIRIT_HINTS =
+  /\b(sabor|flavored|flavour|infused|infus[aã]o|cream|creme|liqueur|licor|apple|ma[cç][aã]|morango|strawberry|coco(?:nut)?|menta|mint|peach|p[eê]ssego|cherry|cereja|honey|mel|ginger|gengibre|spiced|especiad|chocolate|caramel|caramelo|mango|maracuj[aá]|passion\s*fruit|blue|azul|ros[eé]|pink|sour\s*apple)\b/i;
+
+const NEUTRAL_SPIRIT_HINTS =
+  /\b(bianco|blanco|branca|white|silver|plata|cl[aá]ssic|classic|carta\s*blanca|original|reposado|anejo|a[nñ]ejo|extra\s*anejo|100\s*%\s*agave|especial|anej[oá])\b/i;
+
+function spiritItemAllowedForGroup(item: AdegaItem, group: DrinkRequirementGroup): boolean {
+  const nameBrand = itemNameBrandHaystack(item);
+  const groupText = normalizeText([group.label, ...group.searchTerms].join(' '));
+
+  for (const { item: itemPat, allowedWhen } of SIGNATURE_SPIRIT_RULES) {
+    if (itemPat.test(nameBrand)) {
+      return allowedWhen.test(groupText);
+    }
+  }
+
+  const isLikelyFlavored =
+    FLAVORED_SPIRIT_HINTS.test(nameBrand) && !NEUTRAL_SPIRIT_HINTS.test(nameBrand);
+
+  if (!isLikelyFlavored) return true;
+
+  const nameTokens = normalizeText(item.name)
+    .split(/\s+/)
+    .filter((token) => token.length >= 4 && !/^(rum|gin|vodka|tequila|cacha[cç]a)$/i.test(token));
+  if (nameTokens.some((token) => groupText.includes(token))) return true;
+
+  if (item.brand) {
+    const brand = normalizeText(item.brand);
+    if (brand.length >= 4 && groupText.includes(brand)) return true;
+  }
+
+  return false;
+}
+
 function licorSubtypeMatches(groupLabel: string, item: AdegaItem): boolean {
   const label = normalizeText(groupLabel);
   const name = itemNameBrandHaystack(item);
@@ -524,6 +573,7 @@ function itemMatchesGroup(item: AdegaItem, group: DrinkRequirementGroup): boolea
     for (const ruleId of group.ruleIds) {
       const rule = SPIRIT_RULES.find((entry) => entry.id === ruleId);
       if (!rule || !itemMatchesRule(item, rule)) continue;
+      if (!spiritItemAllowedForGroup(item, group)) continue;
       if (rule.id === 'licor' && !licorSubtypeMatches(group.label, item)) continue;
       if (rule.id === 'cerveja') {
         const label = normalizeText(group.label);
@@ -572,7 +622,7 @@ export function findSubstituteItemsForGroup(
     const haystack = itemHaystack(item);
     const matchesRule = group.ruleIds.some((ruleId) => {
       const rule = SPIRIT_RULES.find((entry) => entry.id === ruleId);
-      return rule ? itemMatchesRule(item, rule) : false;
+      return rule ? itemMatchesRule(item, rule) && spiritItemAllowedForGroup(item, group) : false;
     });
 
     if (!matchesRule) return false;
