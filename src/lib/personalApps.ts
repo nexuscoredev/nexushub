@@ -13,7 +13,7 @@ export type PersonalAppIcon =
   | { type: 'piggy' }
   | { type: 'letter'; value: string };
 
-export type PersonalInternalAction = 'finance' | 'drinks' | 'pc-guide' | 'adega' | 'coffee';
+export type PersonalInternalAction = 'finance' | 'drinks' | 'pc-guide' | 'adega' | 'coffee' | 'vault';
 
 export type PersonalAppDefinition = {
   id: string;
@@ -41,6 +41,14 @@ export const PERSONAL_APP_CATALOG: PersonalAppDefinition[] = [
     kind: 'internal',
     internalAction: 'finance',
     icon: { type: 'piggy' },
+  },
+  {
+    id: 'vault',
+    label: 'Cofre',
+    subtitle: 'Senhas pessoais',
+    kind: 'internal',
+    internalAction: 'vault',
+    icon: { type: 'material', name: 'key', tone: 'violet' },
   },
   {
     id: 'drinks',

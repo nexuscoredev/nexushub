@@ -9,6 +9,7 @@ import { ViniciusDrinksCarta } from '../components/personal/ViniciusDrinksCarta'
 import { ViniciusPcGuide } from '../components/personal/ViniciusPcGuide';
 import { ViniciusAdega } from '../components/personal/ViniciusAdega';
 import { ViniciusCoffee } from '../components/personal/ViniciusCoffee';
+import { PersonalPasswordVault } from '../components/personal/PersonalPasswordVault';
 import { useAuth } from '../contexts/AuthContext';
 import { resolveFinanceMonthKey } from '../lib/personalFinanceMonth';
 import { isViniciusOnly } from '../lib/viniciusPersonalFinance';
@@ -24,6 +25,7 @@ export function PessoalPage() {
   const pcGuide = searchParams.get('pc-guide') === '1';
   const adega = searchParams.get('adega') === '1';
   const coffee = searchParams.get('coffee') === '1';
+  const vault = searchParams.get('vault') === '1';
 
   const firstName = profile?.nome?.trim().split(/\s+/)[0] ?? 'você';
   const email = profile?.email ?? user?.email;
@@ -54,6 +56,10 @@ export function PessoalPage() {
 
   const openCoffee = () => {
     navigate('/pessoal?coffee=1');
+  };
+
+  const openVault = () => {
+    navigate('/pessoal?vault=1');
   };
 
   const backHome = () => {
@@ -231,6 +237,16 @@ export function PessoalPage() {
           </div>
           <PersonalFinancePanel userEmail={email} userId={user?.id} />
         </>
+      ) : vault ? (
+        <>
+          <div className={styles.financeTop}>
+            <PageHeader compact title="Cofre pessoal" subtitle={`${firstName} · senhas criptografadas`} />
+            <button type="button" className={styles.backBtn} onClick={backHome}>
+              ← Cantinho
+            </button>
+          </div>
+          <PersonalPasswordVault userId={user?.id} />
+        </>
       ) : (
         <div className={styles.homeShell}>
           <PageHeader
@@ -245,6 +261,7 @@ export function PessoalPage() {
             onOpenPcGuide={viniciusOnly ? openPcGuide : undefined}
             onOpenAdega={viniciusOnly ? openAdega : undefined}
             onOpenCoffee={viniciusOnly ? openCoffee : undefined}
+            onOpenVault={openVault}
           />
         </div>
       )}

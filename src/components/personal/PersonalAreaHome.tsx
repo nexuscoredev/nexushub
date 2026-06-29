@@ -22,13 +22,21 @@ function saudacao(nome: string): string {
 
 interface PersonalAreaHomeProps {
   onOpenFinance: () => void;
+  onOpenVault: () => void;
   onOpenDrinks?: () => void;
   onOpenPcGuide?: () => void;
   onOpenAdega?: () => void;
   onOpenCoffee?: () => void;
 }
 
-export function PersonalAreaHome({ onOpenFinance, onOpenDrinks, onOpenPcGuide, onOpenAdega, onOpenCoffee }: PersonalAreaHomeProps) {
+export function PersonalAreaHome({
+  onOpenFinance,
+  onOpenVault,
+  onOpenDrinks,
+  onOpenPcGuide,
+  onOpenAdega,
+  onOpenCoffee,
+}: PersonalAreaHomeProps) {
   const { profile, user } = useAuth();
   const userId = user?.id;
   const email = profile?.email ?? user?.email;
@@ -83,6 +91,7 @@ export function PersonalAreaHome({ onOpenFinance, onOpenDrinks, onOpenPcGuide, o
         userId={userId}
         viniciusOnly={viniciusOnly}
         onOpenFinance={onOpenFinance}
+        onOpenVault={onOpenVault}
         onOpenDrinks={onOpenDrinks}
         onOpenPcGuide={onOpenPcGuide}
         onOpenAdega={onOpenAdega}

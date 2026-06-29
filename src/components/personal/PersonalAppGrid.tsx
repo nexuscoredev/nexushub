@@ -22,6 +22,7 @@ interface PersonalAppGridProps {
   userId: string | undefined;
   viniciusOnly: boolean;
   onOpenFinance: () => void;
+  onOpenVault: () => void;
   onOpenDrinks?: () => void;
   onOpenPcGuide?: () => void;
   onOpenAdega?: () => void;
@@ -32,6 +33,7 @@ export function PersonalAppGrid({
   userId,
   viniciusOnly,
   onOpenFinance,
+  onOpenVault,
   onOpenDrinks,
   onOpenPcGuide,
   onOpenAdega,
@@ -92,6 +94,7 @@ export function PersonalAppGrid({
 
   const handleInternal = (action: PersonalInternalAction) => {
     if (action === 'finance') onOpenFinance();
+    if (action === 'vault') onOpenVault();
     if (action === 'drinks') onOpenDrinks?.();
     if (action === 'pc-guide') onOpenPcGuide?.();
     if (action === 'adega') onOpenAdega?.();
