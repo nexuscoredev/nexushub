@@ -147,10 +147,16 @@ function parseScreen(value: string | null): CoffeeScreen {
 }
 
 type ViniciusCoffeeProps = {
-  onBack?: () => void;
+  onBackToApps?: () => void;
+  onDetailChange?: (inDetail: boolean) => void;
+  onRegisterBackToList?: (backToList: () => void) => void;
 };
 
-export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
+export function ViniciusCoffee({
+  onBackToApps,
+  onDetailChange,
+  onRegisterBackToList,
+}: ViniciusCoffeeProps = {}) {
   const { user } = useAuth();
   const userId = user?.id;
   const navigate = useNavigate();
@@ -158,7 +164,7 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
   const editing = searchParams.get('edit') === '1';
   const screen = parseScreen(searchParams.get('view'));
   const isMobileApp = useMaxWidth(899);
-  const embeddedDesktop = Boolean(onBack && !isMobileApp);
+  const embeddedDesktop = Boolean(onBackToApps && !isMobileApp);
 
   const [stock, setStock] = useState<CoffeeStockItem[]>(() => loadCoffeeStock(userId));
   const [stockViewMode, setStockViewMode] = useState<CoffeeStockViewMode>(() =>
@@ -204,6 +210,14 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
     params.delete('receita');
     navigate(`/pessoal?${params.toString()}`, { replace: true });
   }, [navigate, searchParams]);
+
+  useEffect(() => {
+    onDetailChange?.(Boolean(viewingStockItem && !stockDialogOpen));
+  }, [viewingStockItem, stockDialogOpen, onDetailChange]);
+
+  useEffect(() => {
+    onRegisterBackToList?.(() => setViewingStockItem(null));
+  }, [onRegisterBackToList]);
 
   const displayStock = useMemo(() => resolveCoffeeDisplayStock(stock), [stock]);
   const collectionCount = displayStock.length;
@@ -536,6 +550,7 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
         <CoffeeCapsuleDetail
           item={detailItem}
           onBack={() => setViewingStockItem(null)}
+          onBackToApps={onBackToApps}
           onEdit={() => {
             setViewingStockItem(null);
             openStockEdit(detailItem);
@@ -682,11 +697,6 @@ export function ViniciusCoffee({ onBack }: ViniciusCoffeeProps = {}) {
         </>
       ) : (
         <header className={`${styles.appHeader} ${embeddedDesktop ? styles.appHeaderEmbedded : ''}`}>
-          {onBack && isMobileApp ? (
-            <button type="button" className={styles.headerBtn} onClick={onBack} aria-label="Voltar ao cantinho">
-              ←
-            </button>
-          ) : null}
           <h1 className={styles.appTitle}>MEU CAFÉ</h1>
           <div className={styles.headerActions}>
             {screen !== 'home' ? (

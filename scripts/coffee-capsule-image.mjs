@@ -5,7 +5,9 @@ import sharp from 'sharp';
 import { findContentBounds, THUMB_BG, THUMB_SIZE } from './drink-thumb-center.mjs';
 
 /** Mercafé às vezes entrega PNG quadrado com caixa + cápsula (ex.: Gourmet). */
-export const MERCAFE_COMPOSITE_CAPSULES = new Set(['tres-coracoes/espresso-ristretto']);
+export const MERCAFE_COMPOSITE_CAPSULES = new Set([
+  'tres-coracoes/espresso-gourmet-dark-roast',
+]);
 
 const MERCAFE_COMPOSITE_CROP = {
   leftFrac: 0,
@@ -48,14 +50,28 @@ export async function extractMercafeCompositeCapsule(input) {
   return sharp(input).extract(region).toBuffer();
 }
 
+/** neostart 1000×1000: cápsula à direita da arte. */
+const NEO_HERO_CAPSULE_CROP = {
+  leftFrac: 0.52,
+  topFrac: 0.38,
+  widthFrac: 0.4,
+  heightFrac: 0.55,
+};
+
 export async function extractDolceGustoCapsuleFromBox(input, hint = '') {
   const meta = await sharp(input).metadata();
   const w = meta.width ?? 0;
   const h = meta.height ?? 0;
   if (!w || !h) throw new Error('dimensões inválidas');
 
-  const useXicaraLayout = /x_cara-capsula|xicara.e.capsula|xicara_e_capsula/i.test(hint);
-  const cropSpec = useXicaraLayout ? DG_XICARA_CAPSULE_CROP : DG_BOX_CAPSULE_CROP;
+  const useNeoLayout = /neostart|hero-images|1000x1000/i.test(hint);
+  const useXicaraLayout =
+    !useNeoLayout && /x_cara-capsula|xicara.e.capsula|xicara_e_capsula/i.test(hint);
+  const cropSpec = useNeoLayout
+    ? NEO_HERO_CAPSULE_CROP
+    : useXicaraLayout
+      ? DG_XICARA_CAPSULE_CROP
+      : DG_BOX_CAPSULE_CROP;
 
   const region = {
     left: Math.round(w * cropSpec.leftFrac),
@@ -116,23 +132,25 @@ export async function centerCoffeeCapsule(input, output = input) {
 }
 
 export async function normalizeCoffeeCapsuleImage(filePath, catalogKey) {
+  const fs = await import('node:fs');
   let buf = await sharp(filePath).toBuffer();
 
   if (MERCAFE_COMPOSITE_CAPSULES.has(catalogKey)) {
     buf = await extractMercafeCompositeCapsule(buf);
   }
 
-  const tmp = `${filePath}.prep.jpg`;
-  await sharp(buf).jpeg({ quality: 95 }).toFile(tmp);
+  const prep = `${filePath}.prep.jpg`;
+  const outTmp = `${filePath}.out.tmp.jpg`;
+  await sharp(buf).jpeg({ quality: 95 }).toFile(prep);
   try {
-    await centerCoffeeCapsule(tmp, filePath);
+    await centerCoffeeCapsule(prep, outTmp);
   } catch {
     await sharp(buf)
       .resize(THUMB_SIZE, THUMB_SIZE, { fit: 'inside', background: THUMB_BG })
       .jpeg({ quality: 90 })
-      .toFile(filePath);
+      .toFile(outTmp);
   }
-  const fs = await import('node:fs');
-  fs.unlinkSync(tmp);
+  fs.unlinkSync(prep);
+  fs.renameSync(outTmp, filePath);
   return filePath;
 }

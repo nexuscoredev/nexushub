@@ -9,7 +9,7 @@
     "cupSize": "ristretto",
     "cupVolumeMl": 25,
     "flavorNotes": "Muito intenso e encorpado",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-ispirazione-napoli",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/napoli/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/napoli/capsule.jpg"
@@ -26,7 +26,7 @@
     "cupSize": "ristretto",
     "cupVolumeMl": 25,
     "flavorNotes": "Intenso e especiado",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-ispirazione-palermo-kazaar",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/kazaar/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/kazaar/capsule.jpg"
@@ -42,7 +42,7 @@
     "packSize": 10,
     "cupSize": "lungo",
     "cupVolumeMl": 110,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-monsoon-india",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/india/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/india/capsule.jpg"
@@ -58,7 +58,7 @@
     "packSize": 10,
     "cupSize": "lungo",
     "cupVolumeMl": 110,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-cape-town-envivo-lungo",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/cape-town-lungo/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/cape-town-lungo/capsule.jpg"
@@ -74,7 +74,7 @@
     "packSize": 10,
     "cupSize": "ristretto",
     "cupVolumeMl": 25,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsula-cafe-lisbon-bica",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/lisbon-bica/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/lisbon-bica/capsule.jpg"
@@ -93,7 +93,7 @@
     "flavorNotes": "Potente e contrastante",
     "description": "Combinação de cafés Robusta e Arábica torrados separadamente para um ristretto intenso com notas de frutas silvestres.",
     "coffeeType": "Blend",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-ispirazione-ristretto-italiano",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/ristretto/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/ristretto/capsule.jpg"
@@ -109,7 +109,7 @@
     "packSize": 10,
     "cupSize": "ristretto",
     "cupVolumeMl": 25,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-ispirazione-ristretto-italiano-decaffeinato",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/ristretto-decaffeinato/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/ristretto-decaffeinato/capsule.jpg"
@@ -126,7 +126,7 @@
     "cupSize": "ristretto",
     "cupVolumeMl": 25,
     "flavorNotes": "Intenso e cremoso",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-ispirazione-firenze-arpeggio",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/arpeggio/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/arpeggio/capsule.jpg"
@@ -142,7 +142,7 @@
     "packSize": 10,
     "cupSize": "ristretto",
     "cupVolumeMl": 25,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-ispirazione-firenze-arpeggio-decaffeinato",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/arpeggio-decaffeinato/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/arpeggio-decaffeinato/capsule.jpg"
@@ -158,7 +158,7 @@
     "packSize": 10,
     "cupSize": "ristretto",
     "cupVolumeMl": 25,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsula-cafe-caffe-florian",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/caffe-florian/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/caffe-florian/capsule.jpg"
@@ -174,7 +174,7 @@
     "packSize": 10,
     "cupSize": "espresso",
     "cupVolumeMl": 40,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/cafe-espresso-rio-de-janeiro",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/rio-de-janeiro-espresso/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/rio-de-janeiro-espresso/capsule.jpg"
@@ -191,7 +191,7 @@
     "cupSize": "lungo",
     "cupVolumeMl": 110,
     "flavorNotes": "Intenso e maltado",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-stockholm-fortissio-lungo",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/fortissio-lungo/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/fortissio-lungo/capsule.jpg"
@@ -207,7 +207,7 @@
     "packSize": 10,
     "cupSize": "lungo",
     "cupVolumeMl": 110,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-processo-umido-indonesia",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/indonesia/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/indonesia/capsule.jpg"
@@ -223,7 +223,7 @@
     "packSize": 10,
     "cupSize": "espresso",
     "cupVolumeMl": 40,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-nespresso-istanbul-espresso",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/istanbul-espresso/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/istanbul-espresso/capsule.jpg"
@@ -240,7 +240,7 @@
     "cupSize": "ristretto",
     "cupVolumeMl": 25,
     "flavorNotes": "Encorpado e maltado",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-ispirazione-roma",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/roma/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/roma/capsule.jpg"
@@ -256,7 +256,7 @@
     "packSize": 10,
     "cupSize": "ristretto",
     "cupVolumeMl": 25,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-ispirazione-venezia",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/venezia/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/venezia/capsule.jpg"
@@ -272,7 +272,7 @@
     "packSize": 10,
     "cupSize": "lungo",
     "cupVolumeMl": 110,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-nespresso-brazil-organic",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/brazil-organic/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/brazil-organic/capsule.jpg"
@@ -289,7 +289,7 @@
     "cupSize": "espresso",
     "cupVolumeMl": 40,
     "flavorNotes": "Equilibrado e torrado",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-ispirazione-genova-livanto",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/livanto/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/livanto/capsule.jpg"
@@ -305,7 +305,7 @@
     "packSize": 10,
     "cupSize": "lungo",
     "cupVolumeMl": 110,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-de-cafe-vienna-lungo-decaffeinato",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/vienna-lungo-decaffeinato/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/vienna-lungo-decaffeinato/capsule.jpg"
@@ -321,7 +321,7 @@
     "packSize": 10,
     "cupSize": "lungo",
     "cupVolumeMl": 110,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsula-de-cafe-colombia-nespresso",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/colombia/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/colombia/capsule.jpg"
@@ -338,7 +338,7 @@
     "cupSize": "lungo",
     "cupVolumeMl": 110,
     "flavorNotes": "Suave e cereal",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-vienna-linizio-lungo",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/linizio-lungo/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/linizio-lungo/capsule.jpg"
@@ -354,7 +354,7 @@
     "packSize": 10,
     "cupSize": "espresso",
     "cupVolumeMl": 40,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/cafe-espresso-paris",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/paris-espresso/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/paris-espresso/capsule.jpg"
@@ -371,7 +371,7 @@
     "cupSize": "lungo",
     "cupVolumeMl": 110,
     "flavorNotes": "Floral e complexo",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-tokyo-vivalto-lungo",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/vivalto-lungo/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/vivalto-lungo/capsule.jpg"
@@ -388,7 +388,7 @@
     "cupSize": "espresso",
     "cupVolumeMl": 40,
     "flavorNotes": "Leve e vibrante",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-espresso-comprar-capriccio-intensidade-5",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/capriccio/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/capriccio/capsule.jpg"
@@ -404,7 +404,7 @@
     "packSize": 10,
     "cupSize": "lungo",
     "cupVolumeMl": 110,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-black-honey-nicaragua",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/nicaragua/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/nicaragua/capsule.jpg"
@@ -420,7 +420,7 @@
     "packSize": 10,
     "cupSize": "lungo",
     "cupVolumeMl": 110,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-shangai-lungo",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/shanghai-lungo/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/shanghai-lungo/capsule.jpg"
@@ -436,7 +436,7 @@
     "packSize": 10,
     "cupSize": "lungo",
     "cupVolumeMl": 110,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-buenos-aires-lungo",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/buenos-aires-lungo/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/buenos-aires-lungo/capsule.jpg"
@@ -453,7 +453,7 @@
     "cupSize": "espresso",
     "cupVolumeMl": 40,
     "flavorNotes": "Suave e frutado",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-espresso-comprar-cosi-intensidade-4",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/cosi/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/cosi/capsule.jpg"
@@ -469,7 +469,7 @@
     "packSize": 10,
     "cupSize": "lungo",
     "cupVolumeMl": 110,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-secagem-natural-ethiopia",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/ethiopia/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/ethiopia/capsule.jpg"
@@ -486,7 +486,7 @@
     "cupSize": "espresso",
     "cupVolumeMl": 40,
     "flavorNotes": "Doce e leve",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-espresso-comprar-volluto-intensidade-4",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/volluto/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/volluto/capsule.jpg"
@@ -502,7 +502,7 @@
     "packSize": 10,
     "cupSize": "espresso",
     "cupVolumeMl": 40,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-descafeinado-comprar-volluto-decaffeinato-intensidade-4",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/volluto-decaffeinato/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/volluto-decaffeinato/capsule.jpg"
@@ -517,7 +517,7 @@
     "packSize": 10,
     "cupSize": "lungo",
     "cupVolumeMl": 110,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-caramello",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/caramello/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/caramello/capsule.jpg"
@@ -532,7 +532,7 @@
     "packSize": 10,
     "cupSize": "espresso",
     "cupVolumeMl": 40,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/comprar-nespresso-barista-creations-capsula-cafe-chiaro",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/chiaro/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/chiaro/capsule.jpg"
@@ -547,7 +547,7 @@
     "packSize": 10,
     "cupSize": "lungo",
     "cupVolumeMl": 110,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-cioccolatino",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/cioccolatino/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/cioccolatino/capsule.jpg"
@@ -562,7 +562,7 @@
     "packSize": 10,
     "cupSize": "ristretto",
     "cupVolumeMl": 25,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/nespresso-barista-creations-capsula-cafe-corto",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/corto/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/corto/capsule.jpg"
@@ -577,7 +577,7 @@
     "packSize": 10,
     "cupSize": "lungo",
     "cupVolumeMl": 110,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-nocciola",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/nocciola/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/nocciola/capsule.jpg"
@@ -592,7 +592,7 @@
     "packSize": 10,
     "cupSize": "espresso",
     "cupVolumeMl": 40,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/comprar-nespresso-barista-creations-capsula-cafe-scuro",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/scuro/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/scuro/capsule.jpg"
@@ -607,7 +607,7 @@
     "packSize": 10,
     "cupSize": "lungo",
     "cupVolumeMl": 110,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-vaniglia-eclair",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/vaniglia/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/vaniglia/capsule.jpg"
@@ -622,7 +622,7 @@
     "packSize": 10,
     "cupSize": "lungo",
     "cupVolumeMl": 110,
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original/capsulas-cafe-vaniglia-decaffeinato",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/vaniglia-decaffeinato/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/vaniglia-decaffeinato/capsule.jpg"
@@ -639,7 +639,7 @@
     "cupSize": "espresso",
     "cupVolumeMl": 40,
     "flavorNotes": "Máxima intensidade, madeira e chocolate amargo",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/compativeis/capsula-de-espresso-maximo/",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/3c-maximo/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/3c-maximo/capsule.jpg"
@@ -660,7 +660,7 @@
     "cupSize": "espresso",
     "cupVolumeMl": 40,
     "flavorNotes": "Encorpado e intenso",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/compativeis/espresso-intenso/",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/3c-espresso-intenso/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/3c-espresso-intenso/capsule.jpg"
@@ -681,7 +681,7 @@
     "cupSize": "espresso",
     "cupVolumeMl": 40,
     "flavorNotes": "Chocolate amargo e acidez média",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/compativeis/espresso-cerrado-mineiro/",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/3c-cerrado-mineiro/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/3c-cerrado-mineiro/capsule.jpg"
@@ -702,7 +702,7 @@
     "cupSize": "espresso",
     "cupVolumeMl": 40,
     "flavorNotes": "Corpo aveludado e floral",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/compativeis/espresso-mogiana-paulista/",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/3c-mogiana-paulista/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/3c-mogiana-paulista/capsule.jpg"
@@ -723,7 +723,7 @@
     "cupSize": "espresso",
     "cupVolumeMl": 40,
     "flavorNotes": "Chocolate adocicado e acidez delicada",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/compativeis/capsula-de-espresso-regioes-do-mundo-colombia/",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/3c-regioes-colombia/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/3c-regioes-colombia/capsule.jpg"
@@ -744,7 +744,7 @@
     "cupSize": "espresso",
     "cupVolumeMl": 40,
     "flavorNotes": "Caramelo, cacau e especiarias",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/compativeis/capsula-de-espresso-regioes-do-mundo-peru/",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/3c-regioes-peru/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/3c-regioes-peru/capsule.jpg"
@@ -765,7 +765,7 @@
     "cupSize": "espresso",
     "cupVolumeMl": 40,
     "flavorNotes": "Suave e equilibrado",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/compativeis/espresso-organico/",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/3c-organico/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/3c-organico/capsule.jpg"
@@ -785,7 +785,7 @@
     "cupSize": "espresso",
     "cupVolumeMl": 40,
     "flavorNotes": "Sabor de café, mínimo de cafeína",
-    "catalogUrl": "https://www.nespresso.com/br/pt/order/capsules/original",
+    "catalogUrl": "https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/compativeis/espresso-descafeinado/",
     "images": {
       "box": "/img/personal/coffee/catalog/nespresso/3c-descafeinado/box.jpg",
       "capsule": "/img/personal/coffee/catalog/nespresso/3c-descafeinado/capsule.jpg"

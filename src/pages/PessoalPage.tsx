@@ -3,7 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PageHeader } from '../components/PageHeader';
 import { PersonalAppShell } from '../components/personal/PersonalAppShell';
 import { PersonalAppIcon } from '../components/personal/PersonalAppIcon';
-import { PersonalAreaHome } from '../components/personal/PersonalAreaHome';import { PersonalFinancePanel } from '../components/personal/PersonalFinancePanel';
+import { PersonalAreaHome } from '../components/personal/PersonalAreaHome';
+import { PersonalFinancePanel } from '../components/personal/PersonalFinancePanel';
 import { ViniciusDrinksCarta } from '../components/personal/ViniciusDrinksCarta';
 import { ViniciusPcGuide } from '../components/personal/ViniciusPcGuide';
 import { ViniciusAdega } from '../components/personal/ViniciusAdega';
@@ -11,6 +12,7 @@ import { ViniciusCoffee } from '../components/personal/ViniciusCoffee';
 import { useAuth } from '../contexts/AuthContext';
 import { resolveFinanceMonthKey } from '../lib/personalFinanceMonth';
 import { isViniciusOnly } from '../lib/viniciusPersonalFinance';
+import { PERSONAL_APP_ICON_PATHS } from '../lib/personalAppIconOptions';
 import styles from './PessoalPage.module.css';
 import '../styles/personalAppMobile.css';
 export function PessoalPage() {
@@ -82,6 +84,50 @@ export function PessoalPage() {
     ? 'Voltar à carta de drinks'
     : 'Voltar aos aplicativos';
 
+  const adegaBackToListRef = useRef<() => void>(() => {});
+  const [adegaInDetail, setAdegaInDetail] = useState(false);
+
+  const adegaShellBack = () => {
+    if (adegaInDetail) {
+      adegaBackToListRef.current();
+      return;
+    }
+    backHome();
+  };
+
+  const adegaBackLabel = adegaInDetail ? 'Minha Adega' : 'Aplicativos';
+  const adegaBackIcon = adegaInDetail ? (
+    <PersonalAppIcon
+      icon={{ type: 'image', src: PERSONAL_APP_ICON_PATHS.adega }}
+      label="Minha Adega"
+    />
+  ) : (
+    <PersonalAppIcon icon={{ type: 'material', name: 'apps', tone: 'cyan' }} label="Aplicativos" />
+  );
+  const adegaBackAria = adegaInDetail ? 'Voltar à adega' : 'Voltar aos aplicativos';
+
+  const coffeeBackToListRef = useRef<() => void>(() => {});
+  const [coffeeInDetail, setCoffeeInDetail] = useState(false);
+
+  const coffeeShellBack = () => {
+    if (coffeeInDetail) {
+      coffeeBackToListRef.current();
+      return;
+    }
+    backHome();
+  };
+
+  const coffeeBackLabel = coffeeInDetail ? 'Café' : 'Aplicativos';
+  const coffeeBackIcon = coffeeInDetail ? (
+    <PersonalAppIcon
+      icon={{ type: 'image', src: PERSONAL_APP_ICON_PATHS.coffee }}
+      label="Café"
+    />
+  ) : (
+    <PersonalAppIcon icon={{ type: 'material', name: 'apps', tone: 'cyan' }} label="Aplicativos" />
+  );
+  const coffeeBackAria = coffeeInDetail ? 'Voltar ao café' : 'Voltar aos aplicativos';
+
   if (drinks && viniciusOnly) {
     return (
       <div className={`${styles.page} ${styles.personalAppPage}`}>
@@ -125,11 +171,21 @@ export function PessoalPage() {
       <div className={`${styles.page} ${styles.personalAppPage}`}>
         <PersonalAppShell
           title="Café"
+          mobileTitle="Meu Café"
           subtitle={`${firstName} · cápsulas`}
-          onBack={backHome}
+          onBack={coffeeShellBack}
+          backLabel={coffeeBackLabel}
+          backIcon={coffeeBackIcon}
+          backAriaLabel={coffeeBackAria}
           variant="coffee"
         >
-          <ViniciusCoffee onBack={backHome} />
+          <ViniciusCoffee
+            onBackToApps={backHome}
+            onDetailChange={setCoffeeInDetail}
+            onRegisterBackToList={(fn) => {
+              coffeeBackToListRef.current = fn;
+            }}
+          />
         </PersonalAppShell>
       </div>
     );
@@ -142,10 +198,19 @@ export function PessoalPage() {
           title="Minha adega"
           mobileTitle="Minha Adega"
           subtitle={`${firstName} · coleção`}
-          onBack={backHome}
+          onBack={adegaShellBack}
+          backLabel={adegaBackLabel}
+          backIcon={adegaBackIcon}
+          backAriaLabel={adegaBackAria}
           variant="adega"
         >
-          <ViniciusAdega />
+          <ViniciusAdega
+            onBackToApps={backHome}
+            onDetailChange={setAdegaInDetail}
+            onRegisterBackToList={(fn) => {
+              adegaBackToListRef.current = fn;
+            }}
+          />
         </PersonalAppShell>
       </div>
     );

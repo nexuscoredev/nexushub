@@ -40,14 +40,30 @@ const TRES_PRODUCTS = [
   { slug: 'espresso-gourmet-mogiana-paulista', name: 'Espresso Gourmet Mogiana Paulista', intensity: 6, cupSize: 'espresso', cupVolumeMl: 50, catalogUrl: 'https://www.mercafe.com.br/capsula-de-cafe-espresso-gourmet-mogiana-paulista-tres-3-coracoes/p' },
   { slug: 'espresso-descafeinado', name: 'Espresso Descafeinado', intensity: 4, cupSize: 'espresso', cupVolumeMl: 50, catalogUrl: 'https://www.mercafe.com.br/capsula-cafe-espresso-descafeinado-tres/p' },
   { slug: 'espresso-rituais-chocolate', name: 'Espresso Rituais Chocolate', intensity: 4, cupSize: 'espresso', cupVolumeMl: 50, catalogUrl: 'https://www.mercafe.com.br/capsula-de-cafe-espresso-rituais-chocolate-tres-3-coracoes/p' },
-  { slug: 'espresso-rituais-mogiana-paulista', name: 'Espresso Rituais Mogiana Paulista', intensity: 6, cupSize: 'espresso', cupVolumeMl: 50, catalogUrl: 'https://www.mercafe.com.br/capsula-de-cafe-espresso-rituais-mogiana-paulista-tres-3-coracoes/p' },
+  {
+    slug: 'espresso-rituais-mogiana-paulista',
+    name: 'Espresso Rituais Mogiana Paulista',
+    intensity: 6,
+    cupSize: 'espresso',
+    cupVolumeMl: 50,
+    flavorNotes: 'Descontinuado no Mercafé',
+    catalogUrl: 'https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/',
+  },
   { slug: 'espresso-rituais-exotico', name: 'Espresso Rituais Exótico', intensity: 6, cupSize: 'espresso', cupVolumeMl: 50, catalogUrl: 'https://www.mercafe.com.br/capsula-de-cafe-espresso-rituais-exotico-tres-3-coracoes/p' },
   { slug: 'espresso-portinari-peneirando', name: 'Espresso Portinari Peneirando Café', intensity: 5, cupSize: 'espresso', cupVolumeMl: 50, catalogUrl: 'https://www.mercafe.com.br/capsula-cafe-espresso-portinari-peneirando-cafe-tres-3-coracoes/p' },
   { slug: 'espresso-portinari-meninos-soltando-pipa', name: 'Espresso Portinari Meninos Soltando Pipa', intensity: 6, cupSize: 'espresso', cupVolumeMl: 50, catalogUrl: 'https://www.mercafe.com.br/capsula-cafe-espresso-portinari-meninos-soltando-pipa-tres-3-coracoes/p' },
   { slug: 'espresso-regioes-colombia', name: 'Espresso Regiões do Mundo Colômbia', intensity: 7, cupSize: 'espresso', cupVolumeMl: 50, catalogUrl: 'https://www.mercafe.com.br/capsula-cafe-espresso-regioes-do-mundo-colombia-tres/p' },
   { slug: 'espresso-regioes-congo', name: 'Espresso Regiões do Mundo Congo', intensity: 5, cupSize: 'espresso', cupVolumeMl: 50, catalogUrl: 'https://www.mercafe.com.br/capsula-cafe-espresso-regioes-do-mundo-congo-tres/p' },
   { slug: 'espresso-regioes-india', name: 'Espresso Regiões do Mundo Índia', intensity: 6, cupSize: 'espresso', cupVolumeMl: 50, catalogUrl: 'https://www.mercafe.com.br/capsula-cafe-espresso-regioes-do-mundo-india-tres/p' },
-  { slug: 'espresso-regioes-mexico', name: 'Espresso Regiões do Mundo México', intensity: 6, cupSize: 'espresso', cupVolumeMl: 50, catalogUrl: 'https://www.mercafe.com.br/capsula-cafe-espresso-regioes-do-mundo-mexico-tres/p' },
+  {
+    slug: 'espresso-regioes-mexico',
+    name: 'Espresso Regiões do Mundo México',
+    intensity: 6,
+    cupSize: 'espresso',
+    cupVolumeMl: 50,
+    flavorNotes: 'Descontinuado no Mercafé',
+    catalogUrl: 'https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/',
+  },
   { slug: 'iced-coffee-rituais', name: 'Iced Coffee Rituais', cupSize: 'regular', cupVolumeMl: 100, catalogUrl: 'https://www.mercafe.com.br/capsula-iced-coffee-rituais-3-coracoes/p' },
   { slug: 'cafe-filtrado', name: 'Café Filtrado', cupSize: 'regular', cupVolumeMl: 100, flavorNotes: 'Café filtrado na Solução TRES', catalogUrl: 'https://www.mercafe.com.br/capsula-cafe-filtrado-3-coracoes-tres/p', cafe3cUrl: 'https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/cafe-filtrado/' },
   { slug: 'cafe-filtrado-gourmet', name: 'Café Filtrado Gourmet', intensity: 3, cupSize: 'regular', cupVolumeMl: 100, catalogUrl: 'https://www.mercafe.com.br/capsula-cafe-filtrado-gourmet-tres/p' },
@@ -69,7 +85,37 @@ const TRES_PRODUCTS = [
   { slug: 'cha-capim-cidreira', name: 'Chá de Capim Cidreira', cupSize: 'regular', cupVolumeMl: 100, catalogUrl: 'https://www.mercafe.com.br/capsula-cha-capim-cidreira-tres/p' },
   { slug: 'cha-maca-verde-cranberry', name: 'Chá de Maçã Verde com Cranberry', cupSize: 'regular', cupVolumeMl: 100, catalogUrl: 'https://www.mercafe.com.br/capsula-cha-maca-verde-com-cranberry-tres/p' },
   { slug: 'cha-laranja-mediterranea-hibisco', name: 'Chá de Laranja Mediterrânea com Hibisco', cupSize: 'regular', cupVolumeMl: 100, catalogUrl: 'https://www.mercafe.com.br/capsula-cha-laranja-mediterranea-com-hibisco-tres-3cha/p' },
+  { slug: 'cappuccino-pacoca', name: 'Cappuccino Paçoca', cupSize: 'regular', cupVolumeMl: 80, flavorNotes: 'Cremoso com sabor de paçoca', catalogUrl: 'https://www.mercafe.com.br/capsula-de-cappuccino-pacoca-tres-3-coracoes/p' },
+  { slug: 'cappuccino-napolitano', name: 'Cappuccino Napolitano', cupSize: 'regular', cupVolumeMl: 80, flavorNotes: 'Chocolate, morango e baunilha', catalogUrl: 'https://www.mercafe.com.br/capsula-de-cappuccino-napolitano-tres-3-coracoes/p' },
+  { slug: 'espresso-robusta-amazonico', name: 'Espresso Robusta Amazônico', intensity: 9, cupSize: 'espresso', cupVolumeMl: 50, flavorNotes: '100% robusta da Amazônia', catalogUrl: 'https://www.mercafe.com.br/capsula-cafe-espresso-robusta-amazonico-tres/p' },
+  { slug: 'espresso-gourmet-organico', name: 'Espresso Gourmet Orgânico', intensity: 5, cupSize: 'espresso', cupVolumeMl: 50, flavorNotes: 'Café orgânico gourmet', catalogUrl: 'https://www.mercafe.com.br/capsula-de-cafe-espresso-gourmet-organico-tres-3-coracoes/p' },
+  { slug: 'espresso-regioes-honduras', name: 'Espresso Regiões do Mundo Honduras', intensity: 6, cupSize: 'espresso', cupVolumeMl: 50, catalogUrl: 'https://www.mercafe.com.br/capsula-cafe-espresso-regioes-do-mundo-honduras-tres/p' },
+  { slug: 'espresso-star-wars-darth-vader', name: 'Espresso Star Wars Darth Vader', intensity: 10, cupSize: 'espresso', cupVolumeMl: 50, flavorNotes: 'Blend intenso edição Star Wars', catalogUrl: 'https://www.mercafe.com.br/capsula-cafe-espresso-star-wars-darth-vader-tres/p' },
+  { slug: 'cha-noites-tranquilas', name: 'Chá Noites Tranquilas', cupSize: 'regular', cupVolumeMl: 100, flavorNotes: 'Camomila e ervas para relaxar', catalogUrl: 'https://www.mercafe.com.br/capsula-de-cha-noites-tranquilas-tres-3cha/p' },
+  {
+    slug: 'espresso-reserva-santa-clara-chapada',
+    name: 'Espresso Reserva da Família Chapada Diamantina',
+    intensity: 4,
+    cupSize: 'espresso',
+    cupVolumeMl: 50,
+    flavorNotes: 'Santa Clara — Chapada Diamantina',
+    catalogUrl: 'https://www.mercafe.com.br/capsula-cafe-espresso-santa-clara-reserva-da-familia-chapada-diamantina/p',
+  },
 ];
+
+/** Produtos descontinuados no Mercafé — imagens fixas VTEX. */
+const MERCAFE_OVERRIDES = {
+  'espresso-regioes-mexico': {
+    box: 'https://mercafefaststore.vtexassets.com/arquivos/ids/553471/MEXICO.png',
+    capsule: 'https://mercafefaststore.vtexassets.com/arquivos/ids/553472/CAPSULA-MEXICO.png',
+    catalogUrl: 'https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/',
+  },
+  'espresso-rituais-mogiana-paulista': {
+    box: 'https://mercafefaststore.vtexassets.com/arquivos/ids/556793/RITUAIS_CARTUCHO_MOGIANA.png.png',
+    capsule: 'https://mercafefaststore.vtexassets.com/arquivos/ids/556794/RITUAIS_CAPSULA_MOGIANA.png.png',
+    catalogUrl: 'https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/',
+  },
+};
 
 const CAFE3C_OVERRIDES = {
   'cafe-filtrado': {
@@ -122,6 +168,15 @@ function extractCafe3cImages(html) {
 }
 
 async function fetchProductImages(product) {
+  const mercafeStatic = MERCAFE_OVERRIDES[product.slug];
+  if (mercafeStatic) {
+    return {
+      box: mercafeStatic.box,
+      capsule: mercafeStatic.capsule,
+      catalogUrl: mercafeStatic.catalogUrl ?? product.catalogUrl,
+    };
+  }
+
   const override = CAFE3C_OVERRIDES[product.slug];
   if (override) return { ...override, catalogUrl: product.cafe3cUrl ?? product.catalogUrl };
 

@@ -57,8 +57,8 @@ export function CoffeeCategoryFilterIcon({ id, active = false }: CoffeeCategoryF
       src={SYSTEM_ICON_BY_ID[id]}
       alt=""
       className={adegaStyles.filterBtnBrandIcon}
-      width={24}
-      height={24}
+      width={26}
+      height={26}
       loading="lazy"
       decoding="async"
     />

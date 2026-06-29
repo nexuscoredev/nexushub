@@ -5,7 +5,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { MERCAFE_COMPOSITE_CAPSULES, normalizeCoffeeCapsuleImage } from './coffee-capsule-image.mjs';
+import { normalizeCoffeeCapsuleImage } from './coffee-capsule-image.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -229,9 +229,7 @@ async function main() {
         writeFileSync(join(outDir, 'box.jpg'), boxPick.buf);
         writeFileSync(join(outDir, 'capsule.jpg'), cap.buf);
         const catalogKey = `${system}/${entry.slug}`;
-        if (MERCAFE_COMPOSITE_CAPSULES.has(catalogKey)) {
-          await normalizeCoffeeCapsuleImage(join(outDir, 'capsule.jpg'), catalogKey);
-        }
+        await normalizeCoffeeCapsuleImage(join(outDir, 'capsule.jpg'), catalogKey);
         entry.images = {
           box: `/img/personal/coffee/catalog/${system}/${entry.slug}/box.jpg`,
           capsule: `/img/personal/coffee/catalog/${system}/${entry.slug}/capsule.jpg`,

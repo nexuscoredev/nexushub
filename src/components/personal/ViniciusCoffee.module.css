@@ -575,21 +575,21 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.35rem;
-  min-width: 2.35rem;
-  height: 2.35rem;
-  padding: 0.35rem;
+  width: 2.585rem;
+  min-width: 2.585rem;
+  height: 2.585rem;
+  padding: 0.385rem;
 }
 
 .filterChipBrandIcon {
-  width: 1.4rem;
-  height: 1.4rem;
+  width: 1.54rem;
+  height: 1.54rem;
   object-fit: contain;
   border-radius: 0.15rem;
 }
 
 .filterChipMaterialIcon {
-  font-size: 1.25rem;
+  font-size: 1.375rem;
   line-height: 1;
 }
 
@@ -945,6 +945,10 @@
 }
 
 /* —— Página de detalhe do produto —— */
+
+.detailToolbar {
+  padding: 0.55rem 0.65rem 0;
+}
 
 .productPage {
   display: flex;

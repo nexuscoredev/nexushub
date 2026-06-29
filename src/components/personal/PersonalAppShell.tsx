@@ -48,22 +48,20 @@ export function PersonalAppShell({
         </button>
       </div>
 
-      {variant !== 'coffee' ? (
-        <header className={styles.mobileChrome}>
-          <button
-            type="button"
-            className={styles.mobileBackBtn}
-            onClick={onBack}
-            aria-label={ariaLabel}
-          >
-            ←
-          </button>
-          <div className={styles.mobileChromeTitles}>
-            <h1 className={styles.mobileChromeTitle}>{shellTitle}</h1>
-            <p className={styles.mobileChromeSubtitle}>{subtitle}</p>
-          </div>
-        </header>
-      ) : null}
+      <header className={styles.mobileChrome}>
+        <button
+          type="button"
+          className={styles.mobileBackBtn}
+          onClick={onBack}
+          aria-label={ariaLabel}
+        >
+          ←
+        </button>
+        <div className={styles.mobileChromeTitles}>
+          <h1 className={styles.mobileChromeTitle}>{shellTitle}</h1>
+          <p className={styles.mobileChromeSubtitle}>{subtitle}</p>
+        </div>
+      </header>
 
       <div className={styles.appBody}>{children}</div>
     </div>

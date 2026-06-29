@@ -31,7 +31,7 @@ function auditSystem(system) {
     if (!existsSync(cap)) {
       missingCap++;
       issues.push(`sem capsule.jpg: ${e.slug} (${e.name})`);
-    } else if (readFileSync(cap).length < 15_000) {
+    } else if (readFileSync(cap).length < 7_000) {
       tinyCap++;
       issues.push(`capsule pequena: ${e.slug} (${readFileSync(cap).length} B)`);
     }

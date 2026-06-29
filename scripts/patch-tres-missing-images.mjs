@@ -17,7 +17,47 @@ const UA =
 
 const IMG_RE = /https:\/\/mercafefaststore\.vtexassets\.com\/arquivos\/ids\/\d+\/[^"'\s]+\.(?:png|jpe?g|webp)(?:\?[^"'\s]*)?/gi;
 
-const PATCHES = [
+/** URLs confirmadas (VTEX / CDN Mercafé). */
+const MANUAL_PATCHES = [
+  {
+    slug: 'cappuccino-doce-de-leite-havanna',
+    catalogUrl: 'https://www.mercafe.com.br/capsula-cappuccino-doce-de-leite-havanna-tres/p',
+    box: 'https://mercafefaststore.vtexassets.com/arquivos/ids/552545/CAPPUCCINO-HAVANNA.png',
+    capsule: 'https://mercafefaststore.vtexassets.com/arquivos/ids/553710/CAPSULA-CAPPUCCINO-HAVANNA.png',
+  },
+  {
+    slug: 'cha-maca-verde-cranberry',
+    catalogUrl: 'https://www.mercafe.com.br/capsula-cha-maca-verde-com-cranberry-tres-3cha/p',
+    box: 'https://mercafefaststore.vtexassets.com/arquivos/ids/537149/CHA_Maca_1000x1000_2.png',
+    capsule: 'https://mercafefaststore.vtexassets.com/arquivos/ids/553700/Cha-de-Maca-Verde-com-Cranberry_.png',
+  },
+  {
+    slug: 'espresso-regioes-congo',
+    catalogUrl: 'https://www.mercafe.com.br/capsula-cafe-espresso-regioes-do-mundo-congo-tres/p',
+    box: 'https://mercafefaststore.vtexassets.com/arquivos/ids/553465/CONGO.png',
+    capsule: 'https://mercafefaststore.vtexassets.com/arquivos/ids/553466/CAPSULA-CONGO.png',
+  },
+  {
+    slug: 'espresso-regioes-india',
+    catalogUrl: 'https://www.mercafe.com.br/capsula-cafe-espresso-regioes-do-mundo-india-tres/p',
+    box: 'https://mercafefaststore.vtexassets.com/arquivos/ids/553467/INDIA.png',
+    capsule: 'https://mercafefaststore.vtexassets.com/arquivos/ids/553474/CAPSULA-INDIA.png',
+  },
+  {
+    slug: 'espresso-regioes-mexico',
+    catalogUrl: 'https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/',
+    box: 'https://mercafefaststore.vtexassets.com/arquivos/ids/553471/MEXICO.png',
+    capsule: 'https://mercafefaststore.vtexassets.com/arquivos/ids/553472/CAPSULA-MEXICO.png',
+  },
+  {
+    slug: 'espresso-rituais-mogiana-paulista',
+    catalogUrl: 'https://www.cafe3coracoes.com.br/nossos-produtos/capsulas/tres/',
+    box: 'https://mercafefaststore.vtexassets.com/arquivos/ids/556793/RITUAIS_CARTUCHO_MOGIANA.png.png',
+    capsule: 'https://mercafefaststore.vtexassets.com/arquivos/ids/556794/RITUAIS_CAPSULA_MOGIANA.png.png',
+  },
+];
+
+const SCRAPE_PATCHES = [
   {
     slug: 'cha-verde-limao-gengibre',
     catalogUrl: 'https://www.mercafe.com.br/capsula-cha-verde-limao-e-gengibre-tres/p',
@@ -56,14 +96,19 @@ async function download(url, dest) {
 const catalog = JSON.parse(readFileSync(CATALOG_FILE, 'utf8'));
 const manifest = JSON.parse(readFileSync(MANIFEST_FILE, 'utf8'));
 
-for (const patch of PATCHES) {
+for (const patch of [...MANUAL_PATCHES, ...SCRAPE_PATCHES]) {
   process.stdout.write(`${patch.slug}… `);
-  const r = await fetch(patch.catalogUrl, { headers: { 'User-Agent': UA } });
-  if (!r.ok) {
-    console.log(`✗ HTTP ${r.status}`);
-    continue;
+
+  let remote = { box: patch.box ?? null, capsule: patch.capsule ?? null };
+  if (!remote.box || !remote.capsule) {
+    const r = await fetch(patch.catalogUrl, { headers: { 'User-Agent': UA } });
+    if (!r.ok) {
+      console.log(`✗ HTTP ${r.status}`);
+      continue;
+    }
+    remote = extractImages(await r.text(), patch);
   }
-  const remote = extractImages(await r.text(), patch);
+
   if (!remote.box || !remote.capsule) {
     console.log('✗ incompleto', remote);
     continue;
@@ -77,6 +122,10 @@ for (const patch of PATCHES) {
   const entry = catalog.find((e) => e.slug === patch.slug);
   if (entry) {
     entry.catalogUrl = patch.catalogUrl;
+    entry.images = {
+      box: `/img/personal/coffee/catalog/tres-coracoes/${patch.slug}/box.jpg`,
+      capsule: `/img/personal/coffee/catalog/tres-coracoes/${patch.slug}/capsule.jpg`,
+    };
     entry.imagesPending = false;
   }
 

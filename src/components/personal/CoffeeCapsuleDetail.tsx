@@ -12,10 +12,12 @@ import {
   type CoffeeStockItem,
 } from '../../lib/viniciusCoffeeStock';
 import styles from './ViniciusCoffee.module.css';
+import { PersonalAppBackLink } from './PersonalAppBackLink';
 
 type CoffeeCapsuleDetailProps = {
   item: CoffeeStockItem;
   onBack: () => void;
+  onBackToApps?: () => void;
   onEdit: () => void;
   onToggleQuantity: () => void;
   onToggleFavorite: () => void;
@@ -24,6 +26,7 @@ type CoffeeCapsuleDetailProps = {
 export function CoffeeCapsuleDetail({
   item,
   onBack,
+  onBackToApps,
   onEdit,
   onToggleQuantity,
   onToggleFavorite,
@@ -39,6 +42,11 @@ export function CoffeeCapsuleDetail({
 
   return (
     <div className={styles.productPage}>
+      {onBackToApps ? (
+        <div className={styles.detailToolbar}>
+          <PersonalAppBackLink onClick={onBackToApps} ariaLabel="Voltar aos aplicativos" />
+        </div>
+      ) : null}
       <header className={styles.productTopBar}>
         <button type="button" className={styles.headerBtn} onClick={onBack} aria-label="Voltar">
           ←

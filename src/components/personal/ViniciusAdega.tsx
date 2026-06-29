@@ -19,6 +19,7 @@ import { AdegaBeverageMediaPanel } from './AdegaBeverageMediaPanel';
 import { AdegaIngredientMediaPanel, type IngredientMediaMode } from './AdegaIngredientMediaPanel';
 import { AdegaItemCards } from './AdegaItemCards';
 import { AdegaViewMenu } from './AdegaViewMenu';
+import { PersonalAppBackLink } from './PersonalAppBackLink';
 import { loadAdegaViewMode, saveAdegaViewMode, type AdegaViewMode } from '../../lib/adegaView';
 import {
   ADEGA_CATEGORY_PRESETS,
@@ -189,7 +190,17 @@ function imageUrlFieldValue(imageUrl: string): string {
   return imageUrl;
 }
 
-export function ViniciusAdega() {
+type ViniciusAdegaProps = {
+  onBackToApps?: () => void;
+  onDetailChange?: (inDetail: boolean) => void;
+  onRegisterBackToList?: (backToList: () => void) => void;
+};
+
+export function ViniciusAdega({
+  onBackToApps,
+  onDetailChange,
+  onRegisterBackToList,
+}: ViniciusAdegaProps = {}) {
   const { user } = useAuth();
   const userId = user?.id;
   const navigate = useNavigate();
@@ -496,6 +507,16 @@ export function ViniciusAdega() {
     };
   }, [viewingItem]);
 
+  const backToApps = onBackToApps ?? (() => navigate('/pessoal'));
+
+  useEffect(() => {
+    onDetailChange?.(Boolean(viewingItem));
+  }, [viewingItem, onDetailChange]);
+
+  useEffect(() => {
+    onRegisterBackToList?.(() => setViewingItem(null));
+  }, [onRegisterBackToList]);
+
   return (
     <div className={`${styles.adega} nexus-personal-app-root nexus-adega-root ${editing ? styles.adegaEditing : ''}`}>
       <div className={`${styles.adegaToolbar} nexus-personal-toolbar`}>
@@ -693,6 +714,11 @@ export function ViniciusAdega() {
             aria-labelledby="adega-view-title"
             onClick={(e) => e.stopPropagation()}
           >
+            {onBackToApps ? (
+              <div className={styles.viewToolbar}>
+                <PersonalAppBackLink onClick={backToApps} ariaLabel="Voltar aos aplicativos" />
+              </div>
+            ) : null}
             <button
               type="button"
               className={styles.viewCloseFloating}
