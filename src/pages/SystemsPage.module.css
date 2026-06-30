@@ -1,3 +1,322 @@
+@keyframes demoHubPulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes demoCardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.demoHub {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.demoHubBanner {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  padding: 1.15rem 1.25rem;
+  border-radius: var(--radius);
+  border: 1px solid rgba(30, 73, 214, 0.28);
+  background:
+    linear-gradient(135deg, rgba(30, 73, 214, 0.12), rgba(0, 16, 75, 0.2)),
+    var(--surface);
+  overflow: hidden;
+}
+
+.demoHubPulse {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+  animation: demoHubPulse 2.4s ease-in-out infinite;
+}
+
+.demoHubCopy {
+  flex: 1;
+  min-width: min(100%, 28rem);
+  padding-left: 1.1rem;
+}
+
+.demoHubEyebrow {
+  margin: 0 0 0.25rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #93c5fd;
+}
+
+.demoHubTitle {
+  margin: 0 0 0.4rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.demoHubLead {
+  margin: 0;
+  max-width: 58ch;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.demoHubTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.demoHubTags li {
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.22);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.demoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.demoCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  min-height: 18rem;
+  padding: 1.25rem 1.3rem;
+  border-radius: var(--radius);
+  border: 1px solid color-mix(in srgb, var(--demo-accent) 28%, var(--border));
+  background:
+    linear-gradient(160deg, var(--demo-accent-soft), rgba(0, 0, 0, 0.28)),
+    var(--surface);
+  overflow: hidden;
+  animation: demoCardEnter 0.45s ease both;
+  animation-delay: calc(var(--stagger, 0) * 0.08s);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.demoCard:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--demo-accent) 45%, transparent);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+}
+
+.demoCardGlow {
+  position: absolute;
+  top: -30%;
+  right: -15%;
+  width: 10rem;
+  height: 10rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--demo-accent-soft), transparent 70%);
+  pointer-events: none;
+}
+
+.demoCardTop {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.demoCardBadges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+}
+
+.templateVertical {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.28);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #e2e8f0;
+}
+
+.demoCardIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 12px;
+  background: var(--demo-accent-soft);
+  color: var(--demo-accent);
+  border: 1px solid color-mix(in srgb, var(--demo-accent) 35%, transparent);
+}
+
+.demoCardIcon .material-symbols-outlined {
+  font-size: 1.35rem;
+}
+
+.demoCardTitle {
+  position: relative;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.demoCardDesc {
+  position: relative;
+  margin: 0;
+  flex: 1;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.demoModules {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.demoModules li {
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.22);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.demoCardFooter {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  margin-top: auto;
+  padding-top: 0.35rem;
+}
+
+.demoCardNote {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.demoBtn {
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.demoGuide {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 1rem;
+  padding: 1.1rem 1.25rem;
+  border-radius: var(--radius);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.18);
+  animation: demoCardEnter 0.5s ease 0.15s both;
+}
+
+.demoGuideIcon {
+  grid-row: span 2;
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 10px;
+  background: rgba(30, 73, 214, 0.14);
+  color: #93c5fd;
+}
+
+.demoGuideIcon .material-symbols-outlined {
+  font-size: 1.2rem;
+  margin-top: 0.35rem;
+}
+
+.demoGuideTitle {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  align-self: end;
+}
+
+.demoGuideList {
+  grid-column: 2;
+  margin: 0;
+  padding: 0 0 0 1rem;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.demoGuideList li + li {
+  margin-top: 0.25rem;
+}
+
+.demoGuideFoot {
+  grid-column: 1 / -1;
+  margin: 0.35rem 0 0;
+  padding-top: 0.65rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.templateCategory {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--demo-accent) 40%, transparent);
+  background: color-mix(in srgb, var(--demo-accent) 12%, transparent);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--demo-accent) 75%, #fff);
+}
+
 .docSection {
   margin-top: 2.5rem;
 }
@@ -36,9 +355,52 @@
   gap: 0.45rem;
 }
 
+@media (max-width: 768px) {
+  .demoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .demoHubBanner {
+    flex-direction: column;
+  }
+
+  .demoGuide {
+    grid-template-columns: 1fr;
+  }
+
+  .demoGuideIcon {
+    grid-row: auto;
+  }
+
+  .demoGuideTitle,
+  .demoGuideList {
+    grid-column: 1;
+  }
+}
+
 @media (max-width: 599px) {
   .docCard {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .demoCardFooter {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .demoBtn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demoHubPulse,
+  .demoCard {
+    animation: none !important;
+  }
+
+  .demoCard {
+    transition: none !important;
   }
 }

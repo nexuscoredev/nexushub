@@ -25,6 +25,7 @@ import { JarvisChatsPage } from './pages/JarvisChatsPage';
 import { PessoalPage } from './pages/PessoalPage';
 import { VaultPage } from './pages/VaultPage';
 import { DesenvolvimentoPage } from './pages/DesenvolvimentoPage';
+import { SistemaDemoPage } from './pages/SistemaDemoPage';
 import { VaultProvider } from './contexts/VaultContext';
 
 export default function App() {
@@ -47,6 +48,7 @@ export default function App() {
             </Route>
           </Route>
           <Route element={<ProtectedRoute />}>
+            <Route path="/sistemas/demo/:demoId" element={<SistemaDemoPage />} />
             <Route element={<DashboardLayout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/chat" element={<ChatPage />} />
