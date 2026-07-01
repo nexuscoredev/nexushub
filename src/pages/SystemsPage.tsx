@@ -1,5 +1,5 @@
 import { useEffect, useState, type CSSProperties } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { HubSystemHealthPanel } from '../components/HubSystemHealthPanel';
 import { PageHeader } from '../components/PageHeader';
 import { SystemDetailsModal } from '../components/SystemDetailsModal';
@@ -9,11 +9,13 @@ import { SISTEMAS_DEMOS } from '../data/sistemasTemplates';
 import { LIGEIRINHO_CONTRATO, LIGEIRINHO_CONTRATO_HUB_PATH } from '../lib/ligeirinhoDocumentacao';
 import { supabase, supabaseErrorMessage } from '../lib/supabase';
 import type { HubSystem } from '../types/database';
+import { requestDemoFullscreen } from '../lib/demoFullscreen';
 import styles from './SystemsPage.module.css';
 
 type SystemsTab = 'sistemas' | 'templates';
 
 export function SystemsPage() {
+  const navigate = useNavigate();
   const { podeDocumentacao } = useAuth();
   const [tab, setTab] = useState<SystemsTab>('sistemas');
   const [systems, setSystems] = useState<HubSystem[]>([]);
@@ -37,6 +39,11 @@ export function SystemsPage() {
         setLoading(false);
       });
   }, []);
+
+  const openDemo = (demoId: string) => {
+    void requestDemoFullscreen(document.documentElement);
+    navigate(`/sistemas/demo/${demoId}`);
+  };
 
   return (
     <div>
@@ -115,9 +122,13 @@ export function SystemsPage() {
                 </ul>
                 <div className={styles.demoCardFooter}>
                   <span className={styles.demoCardNote}>Fictício · não publicar</span>
-                  <Link to={`/sistemas/demo/${demo.demoId}`} className={`btn-primary ${styles.demoBtn}`}>
+                  <button
+                    type="button"
+                    className={`btn-primary ${styles.demoBtn}`}
+                    onClick={() => openDemo(demo.demoId)}
+                  >
                     Abrir demonstração
-                  </Link>
+                  </button>
                 </div>
               </article>
             ))}

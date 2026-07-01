@@ -13,6 +13,7 @@ import { HubNavMoreMenu } from '../components/nav/HubNavMoreMenu';
 import { HubNovidadesModal } from '../components/HubNovidadesModal';
 import { InstallAppPrompt } from '../components/InstallAppPrompt';
 import { hasUnseenNovidades } from '../data/hubNovidades';
+import { NEXUS_LOGO_URL } from '../lib/nexusBrand';
 import { resolveHubNavItems } from '../lib/hubNav';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './DashboardLayout.module.css';
@@ -77,7 +78,7 @@ export function DashboardLayout() {
         <header className={styles.hubNav}>
           <div className={styles.hubNavBar}>
             <NavLink to="/dashboard" className={styles.brandBlock} aria-label="NEXUS Hub — painel">
-              <img src="/img/favicon.png" alt="" className={styles.brandMark} width={28} height={28} />
+              <img src={NEXUS_LOGO_URL} alt="" className={styles.brandMark} width={28} height={28} />
               <span className={styles.brandName}>NEXUS</span>
             </NavLink>
 

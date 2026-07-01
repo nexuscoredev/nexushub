@@ -1,0 +1,17 @@
+---
+description: Logo oficial NEXUS para branding, transições e UI
+alwaysApply: true
+---
+
+# Logo NEXUS
+
+Use sempre o emblema circular metálico da NEXUS.
+
+- **Arquivo canônico:** `public/img/nexus-logo.png`
+- **Constante:** `NEXUS_LOGO_URL` em `src/lib/nexusBrand.ts`
+
+Não usar como logo da NEXUS:
+- `public/logo-nexus-mark.svg` (quadrado com letra — incorreto)
+- Qualquer ícone com "M" em quadrado arredondado
+
+Para marca no Hub, transições de demo, favicon e componentes de branding, importar `NEXUS_LOGO_URL` de `src/lib/nexusBrand.ts`.

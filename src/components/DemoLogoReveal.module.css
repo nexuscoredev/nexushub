@@ -1,0 +1,433 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #000;
+  animation: overlayIn 0.35s ease both;
+  pointer-events: auto;
+}
+
+.overlayExit {
+  animation:
+    overlayIn 0.35s ease both,
+    irisOut 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+@keyframes overlayIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes irisOut {
+  0% {
+    clip-path: circle(150% at 50% 46%);
+    opacity: 1;
+  }
+  100% {
+    clip-path: circle(0% at 50% 46%);
+    opacity: 0;
+  }
+}
+
+.void {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 55% at 50% 46%, #12151c 0%, #000 72%);
+}
+
+.rays {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ray {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140vmax;
+  height: 18vmax;
+  margin: -9vmax 0 0 -70vmax;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.02) 18%,
+    rgba(255, 255, 255, 0.14) 50%,
+    rgba(255, 255, 255, 0.02) 82%,
+    transparent 100%
+  );
+  filter: blur(18px);
+  opacity: 0;
+  transform: rotate(calc(var(--ray-i) * 30deg - 75deg));
+  animation: raySweep 2.8s ease-in-out calc(0.08s + var(--ray-i) * 0.04s) both;
+}
+
+@keyframes raySweep {
+  0% {
+    opacity: 0;
+    transform: rotate(calc(var(--ray-i) * 30deg - 75deg)) scaleX(0.35);
+  }
+  18% {
+    opacity: 0.85;
+  }
+  42% {
+    opacity: 0.55;
+    transform: rotate(calc(var(--ray-i) * 30deg - 75deg)) scaleX(1);
+  }
+  68% {
+    opacity: 0.35;
+  }
+  100% {
+    opacity: 0.12;
+    transform: rotate(calc(var(--ray-i) * 30deg - 75deg)) scaleX(1.05);
+  }
+}
+
+.shards {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.shard {
+  position: absolute;
+  width: 3.5rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, #f8fafc, #cbd5e1, transparent);
+  box-shadow:
+    0 0 24px rgba(255, 255, 255, 0.45),
+    0 0 60px rgba(255, 255, 255, 0.15);
+  opacity: 0;
+  filter: blur(0.4px);
+}
+
+.shard:first-child {
+  top: 38%;
+  right: 34%;
+  transform: rotate(38deg);
+  animation: shardIn 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+.shard:last-child {
+  bottom: 36%;
+  left: 30%;
+  transform: rotate(-12deg);
+  animation: shardIn 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both;
+}
+
+@keyframes shardIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.4) rotate(var(--shard-rot, 0deg));
+    filter: blur(8px);
+  }
+  55% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.15) rotate(var(--shard-rot, 0deg));
+    filter: blur(6px);
+  }
+}
+
+.stage {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.logoShell {
+  position: relative;
+  width: clamp(5.5rem, 18vw, 7.5rem);
+  height: clamp(5.5rem, 18vw, 7.5rem);
+  animation: logoShellIn 3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes logoShellIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.72);
+    filter: blur(12px);
+  }
+  22% {
+    opacity: 1;
+    transform: scale(0.92);
+    filter: blur(2px);
+  }
+  48% {
+    transform: scale(1);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+.logoGlow {
+  position: absolute;
+  inset: -35%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--reveal-accent, #22c55e) 35%, #ffffff) 0%,
+    color-mix(in srgb, var(--reveal-accent, #22c55e) 12%, transparent) 38%,
+    transparent 68%
+  );
+  opacity: 0;
+  animation: logoGlowPulse 2.6s ease-in-out 0.5s both;
+}
+
+@keyframes logoGlowPulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  30% {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+  55% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0.45;
+    transform: scale(1.08);
+  }
+}
+
+.logoStroke {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.strokeCircle {
+  fill: none;
+  stroke: #f8fafc;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.85))
+    drop-shadow(0 0 22px rgba(255, 255, 255, 0.35));
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: drawStroke 1.15s cubic-bezier(0.65, 0, 0.35, 1) 0.45s forwards;
+}
+
+@keyframes drawStroke {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.logoFill {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(0.88);
+  filter: blur(6px) brightness(1.4);
+  animation: logoFillReveal 1.35s cubic-bezier(0.22, 1, 0.36, 1) 1.55s forwards;
+}
+
+@keyframes logoFillReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.88);
+    filter: blur(6px) brightness(1.6);
+  }
+  45% {
+    opacity: 1;
+    transform: scale(1.03);
+    filter: blur(0) brightness(1.25);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0) brightness(1);
+  }
+}
+
+.logoMark {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 28px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 0 18px color-mix(in srgb, var(--reveal-accent, #22c55e) 40%, transparent));
+}
+
+.logoStroke {
+  animation: strokeFadeOut 0.55s ease 1.65s forwards;
+}
+
+@keyframes strokeFadeOut {
+  to {
+    opacity: 0;
+  }
+}
+
+.wordmark {
+  margin: 0;
+  font-family: var(--font-serif, Georgia, serif);
+  font-size: clamp(1.85rem, 5.5vw, 2.65rem);
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(10px);
+  background: linear-gradient(
+    118deg,
+    #ffffff 0%,
+    #c8ccd4 18%,
+    #ffffff 36%,
+    #8a8f98 52%,
+    #eef0f4 66%,
+    #ffffff 100%
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation:
+    wordmarkIn 0.85s cubic-bezier(0.22, 1, 0.36, 1) 1.85s forwards,
+    metalShine 2.4s ease-in-out 2.1s infinite;
+}
+
+@keyframes wordmarkIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes metalShine {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.subtitle {
+  margin: -0.35rem 0 0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--reveal-accent, #22c55e) 70%, #e2e8f0);
+  opacity: 0;
+  animation: subtitleIn 0.65s ease 2.05s forwards;
+}
+
+@keyframes subtitleIn {
+  to {
+    opacity: 1;
+  }
+}
+
+.demoLabel {
+  margin: 0;
+  max-width: 18rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #94a3b8;
+  opacity: 0;
+  animation: subtitleIn 0.65s ease 2.2s forwards;
+}
+
+.enterBtn {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  z-index: 3;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.35rem;
+  border: 1px solid color-mix(in srgb, var(--reveal-accent, #22c55e) 45%, rgba(255, 255, 255, 0.2));
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.88);
+  color: #f8fafc;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  animation: enterBtnIn 0.45s ease 2.35s forwards;
+  pointer-events: auto;
+}
+
+.enterBtn .material-symbols-outlined {
+  font-size: 1.15rem;
+  color: color-mix(in srgb, var(--reveal-accent, #22c55e) 80%, #fff);
+}
+
+@keyframes enterBtnIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .overlayExit,
+  .ray,
+  .shard,
+  .logoShell,
+  .logoGlow,
+  .strokeCircle,
+  .logoFill,
+  .logoStroke,
+  .wordmark,
+  .subtitle,
+  .demoLabel,
+  .enterBtn {
+    animation: none !important;
+  }
+
+  .overlayExit {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .logoFill,
+  .wordmark,
+  .subtitle,
+  .demoLabel,
+  .enterBtn {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  .logoStroke {
+    opacity: 0;
+  }
+}

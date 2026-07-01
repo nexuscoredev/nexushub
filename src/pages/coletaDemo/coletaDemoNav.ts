@@ -52,7 +52,6 @@ export const COLETA_MENU_GROUPS: ColetaMenuGroup[] = [
     items: [
       { id: 'programacao', label: 'Programações' },
       { id: 'mtr', label: 'MTR' },
-      { id: 'preview', label: 'Pesagem e Ticket' },
     ],
   },
 ];

@@ -5,7 +5,6 @@ import {
   COLETA_CLIENTES,
   COLETA_PROGRAMACAO,
   COLETA_MTRS,
-  ADEGA_PEDIDOS,
 } from './sistemaDemoCatalog';
 
 const OPERATORS = [
@@ -109,19 +108,34 @@ const FROTA_DETALHES = [
   'Pátio central',
 ];
 
-const PEDIDO_CANAIS = ['Totem', 'Delivery', 'PDV', 'App'] as const;
-const PEDIDO_STATUS = ['Na fila', 'Separando', 'Pronto', 'Entregue'] as const;
+const PEDIDO_CANAIS = ['Canal Alfa', 'Totem Demo', 'Parceiros', 'PDV'] as const;
+const PEDIDO_STATUS = ['Pendente', 'Sep. em and.', 'Aguardando pagamento', 'Concluído'] as const;
 
-const CLIENTES_BALCAO = ['Mesa 1', 'Mesa 2', 'Mesa 3', 'Mesa 4', 'Mesa 5', 'Balcão'];
+const CLIENTES_BALCAO = ['Mesa 1', 'Mesa 2', 'Mesa 3', 'Mesa 4', 'Balcão Demo'];
 const CLIENTES_NOME = [
-  'Ana M.',
-  'Carlos R.',
-  'Beatriz K.',
-  'Diego F.',
-  'Helena P.',
-  'Marcos T.',
-  'Patrícia L.',
-  'Renato S.',
+  'DISTRIBUIDORA MODELO SUL',
+  'BAR EXEMPLO CENTRO',
+  'ADEGA DEMO NORTE',
+  'MERCADO FICTÍCIO LESTE',
+  'EMPÓRIO PILOTO OESTE',
+  'CONVENIÊNCIA AMOSTRA',
+  'ATACADO TESTE LTDA',
+  'DEPÓSITO MODELO',
+];
+
+const MOTORISTAS_BEBIDAS = [
+  'JOÃO MODELO',
+  'MARIA EXEMPLO',
+  'CARLOS DEMO',
+  'FERNANDA TESTE',
+  'RICARDO AMOSTRA',
+];
+
+const ENDERECOS_DEMO = [
+  'Rua das Flores, 120 — Centro',
+  'Av. Central, 500 — Zona Norte',
+  'Alameda Modelo, 88 — Industrial',
+  'Travessa Demo, 15 — Bairro Sul',
 ];
 
 const TENDENCIAS = ['Alta', 'Estável', 'Baixa'] as const;
@@ -193,6 +207,69 @@ export interface BebidaPedidoRow {
   total: string;
   status: string;
   hora: string;
+  data: string;
+}
+
+export interface BebidaEntregaRow {
+  id: string;
+  pedido: string;
+  cliente: string;
+  status: string;
+  valor: string;
+  quando: string;
+  endereco: string;
+  canalTag: string;
+  destaque: boolean;
+}
+
+export interface BebidaOcorrenciaRow {
+  id: string;
+  titulo: string;
+  subtitulo: string;
+  tags: string[];
+}
+
+export interface BebidaMotoristaRow {
+  id: string;
+  nome: string;
+  telefone: string;
+  documento: string;
+  status: string;
+}
+
+export interface BebidaMovimentoRow {
+  id: string;
+  quando: string;
+  produto: string;
+  tipo: string;
+  qtd: number;
+}
+
+export interface BebidaSaldoRow {
+  id: string;
+  produto: string;
+  codigo: string;
+  deposito: string;
+  saldo: number;
+  status: string;
+}
+
+export interface BebidaHubStats {
+  totalPedidos: number;
+  canalAlfa: number;
+  totemDemo: number;
+  parceiros: number;
+  aguardandoPagamento: number;
+  semItens: number;
+  comSaldo: number;
+  abaixoMinimo: number;
+  lotes30d: number;
+  movHoje: number;
+  unidades: number;
+  vencidos: number;
+  venceHoje: number;
+  ate7dias: number;
+  emAtencao: number;
 }
 
 export interface BebidaEstoqueRow {
@@ -478,6 +555,12 @@ export interface BebidasSessionData {
   produtos: BebidaProduto[];
   pedidos: BebidaPedidoRow[];
   estoque: BebidaEstoqueRow[];
+  entregas: BebidaEntregaRow[];
+  ocorrencias: BebidaOcorrenciaRow[];
+  motoristas: BebidaMotoristaRow[];
+  movimentos: BebidaMovimentoRow[];
+  saldos: BebidaSaldoRow[];
+  hubStats: BebidaHubStats;
   dashboardBars: BarItem[];
   dashboardCanais: ProgressItem[];
   dashboardDestaques: DestaqueRow[];
@@ -530,6 +613,24 @@ function formatTonnes(rng: () => number) {
 
 function formatBrl(value: number) {
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+const CNH_CATEGORIAS = ['B', 'C', 'D', 'E', 'AD'] as const;
+
+function formatCpfDemo(rng: () => number): string {
+  return `${randInt(rng, 100, 999)}.${randInt(rng, 100, 999)}.${randInt(rng, 100, 999)}-${randInt(rng, 10, 99)}`;
+}
+
+function formatCnhDemo(rng: () => number): string {
+  return String(randInt(rng, 1_000_000_000, 9_999_999_999));
+}
+
+function formatValidadeDemo(rng: () => number, anosMin = 1, anosMax = 4): string {
+  const hoje = new Date();
+  const ano = hoje.getFullYear() + randInt(rng, anosMin, anosMax);
+  const mes = randInt(rng, 1, 12);
+  const dia = randInt(rng, 1, 28);
+  return new Date(ano, mes - 1, dia).toLocaleDateString('pt-BR');
 }
 
 function formatHora(minutes: number) {
@@ -672,27 +773,32 @@ function buildColetaSession(rng: () => number): ColetaSessionData {
 
   const motoristas: ColetaMotoristaRow[] = shuffle(rng, MOTORISTAS_NOMES)
     .slice(0, 12)
-    .map((nome, i) => ({
-      id: String(i + 1),
-      nome,
-      cpf: rng() > 0.35 ? '-' : `${randInt(rng, 100, 999)}.${randInt(rng, 100, 999)}.${randInt(rng, 100, 999)}-${randInt(rng, 10, 99)}`,
-      cnh: '-',
-      categoria: '-',
-      validadeCnh: '-',
-      mopp: pick(rng, ['Não', 'Não', 'Sim']),
-      valMopp: '-',
-    }));
+    .map((nome, i) => {
+      const mopp = pick(rng, ['Não', 'Não', 'Sim']);
+      return {
+        id: String(i + 1),
+        nome,
+        cpf: formatCpfDemo(rng),
+        cnh: formatCnhDemo(rng),
+        categoria: pick(rng, CNH_CATEGORIAS),
+        validadeCnh: formatValidadeDemo(rng),
+        mopp,
+        valMopp: mopp === 'Sim' ? formatValidadeDemo(rng, 0, 2) : 'Sem certificado',
+      };
+    });
 
   const veiculos: ColetaVeiculoRow[] = Array.from({ length: 14 }, (_, i) => {
-    const hasSpecs = rng() > 0.4;
+    const taraVal = 8 + rng() * 6;
+    const cmtVal = 28 + rng() * 12;
+    const brutoVal = Math.min(cmtVal - 0.5, taraVal + 10 + rng() * 14);
     return {
       id: String(i + 1),
       placa: `DEM${randInt(rng, 1, 9)}${String.fromCharCode(65 + randInt(rng, 0, 25))}${randInt(rng, 10, 99)}`,
-      motorista: rng() > 0.7 ? pick(rng, MOTORISTAS_NOMES) : '-',
+      motorista: MOTORISTAS_NOMES[i % MOTORISTAS_NOMES.length],
       modelo: pick(rng, VEICULO_MODELOS),
-      tara: hasSpecs ? `${(8 + rng() * 6).toFixed(2)}T` : '-',
-      bruto: hasSpecs ? `${(18 + rng() * 18).toFixed(2)}T` : '-',
-      cmt: hasSpecs ? `${(28 + rng() * 12).toFixed(2)}T` : '-',
+      tara: `${taraVal.toFixed(2)}T`,
+      bruto: `${brutoVal.toFixed(2)}T`,
+      cmt: `${cmtVal.toFixed(2)}T`,
       disponibilidade: pick(rng, ['Disponível', 'Disponível', 'Em rota', 'Manutenção']),
     };
   });
@@ -739,15 +845,16 @@ function buildColetaSession(rng: () => number): ColetaSessionData {
 
 function buildBebidasSession(rng: () => number): BebidasSessionData {
   const pedidosHoje = randInt(rng, 28, 72);
-  const alertasEstoque = randInt(rng, 1, 6);
+  const alertasEstoque = randInt(rng, 0, 4);
   const naFila = randInt(rng, 3, 12);
   const ticket = 45 + rng() * 45;
+  const totalPedidos = randInt(rng, 280, 380);
 
   const kpis: KpiItem[] = [
     { label: 'Pedidos hoje', value: String(pedidosHoje), delta: `+${randInt(rng, 4, 22)}% vs ontem` },
     { label: 'Ticket médio', value: formatBrl(ticket), delta: 'Últimas 24h' },
     { label: 'Estoque baixo', value: String(alertasEstoque), delta: 'Itens abaixo do mínimo' },
-    { label: 'Canais ativos', value: '3', delta: 'PDV, totem e delivery' },
+    { label: 'Canais ativos', value: '4', delta: 'PDV, totem e parceiros' },
   ];
 
   const quickStats: QuickStatItem[] = [
@@ -762,22 +869,23 @@ function buildBebidasSession(rng: () => number): BebidasSessionData {
     preco: Math.round(p.preco * (0.88 + rng() * 0.24) * 100) / 100,
   }));
 
-  const pedidoHoras = randomTimes(rng, ADEGA_PEDIDOS.length, 9 * 60 + 5);
-  const pedidos: BebidaPedidoRow[] = ADEGA_PEDIDOS.map((row, i) => {
+  const pedidoHoras = randomTimes(rng, 28, 9 * 60 + 5);
+  const pedidos: BebidaPedidoRow[] = Array.from({ length: 28 }, (_, i) => {
     const canal = pick(rng, PEDIDO_CANAIS);
     const cliente =
-      canal === 'PDV' || canal === 'Totem'
+      canal === 'PDV' || canal === 'Totem Demo'
         ? pick(rng, CLIENTES_BALCAO)
         : pick(rng, CLIENTES_NOME);
-    const total = formatBrl(12 + rng() * 140);
+    const dia = randInt(rng, 1, 28);
     return {
-      id: row.id,
-      pedido: `#D-${randInt(rng, 1000, 1999)}`,
+      id: String(i + 1),
+      pedido: `#${randInt(rng, 300, 399)}`,
       canal,
       cliente,
-      total,
+      total: formatBrl(12 + rng() * 280),
       status: pick(rng, PEDIDO_STATUS),
       hora: pedidoHoras[i],
+      data: `${String(dia).padStart(2, '0')}/06/2026`,
     };
   });
 
@@ -788,7 +896,7 @@ function buildBebidasSession(rng: () => number): BebidasSessionData {
     const status = saldo < minimo ? 'Baixo' : 'OK';
     return {
       id: String(i + 1),
-      sku: `BEV-${String(randInt(rng, 1, 99)).padStart(3, '0')}`,
+      sku: `DEM-${String(randInt(rng, 1, 99)).padStart(3, '0')}`,
       produto: p.nome,
       saldo: `${saldo} un.`,
       minimo: `${minimo} un.`,
@@ -797,12 +905,94 @@ function buildBebidasSession(rng: () => number): BebidasSessionData {
     };
   });
 
+  const entregas: BebidaEntregaRow[] = Array.from({ length: 8 }, (_, i) => {
+    const ped = pedidos[i % pedidos.length];
+    return {
+      id: String(i + 1),
+      pedido: ped.pedido,
+      cliente: pick(rng, CLIENTES_NOME),
+      status: pick(rng, ['Aguardando entrega', 'Em rota', 'Entregue']),
+      valor: ped.total,
+      quando: `${ped.data}, ${ped.hora}`,
+      endereco: pick(rng, ENDERECOS_DEMO),
+      canalTag: ped.canal === 'Canal Alfa' ? 'alfa' : ped.canal === 'Totem Demo' ? 'totem' : 'parceiros',
+      destaque: i === 2,
+    };
+  });
+
+  const ocorrencias: BebidaOcorrenciaRow[] = [
+    {
+      id: '1',
+      titulo: 'Separação',
+      subtitulo: `Pedido ${pedidos[0]?.pedido ?? '#000'} — ${pedidos[0]?.data ?? '01/06'}, ${pedidos[0]?.hora ?? '10:00'}`,
+      tags: ['OCORRÊNCIA', 'URGENTE', `há ${randInt(rng, 2, 12)} dias`],
+    },
+    {
+      id: '2',
+      titulo: 'Cancelamento de item',
+      subtitulo: `Operador demo — ${pedidos[1]?.data ?? '01/06'}, ${pedidos[1]?.hora ?? '11:00'}`,
+      tags: ['CANCEL. PDV', 'ATRASADO'],
+    },
+    {
+      id: '3',
+      titulo: 'Divergência de estoque',
+      subtitulo: `Produto ${produtos[0]?.nome ?? 'Item demo'} — conferência`,
+      tags: ['OCORRÊNCIA', `ASSUMIDO: ${pick(rng, MOTORISTAS_BEBIDAS).split(' ')[0]}`],
+    },
+  ];
+
+  const motoristas: BebidaMotoristaRow[] = MOTORISTAS_BEBIDAS.map((nome, i) => ({
+    id: String(i + 1),
+    nome,
+    telefone: `(11) 9${randInt(rng, 1000, 9999)}-${randInt(rng, 1000, 9999)}`,
+    documento: rng() > 0.4 ? `ID-${randInt(rng, 10000, 99999)}` : '-',
+    status: pick(rng, ['Ativo', 'Ativo', 'Ativo', 'Inativo']),
+  }));
+
+  const movimentos: BebidaMovimentoRow[] = produtos.slice(0, 4).map((p, i) => ({
+    id: String(i + 1),
+    quando: `18/06/2026, ${pedidoHoras[i]}`,
+    produto: p.nome,
+    tipo: 'ENTRADA',
+    qtd: randInt(rng, 6, 36),
+  }));
+
+  const saldos: BebidaSaldoRow[] = produtos.map((p, i) => {
+    const saldo = randInt(rng, 0, 48);
+    return {
+      id: String(i + 1),
+      produto: p.nome,
+      codigo: `DEM-${String(i + 1).padStart(3, '0')}`,
+      deposito: 'DEP01 — Depósito principal',
+      saldo,
+      status: saldo > 8 ? 'OK' : saldo > 0 ? 'Baixo' : 'OK',
+    };
+  });
+
+  const hubStats: BebidaHubStats = {
+    totalPedidos,
+    canalAlfa: randInt(rng, 180, 300),
+    totemDemo: randInt(rng, 15, 35),
+    parceiros: randInt(rng, 15, 35),
+    aguardandoPagamento: randInt(rng, 8, 24),
+    semItens: randInt(rng, 200, 320),
+    comSaldo: saldos.filter((s) => s.saldo > 0).length,
+    abaixoMinimo: estoque.filter((e) => e.status === 'Baixo').length,
+    lotes30d: randInt(rng, 0, 6),
+    movHoje: movimentos.length,
+    unidades: movimentos.reduce((a, m) => a + m.qtd, 0),
+    vencidos: randInt(rng, 0, 2),
+    venceHoje: randInt(rng, 0, 2),
+    ate7dias: randInt(rng, 0, 3),
+    emAtencao: randInt(rng, 0, 2),
+  };
+
   const dashboardBars: BarItem[] = WEEK_LABELS.map((label) => ({
     label,
     value: randInt(rng, 22, 98),
   }));
 
-  const canalLabels = ['PDV balcão', 'Totem', 'Delivery'];
+  const canalLabels = ['Canal Alfa', 'Totem Demo', 'Parceiros', 'PDV'];
   const canalPcts = partitionPct(rng, canalLabels.length);
   const dashboardCanais: ProgressItem[] = canalLabels.map((label, i) => ({
     label,
@@ -818,11 +1008,11 @@ function buildBebidasSession(rng: () => number): BebidasSessionData {
 
   const eventoHoras = randomTimes(rng, 5, 8 * 60 + 10);
   const dashboardEventos: EventoRow[] = [
-    () => `Pedido ${pedidos[0]?.pedido ?? '#D-0000'} · ${pedidos[0]?.canal ?? 'Totem'} · ${pedidos[0]?.cliente ?? 'Mesa 1'}`,
+    () => `Pedido ${pedidos[0]?.pedido ?? '#000'} · ${pedidos[0]?.canal ?? 'Totem Demo'}`,
     () => `Estoque baixo · ${estoque.find((e) => e.status === 'Baixo')?.produto ?? produtos[0].nome}`,
     () => `Venda PDV · ${formatBrl(40 + rng() * 120)}`,
-    () => `Pedido delivery · ${pick(rng, CLIENTES_NOME)} · Bairro ${pick(rng, ['Centro', 'Norte', 'Sul', 'Leste'])}`,
-    () => `Reposição registrada · ${randInt(rng, 12, 48)} un. ${pick(rng, produtos).nome}`,
+    () => `Pedido parceiro · ${pick(rng, CLIENTES_NOME)}`,
+    () => `Reposição · ${randInt(rng, 12, 48)} un. ${pick(rng, produtos).nome}`,
   ].map((fn, i) => ({
     hora: eventoHoras[i],
     texto: fn(),
@@ -837,6 +1027,12 @@ function buildBebidasSession(rng: () => number): BebidasSessionData {
     produtos,
     pedidos,
     estoque,
+    entregas,
+    ocorrencias,
+    motoristas,
+    movimentos,
+    saldos,
+    hubStats,
     dashboardBars,
     dashboardCanais,
     dashboardDestaques,

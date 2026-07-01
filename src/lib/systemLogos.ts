@@ -1,4 +1,6 @@
 /** Logos placeholder — substituir por assets oficiais de cada produto em public/img/systems/ */
+import { NEXUS_LOGO_URL } from './nexusBrand';
+
 const SYSTEM_LOGOS: Record<string, string> = {
   'rh-ambiental': '/img/systems/rh-ambiental.png',
   ligeirinho: '/img/systems/ligeirinho.png',
@@ -56,7 +58,7 @@ export function filaOperacionalProjects<T extends { name: string }>(projects: T[
 }
 
 export function systemLogoUrl(systemId: string): string {
-  return SYSTEM_LOGOS[systemId] ?? '/img/favicon.png';
+  return SYSTEM_LOGOS[systemId] ?? NEXUS_LOGO_URL;
 }
 
 /** Documentação interna no Hub (por sistema) */
@@ -98,10 +100,10 @@ export function matchProjectToSystem(projectName: string): ClientSystem | null {
 
 export function projectLogoUrl(projectName: string): string {
   if (isGeneralProject(projectName) || isInboxProject(projectName)) {
-    return '/img/favicon.png';
+    return NEXUS_LOGO_URL;
   }
   const sys = matchProjectToSystem(projectName);
-  return sys ? systemLogoUrl(sys.id) : '/img/favicon.png';
+  return sys ? systemLogoUrl(sys.id) : NEXUS_LOGO_URL;
 }
 
 export function projectDisplayName(projectName: string): string {

@@ -10,9 +10,10 @@ import styles from './SistemaDemoChat.module.css';
 
 interface SistemaDemoChatProps {
   demoId: DemoId;
+  fabVariant?: 'default' | 'ligeirinho';
 }
 
-export function SistemaDemoChat({ demoId }: SistemaDemoChatProps) {
+export function SistemaDemoChat({ demoId, fabVariant = 'default' }: SistemaDemoChatProps) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const [typing, setTyping] = useState(false);
@@ -130,11 +131,15 @@ export function SistemaDemoChat({ demoId }: SistemaDemoChatProps) {
         </section>
       ) : null}
 
-      <button type="button" className={styles.toggleBtn} onClick={() => setOpen((value) => !value)}>
+      <button
+        type="button"
+        className={`${styles.toggleBtn} ${fabVariant === 'ligeirinho' ? styles.toggleBtnLigeirinho : ''}`}
+        onClick={() => setOpen((value) => !value)}
+      >
         <span className="material-symbols-outlined" aria-hidden>
-          {open ? 'expand_more' : 'chat'}
+          {open ? 'expand_more' : fabVariant === 'ligeirinho' ? 'headset_mic' : 'chat'}
         </span>
-        {open ? 'Fechar assistente' : 'Assistente demo'}
+        {open ? 'Fechar' : fabVariant === 'ligeirinho' ? 'Chat' : 'Assistente demo'}
       </button>
     </div>
   );

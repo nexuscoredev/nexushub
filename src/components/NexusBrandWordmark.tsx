@@ -1,4 +1,5 @@
 import styles from './HubLogo.module.css';
+import { NEXUS_LOGO_URL } from '../lib/nexusBrand';
 
 type NexusBrandAccent = 'hub' | 'client';
 
@@ -22,7 +23,7 @@ export function NexusBrandWordmark({
     <>
       {withIcon ? (
         <img
-          src="/img/favicon.png"
+          src={NEXUS_LOGO_URL}
           alt=""
           className={markImgClassName ?? styles.markImg}
           aria-hidden

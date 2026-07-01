@@ -9,15 +9,11 @@ import {
   isColetaMenuBranch,
   type ColetaDemoScreen,
 } from './coletaDemoNav';
+import { DemoDataNotice } from '../../components/DemoDataNotice';
 import styles from './ColetaDemo.module.css';
 
 function Fv({ children }: { children: ReactNode }) {
-  return (
-    <span className={styles.ficticioWrap}>
-      {children}
-      <span className={styles.ficticioMark}>fictício</span>
-    </span>
-  );
+  return <>{children}</>;
 }
 
 function initials(name: string) {
@@ -182,6 +178,8 @@ export function ColetaDemoApp() {
           <span className={styles.selectFake}>Todos os Estados / Cidades</span>
         </div>
 
+        <DemoDataNotice />
+
         <div className={styles.kpiGridHero}>
           {[
             ['Total faturado', m.totalFaturado],
@@ -328,6 +326,8 @@ export function ColetaDemoApp() {
           </div>
         </div>
 
+        <DemoDataNotice />
+
         <div className={styles.summaryCards}>
           {[
             ['Mês selecionado', 'Julho de 2026'],
@@ -346,6 +346,7 @@ export function ColetaDemoApp() {
         </div>
 
         <div className={styles.tableWrap}>
+          <DemoDataNotice compact />
           <table className={styles.table}>
             <thead>
               <tr>
@@ -395,6 +396,7 @@ export function ColetaDemoApp() {
         </div>
       </div>
       <div className={styles.tableWrap}>
+        <DemoDataNotice compact />
         <table className={styles.table}>
           <thead>
             <tr>
@@ -443,6 +445,7 @@ export function ColetaDemoApp() {
         </div>
       </div>
       <div className={styles.tableWrap}>
+        <DemoDataNotice compact />
         <table className={styles.table}>
           <thead>
             <tr>
@@ -492,6 +495,7 @@ export function ColetaDemoApp() {
         </div>
       </div>
       <div className={styles.tableWrap}>
+        <DemoDataNotice compact />
         <table className={styles.table}>
           <thead>
             <tr>
@@ -545,6 +549,7 @@ export function ColetaDemoApp() {
         </div>
       </div>
       <div className={styles.tableWrap}>
+        <DemoDataNotice compact />
         <table className={styles.table}>
           <thead>
             <tr>
@@ -585,6 +590,7 @@ export function ColetaDemoApp() {
         <button type="button" className={styles.btnPrimary}>Novo gerenciador</button>
       </div>
       <div className={styles.sectionCard}>
+        <DemoDataNotice compact />
         <div className={styles.filterRow}>
           {['Nome fantasia', 'Razão social', 'CNPJ / CPF', 'Status'].map((l) => (
             <span key={l} className={styles.selectFake}>
@@ -700,14 +706,6 @@ export function ColetaDemoApp() {
               </div>
               <h1 className={styles.pageTitle}>{pageTitle}</h1>
             </div>
-            <div className={styles.searchWrap}>
-              <input
-                className={styles.searchInput}
-                placeholder="Cliente, número MTR ou ticket..."
-                readOnly
-                aria-label="Busca global"
-              />
-            </div>
             <div className={styles.headerRight}>
               <span className={styles.pillOnline}>Online</span>
               <span className={styles.datetime}>{nowLabel}</span>
@@ -718,9 +716,6 @@ export function ColetaDemoApp() {
                 <span className={styles.userRole}>Operacional</span>
               </div>
               <div className={styles.avatar}>{initials(operatorName)}</div>
-              <Link to="/sistemas" className={styles.btnSair}>
-                Sair
-              </Link>
             </div>
           </header>
 

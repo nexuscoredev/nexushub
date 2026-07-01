@@ -249,6 +249,30 @@
   color: var(--demo-accent);
 }
 
+.toggleBtnLigeirinho {
+  flex-direction: column;
+  gap: 0.15rem;
+  width: 4.25rem;
+  height: 4.25rem;
+  padding: 0.55rem;
+  border-radius: 50%;
+  border-color: var(--lh-gold-border, rgba(201, 162, 39, 0.45));
+  background: rgba(10, 10, 10, 0.95);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.toggleBtnLigeirinho .material-symbols-outlined {
+  font-size: 1.35rem;
+  color: var(--lh-gold, #c9a227);
+}
+
+.toggleBtnLigeirinho:hover {
+  border-color: var(--lh-gold, #c9a227);
+}
+
 @media (max-width: 768px) {
   .root {
     right: 0.65rem;
