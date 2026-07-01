@@ -3,7 +3,6 @@ import { Link, Navigate, useLocation, useParams } from 'react-router-dom';
 import {
   ADEGA_CANAIS,
   ADEGA_PIPELINE,
-  COLETA_PIPELINE,
   DEMO_BANNER,
   DEMO_CATALOG,
   resolveDemoId,
@@ -12,9 +11,9 @@ import {
 import {
   useDemoSessionData,
   type BebidasSessionData,
-  type ColetaSessionData,
 } from '../data/sistemaDemoRandomize';
 import { SistemaDemoChat } from '../components/SistemaDemoChat';
+import { ColetaDemoApp } from './coletaDemo/ColetaDemoApp';
 import styles from './SistemaDemoPage.module.css';
 
 function statusClass(status: string): string {
@@ -111,7 +110,6 @@ export function SistemaDemoPage() {
     setPopProductId(null);
     setSaleFlash(false);
   }, [location.key]);
-  const coleta = session.demoId === 'coleta' ? session : null;
   const bebidas = session.demoId === 'ligeirinho' ? session : null;
 
   const cartCount = useMemo(() => Object.values(cart).reduce((a, b) => a + b, 0), [cart]);
@@ -131,6 +129,10 @@ export function SistemaDemoPage() {
 
   if (!resolvedId) {
     return <Navigate to="/sistemas" replace />;
+  }
+
+  if (resolvedId === 'coleta') {
+    return <ColetaDemoApp />;
   }
 
   const demoId: DemoId = resolvedId;
@@ -181,66 +183,6 @@ export function SistemaDemoPage() {
         ))}
       </div>
     </div>
-    );
-  };
-
-  const renderLineChart = (title: string, points: { label: string; value: number }[], delta: string) => {
-    const max = Math.max(...points.map((p) => p.value));
-    const min = Math.min(...points.map((p) => p.value));
-    const range = max - min || 1;
-    const width = 100;
-    const height = 44;
-    const padX = 6;
-    const padY = 6;
-
-    const coords = points.map((point, i) => {
-      const x = padX + (i / Math.max(points.length - 1, 1)) * (width - padX * 2);
-      const y = height - padY - ((point.value - min) / range) * (height - padY * 2);
-      return { ...point, x, y };
-    });
-
-    const linePath = coords.map((c, i) => `${i === 0 ? 'M' : 'L'} ${c.x} ${c.y}`).join(' ');
-    const areaPath = `${linePath} L ${coords[coords.length - 1].x} ${height} L ${coords[0].x} ${height} Z`;
-
-    return (
-      <div className={`${styles.chartCard} ${styles.chartCardWide}`}>
-        <div className={styles.chartCardHead}>
-          <span className={styles.chartLabel}>{title}</span>
-          <span className={styles.lineChartDelta}>
-            <Fv>{delta}</Fv>
-          </span>
-        </div>
-        <div className={styles.lineChartWrap} role="img" aria-label={`${title} — ${delta}`}>
-          <svg viewBox={`0 0 ${width} ${height}`} className={styles.lineChartSvg} preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="coletaLineFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="var(--demo-accent)" stopOpacity="0.38" />
-                <stop offset="100%" stopColor="var(--demo-accent)" stopOpacity="0.02" />
-              </linearGradient>
-            </defs>
-            {[0.25, 0.5, 0.75].map((ratio) => (
-              <line
-                key={ratio}
-                x1={padX}
-                x2={width - padX}
-                y1={padY + ratio * (height - padY * 2)}
-                y2={padY + ratio * (height - padY * 2)}
-                className={styles.lineChartGrid}
-              />
-            ))}
-            <path d={areaPath} fill="url(#coletaLineFill)" className={styles.lineChartArea} />
-            <path d={linePath} className={styles.lineChartPath} />
-            {coords.map((c, i) => (
-              <circle key={c.label} cx={c.x} cy={c.y} r="1.35" className={styles.lineChartDot} style={{ '--dot-i': i } as CSSProperties} />
-            ))}
-          </svg>
-          <div className={styles.lineChartLabels}>
-            {points.map((p) => (
-              <span key={p.label}>{p.label}</span>
-            ))}
-          </div>
-        </div>
-      </div>
     );
   };
 
@@ -316,350 +258,6 @@ export function SistemaDemoPage() {
       ))}
     </div>
   );
-
-  const renderColetaScreen = () => {
-    const data = coleta as ColetaSessionData;
-    switch (screen) {
-      case 'dashboard':
-        return (
-          <DemoScreen screen={screen}>
-            {renderKpiGrid(data.kpis)}
-            {renderLineChart('Evolução de coletas', data.dashboardLine, data.lineDelta)}
-            <div className={styles.dashboardGrid}>
-              {renderBarChart('Coletas da semana', data.dashboardBars)}
-              {renderProgressList('Volume por perfil de resíduo', data.dashboardPerfil)}
-            </div>
-            <div className={styles.dashboardGrid}>
-              <div className={styles.panelCard}>
-                <span className={styles.panelTitle}>Frota em operação</span>
-                <ul className={styles.fleetList}>
-                  {data.dashboardFrota.map((f, i) => (
-                    <li key={f.veiculo} className={styles.fleetRow} style={{ '--stagger': i } as CSSProperties}>
-                      <div className={styles.fleetHead}>
-                        <strong>
-                          <Fv>{f.veiculo}</Fv>
-                        </strong>
-                        <span className={`${styles.statusPill} ${statusClass(f.status)}`}>{f.status}</span>
-                      </div>
-                      <span className={styles.fleetDetail}>
-                        <Fv>{f.detalhe}</Fv>
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              {renderEventList('Últimos eventos', data.dashboardEventos)}
-            </div>
-          </DemoScreen>
-        );
-      case 'programacao':
-        return (
-          <DemoScreen screen={screen}>
-            <div className={styles.tableWrap}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th>Hora</th>
-                    <th>Cliente</th>
-                    <th>Rota</th>
-                    <th>Veículo</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.programacao.map((row, i) => (
-                    <tr key={row.id} className={styles.tableRow} style={{ '--stagger': i } as CSSProperties}>
-                      <td className={styles.mono}>{row.hora}</td>
-                      <td>
-                        <Fv>{row.cliente}</Fv>
-                      </td>
-                      <td>
-                        <Fv>{row.rota}</Fv>
-                      </td>
-                      <td>
-                        <Fv>{row.caminhao}</Fv>
-                      </td>
-                      <td>
-                        <span className={`${styles.statusPill} ${statusClass(row.status)}`}>{row.status}</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className={styles.screenFooter}>
-              {renderKpiGrid([
-                {
-                  label: 'Coletas do dia',
-                  value: String(data.programacao.length),
-                  delta: 'Na programação',
-                },
-                {
-                  label: 'Em rota',
-                  value: String(data.programacao.filter((r) => r.status === 'Em rota').length),
-                  delta: 'Em andamento',
-                },
-                {
-                  label: 'Agendadas',
-                  value: String(data.programacao.filter((r) => r.status === 'Agendada').length),
-                  delta: 'A executar',
-                },
-                {
-                  label: 'Concluídas',
-                  value: String(data.programacao.filter((r) => r.status === 'Concluída').length),
-                  delta: 'Finalizadas',
-                },
-              ])}
-              <div className={styles.dashboardGrid}>
-                {renderProgressList(
-                  'Por status',
-                  countGrouped(data.programacao, (r) => r.status, ['Em rota', 'Agendada', 'Concluída']),
-                )}
-                {renderProgressList('Por rota', countGrouped(data.programacao, (r) => r.rota))}
-              </div>
-              <div className={styles.dashboardGrid}>
-                {renderBarChart(
-                  'Coletas por veículo',
-                  countGrouped(data.programacao, (r) => r.caminhao).map(({ label, pct }) => ({
-                    label: shortLabel(label, 12),
-                    value: pct,
-                  })),
-                )}
-                {renderEventList('Movimentações recentes', data.dashboardEventos.slice(0, 5))}
-              </div>
-            </div>
-          </DemoScreen>
-        );
-      case 'mtr':
-        return (
-          <DemoScreen screen={screen}>
-            <div className={styles.tableWrap}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th>Documento</th>
-                    <th>Cliente</th>
-                    <th>Etapa</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.mtrs.map((row, i) => (
-                    <tr key={row.id} className={styles.tableRow} style={{ '--stagger': i } as CSSProperties}>
-                      <td className={styles.mono}>
-                        <Fv>{row.documento}</Fv>
-                      </td>
-                      <td>
-                        <Fv>{row.cliente}</Fv>
-                      </td>
-                      <td>{row.etapa}</td>
-                      <td>
-                        <span className={`${styles.statusPill} ${statusClass(row.status)}`}>{row.status}</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className={styles.screenFooter}>
-              {renderKpiGrid([
-                { label: 'Documentos', value: String(data.mtrs.length), delta: 'Listados' },
-                {
-                  label: 'Em andamento',
-                  value: String(data.mtrs.filter((r) => r.status === 'Em andamento').length),
-                  delta: 'Operação ativa',
-                },
-                {
-                  label: 'Emitidos',
-                  value: String(data.mtrs.filter((r) => r.status === 'Emitido').length),
-                  delta: 'Aguardando fluxo',
-                },
-                {
-                  label: 'Finalizados',
-                  value: String(data.mtrs.filter((r) => r.status === 'Finalizado').length),
-                  delta: 'Encerrados',
-                },
-              ])}
-              <div className={styles.dashboardGrid}>
-                {renderProgressList(
-                  'Por status',
-                  countGrouped(data.mtrs, (r) => r.status, ['Em andamento', 'Emitido', 'Finalizado', 'Rascunho']),
-                )}
-                {renderProgressList('Por etapa', countGrouped(data.mtrs, (r) => r.etapa))}
-              </div>
-              <div className={styles.dashboardGrid}>
-                {renderBarChart(
-                  'Documentos por cliente',
-                  countGrouped(data.mtrs, (r) => r.cliente).map(({ label, pct }) => ({
-                    label: shortLabel(label, 14),
-                    value: pct,
-                  })),
-                )}
-                {renderEventList('Últimos eventos', data.dashboardEventos.slice(0, 5))}
-              </div>
-            </div>
-          </DemoScreen>
-        );
-      case 'clientes':
-        return (
-          <DemoScreen screen={screen}>
-            <div className={styles.cardGrid}>
-              {data.clientes.map((c, i) => (
-                <article
-                  key={c.id}
-                  className={styles.clientCard}
-                  style={{ '--stagger': i } as CSSProperties}
-                >
-                  <div className={styles.clientCardHead}>
-                    <span className={styles.clientIcon} aria-hidden>
-                      <span className="material-symbols-outlined">{c.icon}</span>
-                    </span>
-                    <div className={styles.clientCardTitles}>
-                      <h3 className={styles.clientCardTitle}>{c.segmento}</h3>
-                      <span className={styles.clientCardSub}>Cliente ativo</span>
-                    </div>
-                    <span className={styles.clientBadge}>Ativo</span>
-                  </div>
-                  <dl className={styles.clientDl}>
-                    <div>
-                      <dt>Região</dt>
-                      <dd>
-                        <Fv>{c.regiao}</Fv>
-                      </dd>
-                    </div>
-                    <div>
-                      <dt>Periodicidade</dt>
-                      <dd>
-                        <Fv>{c.periodicidade}</Fv>
-                      </dd>
-                    </div>
-                    <div>
-                      <dt>Perfil de resíduo</dt>
-                      <dd>
-                        <Fv>{c.perfil}</Fv>
-                      </dd>
-                    </div>
-                  </dl>
-                </article>
-              ))}
-            </div>
-            <div className={styles.screenFooter}>
-              <div className={styles.dashboardGrid}>
-                {renderProgressList('Por segmento', countGrouped(data.clientes, (c) => c.segmento))}
-                {renderProgressList('Por periodicidade', countGrouped(data.clientes, (c) => c.periodicidade))}
-              </div>
-              <div className={styles.dashboardGrid}>
-                {renderProgressList('Por perfil de resíduo', countGrouped(data.clientes, (c) => c.perfil))}
-                {renderEventList('Atividade recente', data.dashboardEventos.slice(0, 5))}
-              </div>
-            </div>
-          </DemoScreen>
-        );
-      default:
-        return (
-          <DemoScreen screen={screen}>
-            <div className={styles.inicioLayout}>
-              <div className={styles.hero}>
-                <div className={styles.heroGlow} aria-hidden />
-                <p className={styles.heroEyebrow}>Desenvolvido por NEXUS · Sua marca · Seu sistema</p>
-                <h2 className={styles.heroTitle}>
-                  Olá, <Fv>{operatorName}</Fv>
-                </h2>
-                <p className={styles.heroLead}>
-                  Hoje há{' '}
-                  <Fv>
-                    <strong>{data.hero.coletasProgramadas} coletas programadas</strong>
-                  </Fv>{' '}
-                  e{' '}
-                  <Fv>
-                    <strong>{data.hero.mtrAberto} MTR em aberto</strong>
-                  </Fv>{' '}
-                  na operação de hoje.
-                </p>
-                <div className={styles.pipeline}>
-                  {COLETA_PIPELINE.map((step, i) => (
-                    <div
-                      key={step.label}
-                      className={styles.pipelineStep}
-                      style={{ '--stagger': i } as CSSProperties}
-                    >
-                      <span className="material-symbols-outlined" aria-hidden>
-                        {step.icon}
-                      </span>
-                      <span>
-                        {step.label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <div className={styles.heroActions}>
-                  <button type="button" className={styles.primaryBtn} onClick={() => goTo('programacao')}>
-                    Ver programação
-                  </button>
-                  <button type="button" className={styles.ghostBtn} onClick={() => goTo('dashboard')}>
-                    Dashboard
-                  </button>
-                </div>
-              </div>
-              <aside className={styles.inicioAside}>
-                {renderQuickStats(data.quickStats)}
-                {renderEventList('Agora na operação', data.dashboardEventos.slice(0, 4))}
-              </aside>
-            </div>
-            <div className={styles.inicioBottom}>
-              <div className={styles.panelCard}>
-                <span className={styles.panelTitle}>Próximas coletas</span>
-                <div className={styles.tableWrap}>
-                  <table className={styles.table}>
-                    <thead>
-                      <tr>
-                        <th>Hora</th>
-                        <th>Cliente</th>
-                        <th>Rota</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.programacao.slice(0, 6).map((row, i) => (
-                        <tr key={row.id} className={styles.tableRow} style={{ '--stagger': i } as CSSProperties}>
-                          <td className={styles.mono}>{row.hora}</td>
-                          <td>
-                            <Fv>{row.cliente}</Fv>
-                          </td>
-                          <td>
-                            <Fv>{row.rota}</Fv>
-                          </td>
-                          <td>
-                            <span className={`${styles.statusPill} ${statusClass(row.status)}`}>{row.status}</span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <div className={styles.panelCard}>
-                <span className={styles.panelTitle}>Segmentos ativos</span>
-                <ul className={styles.segmentList}>
-                  {data.clientes.map((c, i) => (
-                    <li key={c.id} className={styles.segmentRow} style={{ '--stagger': i } as CSSProperties}>
-                      <span className={styles.segmentIcon} aria-hidden>
-                        <span className="material-symbols-outlined">{c.icon}</span>
-                      </span>
-                      <div className={styles.segmentBody}>
-                        <strong>{c.segmento}</strong>
-                        <span>Cadastro ativo</span>
-                      </div>
-                      <span className={styles.clientBadge}>Ativo</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </DemoScreen>
-        );
-    }
-  };
 
   const renderAdegaScreen = () => {
     const data = bebidas as BebidasSessionData;
@@ -1147,7 +745,7 @@ export function SistemaDemoPage() {
 
         <main className={styles.main}>
           <h1 className={styles.screenTitle}>{screenTitle}</h1>
-          {demoId === 'coleta' ? renderColetaScreen() : renderAdegaScreen()}
+          {renderAdegaScreen()}
         </main>
       </div>
 
