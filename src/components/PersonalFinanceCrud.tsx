@@ -16,7 +16,7 @@ function buildPayload(fd: FormData): Record<string, unknown> {
     if (!value && key !== 'notas' && key !== 'categoria') continue;
     if (key === 'valor') payload[key] = Number(value);
     else if (key === 'notas' || key === 'categoria') {
-      if (value) payload[key] = value;
+      payload[key] = value || null;
     } else {
       payload[key] = value;
     }

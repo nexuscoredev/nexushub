@@ -9,7 +9,11 @@ import {
   resolveFinanceMonthKey,
   saveMonthKey,
 } from '../../lib/personalFinanceMonth';
-import { buildInitialMonthRows, clearMonthPagoMarks } from '../../lib/personalFinanceMonthView';
+import {
+  buildInitialMonthRows,
+  clearMonthPagoMarks,
+  mergeNewGrupoTemplates,
+} from '../../lib/personalFinanceMonthView';
 import {
   formatSnapshotSavedAt,
   loadMonthSnapshot,
@@ -130,6 +134,20 @@ export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanel
     upsertRow,
   } = usePersonalFinanceRows();
 
+  const allRowsRef = useRef(allRows);
+  allRowsRef.current = allRows;
+
+  const persistLocalMonth = useCallback(
+    (rows: HubPersonalTransaction[]) => {
+      if (!userId || !rows.length) return;
+      const snapshot = saveMonthSnapshot(userId, selectedMonth, rows);
+      setLastSavedAt(snapshot.savedAt);
+    },
+    [userId, selectedMonth],
+  );
+
+  // Carrega o mês só ao trocar de mês / user / fim do loading inicial.
+  // NÃO depende de allRows — senão cada edição recarregava o snapshot antigo e revertia o valor.
   useEffect(() => {
     if (loading || !userId) return;
 
@@ -140,7 +158,7 @@ export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanel
     prevMonthRef.current = selectedMonth;
 
     let cancelled = false;
-    void resolveMonthRows(userId, selectedMonth, allRows).then((result) => {
+    void resolveMonthRows(userId, selectedMonth, allRowsRef.current).then((result) => {
       if (cancelled) return;
       setMonthRows(result.rows);
       setLastSavedAt(result.savedAt);
@@ -150,7 +168,16 @@ export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanel
     return () => {
       cancelled = true;
     };
-  }, [selectedMonth, userId, loading, allRows]);
+  }, [selectedMonth, userId, loading]);
+
+  // Contas novas no template entram no mês sem descartar edições locais.
+  useEffect(() => {
+    if (loading || !userId) return;
+    setMonthRows((prev) => {
+      if (!prev.length) return prev;
+      return mergeNewGrupoTemplates(prev, allRows, selectedMonth);
+    });
+  }, [allRows, loading, userId, selectedMonth]);
 
   const summary = useMemo(() => buildPessoalFinanceSummary(monthRows), [monthRows]);
   const defaultDate = defaultDateForMonth(selectedMonth);
@@ -170,13 +197,17 @@ export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanel
 
   const handleMonthPatch = useCallback(
     (id: string, patch: Partial<HubPersonalTransaction>) => {
-      setMonthRows((prev) => prev.map((row) => (row.id === id ? { ...row, ...patch } : row)));
+      setMonthRows((prev) => {
+        const next = prev.map((row) => (row.id === id ? { ...row, ...patch } : row));
+        persistLocalMonth(next);
+        return next;
+      });
       const pagoOnly = Object.keys(patch).length === 1 && 'pago' in patch;
       if (!pagoOnly) {
         applyPatch(id, patch);
       }
     },
-    [applyPatch],
+    [applyPatch, persistLocalMonth],
   );
 
   const handleMonthUpsert = useCallback(
@@ -184,23 +215,31 @@ export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanel
       upsertRow(row);
       setMonthRows((prev) => {
         const idx = prev.findIndex((r) => r.id === row.id);
-        if (idx >= 0) {
-          const next = [...prev];
-          next[idx] = row;
-          return next;
-        }
-        return [...prev, row];
+        const next =
+          idx >= 0
+            ? (() => {
+                const copy = [...prev];
+                copy[idx] = row;
+                return copy;
+              })()
+            : [...prev, row];
+        persistLocalMonth(next);
+        return next;
       });
     },
-    [upsertRow],
+    [upsertRow, persistLocalMonth],
   );
 
   const handleMonthRemove = useCallback(
     (id: string) => {
       applyRemove(id);
-      setMonthRows((prev) => prev.filter((row) => row.id !== id));
+      setMonthRows((prev) => {
+        const next = prev.filter((row) => row.id !== id);
+        persistLocalMonth(next);
+        return next;
+      });
     },
-    [applyRemove],
+    [applyRemove, persistLocalMonth],
   );
 
   const entradas = useMemo(() => monthRows.filter((r) => r.tipo === 'entrada'), [monthRows]);

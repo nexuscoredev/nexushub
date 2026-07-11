@@ -30,7 +30,7 @@ function buildContaPayload(fd: FormData): Record<string, unknown> {
     } else if (key === 'pago') {
       payload[key] = value === 'on' || value === 'true';
     } else if (key === 'categoria' || key === 'notas') {
-      if (value) payload[key] = value;
+      payload[key] = value || null;
     } else if (value) {
       payload[key] = value;
     }
