@@ -130,5 +130,31 @@
 @media (max-width: 519px) {
   .input {
     font-size: 16px;
+    min-height: 48px;
+    border-radius: 12px;
+    padding: 0.75rem 0.85rem;
+  }
+
+  .checkRow {
+    min-height: 48px;
+    border-radius: 12px;
+  }
+
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: 0.45rem;
+  }
+
+  .actions :global(.btn-primary),
+  .actions :global(.btn-ghost) {
+    width: 100%;
+    min-height: 48px;
+    justify-content: center;
+    border-radius: 12px;
+  }
+
+  .actions:has(> :only-child) {
+    grid-template-columns: 1fr;
   }
 }

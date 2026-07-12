@@ -222,18 +222,18 @@ export function PessoalPage() {
     );
   }
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ${financeiro ? styles.financePage : ''}`}>
       {financeiro ? (
         <>
           <div className={styles.financeTop}>
+            <button type="button" className={styles.backBtn} onClick={backHome}>
+              ← Cantinho
+            </button>
             <PageHeader
               compact
               title="Finanças"
               subtitle={`${firstName} · privado`}
             />
-            <button type="button" className={styles.backBtn} onClick={backHome}>
-              ← Cantinho
-            </button>
           </div>
           <PersonalFinancePanel userEmail={email} userId={user?.id} />
         </>

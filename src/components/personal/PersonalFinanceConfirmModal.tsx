@@ -59,6 +59,9 @@ export function PersonalFinanceConfirmModal({
         aria-labelledby={titleId}
         aria-describedby={messageId}
       >
+        <div className={styles.sheetHandle} aria-hidden>
+          <span className={styles.sheetHandleBar} />
+        </div>
         <div className={styles.header}>
           <div className={styles.headerCopy}>
             <h2 id={titleId} className={styles.title}>

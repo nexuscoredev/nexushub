@@ -23,6 +23,12 @@
   }
 }
 
+.chrome {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
 .toolbar {
   display: flex;
   flex-direction: column;
@@ -80,6 +86,8 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition:
     background 0.15s ease,
     border-color 0.15s ease,
@@ -115,11 +123,21 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition:
     background 0.15s ease,
     border-color 0.15s ease,
     color 0.15s ease,
     opacity 0.15s ease;
+}
+
+.clearBtnFull {
+  display: inline;
+}
+
+.clearBtnShort {
+  display: none;
 }
 
 .clearBtn:hover:not(:disabled) {
@@ -153,6 +171,74 @@
   font-size: 0.78rem;
   letter-spacing: 0.06em;
   color: var(--muted);
+}
+
+@media (max-width: 767px) {
+  .panel {
+    gap: 0.65rem;
+    padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+  }
+
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    margin: 0 -0.15rem;
+    padding: 0.45rem 0.15rem 0.55rem;
+    background: linear-gradient(
+      180deg,
+      rgba(10, 10, 12, 0.97) 0%,
+      rgba(10, 10, 12, 0.94) 70%,
+      rgba(10, 10, 12, 0.72) 100%
+    );
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  .toolbar {
+    gap: 0.45rem;
+  }
+
+  .saveWrap {
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .saveHint {
+    text-align: center;
+    width: 100%;
+  }
+
+  .saveActions {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    width: 100%;
+    gap: 0.4rem;
+  }
+
+  .saveActions:has(> :only-child) {
+    grid-template-columns: 1fr;
+  }
+
+  .clearBtn,
+  .saveBtn {
+    min-height: 44px;
+    width: 100%;
+  }
+
+  .clearBtnFull {
+    display: none;
+  }
+
+  .clearBtnShort {
+    display: inline;
+  }
+
+  .contentCard {
+    padding: 0.65rem 0.7rem;
+    border-radius: 14px;
+  }
 }
 
 @media (min-width: 768px) {

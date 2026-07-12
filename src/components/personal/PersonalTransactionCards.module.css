@@ -108,31 +108,56 @@
 }
 
 @media (max-width: 599px) {
+  .wrap {
+    gap: 0.65rem;
+  }
+
+  .wrap :global(.btn-primary) {
+    width: 100%;
+    min-height: 44px;
+    justify-content: center;
+    border-radius: 12px;
+  }
+
   .card {
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas:
-      'icon body'
-      'valor valor'
-      'actions actions';
-    padding-left: max(0.75rem, env(safe-area-inset-left));
-    padding-right: max(0.75rem, env(safe-area-inset-right));
+      'icon body valor'
+      'actions actions actions';
+    gap: 0.4rem 0.55rem;
+    padding: 0.7rem 0.75rem;
+    border-radius: 12px;
+  }
+
+  .cardIcon {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 10px;
+  }
+
+  .cardTitle {
+    font-size: 0.9rem;
   }
 
   .cardValor {
-    text-align: right;
+    align-self: start;
+    font-size: 0.9rem;
+    font-weight: 700;
   }
 
   .cardActions {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.35rem;
+    gap: 0.4rem;
     padding-left: 0;
     width: 100%;
   }
 
   .cardActions :global(.btn-ghost) {
-    min-height: 40px;
+    min-height: 42px;
     justify-content: center;
     width: 100%;
+    border-radius: 10px;
+    touch-action: manipulation;
   }
 }

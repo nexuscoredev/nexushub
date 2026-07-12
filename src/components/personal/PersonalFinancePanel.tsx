@@ -41,9 +41,9 @@ interface PersonalFinancePanelProps {
 }
 
 const VINICIUS_TABS = [
-  { id: 'contas', label: 'Contas fixas', icon: '/img/personal/grupo-fixos.svg' },
+  { id: 'contas', label: 'Contas', icon: '/img/personal/grupo-fixos.svg' },
   { id: 'receitas', label: 'Receitas', icon: '/img/finance/entradas.svg' },
-  { id: 'outros', label: 'Outros gastos', icon: '/img/finance/saidas.svg' },
+  { id: 'outros', label: 'Outros', icon: '/img/finance/saidas.svg' },
 ] as const;
 
 const GENERIC_TABS = [
@@ -290,46 +290,49 @@ export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanel
       {error && <div className="error-banner">{error}</div>}
       {saveError && <div className="error-banner">{saveError}</div>}
 
-      <div className={styles.toolbar}>
-        <div className={styles.toolbarMain}>
-          <PersonalFinanceMonthPicker value={selectedMonth} onChange={setSelectedMonth} />
-          {viniciusLayout ? (
-            <PersonalFinanceNav
-              tabs={[...VINICIUS_TABS]}
-              active={viniciusView}
-              onChange={(id) => setViniciusView(id as ViniciusFinanceView)}
-            />
-          ) : (
-            <PersonalFinanceNav
-              tabs={[...GENERIC_TABS]}
-              active={fluxo}
-              onChange={(id) => setFluxo(id as 'entrada' | 'saida')}
-            />
-          )}
-        </div>
-        <div className={styles.saveWrap}>
-          {savedLabel && <span className={styles.saveHint}>{savedLabel}</span>}
-          <div className={styles.saveActions}>
-            {viniciusLayout && (
+      <div className={styles.chrome}>
+        <div className={styles.toolbar}>
+          <div className={styles.toolbarMain}>
+            <PersonalFinanceMonthPicker value={selectedMonth} onChange={setSelectedMonth} />
+            {viniciusLayout ? (
+              <PersonalFinanceNav
+                tabs={[...VINICIUS_TABS]}
+                active={viniciusView}
+                onChange={(id) => setViniciusView(id as ViniciusFinanceView)}
+              />
+            ) : (
+              <PersonalFinanceNav
+                tabs={[...GENERIC_TABS]}
+                active={fluxo}
+                onChange={(id) => setFluxo(id as 'entrada' | 'saida')}
+              />
+            )}
+          </div>
+          <div className={styles.saveWrap}>
+            {savedLabel && <span className={styles.saveHint}>{savedLabel}</span>}
+            <div className={styles.saveActions}>
+              {viniciusLayout && (
+                <button
+                  type="button"
+                  className={styles.clearBtn}
+                  onClick={() => setClearConfirmOpen(true)}
+                  disabled={loading || !userId || !hasPagoMarks}
+                  title="Desmarcar todos os pagos das contas fixas deste mês"
+                >
+                  <span className={styles.clearBtnFull}>Limpar marcações</span>
+                  <span className={styles.clearBtnShort}>Limpar</span>
+                </button>
+              )}
               <button
                 type="button"
-                className={styles.clearBtn}
-                onClick={() => setClearConfirmOpen(true)}
-                disabled={loading || !userId || !hasPagoMarks}
-                title="Desmarcar todos os pagos das contas fixas deste mês"
+                className={styles.saveBtn}
+                onClick={() => void handleSaveMonth()}
+                disabled={loading || saving || !userId}
+                title={`Salvar ${formatMonthLabel(selectedMonth)} na nuvem e neste dispositivo`}
               >
-                Limpar marcações
+                {saving ? 'Salvando…' : 'Salvar mês'}
               </button>
-            )}
-            <button
-              type="button"
-              className={styles.saveBtn}
-              onClick={() => void handleSaveMonth()}
-              disabled={loading || saving || !userId}
-              title={`Salvar ${formatMonthLabel(selectedMonth)} na nuvem e neste dispositivo`}
-            >
-              {saving ? 'Salvando…' : 'Salvar mês'}
-            </button>
+            </div>
           </div>
         </div>
       </div>

@@ -51,6 +51,9 @@ export function PersonalFinanceModal({ open, title, onClose, children }: Persona
       }}
     >
       <div className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby={titleId}>
+        <div className={styles.sheetHandle} aria-hidden>
+          <span className={styles.sheetHandleBar} />
+        </div>
         <div className={styles.header}>
           <div className={styles.headerCopy}>
             {eyebrow && <span className={styles.eyebrow}>{eyebrow}</span>}

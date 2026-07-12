@@ -49,6 +49,8 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition:
     color 0.15s ease,
     background 0.15s ease,
@@ -74,6 +76,31 @@
   }
 }
 
+@media (max-width: 767px) {
+  .financePage .financeTop {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .financePage .financeTop :global(header) {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .financePage .financeTop :global(h1) {
+    font-size: 1.05rem;
+  }
+
+  .financePage .backBtn {
+    order: -1;
+    min-height: 40px;
+    padding: 0.4rem 0.75rem;
+  }
+}
+
 @media (max-width: 479px) {
   .page {
     padding-left: max(0.65rem, env(safe-area-inset-left));
@@ -81,12 +108,7 @@
   }
 
   .financeTop {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .financeTop :global(header) {
-    flex: 1 1 100%;
+    gap: 0.45rem;
   }
 
   .backBtn {
