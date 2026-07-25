@@ -50,6 +50,22 @@ export const VINICIUS_DRINKS: ViniciusDrink[] = [
     notes: 'De preferência sem coqueteleira. Drink misturado (não batido)!',
   },
   {
+    slug: 'whisky-highball',
+    title: 'Whisky Highball',
+    tagline: 'Whisky e água com gás gelada — clássico simples e refrescante.',
+    imageUrl: drinkThumbPath('whisky-highball'),
+    ingredients: ['50 ml de Whisky', 'Água com gás gelada', 'Gelo'],
+    garnish: ['Casca de limão (opcional)'],
+    steps: [
+      'Encha um copo highball com gelo;',
+      'Despeje o whisky;',
+      'Complete com água com gás gelada;',
+      'Mexa suavemente uma vez;',
+      'Decore com casca de limão, se quiser.',
+    ],
+    notes: 'Drink misturado (não batido)! Água com gás bem gelada deixa o highball mais cremoso.',
+  },
+  {
     slug: 'mojito',
     title: 'Mojito',
     tagline: 'Rum branco, hortelã, limão e água com gás — refrescante e clássico.',

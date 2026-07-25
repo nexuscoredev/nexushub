@@ -50,6 +50,7 @@ export const DRINK_COLLECTIONS: DrinkCollection[] = [
       'blue-lagoon',
       'margarita-blue',
       'whisky-cola',
+      'whisky-highball',
     ],
   },
   {
