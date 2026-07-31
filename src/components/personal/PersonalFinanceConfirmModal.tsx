@@ -1,4 +1,5 @@
 import { useEffect, useId } from 'react';
+import { createPortal } from 'react-dom';
 import { NavIcon } from '../NavIcon';
 import styles from './PersonalFinanceModal.module.css';
 
@@ -44,7 +45,7 @@ export function PersonalFinanceConfirmModal({
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div
       className={styles.backdrop}
       role="presentation"
@@ -93,6 +94,7 @@ export function PersonalFinanceConfirmModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

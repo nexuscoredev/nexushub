@@ -1,4 +1,5 @@
 import { useEffect, useId, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { NavIcon } from '../NavIcon';
 import styles from './PersonalFinanceModal.module.css';
 
@@ -42,7 +43,7 @@ export function PersonalFinanceModal({ open, title, onClose, children }: Persona
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div
       className={styles.backdrop}
       role="presentation"
@@ -67,6 +68,7 @@ export function PersonalFinanceModal({ open, title, onClose, children }: Persona
         </div>
         <div className={styles.body}>{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
