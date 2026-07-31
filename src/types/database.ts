@@ -142,3 +142,23 @@ export interface HubPersonalTransaction {
   created_at?: string;
   updated_at?: string;
 }
+
+export type HubPersonalFinanceMacroCategoria =
+  | 'divida_atual'
+  | 'divida_recorrente'
+  | 'a_receber'
+  | 'assinatura';
+
+export interface HubPersonalFinanceMacroItem {
+  id: string;
+  user_id: string;
+  categoria: HubPersonalFinanceMacroCategoria;
+  titulo: string;
+  valor_mensal: number | null;
+  saldo_restante: number | null;
+  parcelas_restantes: number | null;
+  notas: string | null;
+  ordem: number;
+  created_at?: string;
+  updated_at?: string;
+}

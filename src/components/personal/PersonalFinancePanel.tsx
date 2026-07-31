@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { PersonalContasFixasView } from '../PersonalContasFixasView';
 import { usePersonalFinanceRows } from '../../hooks/usePersonalFinanceRows';
+import { usePersonalFinanceMacro } from '../../hooks/usePersonalFinanceMacro';
 import {
   defaultDateForMonth,
   formatMonthLabel,
@@ -31,9 +32,11 @@ import { PersonalFinanceKpiGrid } from './PersonalFinanceKpiGrid';
 import { PersonalFinanceMonthPicker } from './PersonalFinanceMonthPicker';
 import { PersonalFinanceNav } from './PersonalFinanceNav';
 import { PersonalTransactionCards } from './PersonalTransactionCards';
+import { PersonalFinanceMacroHero } from './PersonalFinanceMacroHero';
+import { PersonalFinanceTotalView } from './PersonalFinanceTotalView';
 import styles from './PersonalFinancePanel.module.css';
 
-type ViniciusFinanceView = 'contas' | 'receitas' | 'outros';
+type ViniciusFinanceView = 'contas' | 'receitas' | 'outros' | 'total';
 
 interface PersonalFinancePanelProps {
   userEmail: string | undefined;
@@ -44,6 +47,7 @@ const VINICIUS_TABS = [
   { id: 'contas', label: 'Contas', icon: '/img/personal/grupo-fixos.svg' },
   { id: 'receitas', label: 'Receitas', icon: '/img/finance/entradas.svg' },
   { id: 'outros', label: 'Outros', icon: '/img/finance/saidas.svg' },
+  { id: 'total', label: 'Total', icon: '/img/finance/pendente.svg' },
 ] as const;
 
 const GENERIC_TABS = [
@@ -133,6 +137,16 @@ export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanel
     applyRemove,
     upsertRow,
   } = usePersonalFinanceRows();
+
+  const {
+    items: macroItems,
+    summary: macroSummary,
+    loading: macroLoading,
+    error: macroError,
+    refresh: refreshMacro,
+    upsertLocal: upsertMacroLocal,
+    removeLocal: removeMacroLocal,
+  } = usePersonalFinanceMacro(userId);
 
   const allRowsRef = useRef(allRows);
   allRowsRef.current = allRows;
@@ -284,16 +298,20 @@ export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanel
     : null;
 
   const hasPagoMarks = monthRows.some((row) => row.grupo && row.pago);
+  const isTotalView = viniciusLayout && viniciusView === 'total';
 
   return (
     <div className={styles.panel}>
       {error && <div className="error-banner">{error}</div>}
-      {saveError && <div className="error-banner">{saveError}</div>}
+      {macroError && isTotalView && <div className="error-banner">{macroError}</div>}
+      {saveError && !isTotalView && <div className="error-banner">{saveError}</div>}
 
       <div className={styles.chrome}>
         <div className={styles.toolbar}>
           <div className={styles.toolbarMain}>
-            <PersonalFinanceMonthPicker value={selectedMonth} onChange={setSelectedMonth} />
+            {!isTotalView && (
+              <PersonalFinanceMonthPicker value={selectedMonth} onChange={setSelectedMonth} />
+            )}
             {viniciusLayout ? (
               <PersonalFinanceNav
                 tabs={[...VINICIUS_TABS]}
@@ -309,9 +327,9 @@ export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanel
             )}
           </div>
           <div className={styles.saveWrap}>
-            {savedLabel && <span className={styles.saveHint}>{savedLabel}</span>}
+            {!isTotalView && savedLabel && <span className={styles.saveHint}>{savedLabel}</span>}
             <div className={styles.saveActions}>
-              {viniciusLayout && (
+              {viniciusLayout && !isTotalView && (
                 <button
                   type="button"
                   className={styles.clearBtn}
@@ -323,35 +341,54 @@ export function PersonalFinancePanel({ userEmail, userId }: PersonalFinancePanel
                   <span className={styles.clearBtnShort}>Limpar</span>
                 </button>
               )}
-              <button
-                type="button"
-                className={styles.saveBtn}
-                onClick={() => void handleSaveMonth()}
-                disabled={loading || saving || !userId}
-                title={`Salvar ${formatMonthLabel(selectedMonth)} na nuvem e neste dispositivo`}
-              >
-                {saving ? 'Salvando…' : 'Salvar mês'}
-              </button>
+              {!isTotalView && (
+                <button
+                  type="button"
+                  className={styles.saveBtn}
+                  onClick={() => void handleSaveMonth()}
+                  disabled={loading || saving || !userId}
+                  title={`Salvar ${formatMonthLabel(selectedMonth)} na nuvem e neste dispositivo`}
+                >
+                  {saving ? 'Salvando…' : 'Salvar mês'}
+                </button>
+              )}
             </div>
           </div>
         </div>
       </div>
 
       <div className={styles.summaryStrip}>
-        <PersonalFinanceHero
-          summary={summary}
-          loading={loading}
-          monthKey={selectedMonth}
-          viniciusLayout={viniciusLayout}
-        />
-        {!(viniciusLayout && viniciusView === 'contas') && (
-          <PersonalFinanceKpiGrid summary={summary} loading={loading} />
+        {isTotalView ? (
+          <PersonalFinanceMacroHero summary={macroSummary} loading={macroLoading} />
+        ) : (
+          <>
+            <PersonalFinanceHero
+              summary={summary}
+              loading={loading}
+              monthKey={selectedMonth}
+              viniciusLayout={viniciusLayout}
+            />
+            {!(viniciusLayout && viniciusView === 'contas') && (
+              <PersonalFinanceKpiGrid summary={summary} loading={loading} />
+            )}
+          </>
         )}
       </div>
 
       {viniciusLayout ? (
         <>
-          {loading ? (
+          {isTotalView ? (
+            <div className={styles.contentCard}>
+              <PersonalFinanceTotalView
+                userId={userId}
+                items={macroItems}
+                loading={macroLoading}
+                onUpsert={upsertMacroLocal}
+                onRemove={removeMacroLocal}
+                onSyncError={refreshMacro}
+              />
+            </div>
+          ) : loading ? (
             <p className={styles.loading}>Carregando…</p>
           ) : viniciusView === 'contas' ? (
             <PersonalContasFixasView
